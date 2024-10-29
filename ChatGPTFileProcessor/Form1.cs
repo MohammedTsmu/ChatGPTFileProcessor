@@ -15,6 +15,9 @@ using System.Threading.Tasks;
 using System.Data.SqlClient;
 using Word = Microsoft.Office.Interop.Word;
 using System.Text.Json.Nodes;  // Add this at the top of your file if not present
+using System.Text.RegularExpressions;
+using iText.Commons.Utils;
+
 
 
 
@@ -176,8 +179,14 @@ namespace ChatGPTFileProcessor
                 }
 
 
-                // Output results after processing all pages and chunks
-                SaveResultsToWord(outputContent.ToString());
+                //// Output results after processing all pages and chunks
+                //SaveResultsToWord(outputContent.ToString());
+
+                // After generating content, post-process for consistent formatting
+                string postProcessedContent = PostProcessContent(outputContent.ToString());
+
+                // Save the post-processed content to a Word document
+                SaveResultsToWord(postProcessedContent);
             }
             catch (Exception ex)
             {
@@ -234,14 +243,55 @@ namespace ChatGPTFileProcessor
         }
 
 
-        private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
-        {
-            { "gpt-3.5-turbo", (4096, "Summarize each page with the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. Term\n\nUse this structure for all responses, with labeled sections as shown.") },
-            { "gpt-3.5-turbo-16k", (16384, "For each page, use the following structured format:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. Term\n\nEnsure consistency by following this structure and labeling each section clearly.") },
-            { "gpt-4", (8192, "Please analyze each page and follow this structured format:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. Term\n\nKeep the format consistent and labeled as instructed.") },
-            { "gpt-4-turbo", (128000, "For each page, provide a comprehensive response using the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. Term\n\nPlease ensure the response strictly follows this format and includes labels and answer keys where applicable.") }
-        };
+        //private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
+        //{
+        //    { "gpt-3.5-turbo", (4096, "Summarize each page with the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. Term\n\nUse this structure for all responses, with labeled sections as shown.") },
+        //    { "gpt-3.5-turbo-16k", (16384, "For each page, use the following structured format:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. Term\n\nEnsure consistency by following this structure and labeling each section clearly.") },
+        //    { "gpt-4", (8192, "Please analyze each page and follow this structured format:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. Term\n\nKeep the format consistent and labeled as instructed.") },
+        //    { "gpt-4-turbo", (128000, "For each page, provide a comprehensive response using the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. Term\n\nPlease ensure the response strictly follows this format and includes labels and answer keys where applicable.") }
+        //};
 
+        //private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
+        //{
+        //    {
+        //        "gpt-3.5-turbo",
+        //        (4096, "Summarize each page with the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nEnsure each section is labeled and formatted as specified.")
+        //    },
+        //    {
+        //        "gpt-3.5-turbo-16k",
+        //        (16384, "For each page, use the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nMake sure each section is labeled and formatted consistently with this structure.")
+        //    },
+        //    {
+        //        "gpt-4",
+        //        (8192, "Analyze each page and follow this structured format:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nUse consistent labels and formatting as specified in this structure.")
+        //    },
+        //    {
+        //        "gpt-4-turbo",
+        //        (128000, "For each page, provide a comprehensive response using the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nEnsure each section strictly follows the specified format and includes labels and answer keys.")
+        //    }
+        //};
+
+
+
+        private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
+{
+    {
+        "gpt-3.5-turbo",
+        (4096, "Summarize each page with the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nEnsure each section is labeled and formatted as specified.")
+    },
+    {
+        "gpt-3.5-turbo-16k",
+        (16384, "For each page, use the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nMake sure each section is labeled and formatted consistently with this structure.")
+    },
+    {
+        "gpt-4",
+        (8192, "Analyze each page and follow this structured format:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nUse consistent labels and formatting as specified in this structure.")
+    },
+    {
+        "gpt-4-turbo",
+        (128000, "For each page, provide a comprehensive response using the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nEnsure each section strictly follows the specified format and includes labels and answer keys.")
+    }
+};
 
 
 
@@ -400,6 +450,155 @@ namespace ChatGPTFileProcessor
         {
             UpdateStatus("Model changed, saving selection...");
             SaveApiKeyAndModel();
+        }
+
+
+
+        //Create Post-Processing Functions
+        //Create functions to check each section’s structure and reformat as needed after generation.
+        // Function to post-process generated content
+        private string PostProcessContent(string generatedContent)
+            {
+                // Split the content by sections based on common headings
+                string[] sections = generatedContent.Split(new[] { "Definitions:", "MCQs:", "Flashcards:", "Vocabulary:" }, StringSplitOptions.None);
+
+                // Reformat each section
+                string definitions = FormatDefinitions(sections[1]);
+                string mcqs = FormatMCQs(sections[2]);
+                string flashcards = FormatFlashcards(sections[3]);
+                string vocabulary = FormatVocabulary(sections[4]);
+
+                // Recombine sections with consistent headings
+                return $"Definitions:\n{definitions}\n\nMCQs:\n{mcqs}\n\nFlashcards:\n{flashcards}\n\nVocabulary:\n{vocabulary}";
+            }
+
+            // Function to format definitions
+            private string FormatDefinitions(string text)
+            {
+                var formattedDefinitions = new List<string>();
+                var lines = text.Split('\n');
+                int count = 1;
+
+                foreach (var line in lines)
+                {
+                    // Enforce "1. Term: Definition" format
+                    var match = Regex.Match(line, @"^(?<term>.+): (?<definition>.+)$");
+                    if (match.Success)
+                    {
+                        formattedDefinitions.Add($"{count}. {match.Groups["term"].Value}: {match.Groups["definition"].Value}");
+                        count++;
+                    }
+                }
+                return string.Join("\n", formattedDefinitions);
+            }
+
+        // Function to format MCQs with an answer key
+        private string FormatMCQs(string text)
+        {
+            var formattedMCQs = new List<string>();
+            var mcqBlocks = text.Split(new[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
+            int count = 1;
+
+            for (int i = 0; i < mcqBlocks.Length; i++)
+            {
+                var block = mcqBlocks[i];
+                // Ensure each MCQ has an "Answer" field
+                if (!block.Contains("Answer:"))
+                {
+                    block += "\nAnswer: [To be filled]";
+                }
+                formattedMCQs.Add($"{count}. {block}");
+                count++;
+            }
+            return string.Join("\n\n", formattedMCQs);
+        }
+
+
+        // Function to format flashcards
+        private string FormatFlashcards(string text)
+            {
+                var formattedFlashcards = new List<string>();
+                var flashcardBlocks = text.Split(new[] { "Front:", "Back:" }, StringSplitOptions.RemoveEmptyEntries);
+
+                for (int i = 0; i < flashcardBlocks.Length; i += 2)
+                {
+                    var term = flashcardBlocks[i].Trim();
+                    var definition = i + 1 < flashcardBlocks.Length ? flashcardBlocks[i + 1].Trim() : "[Definition missing]";
+                    formattedFlashcards.Add($"Front: {term}\nBack: {definition}");
+                }
+                return string.Join("\n\n", formattedFlashcards);
+            }
+
+        // Function to format vocabulary
+        private string FormatVocabulary(string text)
+        {
+            var formattedVocabulary = new List<string>();
+            var terms = text.Split('\n');
+            int count = 1;
+
+            foreach (var line in terms)
+            {
+                var match = Regex.Match(line, @"^(?<english>.+?) - (?<arabic>.+)$");
+                if (match.Success)
+                {
+                    string english = match.Groups["english"].Value.Trim();
+                    string arabic = match.Groups["arabic"].Value.Trim();
+                    formattedVocabulary.Add($"{count}. {english} - {arabic}");
+                    count++;
+                }
+                else
+                {
+                    // If the format is incorrect, mark for review
+                    formattedVocabulary.Add($"{count}. {line.Trim()} - [Arabic Translation Needed]");
+                    count++;
+                }
+            }
+            return string.Join("\n", formattedVocabulary);
+        }
+
+        private async Task<string> TranslateVocabularyToArabic(string vocabularyText)
+        {
+            string apiKey = textBoxAPIKey.Text.Trim();
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                UpdateStatus("API Key is missing. Please enter and save your API Key.");
+                return string.Empty;
+            }
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + apiKey);
+
+                var requestContent = new
+                {
+                    model = "gpt-3.5-turbo",
+                    messages = new[]
+                    {
+                new { role = "system", content = "Translate the following vocabulary terms from English to Arabic. Use this format:\n\n1. English Term - Arabic Translation" },
+                new { role = "user", content = vocabularyText }
+            }
+                };
+
+                string jsonContent = System.Text.Json.JsonSerializer.Serialize(requestContent, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase });
+                StringContent httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
+                if (response.IsSuccessStatusCode)
+                {
+                    string result = await response.Content.ReadAsStringAsync();
+
+                    // Parse JSON response to get only the content
+                    var jsonObject = JsonNode.Parse(result);
+                    string content = jsonObject?["choices"]?[0]?["message"]?["content"]?.ToString();
+                    return content ?? "Translation not available.";
+                }
+                else
+                {
+                    string errorResponse = await response.Content.ReadAsStringAsync();
+                    UpdateStatus($"Error from ChatGPT: {response.StatusCode} - {errorResponse}");
+                    return string.Empty;
+                }
+            }
         }
 
 

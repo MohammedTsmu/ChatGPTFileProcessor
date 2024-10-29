@@ -62,13 +62,15 @@
             // textBoxAPIKey
             // 
             this.textBoxAPIKey.Location = new System.Drawing.Point(8, 52);
+            this.textBoxAPIKey.Multiline = true;
             this.textBoxAPIKey.Name = "textBoxAPIKey";
-            this.textBoxAPIKey.Size = new System.Drawing.Size(337, 22);
+            this.textBoxAPIKey.PasswordChar = '*';
+            this.textBoxAPIKey.Size = new System.Drawing.Size(465, 108);
             this.textBoxAPIKey.TabIndex = 1;
             // 
             // buttonSaveAPIKey
             // 
-            this.buttonSaveAPIKey.Location = new System.Drawing.Point(8, 80);
+            this.buttonSaveAPIKey.Location = new System.Drawing.Point(6, 166);
             this.buttonSaveAPIKey.Name = "buttonSaveAPIKey";
             this.buttonSaveAPIKey.Size = new System.Drawing.Size(161, 44);
             this.buttonSaveAPIKey.TabIndex = 2;
@@ -78,7 +80,7 @@
             // 
             // buttonEditAPIKey
             // 
-            this.buttonEditAPIKey.Location = new System.Drawing.Point(8, 130);
+            this.buttonEditAPIKey.Location = new System.Drawing.Point(6, 216);
             this.buttonEditAPIKey.Name = "buttonEditAPIKey";
             this.buttonEditAPIKey.Size = new System.Drawing.Size(161, 44);
             this.buttonEditAPIKey.TabIndex = 3;
@@ -88,7 +90,7 @@
             // 
             // buttonClearAPIKey
             // 
-            this.buttonClearAPIKey.Location = new System.Drawing.Point(8, 180);
+            this.buttonClearAPIKey.Location = new System.Drawing.Point(6, 266);
             this.buttonClearAPIKey.Name = "buttonClearAPIKey";
             this.buttonClearAPIKey.Size = new System.Drawing.Size(161, 44);
             this.buttonClearAPIKey.TabIndex = 4;
@@ -133,7 +135,7 @@
             this.groupBox1.Controls.Add(this.buttonEditAPIKey);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(351, 235);
+            this.groupBox1.Size = new System.Drawing.Size(479, 316);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "API Key Section";
@@ -143,7 +145,7 @@
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.buttonBrowseFile);
             this.groupBox2.Controls.Add(this.labelFileName);
-            this.groupBox2.Location = new System.Drawing.Point(363, 12);
+            this.groupBox2.Location = new System.Drawing.Point(497, 12);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(425, 103);
             this.groupBox2.TabIndex = 11;
@@ -154,9 +156,9 @@
             // 
             this.groupBox3.Controls.Add(this.textBoxStatus);
             this.groupBox3.Controls.Add(this.buttonProcessFile);
-            this.groupBox3.Location = new System.Drawing.Point(363, 121);
+            this.groupBox3.Location = new System.Drawing.Point(497, 121);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(425, 317);
+            this.groupBox3.Size = new System.Drawing.Size(425, 408);
             this.groupBox3.TabIndex = 12;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Process and Status Section";
@@ -167,7 +169,7 @@
             this.textBoxStatus.Multiline = true;
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
-            this.textBoxStatus.Size = new System.Drawing.Size(413, 240);
+            this.textBoxStatus.Size = new System.Drawing.Size(413, 331);
             this.textBoxStatus.TabIndex = 9;
             // 
             // buttonProcessFile
@@ -184,12 +186,12 @@
             // 
             this.groupBox4.Controls.Add(this.comboBoxModel);
             this.groupBox4.Controls.Add(this.label3);
-            this.groupBox4.Location = new System.Drawing.Point(12, 253);
+            this.groupBox4.Location = new System.Drawing.Point(12, 334);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(351, 185);
+            this.groupBox4.Size = new System.Drawing.Size(479, 189);
             this.groupBox4.TabIndex = 11;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "API Key Section";
+            this.groupBox4.Text = "Models Section";
             // 
             // comboBoxModel
             // 
@@ -213,13 +215,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(934, 541);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "ChatGPT File Processor";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
