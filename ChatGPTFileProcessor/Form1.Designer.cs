@@ -40,7 +40,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.textBoxStatus = new System.Windows.Forms.TextBox();
-            this.button2 = new System.Windows.Forms.Button();
+            this.buttonProcessFile = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -109,6 +109,7 @@
             this.buttonBrowseFile.TabIndex = 6;
             this.buttonBrowseFile.Text = "Browse";
             this.buttonBrowseFile.UseVisualStyleBackColor = true;
+            this.buttonBrowseFile.Click += new System.EventHandler(this.buttonBrowseFile_Click);
             // 
             // labelFileName
             // 
@@ -128,7 +129,7 @@
             this.groupBox1.Controls.Add(this.buttonEditAPIKey);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(178, 271);
+            this.groupBox1.Size = new System.Drawing.Size(178, 426);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "API Key Section";
@@ -148,10 +149,10 @@
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.textBoxStatus);
-            this.groupBox3.Controls.Add(this.button2);
+            this.groupBox3.Controls.Add(this.buttonProcessFile);
             this.groupBox3.Location = new System.Drawing.Point(209, 121);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(579, 162);
+            this.groupBox3.Size = new System.Drawing.Size(579, 317);
             this.groupBox3.TabIndex = 12;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Process and Status Section";
@@ -162,17 +163,18 @@
             this.textBoxStatus.Multiline = true;
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
-            this.textBoxStatus.Size = new System.Drawing.Size(567, 85);
+            this.textBoxStatus.Size = new System.Drawing.Size(567, 240);
             this.textBoxStatus.TabIndex = 9;
             // 
-            // button2
+            // buttonProcessFile
             // 
-            this.button2.Location = new System.Drawing.Point(6, 21);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(161, 44);
-            this.button2.TabIndex = 8;
-            this.button2.Text = "Process File";
-            this.button2.UseVisualStyleBackColor = true;
+            this.buttonProcessFile.Location = new System.Drawing.Point(6, 21);
+            this.buttonProcessFile.Name = "buttonProcessFile";
+            this.buttonProcessFile.Size = new System.Drawing.Size(161, 44);
+            this.buttonProcessFile.TabIndex = 8;
+            this.buttonProcessFile.Text = "Process File";
+            this.buttonProcessFile.UseVisualStyleBackColor = true;
+            this.buttonProcessFile.Click += new System.EventHandler(this.buttonProcessFile_Click);
             // 
             // Form1
             // 
@@ -208,7 +210,7 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox textBoxStatus;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button buttonProcessFile;
     }
 }
 

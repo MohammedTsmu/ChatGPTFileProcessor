@@ -1,6 +1,14 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using iText.Kernel.Pdf.Canvas.Parser;
+using iText.Kernel.Pdf;
+using Microsoft.Office.Interop.Word;
+
+
+
 
 namespace ChatGPTFileProcessor
 {
@@ -66,5 +74,94 @@ namespace ChatGPTFileProcessor
         {
             textBoxStatus.AppendText(message + Environment.NewLine);
         }
+
+        private void buttonBrowseFile_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "Text Files (*.txt)|*.txt|PDF Files (*.pdf)|*.pdf|Word Files (*.docx)|*.docx";
+                openFileDialog.Title = "Select a File";
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Display the selected file path
+                    labelFileName.Text = openFileDialog.FileName;
+                    UpdateStatus("File selected: " + openFileDialog.FileName);
+                }
+            }
+        }
+
+        private void buttonProcessFile_Click(object sender, EventArgs e)
+        {
+            string filePath = labelFileName.Text;
+
+            if (filePath == "No file selected")
+            {
+                UpdateStatus("Please select a file to process.");
+                return;
+            }
+
+            string fileContent = "";
+            try
+            {
+                if (filePath.EndsWith(".txt"))
+                {
+                    fileContent = ReadTextFile(filePath);
+                }
+                else if (filePath.EndsWith(".docx"))
+                {
+                    fileContent = ReadWordFile(filePath);
+                }
+                else if (filePath.EndsWith(".pdf"))
+                {
+                    fileContent = ReadPdfFile(filePath);
+                }
+                else
+                {
+                    UpdateStatus("Unsupported file format.");
+                    return;
+                }
+
+                UpdateStatus("File content read successfully.");
+                // Here, we'll later add code to send the content to ChatGPT
+            }
+            catch (Exception ex)
+            {
+                UpdateStatus("Error reading file: " + ex.Message);
+            }
+        }
+
+
+        private string ReadTextFile(string filePath)
+        {
+            return File.ReadAllText(filePath);
+        }
+
+        private string ReadWordFile(string filePath)
+        {
+            Microsoft.Office.Interop.Word.Application wordApp = new Microsoft.Office.Interop.Word.Application();
+            Document doc = wordApp.Documents.Open(filePath);
+            string text = doc.Content.Text;
+            doc.Close(false);  // Close the document without saving changes
+            wordApp.Quit(false);  // Quit Word Application
+            System.Runtime.InteropServices.Marshal.ReleaseComObject(wordApp);
+            return text;
+        }
+
+        private string ReadPdfFile(string filePath)
+        {
+            StringBuilder text = new StringBuilder();
+            using (PdfReader pdfReader = new PdfReader(filePath))
+            using (PdfDocument pdfDoc = new PdfDocument(pdfReader))
+            {
+                for (int i = 1; i <= pdfDoc.GetNumberOfPages(); i++)
+                {
+                    text.Append(PdfTextExtractor.GetTextFromPage(pdfDoc.GetPage(i)));
+                }
+            }
+            return text.ToString();
+        }
+
+
     }
 }
