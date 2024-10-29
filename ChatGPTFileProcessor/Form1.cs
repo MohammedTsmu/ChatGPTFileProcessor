@@ -21,9 +21,6 @@ using iText.Commons.Utils;
 
 
 
-
-
-
 namespace ChatGPTFileProcessor
 {
     public partial class Form1 : Form
@@ -31,6 +28,25 @@ namespace ChatGPTFileProcessor
         private readonly string apiKeyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "api_key.txt");
         private readonly string modelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "model.txt");
 
+        private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
+        {
+            {
+                "gpt-3.5-turbo",
+                (4096, "Summarize each page with the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nEnsure each section is labeled and formatted as specified.")
+            },
+            {
+                "gpt-3.5-turbo-16k",
+                (16384, "For each page, use the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nMake sure each section is labeled and formatted consistently with this structure.")
+            },
+            {
+                "gpt-4",
+                (8192, "Analyze each page and follow this structured format:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nUse consistent labels and formatting as specified in this structure.")
+            },
+            {
+                "gpt-4-turbo",
+                (128000, "For each page, provide a comprehensive response using the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nEnsure each section strictly follows the specified format and includes labels and answer keys.")
+            }
+        };
 
         public Form1()
         {
@@ -153,46 +169,38 @@ namespace ChatGPTFileProcessor
 
                 UpdateStatus("File content read successfully.");
 
-                // Split content by pages (assuming '\f' as page separator for text files)
-                string[] pages = fileContent.Split(new[] { "\f" }, StringSplitOptions.None);
+                // Determine model
+                string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "gpt-3.5-turbo";
+
+                // Process each content type separately with chunking
                 StringBuilder outputContent = new StringBuilder();
 
-                foreach (var page in pages)
-                {
-                    UpdateStatus("Processing page...");
+                UpdateStatus("Processing definitions...");
+                outputContent.AppendLine("Definitions:");
+                outputContent.AppendLine(await GenerateDefinitions(fileContent, selectedModel));
 
-                    int chunkSize = GetChunkSizeForModel();
-                    var chunks = SplitTextIntoChunks(page, chunkSize);
+                UpdateStatus("Processing MCQs...");
+                outputContent.AppendLine("\nMCQs:");
+                outputContent.AppendLine(await GenerateMCQs(fileContent, selectedModel));
 
-                    foreach (var chunk in chunks)
-                    {
-                        string chatGptResponse = await SendToChatGPT(chunk);
+                UpdateStatus("Processing flashcards...");
+                outputContent.AppendLine("\nFlashcards:");
+                outputContent.AppendLine(await GenerateFlashcards(fileContent, selectedModel));
 
-                        if (!string.IsNullOrEmpty(chatGptResponse))
-                        {
-                            outputContent.AppendLine(chatGptResponse);
-                            outputContent.AppendLine("\n--- End of Chunk ---\n");
-                        }
-                    }
+                UpdateStatus("Processing vocabulary...");
+                outputContent.AppendLine("\nVocabulary:");
+                outputContent.AppendLine(await GenerateVocabulary(fileContent, selectedModel));
 
-                    outputContent.AppendLine("\n--- End of Page ---\n");
-                }
-
-
-                //// Output results after processing all pages and chunks
-                //SaveResultsToWord(outputContent.ToString());
-
-                // After generating content, post-process for consistent formatting
-                string postProcessedContent = PostProcessContent(outputContent.ToString());
-
-                // Save the post-processed content to a Word document
-                SaveResultsToWord(postProcessedContent);
+                // Output results after processing all chunks
+                SaveResultsToWord(outputContent.ToString());
             }
             catch (Exception ex)
             {
                 UpdateStatus("Error reading file: " + ex.Message);
             }
         }
+
+
 
 
 
@@ -227,15 +235,17 @@ namespace ChatGPTFileProcessor
             return text.ToString();
         }
 
-        private List<string> SplitTextIntoChunks(string text, int maxWords = 500, int overlapWords = 50)
+        // Function to split text into manageable chunks based on model token limits
+        private List<string> SplitTextIntoChunks(string text, int maxTokens, int overlapTokens = 50)
         {
             var words = text.Split(new[] { ' ', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-            var chunks = new List<string>();  // Specify <string> as type argument
+            var chunks = new List<string>();
             int totalWords = words.Length;
+            int maxWords = (int)(maxTokens * 0.5); // Approximate words per chunk; adjust as needed
 
-            for (int i = 0; i < totalWords; i += maxWords - overlapWords)
+            for (int i = 0; i < totalWords; i += maxWords - overlapTokens)
             {
-                var chunk = string.Join(" ", words.Skip(i).Take(maxWords));  // Ensure that .Skip works with string arrays
+                var chunk = string.Join(" ", words.Skip(i).Take(maxWords));
                 chunks.Add(chunk);
             }
 
@@ -243,13 +253,7 @@ namespace ChatGPTFileProcessor
         }
 
 
-        //private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
-        //{
-        //    { "gpt-3.5-turbo", (4096, "Summarize each page with the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. Term\n\nUse this structure for all responses, with labeled sections as shown.") },
-        //    { "gpt-3.5-turbo-16k", (16384, "For each page, use the following structured format:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. Term\n\nEnsure consistency by following this structure and labeling each section clearly.") },
-        //    { "gpt-4", (8192, "Please analyze each page and follow this structured format:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. Term\n\nKeep the format consistent and labeled as instructed.") },
-        //    { "gpt-4-turbo", (128000, "For each page, provide a comprehensive response using the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. Term\n\nPlease ensure the response strictly follows this format and includes labels and answer keys where applicable.") }
-        //};
+        
 
         //private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
         //{
@@ -271,27 +275,76 @@ namespace ChatGPTFileProcessor
         //    }
         //};
 
+        private readonly Dictionary<string, int> modelContextLimits = new Dictionary<string, int>
+        {
+            { "gpt-3.5-turbo", 4096 },
+            { "gpt-3.5-turbo-16k", 16384 },
+            { "gpt-4", 8192 },
+            { "gpt-4-turbo", 128000 }
+        };
+
+        // Definitions Prompt
+        // Definitions Prompt with Chunking
+        private async Task<string> GenerateDefinitions(string content, string model)
+        {
+            var maxTokens = modelContextLimits.ContainsKey(model) ? modelContextLimits[model] : 4096;
+            var chunks = SplitTextIntoChunks(content, maxTokens);
+            StringBuilder definitionsResult = new StringBuilder();
+
+            foreach (var chunk in chunks)
+            {
+                definitionsResult.AppendLine(await SendToChatGPT(chunk, model, "Extract detailed definitions for key terms from the page."));
+            }
+
+            return definitionsResult.ToString();
+        }
 
 
-        private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
-{
-    {
-        "gpt-3.5-turbo",
-        (4096, "Summarize each page with the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nEnsure each section is labeled and formatted as specified.")
-    },
-    {
-        "gpt-3.5-turbo-16k",
-        (16384, "For each page, use the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nMake sure each section is labeled and formatted consistently with this structure.")
-    },
-    {
-        "gpt-4",
-        (8192, "Analyze each page and follow this structured format:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nUse consistent labels and formatting as specified in this structure.")
-    },
-    {
-        "gpt-4-turbo",
-        (128000, "For each page, provide a comprehensive response using the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nEnsure each section strictly follows the specified format and includes labels and answer keys.")
-    }
-};
+        // MCQs Prompt with Chunking
+        private async Task<string> GenerateMCQs(string content, string model)
+        {
+            var maxTokens = modelContextLimits.ContainsKey(model) ? modelContextLimits[model] : 4096;
+            var chunks = SplitTextIntoChunks(content, maxTokens);
+            StringBuilder mcqsResult = new StringBuilder();
+
+            foreach (var chunk in chunks)
+            {
+                mcqsResult.AppendLine(await SendToChatGPT(chunk, model, "Generate multiple-choice questions based on the content of the page."));
+            }
+
+            return mcqsResult.ToString();
+        }
+
+        // Flashcards Prompt with Chunking
+        private async Task<string> GenerateFlashcards(string content, string model)
+        {
+            var maxTokens = modelContextLimits.ContainsKey(model) ? modelContextLimits[model] : 4096;
+            var chunks = SplitTextIntoChunks(content, maxTokens);
+            StringBuilder flashcardsResult = new StringBuilder();
+
+            foreach (var chunk in chunks)
+            {
+                flashcardsResult.AppendLine(await SendToChatGPT(chunk, model, "Create flashcards for key terms and concepts."));
+            }
+
+            return flashcardsResult.ToString();
+        }
+
+        // Vocabulary Prompt with Chunking
+        private async Task<string> GenerateVocabulary(string content, string model)
+        {
+            var maxTokens = modelContextLimits.ContainsKey(model) ? modelContextLimits[model] : 4096;
+            var chunks = SplitTextIntoChunks(content, maxTokens);
+            StringBuilder vocabularyResult = new StringBuilder();
+
+            foreach (var chunk in chunks)
+            {
+                vocabularyResult.AppendLine(await SendToChatGPT(chunk, model, "List important vocabulary terms from the page with Arabic translations."));
+            }
+
+            return vocabularyResult.ToString();
+        }
+
 
 
 
@@ -309,7 +362,8 @@ namespace ChatGPTFileProcessor
 
 
 
-        private async Task<string> SendToChatGPT(string pageContent)
+        // Centralized function to handle ChatGPT API calls
+        private async Task<string> SendToChatGPT(string pageContent, string model, string taskPrompt)
         {
             string apiKey = textBoxAPIKey.Text.Trim();
             if (string.IsNullOrEmpty(apiKey))
@@ -318,20 +372,16 @@ namespace ChatGPTFileProcessor
                 return string.Empty;
             }
 
-            // Get the selected model and its prompt
-            string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "gpt-3.5-turbo";
-            string prompt = modelDetails.ContainsKey(selectedModel) ? modelDetails[selectedModel].prompt : modelDetails["gpt-3.5-turbo"].prompt;
-
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer " + apiKey);
 
                 var requestContent = new
                 {
-                    model = selectedModel,
+                    model = model,
                     messages = new[]
                     {
-                new { role = "system", content = prompt },
+                new { role = "system", content = taskPrompt },
                 new { role = "user", content = pageContent }
             }
                 };
@@ -343,11 +393,8 @@ namespace ChatGPTFileProcessor
                 if (response.IsSuccessStatusCode)
                 {
                     string result = await response.Content.ReadAsStringAsync();
-
-                    // Parse JSON response to get only the content
                     var jsonObject = JsonNode.Parse(result);
-                    string content = jsonObject?["choices"]?[0]?["message"]?["content"]?.ToString();
-                    return content ?? "No content extracted.";
+                    return jsonObject?["choices"]?[0]?["message"]?["content"]?.ToString() ?? "No content extracted.";
                 }
                 else
                 {
