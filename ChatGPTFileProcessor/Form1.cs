@@ -25,7 +25,15 @@ namespace ChatGPTFileProcessor
 {
     public partial class Form1 : Form
     {
-        private readonly string configPath = "config.txt";
+        //private readonly string configPath = "config.txt";
+
+        //private readonly string configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.txt");
+
+        //private readonly string configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ChatGPTFileProcessor", "config.txt");
+
+        private readonly string apiKeyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "api_key.txt");
+        private readonly string modelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "model.txt");
+
 
         public Form1()
         {
@@ -33,12 +41,23 @@ namespace ChatGPTFileProcessor
             LoadAPIKey();  // Load API key on app start
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            // Populate ComboBox items
+            comboBoxModel.Items.Add("gpt-3.5-turbo");
+            comboBoxModel.Items.Add("gpt-4");
+
+            // Load API key and model
+            LoadApiKeyAndModel();
+        }
+
+
         private void LoadAPIKey()
         {
-            if (File.Exists(configPath))
+            if (File.Exists(apiKeyPath))
             {
                 // Read the API key from the config file
-                textBoxAPIKey.Text = File.ReadAllText(configPath);
+                textBoxAPIKey.Text = File.ReadAllText(apiKeyPath);
                 UpdateStatus("API Key loaded successfully.");
             }
             else
@@ -52,7 +71,7 @@ namespace ChatGPTFileProcessor
             string apiKey = textBoxAPIKey.Text.Trim();
             if (!string.IsNullOrEmpty(apiKey))
             {
-                File.WriteAllText(configPath, apiKey);
+                File.WriteAllText(apiKeyPath, apiKey);
                 UpdateStatus("API Key saved successfully.");
             }
             else
@@ -69,9 +88,9 @@ namespace ChatGPTFileProcessor
 
         private void buttonClearAPIKey_Click(object sender, EventArgs e)
         {
-            if (File.Exists(configPath))
+            if (File.Exists(apiKeyPath))
             {
-                File.Delete(configPath);
+                File.Delete(apiKeyPath);
                 textBoxAPIKey.Clear();
                 UpdateStatus("API Key cleared successfully.");
             }
@@ -380,30 +399,131 @@ namespace ChatGPTFileProcessor
             UpdateStatus($"Results saved successfully to {outputPath}");
         }
 
-        private void LoadSelectedModel()
+
+        //private void LoadSelectedModel()
+        //{
+        //    UpdateStatus("Loading selected model from config...");
+        //    if (File.Exists(configPath))
+        //    {
+        //        string[] configLines = File.ReadAllLines(configPath);
+        //        if (configLines.Length > 1)
+        //        {
+        //            string savedModel = configLines[1];  // Assume second line in config is model
+        //            UpdateStatus($"Saved model found: {savedModel}");
+
+        //            // Set ComboBox selection to saved model
+        //            if (comboBoxModel.Items.Contains(savedModel))
+        //            {
+        //                comboBoxModel.SelectedItem = savedModel;
+        //                UpdateStatus($"Model set to: {savedModel}");
+        //            }
+        //            else
+        //            {
+        //                comboBoxModel.SelectedIndex = 0;  // Default to first item if model is not in options
+        //                UpdateStatus("Saved model not in ComboBox items, defaulting to first item.");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            comboBoxModel.SelectedIndex = 0;
+        //            UpdateStatus("No saved model found, defaulting to first item.");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        comboBoxModel.SelectedIndex = 0;
+        //        UpdateStatus("Config file not found, defaulting to first item.");
+        //    }
+        //}
+
+        private void LoadApiKeyAndModel()
         {
-            if (File.Exists(configPath))
+            EnsureConfigDirectoryExists();
+
+            // Load API key
+            if (File.Exists(apiKeyPath))
             {
-                string[] configLines = File.ReadAllLines(configPath);
-                if (configLines.Length > 1)
+                textBoxAPIKey.Text = File.ReadAllText(apiKeyPath).Trim();
+            }
+
+            // Load selected model
+            if (File.Exists(modelPath))
+            {
+                string savedModel = File.ReadAllText(modelPath).Trim();
+                if (comboBoxModel.Items.Contains(savedModel))
                 {
-                    string savedModel = configLines[1];  // Assume second line in config is model
                     comboBoxModel.SelectedItem = savedModel;
                 }
+                else
+                {
+                    comboBoxModel.SelectedIndex = 0;  // Default to first item if model is not in options
+                }
+            }
+            else
+            {
+                comboBoxModel.SelectedIndex = 0;  // Default if model file is missing
             }
         }
 
-        private void SaveSelectedModel()
+        private void SaveApiKeyAndModel()
         {
+            EnsureConfigDirectoryExists();
+
+            // Save API key
+            string apiKey = textBoxAPIKey.Text.Trim();
+            File.WriteAllText(apiKeyPath, apiKey);
+
+            // Save selected model
             string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "gpt-3.5-turbo";
-            var configLines = new List<string> { textBoxAPIKey.Text, selectedModel };
-            File.WriteAllLines(configPath, configLines);
+            File.WriteAllText(modelPath, selectedModel);
         }
+
+
+
+        //private void EnsureConfigDirectoryExists()
+        //{
+        //    var configDirectory = Path.GetDirectoryName(apiKeyPath);
+        //    if (!Directory.Exists(configDirectory))
+        //    {
+        //        Directory.CreateDirectory(configDirectory);
+        //    }
+        //}
+
+        private void EnsureConfigDirectoryExists()
+        {
+            var configDirectory = Path.GetDirectoryName(apiKeyPath);
+            if (!Directory.Exists(configDirectory))
+            {
+                Directory.CreateDirectory(configDirectory);
+            }
+        }
+
+
+
+        //private void SaveSelectedModel()
+        //{
+        //    string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "gpt-3.5-turbo";
+        //    var configLines = new List<string> { textBoxAPIKey.Text, selectedModel };
+        //    File.WriteAllLines(configPath, configLines);
+        //}
+
+
+        //private void SaveSelectedModel()
+        //{
+        //    string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "gpt-3.5-turbo";
+        //    var configLines = new List<string> { textBoxAPIKey.Text, selectedModel };
+        //    File.WriteAllLines(configPath, configLines);
+        //}
+
 
         private void comboBoxModel_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SaveSelectedModel();
+            UpdateStatus("Model changed, saving selection...");
+            //SaveSelectedModel();
+            SaveApiKeyAndModel();
+
         }
+
 
     }
 }

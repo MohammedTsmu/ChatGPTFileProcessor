@@ -42,8 +42,8 @@
             this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.buttonProcessFile = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.comboBoxModel = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -191,6 +191,15 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "API Key Section";
             // 
+            // comboBoxModel
+            // 
+            this.comboBoxModel.FormattingEnabled = true;
+            this.comboBoxModel.Location = new System.Drawing.Point(12, 42);
+            this.comboBoxModel.Name = "comboBoxModel";
+            this.comboBoxModel.Size = new System.Drawing.Size(333, 24);
+            this.comboBoxModel.TabIndex = 1;
+            this.comboBoxModel.SelectedIndexChanged += new System.EventHandler(this.comboBoxModel_SelectedIndexChanged);
+            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -199,18 +208,6 @@
             this.label3.Size = new System.Drawing.Size(98, 16);
             this.label3.TabIndex = 0;
             this.label3.Text = "Choose Model:";
-            // 
-            // comboBoxModel
-            // 
-            this.comboBoxModel.FormattingEnabled = true;
-            this.comboBoxModel.Items.AddRange(new object[] {
-            "gpt-3.5-turbo",
-            "gpt-4"});
-            this.comboBoxModel.Location = new System.Drawing.Point(12, 42);
-            this.comboBoxModel.Name = "comboBoxModel";
-            this.comboBoxModel.Size = new System.Drawing.Size(333, 24);
-            this.comboBoxModel.TabIndex = 1;
-            this.comboBoxModel.SelectedIndexChanged += new System.EventHandler(this.comboBoxModel_SelectedIndexChanged);
             // 
             // Form1
             // 
@@ -223,6 +220,7 @@
             this.Controls.Add(this.groupBox1);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
