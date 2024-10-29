@@ -6,6 +6,11 @@ using System.Xml.Linq;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf;
 using Microsoft.Office.Interop.Word;
+using System.Net.Http;
+using System.Text.Json;
+using Newtonsoft.Json;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
 
 
 
@@ -91,7 +96,7 @@ namespace ChatGPTFileProcessor
             }
         }
 
-        private void buttonProcessFile_Click(object sender, EventArgs e)
+        private async void buttonProcessFile_Click(object sender, EventArgs e)
         {
             string filePath = labelFileName.Text;
 
@@ -123,13 +128,32 @@ namespace ChatGPTFileProcessor
                 }
 
                 UpdateStatus("File content read successfully.");
-                // Here, we'll later add code to send the content to ChatGPT
+
+                // Split content by pages (assuming '\f' as page separator for text files)
+                string[] pages = fileContent.Split(new[] { "\f" }, StringSplitOptions.None);
+                StringBuilder outputContent = new StringBuilder();
+
+                foreach (var page in pages)
+                {
+                    UpdateStatus("Processing page...");
+                    string chatGptResponse = await SendToChatGPT(page);
+
+                    if (!string.IsNullOrEmpty(chatGptResponse))
+                    {
+                        outputContent.AppendLine(chatGptResponse);
+                        outputContent.AppendLine("\n--- End of Page ---\n");
+                    }
+                }
+
+                // Output results after processing all pages (we'll implement saving to Word in the next step)
+                textBoxStatus.AppendText("All pages processed. Ready to save results.");
             }
             catch (Exception ex)
             {
                 UpdateStatus("Error reading file: " + ex.Message);
             }
         }
+
 
 
         private string ReadTextFile(string filePath)
@@ -162,6 +186,62 @@ namespace ChatGPTFileProcessor
             return text.ToString();
         }
 
+
+
+        private async Task<string> SendToChatGPT(string pageContent)
+        {
+            string apiKey = textBoxAPIKey.Text.Trim();
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                UpdateStatus("API Key is missing. Please enter and save your API Key.");
+                return string.Empty;
+            }
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + apiKey);
+
+                var requestContent = new
+                {
+                    model = "gpt-3.5-turbo",
+                    messages = new[]
+                    {
+                new { role = "system", content = "Extract definitions, MCQs, flashcards (front and back), and vocabularies." },
+                new { role = "user", content = pageContent }
+            }
+                };
+
+                string jsonContent = System.Text.Json.JsonSerializer.Serialize(requestContent, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase });
+
+                StringContent httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
+                if (response.IsSuccessStatusCode)
+                {
+                    string result = await response.Content.ReadAsStringAsync();
+                    return result;
+                }
+                else
+                {
+                    UpdateStatus($"Error from ChatGPT: {response.StatusCode}");
+
+                    //WdDeleteCells later it is SQLDebugging if api key not works return ErrorBars message
+                    string errorResponse = await response.Content.ReadAsStringAsync();
+                    UpdateStatus($"Error from ChatGPT: {response.StatusCode} - {errorResponse}");
+                    //return string.Empty;
+
+
+
+                    return string.Empty;
+
+                }
+
+                
+                    
+                
+
+            }
+        }
 
     }
 }

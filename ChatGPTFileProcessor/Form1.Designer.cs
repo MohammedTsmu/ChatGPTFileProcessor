@@ -59,7 +59,7 @@
             // 
             this.textBoxAPIKey.Location = new System.Drawing.Point(8, 52);
             this.textBoxAPIKey.Name = "textBoxAPIKey";
-            this.textBoxAPIKey.Size = new System.Drawing.Size(162, 22);
+            this.textBoxAPIKey.Size = new System.Drawing.Size(337, 22);
             this.textBoxAPIKey.TabIndex = 1;
             // 
             // buttonSaveAPIKey
@@ -129,7 +129,7 @@
             this.groupBox1.Controls.Add(this.buttonEditAPIKey);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(178, 426);
+            this.groupBox1.Size = new System.Drawing.Size(351, 426);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "API Key Section";
@@ -139,9 +139,9 @@
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.buttonBrowseFile);
             this.groupBox2.Controls.Add(this.labelFileName);
-            this.groupBox2.Location = new System.Drawing.Point(209, 12);
+            this.groupBox2.Location = new System.Drawing.Point(363, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(579, 103);
+            this.groupBox2.Size = new System.Drawing.Size(425, 103);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "File Selection";
@@ -150,9 +150,9 @@
             // 
             this.groupBox3.Controls.Add(this.textBoxStatus);
             this.groupBox3.Controls.Add(this.buttonProcessFile);
-            this.groupBox3.Location = new System.Drawing.Point(209, 121);
+            this.groupBox3.Location = new System.Drawing.Point(363, 121);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(579, 317);
+            this.groupBox3.Size = new System.Drawing.Size(425, 317);
             this.groupBox3.TabIndex = 12;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Process and Status Section";
@@ -163,7 +163,7 @@
             this.textBoxStatus.Multiline = true;
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
-            this.textBoxStatus.Size = new System.Drawing.Size(567, 240);
+            this.textBoxStatus.Size = new System.Drawing.Size(413, 240);
             this.textBoxStatus.TabIndex = 9;
             // 
             // buttonProcessFile
