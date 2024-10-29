@@ -37,11 +37,13 @@ namespace ChatGPTFileProcessor
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            // Populate ComboBox items
+            // Populate ComboBox with available models
             comboBoxModel.Items.Add("gpt-3.5-turbo");
+            comboBoxModel.Items.Add("gpt-3.5-turbo-16k");
             comboBoxModel.Items.Add("gpt-4");
+            comboBoxModel.Items.Add("gpt-4-turbo");
 
-            // Load API key and model
+            // Load API key and model selection
             LoadApiKeyAndModel();
         }
 
@@ -232,20 +234,27 @@ namespace ChatGPTFileProcessor
         }
 
 
-        private readonly Dictionary<string, int> modelContextLimits = new Dictionary<string, int>
+        private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
         {
-            { "gpt-3.5-turbo", 4096 },
-            { "gpt-4", 8192 }
+            { "gpt-3.5-turbo", (4096, "Summarize each page with the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. Term\n\nUse this structure for all responses, with labeled sections as shown.") },
+            { "gpt-3.5-turbo-16k", (16384, "For each page, use the following structured format:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. Term\n\nEnsure consistency by following this structure and labeling each section clearly.") },
+            { "gpt-4", (8192, "Please analyze each page and follow this structured format:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. Term\n\nKeep the format consistent and labeled as instructed.") },
+            { "gpt-4-turbo", (128000, "For each page, provide a comprehensive response using the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. Term\n\nPlease ensure the response strictly follows this format and includes labels and answer keys where applicable.") }
         };
+
+
+
 
 
         private int GetChunkSizeForModel()
         {
             string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "gpt-3.5-turbo";
-            int maxTokens = modelContextLimits.ContainsKey(selectedModel) ? modelContextLimits[selectedModel] : 4096;
-
-            // Estimate chunk size as ~20% less than max tokens (accounting for API overhead)
-            return (int)(maxTokens * 0.20);  // Roughly 500-600 words
+            if (modelDetails.ContainsKey(selectedModel))
+            {
+                int maxTokens = modelDetails[selectedModel].maxTokens;
+                return (int)(maxTokens * 0.80);  // Use 80% of max tokens for buffer
+            }
+            return 4096;  // Default chunk size if model not found
         }
 
 
@@ -259,18 +268,22 @@ namespace ChatGPTFileProcessor
                 return string.Empty;
             }
 
+            // Get the selected model and its prompt
+            string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "gpt-3.5-turbo";
+            string prompt = modelDetails.ContainsKey(selectedModel) ? modelDetails[selectedModel].prompt : modelDetails["gpt-3.5-turbo"].prompt;
+
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer " + apiKey);
 
                 var requestContent = new
                 {
-                    model = "gpt-3.5-turbo",
+                    model = selectedModel,
                     messages = new[]
                     {
-                    new { role = "system", content = "Extract definitions, MCQs, flashcards (front and back), and vocabularies." },
-                    new { role = "user", content = pageContent }
-                }
+                new { role = "system", content = prompt },
+                new { role = "user", content = pageContent }
+            }
                 };
 
                 string jsonContent = System.Text.Json.JsonSerializer.Serialize(requestContent, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase });
@@ -294,6 +307,7 @@ namespace ChatGPTFileProcessor
                 }
             }
         }
+
 
 
         private void SaveResultsToWord(string outputContent)
