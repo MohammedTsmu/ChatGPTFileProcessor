@@ -7,10 +7,16 @@ using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf;
 using Microsoft.Office.Interop.Word;
 using System.Net.Http;
+using System.Linq;
+using System.Collections.Generic;
 using System.Text.Json;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
+using Word = Microsoft.Office.Interop.Word;
+using System.Text.Json.Nodes;  // Add this at the top of your file if not present
+
+
 
 
 
@@ -96,6 +102,64 @@ namespace ChatGPTFileProcessor
             }
         }
 
+        //private async void buttonProcessFile_Click(object sender, EventArgs e)
+        //{
+        //    string filePath = labelFileName.Text;
+
+        //    if (filePath == "No file selected")
+        //    {
+        //        UpdateStatus("Please select a file to process.");
+        //        return;
+        //    }
+
+        //    string fileContent = "";
+        //    try
+        //    {
+        //        if (filePath.EndsWith(".txt"))
+        //        {
+        //            fileContent = ReadTextFile(filePath);
+        //        }
+        //        else if (filePath.EndsWith(".docx"))
+        //        {
+        //            fileContent = ReadWordFile(filePath);
+        //        }
+        //        else if (filePath.EndsWith(".pdf"))
+        //        {
+        //            fileContent = ReadPdfFile(filePath);
+        //        }
+        //        else
+        //        {
+        //            UpdateStatus("Unsupported file format.");
+        //            return;
+        //        }
+
+        //        UpdateStatus("File content read successfully.");
+
+        //        // Split content by pages (assuming '\f' as page separator for text files)
+        //        string[] pages = fileContent.Split(new[] { "\f" }, StringSplitOptions.None);
+        //        StringBuilder outputContent = new StringBuilder();
+
+        //        foreach (var page in pages)
+        //        {
+        //            UpdateStatus("Processing page...");
+        //            string chatGptResponse = await SendToChatGPT(page);
+
+        //            if (!string.IsNullOrEmpty(chatGptResponse))
+        //            {
+        //                outputContent.AppendLine(chatGptResponse);
+        //                outputContent.AppendLine("\n--- End of Page ---\n");
+        //            }
+        //        }
+
+        //        // Output results after processing all pages (we'll implement saving to Word in the next step)
+        //        textBoxStatus.AppendText("All pages processed. Ready to save results.");
+        //        SaveResultsToWord(outputContent.ToString());
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        UpdateStatus("Error reading file: " + ex.Message);
+        //    }
+        //}
         private async void buttonProcessFile_Click(object sender, EventArgs e)
         {
             string filePath = labelFileName.Text;
@@ -136,23 +200,34 @@ namespace ChatGPTFileProcessor
                 foreach (var page in pages)
                 {
                     UpdateStatus("Processing page...");
-                    string chatGptResponse = await SendToChatGPT(page);
 
-                    if (!string.IsNullOrEmpty(chatGptResponse))
+                    int chunkSize = GetChunkSizeForModel();
+                    var chunks = SplitTextIntoChunks(page, chunkSize);
+
+                    foreach (var chunk in chunks)
                     {
-                        outputContent.AppendLine(chatGptResponse);
-                        outputContent.AppendLine("\n--- End of Page ---\n");
+                        string chatGptResponse = await SendToChatGPT(chunk);
+
+                        if (!string.IsNullOrEmpty(chatGptResponse))
+                        {
+                            outputContent.AppendLine(chatGptResponse);
+                            outputContent.AppendLine("\n--- End of Chunk ---\n");
+                        }
                     }
+
+                    outputContent.AppendLine("\n--- End of Page ---\n");
                 }
 
-                // Output results after processing all pages (we'll implement saving to Word in the next step)
-                textBoxStatus.AppendText("All pages processed. Ready to save results.");
+
+                // Output results after processing all pages and chunks
+                SaveResultsToWord(outputContent.ToString());
             }
             catch (Exception ex)
             {
                 UpdateStatus("Error reading file: " + ex.Message);
             }
         }
+
 
 
 
@@ -186,61 +261,148 @@ namespace ChatGPTFileProcessor
             return text.ToString();
         }
 
+        private List<string> SplitTextIntoChunks(string text, int maxWords = 500, int overlapWords = 50)
+        {
+            var words = text.Split(new[] { ' ', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+            var chunks = new List<string>();  // Specify <string> as type argument
+            int totalWords = words.Length;
+
+            for (int i = 0; i < totalWords; i += maxWords - overlapWords)
+            {
+                var chunk = string.Join(" ", words.Skip(i).Take(maxWords));  // Ensure that .Skip works with string arrays
+                chunks.Add(chunk);
+            }
+
+            return chunks;
+        }
+
+
+        private readonly Dictionary<string, int> modelContextLimits = new Dictionary<string, int>
+        {
+            { "gpt-3.5-turbo", 4096 },
+            { "gpt-4", 8192 }
+        };
+
+
+        private int GetChunkSizeForModel()
+        {
+            string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "gpt-3.5-turbo";
+            int maxTokens = modelContextLimits.ContainsKey(selectedModel) ? modelContextLimits[selectedModel] : 4096;
+
+            // Estimate chunk size as ~20% less than max tokens (accounting for API overhead)
+            return (int)(maxTokens * 0.20);  // Roughly 500-600 words
+        }
+
+
+
+        
 
 
         private async Task<string> SendToChatGPT(string pageContent)
-        {
-            string apiKey = textBoxAPIKey.Text.Trim();
-            if (string.IsNullOrEmpty(apiKey))
             {
-                UpdateStatus("API Key is missing. Please enter and save your API Key.");
-                return string.Empty;
-            }
-
-            using (HttpClient client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + apiKey);
-
-                var requestContent = new
+                string apiKey = textBoxAPIKey.Text.Trim();
+                if (string.IsNullOrEmpty(apiKey))
                 {
-                    model = "gpt-3.5-turbo",
-                    messages = new[]
-                    {
-                new { role = "system", content = "Extract definitions, MCQs, flashcards (front and back), and vocabularies." },
-                new { role = "user", content = pageContent }
-            }
-                };
-
-                string jsonContent = System.Text.Json.JsonSerializer.Serialize(requestContent, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase });
-
-                StringContent httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-                HttpResponseMessage response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
-                if (response.IsSuccessStatusCode)
-                {
-                    string result = await response.Content.ReadAsStringAsync();
-                    return result;
-                }
-                else
-                {
-                    UpdateStatus($"Error from ChatGPT: {response.StatusCode}");
-
-                    //WdDeleteCells later it is SQLDebugging if api key not works return ErrorBars message
-                    string errorResponse = await response.Content.ReadAsStringAsync();
-                    UpdateStatus($"Error from ChatGPT: {response.StatusCode} - {errorResponse}");
-                    //return string.Empty;
-
-
-
+                    UpdateStatus("API Key is missing. Please enter and save your API Key.");
                     return string.Empty;
-
                 }
 
-                
-                    
-                
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + apiKey);
 
+                    var requestContent = new
+                    {
+                        model = "gpt-3.5-turbo",
+                        messages = new[]
+                        {
+                        new { role = "system", content = "Extract definitions, MCQs, flashcards (front and back), and vocabularies." },
+                        new { role = "user", content = pageContent }
+                    }
+                    };
+
+                    string jsonContent = System.Text.Json.JsonSerializer.Serialize(requestContent, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase });
+                    StringContent httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                    HttpResponseMessage response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string result = await response.Content.ReadAsStringAsync();
+
+                        // Parse JSON response to get only the content
+                        var jsonObject = JsonNode.Parse(result);
+                        string content = jsonObject?["choices"]?[0]?["message"]?["content"]?.ToString();
+                        return content ?? "No content extracted.";
+                    }
+                    else
+                    {
+                        string errorResponse = await response.Content.ReadAsStringAsync();
+                        UpdateStatus($"Error from ChatGPT: {response.StatusCode} - {errorResponse}");
+                        return string.Empty;
+                    }
+                }
             }
+
+
+
+
+        private void SaveResultsToWord(string outputContent)
+        {
+            Word.Application wordApp = new Word.Application();
+            Word.Document doc = wordApp.Documents.Add();
+
+            // Separate content by pages for better structure
+            string[] pages = outputContent.Split(new[] { "\n--- End of Page ---\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var page in pages)
+            {
+                // Add page title
+                Word.Paragraph para = doc.Content.Paragraphs.Add();
+                para.Range.Text = "Page Content:";
+                para.Range.Font.Bold = 1;
+                para.Range.InsertParagraphAfter();
+
+                // Add page content
+                para.Range.Text = page.Trim();
+                para.Range.Font.Bold = 0;
+                para.Range.InsertParagraphAfter();
+
+                // Add a page break
+                para.Range.InsertBreak(Word.WdBreakType.wdPageBreak);
+            }
+
+            // Save the document
+            string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ChatGPT_Processed_Output.docx");
+            doc.SaveAs2(outputPath);
+            doc.Close();
+            wordApp.Quit();
+
+            UpdateStatus($"Results saved successfully to {outputPath}");
+        }
+
+        private void LoadSelectedModel()
+        {
+            if (File.Exists(configPath))
+            {
+                string[] configLines = File.ReadAllLines(configPath);
+                if (configLines.Length > 1)
+                {
+                    string savedModel = configLines[1];  // Assume second line in config is model
+                    comboBoxModel.SelectedItem = savedModel;
+                }
+            }
+        }
+
+        private void SaveSelectedModel()
+        {
+            string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "gpt-3.5-turbo";
+            var configLines = new List<string> { textBoxAPIKey.Text, selectedModel };
+            File.WriteAllLines(configPath, configLines);
+        }
+
+        private void comboBoxModel_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SaveSelectedModel();
         }
 
     }
