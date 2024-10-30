@@ -311,7 +311,7 @@ namespace ChatGPTFileProcessor
         }
 
 
-        // MCQs Prompt with Chunking
+        // MCQs Prompt with Explicit Answer Key Request and Chunking
         private async Task<string> GenerateMCQs(string content, string model)
         {
             var maxTokens = modelContextLimits.ContainsKey(model) ? modelContextLimits[model] : 4096;
@@ -320,11 +320,37 @@ namespace ChatGPTFileProcessor
 
             foreach (var chunk in chunks)
             {
-                mcqsResult.AppendLine(await SendToChatGPT(chunk, model, "Generate multiple-choice questions based on the content of the page."));
+                //string mcqResponse = await SendToChatGPT(chunk, model, "Generate multiple-choice questions based on the content of the page, ensuring each question includes an answer key.");
+
+                string mcqResponse = await SendToChatGPT(chunk, model, "Generate multiple-choice questions based on the content. For each question, provide four answer options labeled A, B, C, and D, followed by the correct answer as 'Answer: [Correct Option]'.");
+
+                //"Generate multiple-choice questions based on the content. For each question, provide four answer options labeled A, B, C, and D, followed by the correct answer as 'Answer: [Correct Option]'."
+
+                // Verify that each MCQ includes an answer key
+                string processedMCQ = EnsureAnswerKeyInMCQs(mcqResponse);
+                mcqsResult.AppendLine(processedMCQ);
+                mcqsResult.AppendLine();  // Separate each MCQ for readability
             }
 
             return mcqsResult.ToString();
         }
+
+        // Function to ensure each MCQ includes an answer key
+        private string EnsureAnswerKeyInMCQs(string mcqContent)
+        {
+            var mcqsWithAnswers = new List<string>();
+            var mcqBlocks = mcqContent.Split(new[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var block in mcqBlocks)
+            {
+                // Check if the block includes an answer key; if not, add a placeholder
+                string mcqWithAnswer = block.Contains("Answer:") ? block : block + "\nAnswer: [To be provided]";
+                mcqsWithAnswers.Add(mcqWithAnswer);
+            }
+
+            return string.Join("\n\n", mcqsWithAnswers);
+        }
+
 
         // Flashcards Prompt with Chunking
         private async Task<string> GenerateFlashcards(string content, string model)
