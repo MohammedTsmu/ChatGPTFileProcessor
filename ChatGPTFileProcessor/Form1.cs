@@ -381,6 +381,8 @@ namespace ChatGPTFileProcessor
         }
 
         // Vocabulary Prompt with Chunking
+        // Vocabulary Prompt with Chunking
+        // Vocabulary Prompt with Chunking and Formatting
         private async Task<string> GenerateVocabulary(string content, string model)
         {
             var maxTokens = modelContextLimits.ContainsKey(model) ? modelContextLimits[model] : 4096;
@@ -389,11 +391,14 @@ namespace ChatGPTFileProcessor
 
             foreach (var chunk in chunks)
             {
-                vocabularyResult.AppendLine(await SendToChatGPT(chunk, model, "List important vocabulary terms from the page with Arabic translations."));
+                var rawVocabulary = await SendToChatGPT(chunk, model, "Extract important vocabulary terms and translate them to Arabic. Use the format: 'English Term - Arabic Translation'. Avoid numbering or bullets, and place a blank line after each entry.");
+                vocabularyResult.AppendLine(rawVocabulary);
             }
 
-            return vocabularyResult.ToString();
+            // Apply formatting to clean up the output
+            return FormatVocabulary(vocabularyResult.ToString());
         }
+
 
 
 
@@ -803,31 +808,36 @@ namespace ChatGPTFileProcessor
 
 
         // Function to format vocabulary
+        // Function to format vocabulary
+        // Improved Function to Format Vocabulary
+        // Revised FormatVocabulary function
         private string FormatVocabulary(string text)
         {
             var formattedVocabulary = new List<string>();
             var terms = text.Split('\n');
-            int count = 1;
 
             foreach (var line in terms)
             {
-                var match = Regex.Match(line, @"^(?<english>.+?) - (?<arabic>.+)$");
+                // Use regular expression to match vocabulary terms in the correct "English - Arabic" format
+                var match = Regex.Match(line, @"^(?<english>[^-]+) - (?<arabic>.+)$");
                 if (match.Success)
                 {
                     string english = match.Groups["english"].Value.Trim();
                     string arabic = match.Groups["arabic"].Value.Trim();
-                    formattedVocabulary.Add($"{count}. {english} - {arabic}");
-                    count++;
+                    formattedVocabulary.Add($"{english} - {arabic}");
                 }
                 else
                 {
-                    // If the format is incorrect, mark for review
-                    formattedVocabulary.Add($"{count}. {line.Trim()} - [Arabic Translation Needed]");
-                    count++;
+                    // If the format doesn't match, add a placeholder or flag for review
+                    formattedVocabulary.Add($"{line.Trim()} - [Translation Needed]");
                 }
             }
+
+            // Join the cleaned and formatted vocabulary list without numbering
             return string.Join("\n", formattedVocabulary);
         }
+
+
 
         private async Task<string> TranslateVocabularyToArabic(string vocabularyText)
         {
