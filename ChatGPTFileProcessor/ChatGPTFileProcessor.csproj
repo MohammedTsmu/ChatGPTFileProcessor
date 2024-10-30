@@ -199,6 +199,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -216,6 +217,20 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="config.txt" />
+    <None Include="Resources\png_256px.png" />
+    <None Include="Resources\png_128px.png" />
+    <None Include="Resources\png_96px.png" />
+    <None Include="Resources\png_72px.png" />
+    <None Include="Resources\png_64px.png" />
+    <None Include="Resources\png_48px.png" />
+    <None Include="Resources\png_32px.png" />
+    <None Include="Resources\icon_32px.ico" />
+    <None Include="Resources\icon_48px.ico" />
+    <None Include="Resources\icon_64px.ico" />
+    <None Include="Resources\icon_72px.ico" />
+    <None Include="Resources\icon_96px.ico" />
+    <None Include="Resources\icon_128px.ico" />
+    <None Include="Resources\icon_256px.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

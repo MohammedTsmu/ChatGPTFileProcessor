@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxAPIKey = new System.Windows.Forms.TextBox();
             this.buttonSaveAPIKey = new System.Windows.Forms.Button();
@@ -44,6 +46,8 @@
             this.comboBoxModel = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.buttonsToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.labelsToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -66,6 +70,7 @@
             this.textBoxAPIKey.PasswordChar = '*';
             this.textBoxAPIKey.Size = new System.Drawing.Size(666, 22);
             this.textBoxAPIKey.TabIndex = 1;
+            this.labelsToolTip.SetToolTip(this.textBoxAPIKey, "Enter You Api Key Generated From ChatGPT Website");
             // 
             // buttonSaveAPIKey
             // 
@@ -74,6 +79,7 @@
             this.buttonSaveAPIKey.Size = new System.Drawing.Size(152, 44);
             this.buttonSaveAPIKey.TabIndex = 2;
             this.buttonSaveAPIKey.Text = "Save API Key";
+            this.buttonsToolTip.SetToolTip(this.buttonSaveAPIKey, "Save The Entered Api Key In Application Settings Database");
             this.buttonSaveAPIKey.UseVisualStyleBackColor = true;
             this.buttonSaveAPIKey.Click += new System.EventHandler(this.buttonSaveAPIKey_Click);
             // 
@@ -84,6 +90,7 @@
             this.buttonEditAPIKey.Size = new System.Drawing.Size(152, 44);
             this.buttonEditAPIKey.TabIndex = 3;
             this.buttonEditAPIKey.Text = "Edit API Key";
+            this.buttonsToolTip.SetToolTip(this.buttonEditAPIKey, "Edit The Key Then Click Edit > Then Save");
             this.buttonEditAPIKey.UseVisualStyleBackColor = true;
             this.buttonEditAPIKey.Click += new System.EventHandler(this.buttonEditAPIKey_Click);
             // 
@@ -94,6 +101,8 @@
             this.buttonClearAPIKey.Size = new System.Drawing.Size(152, 44);
             this.buttonClearAPIKey.TabIndex = 4;
             this.buttonClearAPIKey.Text = "Clear API Key";
+            this.buttonsToolTip.SetToolTip(this.buttonClearAPIKey, "Remove The Api Key From Application Database (in case to protect your personal ap" +
+        "i key from being stolen)");
             this.buttonClearAPIKey.UseVisualStyleBackColor = true;
             this.buttonClearAPIKey.Click += new System.EventHandler(this.buttonClearAPIKey_Click);
             // 
@@ -113,6 +122,7 @@
             this.buttonBrowseFile.Size = new System.Drawing.Size(152, 44);
             this.buttonBrowseFile.TabIndex = 6;
             this.buttonBrowseFile.Text = "Browse";
+            this.buttonsToolTip.SetToolTip(this.buttonBrowseFile, "Select File To Generate Study Material From");
             this.buttonBrowseFile.UseVisualStyleBackColor = true;
             this.buttonBrowseFile.Click += new System.EventHandler(this.buttonBrowseFile_Click);
             // 
@@ -128,6 +138,7 @@
             this.labelFileName.TabIndex = 7;
             this.labelFileName.Text = "No file selected";
             this.labelFileName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labelsToolTip.SetToolTip(this.labelFileName, "Selected File Path");
             // 
             // groupBox1
             // 
@@ -163,6 +174,7 @@
             this.buttonProcessFile.Size = new System.Drawing.Size(152, 44);
             this.buttonProcessFile.TabIndex = 8;
             this.buttonProcessFile.Text = "Process File";
+            this.buttonsToolTip.SetToolTip(this.buttonProcessFile, "Start Generating Process");
             this.buttonProcessFile.UseVisualStyleBackColor = true;
             this.buttonProcessFile.Click += new System.EventHandler(this.buttonProcessFile_Click);
             // 
@@ -178,6 +190,8 @@
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxStatus.Size = new System.Drawing.Size(992, 263);
             this.textBoxStatus.TabIndex = 9;
+            this.labelsToolTip.SetToolTip(this.textBoxStatus, "Application Log Area Were any Action Or Changes Will Be Written Here To Inform Th" +
+        "e User");
             // 
             // groupBox4
             // 
@@ -197,6 +211,7 @@
             this.comboBoxModel.Name = "comboBoxModel";
             this.comboBoxModel.Size = new System.Drawing.Size(308, 24);
             this.comboBoxModel.TabIndex = 1;
+            this.labelsToolTip.SetToolTip(this.comboBoxModel, "Select One Of ChatGPT AI Models To Be Used In Generating Process");
             this.comboBoxModel.SelectedIndexChanged += new System.EventHandler(this.comboBoxModel_SelectedIndexChanged);
             // 
             // label3
@@ -218,6 +233,19 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "STATUS";
             // 
+            // buttonsToolTip
+            // 
+            this.buttonsToolTip.AutoPopDelay = 5000;
+            this.buttonsToolTip.InitialDelay = 500;
+            this.buttonsToolTip.ReshowDelay = 100;
+            this.buttonsToolTip.ToolTipTitle = "Click To";
+            // 
+            // labelsToolTip
+            // 
+            this.labelsToolTip.AutoPopDelay = 5000;
+            this.labelsToolTip.InitialDelay = 500;
+            this.labelsToolTip.ReshowDelay = 100;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -228,6 +256,7 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ChatGPT File Processor";
@@ -262,6 +291,8 @@
         private System.Windows.Forms.ComboBox comboBoxModel;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.ToolTip buttonsToolTip;
+        private System.Windows.Forms.ToolTip labelsToolTip;
     }
 }
 
