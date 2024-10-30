@@ -687,24 +687,48 @@ namespace ChatGPTFileProcessor
 
 
         // Function to format definitions
-        private string FormatDefinitions(string text)
-            {
-                var formattedDefinitions = new List<string>();
-                var lines = text.Split('\n');
-                int count = 1;
+        //private string FormatDefinitions(string text)
+        //    {
+        //        var formattedDefinitions = new List<string>();
+        //        var lines = text.Split('\n');
+        //        int count = 1;
 
-                foreach (var line in lines)
+        //        foreach (var line in lines)
+        //        {
+        //            // Enforce "1. Term: Definition" format
+        //            var match = Regex.Match(line, @"^(?<term>.+): (?<definition>.+)$");
+        //            if (match.Success)
+        //            {
+        //                formattedDefinitions.Add($"{count}. {match.Groups["term"].Value}: {match.Groups["definition"].Value}");
+        //                count++;
+        //            }
+        //        }
+        //        return string.Join("\n", formattedDefinitions);
+        //    }
+        // Function to format definitions
+        // Function to format definitions
+        private string FormatDefinitions(string text)
+        {
+            var formattedDefinitions = new List<string>();
+            var lines = text.Split('\n');
+
+            foreach (var line in lines)
+            {
+                // Remove leading dashes or any extra whitespace
+                string cleanedLine = line.TrimStart('-', ' ');
+
+                // Ensure the line is valid and add it to formatted definitions
+                if (!string.IsNullOrWhiteSpace(cleanedLine))
                 {
-                    // Enforce "1. Term: Definition" format
-                    var match = Regex.Match(line, @"^(?<term>.+): (?<definition>.+)$");
-                    if (match.Success)
-                    {
-                        formattedDefinitions.Add($"{count}. {match.Groups["term"].Value}: {match.Groups["definition"].Value}");
-                        count++;
-                    }
+                    formattedDefinitions.Add(cleanedLine);
                 }
-                return string.Join("\n", formattedDefinitions);
             }
+
+            // Join cleaned definitions with a line break for consistent formatting
+            return string.Join("\n\n", formattedDefinitions);
+        }
+
+
 
         // Function to format MCQs with an answer key
         private string FormatMCQs(string text)
