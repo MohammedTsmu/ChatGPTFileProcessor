@@ -765,6 +765,13 @@ namespace ChatGPTFileProcessor
             }
         }
 
+        private void developerProfileLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            // Mark the link as visited
+            developerProfileLinkLabel.LinkVisited = true;
 
+            // Open the link in the default browser
+            System.Diagnostics.Process.Start("https://github.com/MohammedTsmu/ChatGPTFileProcessor");
+        }
     }
 }

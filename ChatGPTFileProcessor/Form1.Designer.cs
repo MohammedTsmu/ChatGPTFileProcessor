@@ -40,6 +40,7 @@
             this.labelFileName = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.developerProfileLinkLabel = new System.Windows.Forms.LinkLabel();
             this.buttonProcessFile = new System.Windows.Forms.Button();
             this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
@@ -167,6 +168,17 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "FILE AND PROCESS";
             // 
+            // developerProfileLinkLabel
+            // 
+            this.developerProfileLinkLabel.AutoSize = true;
+            this.developerProfileLinkLabel.Location = new System.Drawing.Point(12, 598);
+            this.developerProfileLinkLabel.Name = "developerProfileLinkLabel";
+            this.developerProfileLinkLabel.Size = new System.Drawing.Size(185, 16);
+            this.developerProfileLinkLabel.TabIndex = 9;
+            this.developerProfileLinkLabel.TabStop = true;
+            this.developerProfileLinkLabel.Text = "Dr. Mohammed Studio [v1.0.0]";
+            this.developerProfileLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.developerProfileLinkLabel_LinkClicked);
+            // 
             // buttonProcessFile
             // 
             this.buttonProcessFile.Location = new System.Drawing.Point(164, 37);
@@ -250,7 +262,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1028, 607);
+            this.ClientSize = new System.Drawing.Size(1028, 625);
+            this.Controls.Add(this.developerProfileLinkLabel);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox2);
@@ -270,6 +283,7 @@
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -293,6 +307,7 @@
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.ToolTip buttonsToolTip;
         private System.Windows.Forms.ToolTip labelsToolTip;
+        private System.Windows.Forms.LinkLabel developerProfileLinkLabel;
     }
 }
 
