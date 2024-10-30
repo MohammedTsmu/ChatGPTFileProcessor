@@ -39,8 +39,8 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.buttonProcessFile = new System.Windows.Forms.Button();
+            this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.comboBoxModel = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -167,6 +167,16 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Process";
             // 
+            // buttonProcessFile
+            // 
+            this.buttonProcessFile.Location = new System.Drawing.Point(6, 21);
+            this.buttonProcessFile.Name = "buttonProcessFile";
+            this.buttonProcessFile.Size = new System.Drawing.Size(152, 44);
+            this.buttonProcessFile.TabIndex = 8;
+            this.buttonProcessFile.Text = "Process File";
+            this.buttonProcessFile.UseVisualStyleBackColor = true;
+            this.buttonProcessFile.Click += new System.EventHandler(this.buttonProcessFile_Click);
+            // 
             // textBoxStatus
             // 
             this.textBoxStatus.BackColor = System.Drawing.Color.DarkMagenta;
@@ -179,16 +189,6 @@
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxStatus.Size = new System.Drawing.Size(992, 237);
             this.textBoxStatus.TabIndex = 9;
-            // 
-            // buttonProcessFile
-            // 
-            this.buttonProcessFile.Location = new System.Drawing.Point(6, 21);
-            this.buttonProcessFile.Name = "buttonProcessFile";
-            this.buttonProcessFile.Size = new System.Drawing.Size(152, 44);
-            this.buttonProcessFile.TabIndex = 8;
-            this.buttonProcessFile.Text = "Process File";
-            this.buttonProcessFile.UseVisualStyleBackColor = true;
-            this.buttonProcessFile.Click += new System.EventHandler(this.buttonProcessFile_Click);
             // 
             // groupBox4
             // 
@@ -241,6 +241,7 @@
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ChatGPT File Processor";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);

@@ -345,7 +345,21 @@ namespace ChatGPTFileProcessor
         }
 
 
-        // Flashcards Prompt with Chunking
+        //// Flashcards Prompt with Chunking
+        //private async Task<string> GenerateFlashcards(string content, string model)
+        //{
+        //    var maxTokens = modelContextLimits.ContainsKey(model) ? modelContextLimits[model] : 4096;
+        //    var chunks = SplitTextIntoChunks(content, maxTokens);
+        //    StringBuilder flashcardsResult = new StringBuilder();
+
+        //    foreach (var chunk in chunks)
+        //    {
+        //        flashcardsResult.AppendLine(await SendToChatGPT(chunk, model, "Create flashcards for key terms and concepts."));
+        //    }
+
+        //    return flashcardsResult.ToString();
+        //}
+        // Flashcards Prompt with Chunking and Formatting
         private async Task<string> GenerateFlashcards(string content, string model)
         {
             var maxTokens = modelContextLimits.ContainsKey(model) ? modelContextLimits[model] : 4096;
@@ -354,7 +368,13 @@ namespace ChatGPTFileProcessor
 
             foreach (var chunk in chunks)
             {
-                flashcardsResult.AppendLine(await SendToChatGPT(chunk, model, "Create flashcards for key terms and concepts."));
+                // Generate flashcards without predefined structure
+                string rawFlashcards = await SendToChatGPT(chunk, model, "Create flashcards for key terms and concepts with a 'Front' for term and 'Back' for definition.");
+
+                // Apply formatting to each flashcard entry
+                string formattedFlashcards = FormatFlashcards(rawFlashcards);
+                flashcardsResult.AppendLine(formattedFlashcards);
+                flashcardsResult.AppendLine();  // Space between flashcard sets
             }
 
             return flashcardsResult.ToString();
@@ -732,19 +752,55 @@ namespace ChatGPTFileProcessor
 
 
         // Function to format flashcards
-        private string FormatFlashcards(string text)
-            {
-                var formattedFlashcards = new List<string>();
-                var flashcardBlocks = text.Split(new[] { "Front:", "Back:" }, StringSplitOptions.RemoveEmptyEntries);
+        //private string FormatFlashcards(string text)
+        //    {
+        //        var formattedFlashcards = new List<string>();
+        //        var flashcardBlocks = text.Split(new[] { "Front:", "Back:" }, StringSplitOptions.RemoveEmptyEntries);
 
-                for (int i = 0; i < flashcardBlocks.Length; i += 2)
+        //        for (int i = 0; i < flashcardBlocks.Length; i += 2)
+        //        {
+        //            var term = flashcardBlocks[i].Trim();
+        //            var definition = i + 1 < flashcardBlocks.Length ? flashcardBlocks[i + 1].Trim() : "[Definition missing]";
+        //            formattedFlashcards.Add($"Front: {term}\nBack: {definition}");
+        //        }
+        //        return string.Join("\n\n", formattedFlashcards);
+        //    }
+        // Function to format flashcards with front and back separation
+        // Function to format flashcards with explicit pairing
+        private string FormatFlashcards(string text)
+        {
+            var formattedFlashcards = new List<string>();
+            var lines = text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                // Trim each line to avoid whitespace issues
+                string line = lines[i].Trim();
+
+                // Check if line is a "Front" term
+                if (line.StartsWith("Front:", StringComparison.OrdinalIgnoreCase))
                 {
-                    var term = flashcardBlocks[i].Trim();
-                    var definition = i + 1 < flashcardBlocks.Length ? flashcardBlocks[i + 1].Trim() : "[Definition missing]";
+                    // Get the term and proceed to find its "Back" definition
+                    string term = line.Substring(6).Trim();  // Remove "Front:" prefix
+
+                    // Move to the next line to check for "Back"
+                    string definition = "[Definition missing]";  // Default if no "Back" is found
+                    if (i + 1 < lines.Length && lines[i + 1].StartsWith("Back:", StringComparison.OrdinalIgnoreCase))
+                    {
+                        definition = lines[i + 1].Substring(5).Trim();  // Extract "Back" definition
+                        i++;  // Skip to next line as "Back" has been processed
+                    }
+
+                    // Append formatted flashcard entry
                     formattedFlashcards.Add($"Front: {term}\nBack: {definition}");
                 }
-                return string.Join("\n\n", formattedFlashcards);
             }
+
+            // Join all flashcards with line breaks for clarity
+            return string.Join("\n\n", formattedFlashcards);
+        }
+
+
 
         // Function to format vocabulary
         private string FormatVocabulary(string text)
