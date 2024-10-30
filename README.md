@@ -8,6 +8,7 @@
 - [Installation](#installation)
   - [Prerequisites](#prerequisites)
   - [Setup Steps](#setup-steps)
+- [Creating Your OpenAI ChatGPT API Key](#creating-your-openai-chatgpt-api-key)
 - [Usage](#usage)
   - [Steps to Process a File](#steps-to-process-a-file)
 - [Output Files](#output-files)
@@ -69,6 +70,109 @@
 
     - Start the application from Visual Studio.
     - Ensure that the API key is correctly entered to proceed with document processing.
+
+## Creating Your OpenAI ChatGPT API Key
+
+To use **ChatGPTFileProcessor**, you need an OpenAI API key. Follow the detailed steps below to create and obtain your own API key:
+
+### Step 1: Sign Up for an OpenAI Account
+
+1. **Visit OpenAI's Website**:
+   
+   Navigate to [OpenAI's Sign Up Page](https://platform.openai.com/signup).
+
+2. **Create an Account**:
+   
+   - **New Users**: Click on **"Sign Up"** and provide the required information, including your email address and a secure password.
+   - **Existing Users**: Click on **"Log In"** and enter your credentials.
+
+3. **Verify Your Email**:
+   
+   After signing up, OpenAI will send a verification email to your registered email address. Click the verification link in the email to activate your account.
+
+### Step 2: Access the API Section
+
+1. **Log In to Your Account**:
+   
+   Go to [OpenAI's Platform](https://platform.openai.com/) and log in using your credentials.
+
+2. **Navigate to API Keys**:
+   
+   - Once logged in, click on your profile icon located at the top-right corner.
+   - From the dropdown menu, select **"API Keys"**.
+
+   ![API Keys Navigation](https://i.imgur.com/your-image-link.png)  
+   *_Figure: Navigating to API Keys section_*
+
+### Step 3: Create a New API Key
+
+1. **Generate a New Key**:
+   
+   - Click on the **"Create new secret key"** button.
+   
+   ![Create New API Key](https://i.imgur.com/your-image-link.png)  
+   *_Figure: Creating a new API key_*
+
+2. **Name Your Key**:
+   
+   - Provide a recognizable name for your API key (e.g., `ChatGPTFileProcessor Key`).
+   
+3. **Copy the API Key**:
+   
+   - Once generated, **copy the API key immediately**. For security reasons, this is the only time the full key will be displayed.
+   
+   ![Copy API Key](https://i.imgur.com/your-image-link.png)  
+   *_Figure: Copying your new API key_*
+
+4. **Store the Key Securely**:
+   
+   - Save the API key in a secure location, such as a password manager, to prevent unauthorized access.
+
+### Step 4: Set Up Billing (If Required)
+
+1. **Review Pricing Plans**:
+   
+   - OpenAI offers various pricing tiers. Review them [here](https://openai.com/pricing) to choose a plan that fits your usage needs.
+
+2. **Add Payment Method**:
+   
+   - If prompted, add a valid payment method to activate your API key for usage beyond the free tier.
+
+### Step 5: Integrate the API Key into ChatGPTFileProcessor
+
+1. **Open the Application**:
+   
+   - Launch **ChatGPTFileProcessor** from Visual Studio.
+
+2. **Navigate to API Key Section**:
+   
+   - In the application's UI, find the **API Key** section.
+
+3. **Input Your API Key**:
+   
+   - Paste the copied API key into the designated field.
+   
+   ![API Key Input](https://i.imgur.com/your-image-link.png)  
+   *_Figure: Inputting your API key into the application_*
+
+4. **Save and Confirm**:
+   
+   - Save the changes and confirm that the application recognizes the API key. You should now be able to use the application's full functionality.
+
+### Additional Resources
+
+- **OpenAI API Documentation**:
+  
+  For more detailed information, visit the [OpenAI API Docs](https://platform.openai.com/docs/api-reference/introduction).
+
+- **Managing Your API Keys**:
+  
+  Learn how to manage, regenerate, or revoke your API keys [here](https://platform.openai.com/account/api-keys).
+
+> **⚠️ Important Security Notice**:
+>
+> - **Do Not Share Your API Key**: Treat your API key like a password. Do not share it publicly or commit it to version control systems.
+> - **Regenerate if Compromised**: If you suspect your API key has been exposed, regenerate it immediately from the OpenAI dashboard.
 
 ## Usage
 
