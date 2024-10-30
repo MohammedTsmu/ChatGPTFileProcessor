@@ -27,26 +27,34 @@ namespace ChatGPTFileProcessor
     {
         private readonly string apiKeyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "api_key.txt");
         private readonly string modelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "model.txt");
+        // Define output file paths for each section
+        private readonly string definitionsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Definitions_Output.docx");
+        private readonly string mcqsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MCQs_Output.docx");
+        private readonly string flashcardsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Flashcards_Output.docx");
+        private readonly string vocabularyFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Vocabulary_Output.docx");
+
 
         private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
         {
             {
                 "gpt-3.5-turbo",
-                (4096, "Summarize each page with the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nEnsure each section is labeled and formatted as specified.")
+                (4096, "Summarize each page with the following structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nAvoid using numbering or bold text. Place a blank line after each entry for clarity.")
             },
             {
                 "gpt-3.5-turbo-16k",
-                (16384, "For each page, use the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nMake sure each section is labeled and formatted consistently with this structure.")
+                (16384, "For each page, use the following structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nAvoid numbering and bold text. Add a blank line after each entry for clarity.")
             },
             {
                 "gpt-4",
-                (8192, "Analyze each page and follow this structured format:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nUse consistent labels and formatting as specified in this structure.")
+                (8192, "Analyze each page with this structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nNo numbering or bold. Use a blank line to separate each entry.")
             },
             {
                 "gpt-4-turbo",
-                (128000, "For each page, provide a comprehensive response using the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nEnsure each section strictly follows the specified format and includes labels and answer keys.")
+                (128000, "Provide a comprehensive response per page with the following structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nAvoid numbering and bold text. Place a blank line after each entry.")
             }
         };
+
+
 
         public Form1()
         {
@@ -136,6 +144,7 @@ namespace ChatGPTFileProcessor
             }
         }
 
+        // Modified buttonProcessFile_Click to call individual file-saving methods
         private async void buttonProcessFile_Click(object sender, EventArgs e)
         {
             string filePath = labelFileName.Text;
@@ -149,54 +158,56 @@ namespace ChatGPTFileProcessor
             string fileContent = "";
             try
             {
-                if (filePath.EndsWith(".txt"))
-                {
-                    fileContent = ReadTextFile(filePath);
-                }
-                else if (filePath.EndsWith(".docx"))
-                {
-                    fileContent = ReadWordFile(filePath);
-                }
-                else if (filePath.EndsWith(".pdf"))
-                {
-                    fileContent = ReadPdfFile(filePath);
-                }
-                else
-                {
-                    UpdateStatus("Unsupported file format.");
-                    return;
-                }
-
+                // Read file content
+                fileContent = ReadFileContent(filePath);
                 UpdateStatus("File content read successfully.");
 
                 // Determine model
                 string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "gpt-3.5-turbo";
 
-                // Process each content type separately with chunking
-                StringBuilder outputContent = new StringBuilder();
-
+                // Process each content type separately
                 UpdateStatus("Processing definitions...");
-                outputContent.AppendLine("Definitions:");
-                outputContent.AppendLine(await GenerateDefinitions(fileContent, selectedModel));
+                string definitionsContent = await GenerateDefinitions(fileContent, selectedModel);
+                SaveContentToFile(definitionsContent, definitionsFilePath, "Definitions");
 
                 UpdateStatus("Processing MCQs...");
-                outputContent.AppendLine("\nMCQs:");
-                outputContent.AppendLine(await GenerateMCQs(fileContent, selectedModel));
+                string mcqsContent = await GenerateMCQs(fileContent, selectedModel);
+                SaveContentToFile(mcqsContent, mcqsFilePath, "MCQs");
 
                 UpdateStatus("Processing flashcards...");
-                outputContent.AppendLine("\nFlashcards:");
-                outputContent.AppendLine(await GenerateFlashcards(fileContent, selectedModel));
+                string flashcardsContent = await GenerateFlashcards(fileContent, selectedModel);
+                SaveContentToFile(flashcardsContent, flashcardsFilePath, "Flashcards");
 
                 UpdateStatus("Processing vocabulary...");
-                outputContent.AppendLine("\nVocabulary:");
-                outputContent.AppendLine(await GenerateVocabulary(fileContent, selectedModel));
+                string vocabularyContent = await GenerateVocabulary(fileContent, selectedModel);
+                SaveContentToFile(vocabularyContent, vocabularyFilePath, "Vocabulary");
 
-                // Output results after processing all chunks
-                SaveResultsToWord(outputContent.ToString());
+                UpdateStatus("All sections processed and saved successfully.");
             }
             catch (Exception ex)
             {
                 UpdateStatus("Error reading file: " + ex.Message);
+            }
+        }
+
+        // Helper method to read content from file based on type (PDF, Word, or Text)
+        private string ReadFileContent(string filePath)
+        {
+            if (filePath.EndsWith(".txt"))
+            {
+                return File.ReadAllText(filePath);
+            }
+            else if (filePath.EndsWith(".docx"))
+            {
+                return ReadWordFile(filePath);
+            }
+            else if (filePath.EndsWith(".pdf"))
+            {
+                return ReadPdfFile(filePath);
+            }
+            else
+            {
+                throw new NotSupportedException("Unsupported file format.");
             }
         }
 
@@ -407,39 +418,126 @@ namespace ChatGPTFileProcessor
 
 
 
+        //private void SaveResultsToWord(string outputContent)
+        //{
+        //    Word.Application wordApp = new Word.Application();
+        //    Word.Document doc = wordApp.Documents.Add();
+
+        //    // Split content into sections for organization
+        //    string[] sections = outputContent.Split(new[] { "Definitions:", "MCQs:", "Flashcards:", "Vocabulary:" }, StringSplitOptions.RemoveEmptyEntries);
+
+        //    // Define section titles
+        //    string[] sectionTitles = { "Definitions", "MCQs", "Flashcards", "Vocabulary" };
+
+        //    // Iterate over each section to format and add to Word doc
+        //    for (int i = 0; i < sections.Length; i++)
+        //    {
+        //        // Add section title
+        //        Word.Paragraph titlePara = doc.Content.Paragraphs.Add();
+        //        titlePara.Range.Text = sectionTitles[i] + ":";
+        //        titlePara.Range.Font.Size = 14; // Larger font for titles
+        //        titlePara.Range.Font.Bold = 0;
+        //        titlePara.Range.InsertParagraphAfter();
+
+        //        // Add section content
+        //        string[] entries = sections[i].Split(new[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
+        //        foreach (string entry in entries)
+        //        {
+        //            Word.Paragraph entryPara = doc.Content.Paragraphs.Add();
+        //            entryPara.Range.Text = entry.Trim();
+        //            entryPara.Range.Font.Size = 12; // Regular font size for content
+        //            entryPara.Range.Font.Bold = 0;
+        //            entryPara.Range.InsertParagraphAfter();
+
+        //            // Add a line separator after each entry for clarity
+        //            Word.Paragraph separatorPara = doc.Content.Paragraphs.Add();
+        //            separatorPara.Range.Text = new string('_', 70);
+        //            separatorPara.Range.Font.Size = 10;
+        //            separatorPara.Range.InsertParagraphAfter();
+        //        }
+
+        //        // Add a page break after each section for organization
+        //        if (i < sections.Length - 1)
+        //        {
+        //            doc.Content.Paragraphs.Add().Range.InsertBreak(Word.WdBreakType.wdPageBreak);
+        //        }
+        //    }
+
+        //    // Save the document
+        //    string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ChatGPT_Processed_Output_Formatted.docx");
+        //    doc.SaveAs2(outputPath);
+        //    doc.Close();
+        //    wordApp.Quit();
+
+        //    UpdateStatus($"Results saved successfully to {outputPath}");
+        //}
         private void SaveResultsToWord(string outputContent)
         {
             Word.Application wordApp = new Word.Application();
             Word.Document doc = wordApp.Documents.Add();
 
-            // Separate content by pages for better structure
-            string[] pages = outputContent.Split(new[] { "\n--- End of Page ---\n" }, StringSplitOptions.RemoveEmptyEntries);
+            // Split content by main sections and remove extraneous symbols
+            string[] sections = outputContent.Split(new[] { "Definitions:", "MCQs:", "Flashcards:", "Vocabulary:" }, StringSplitOptions.None);
 
-            foreach (var page in pages)
+            // Process each section individually, with uniform formatting
+            string[] sectionHeaders = { "Definitions", "MCQs", "Flashcards", "Vocabulary" };
+            for (int i = 1; i < sections.Length; i++)
             {
-                // Add page title
-                Word.Paragraph para = doc.Content.Paragraphs.Add();
-                para.Range.Text = "Page Content:";
-                para.Range.Font.Bold = 1;
-                para.Range.InsertParagraphAfter();
+                // Add section header in bold
+                Word.Paragraph headerPara = doc.Content.Paragraphs.Add();
+                headerPara.Range.Text = $"{sectionHeaders[i - 1]}:";
+                headerPara.Range.Font.Bold = 1;
+                headerPara.Range.InsertParagraphAfter();
 
-                // Add page content
-                para.Range.Text = page.Trim();
-                para.Range.Font.Bold = 0;
-                para.Range.InsertParagraphAfter();
+                // Insert section content without bolding
+                Word.Paragraph contentPara = doc.Content.Paragraphs.Add();
+                contentPara.Range.Text = PostProcessContent(sections[i]);
+                contentPara.Range.Font.Bold = 0;
+                contentPara.Range.InsertParagraphAfter();
 
-                // Add a page break
-                para.Range.InsertBreak(Word.WdBreakType.wdPageBreak);
+                // Add spacing after each section
+                contentPara.Range.InsertParagraphAfter();
             }
 
             // Save the document
-            string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ChatGPT_Processed_Output.docx");
+            string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ChatGPT_Processed_Output_Formatted.docx");
             doc.SaveAs2(outputPath);
             doc.Close();
             wordApp.Quit();
 
             UpdateStatus($"Results saved successfully to {outputPath}");
         }
+
+
+        // Method to save content to specific file
+        private void SaveContentToFile(string content, string filePath, string sectionTitle)
+        {
+            Word.Application wordApp = new Word.Application();
+            Word.Document doc = wordApp.Documents.Add();
+
+            // Add section title
+            Word.Paragraph titlePara = doc.Content.Paragraphs.Add();
+            titlePara.Range.Text = sectionTitle;
+            titlePara.Range.Font.Bold = 1;
+            titlePara.Range.Font.Size = 14;
+            titlePara.Format.SpaceAfter = 10;  // Space after title
+            titlePara.Range.InsertParagraphAfter();
+
+            // Add the content
+            Word.Paragraph contentPara = doc.Content.Paragraphs.Add();
+            contentPara.Range.Text = content;
+            contentPara.Range.Font.Bold = 0;
+            contentPara.Format.SpaceAfter = 10;  // Space after each item
+            contentPara.Range.InsertParagraphAfter();
+
+            // Save the document
+            doc.SaveAs2(filePath);
+            doc.Close();
+            wordApp.Quit();
+
+            UpdateStatus($"Results saved successfully to {filePath}");
+        }
+
 
         private void LoadApiKeyAndModel()
         {
@@ -505,22 +603,57 @@ namespace ChatGPTFileProcessor
         //Create functions to check each section’s structure and reformat as needed after generation.
         // Function to post-process generated content
         private string PostProcessContent(string generatedContent)
+        {
+            // Define expected section titles in the correct order
+            string[] sectionHeaders = { "Definitions:", "MCQs:", "Flashcards:", "Vocabulary:" };
+            StringBuilder processedContent = new StringBuilder();
+
+            // Split content by main sections; ignore empty entries
+            string[] sections = generatedContent.Split(sectionHeaders, StringSplitOptions.RemoveEmptyEntries);
+
+            for (int i = 0; i < sectionHeaders.Length; i++)
             {
-                // Split the content by sections based on common headings
-                string[] sections = generatedContent.Split(new[] { "Definitions:", "MCQs:", "Flashcards:", "Vocabulary:" }, StringSplitOptions.None);
+                // Verify that the section exists in the array to avoid index errors
+                if (i < sections.Length)
+                {
+                    // Add section title
+                    processedContent.AppendLine(sectionHeaders[i]);
+                    processedContent.AppendLine();
 
-                // Reformat each section
-                string definitions = FormatDefinitions(sections[1]);
-                string mcqs = FormatMCQs(sections[2]);
-                string flashcards = FormatFlashcards(sections[3]);
-                string vocabulary = FormatVocabulary(sections[4]);
-
-                // Recombine sections with consistent headings
-                return $"Definitions:\n{definitions}\n\nMCQs:\n{mcqs}\n\nFlashcards:\n{flashcards}\n\nVocabulary:\n{vocabulary}";
+                    // Process the section content to ensure clean formatting
+                    string formattedSectionContent = FormatSectionContent(sections[i].Trim());
+                    processedContent.AppendLine(formattedSectionContent);
+                    processedContent.AppendLine();
+                }
+                else
+                {
+                    // Log missing section data if it’s absent
+                    UpdateStatus($"{sectionHeaders[i].Replace(":", "")} section is missing in the generated content.");
+                }
             }
+            return processedContent.ToString();
+        }
 
-            // Function to format definitions
-            private string FormatDefinitions(string text)
+        // Example helper to ensure clean, non-numbered formatting within each section
+        private string FormatSectionContent(string sectionText)
+        {
+            StringBuilder formattedContent = new StringBuilder();
+            string[] lines = sectionText.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var line in lines)
+            {
+                // Trim and add blank lines to space out each entry
+                formattedContent.AppendLine(line.Trim());
+                formattedContent.AppendLine();  // Space between each entry
+            }
+            return formattedContent.ToString();
+        }
+
+
+
+
+        // Function to format definitions
+        private string FormatDefinitions(string text)
             {
                 var formattedDefinitions = new List<string>();
                 var lines = text.Split('\n');
