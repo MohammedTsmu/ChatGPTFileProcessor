@@ -66,7 +66,7 @@
             this.textBoxAPIKey.Location = new System.Drawing.Point(6, 37);
             this.textBoxAPIKey.Name = "textBoxAPIKey";
             this.textBoxAPIKey.PasswordChar = '*';
-            this.textBoxAPIKey.Size = new System.Drawing.Size(645, 22);
+            this.textBoxAPIKey.Size = new System.Drawing.Size(666, 22);
             this.textBoxAPIKey.TabIndex = 1;
             // 
             // buttonSaveAPIKey
@@ -140,7 +140,7 @@
             this.groupBox1.Controls.Add(this.buttonEditAPIKey);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(657, 119);
+            this.groupBox1.Size = new System.Drawing.Size(678, 119);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "API Key Section";
@@ -152,7 +152,7 @@
             this.groupBox2.Controls.Add(this.labelFileName);
             this.groupBox2.Location = new System.Drawing.Point(12, 137);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(657, 123);
+            this.groupBox2.Size = new System.Drawing.Size(1004, 123);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "File Selection";
@@ -160,9 +160,9 @@
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.buttonProcessFile);
-            this.groupBox3.Location = new System.Drawing.Point(675, 137);
+            this.groupBox3.Location = new System.Drawing.Point(848, 12);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(341, 123);
+            this.groupBox3.Size = new System.Drawing.Size(168, 123);
             this.groupBox3.TabIndex = 12;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Process";
@@ -194,9 +194,9 @@
             // 
             this.groupBox4.Controls.Add(this.comboBoxModel);
             this.groupBox4.Controls.Add(this.label3);
-            this.groupBox4.Location = new System.Drawing.Point(675, 12);
+            this.groupBox4.Location = new System.Drawing.Point(696, 16);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(341, 119);
+            this.groupBox4.Size = new System.Drawing.Size(146, 119);
             this.groupBox4.TabIndex = 11;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Models Section";
@@ -206,7 +206,7 @@
             this.comboBoxModel.FormattingEnabled = true;
             this.comboBoxModel.Location = new System.Drawing.Point(12, 42);
             this.comboBoxModel.Name = "comboBoxModel";
-            this.comboBoxModel.Size = new System.Drawing.Size(323, 24);
+            this.comboBoxModel.Size = new System.Drawing.Size(122, 24);
             this.comboBoxModel.TabIndex = 1;
             this.comboBoxModel.SelectedIndexChanged += new System.EventHandler(this.comboBoxModel_SelectedIndexChanged);
             // 

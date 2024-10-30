@@ -315,20 +315,18 @@ namespace ChatGPTFileProcessor
 
             foreach (var chunk in chunks)
             {
-                //string mcqResponse = await SendToChatGPT(chunk, model, "Generate multiple-choice questions based on the content of the page, ensuring each question includes an answer key.");
+                string mcqResponse = await SendToChatGPT(chunk, model,
+                    "Generate multiple-choice questions based on the content. For each question, provide four answer options labeled A, B, C, and D, followed by the correct answer as 'Answer: [Correct Option]'.");
 
-                string mcqResponse = await SendToChatGPT(chunk, model, "Generate multiple-choice questions based on the content. For each question, provide four answer options labeled A, B, C, and D, followed by the correct answer as 'Answer: [Correct Option]'.");
-
-                //"Generate multiple-choice questions based on the content. For each question, provide four answer options labeled A, B, C, and D, followed by the correct answer as 'Answer: [Correct Option]'."
-
-                // Verify that each MCQ includes an answer key
-                string processedMCQ = EnsureAnswerKeyInMCQs(mcqResponse);
+                // Apply formatting to ensure consistency
+                string processedMCQ = FormatMCQs(mcqResponse);
                 mcqsResult.AppendLine(processedMCQ);
                 mcqsResult.AppendLine();  // Separate each MCQ for readability
             }
 
             return mcqsResult.ToString();
         }
+
 
         // Function to ensure each MCQ includes an answer key
         private string EnsureAnswerKeyInMCQs(string mcqContent)
@@ -707,25 +705,30 @@ namespace ChatGPTFileProcessor
 
 
         // Function to format MCQs with an answer key
+        // Function to format MCQs with an answer key
         private string FormatMCQs(string text)
         {
             var formattedMCQs = new List<string>();
             var mcqBlocks = text.Split(new[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
-            int count = 1;
 
-            for (int i = 0; i < mcqBlocks.Length; i++)
+            foreach (var block in mcqBlocks)
             {
-                var block = mcqBlocks[i];
-                // Ensure each MCQ has an "Answer" field
-                if (!block.Contains("Answer:"))
+                // Remove any numbering by using regex to strip numbers or bullets at the beginning of lines
+                var cleanBlock = Regex.Replace(block, @"^\d+\.\s*", string.Empty).Trim();
+
+                // Check if the block includes an "Answer" field; if not, add a placeholder
+                if (!cleanBlock.Contains("Answer:"))
                 {
-                    block += "\nAnswer: [To be filled]";
+                    cleanBlock += "\nAnswer: [To be provided]";
                 }
-                formattedMCQs.Add($"{count}. {block}");
-                count++;
+
+                // Add the cleaned and standardized MCQ to the list, with consistent spacing
+                formattedMCQs.Add(cleanBlock);
             }
+
             return string.Join("\n\n", formattedMCQs);
         }
+
 
 
         // Function to format flashcards
