@@ -27,11 +27,13 @@ namespace ChatGPTFileProcessor
     {
         private readonly string apiKeyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "api_key.txt");
         private readonly string modelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "model.txt");
+
         // Define output file paths for each section
         private readonly string definitionsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Definitions_Output.docx");
         private readonly string mcqsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MCQs_Output.docx");
         private readonly string flashcardsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Flashcards_Output.docx");
         private readonly string vocabularyFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Vocabulary_Output.docx");
+
 
 
         private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
@@ -155,20 +157,16 @@ namespace ChatGPTFileProcessor
                 return;
             }
 
-            string fileContent = "";
             try
             {
-                // Read file content
-                fileContent = ReadFileContent(filePath);
+                string fileContent = ReadFileContent(filePath);
                 UpdateStatus("File content read successfully.");
 
-                // Determine model
                 string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "gpt-3.5-turbo";
 
-                // Process each content type separately
                 UpdateStatus("Processing definitions...");
                 string definitionsContent = await GenerateDefinitions(fileContent, selectedModel);
-                SaveContentToFile(definitionsContent, definitionsFilePath, "Definitions");
+                SaveContentToFile(FormatDefinitions(definitionsContent), definitionsFilePath, "Definitions");
 
                 UpdateStatus("Processing MCQs...");
                 string mcqsContent = await GenerateMCQs(fileContent, selectedModel);
@@ -190,26 +188,18 @@ namespace ChatGPTFileProcessor
             }
         }
 
-        // Helper method to read content from file based on type (PDF, Word, or Text)
         private string ReadFileContent(string filePath)
         {
             if (filePath.EndsWith(".txt"))
-            {
                 return File.ReadAllText(filePath);
-            }
-            else if (filePath.EndsWith(".docx"))
-            {
+            if (filePath.EndsWith(".docx"))
                 return ReadWordFile(filePath);
-            }
-            else if (filePath.EndsWith(".pdf"))
-            {
+            if (filePath.EndsWith(".pdf"))
                 return ReadPdfFile(filePath);
-            }
-            else
-            {
-                throw new NotSupportedException("Unsupported file format.");
-            }
+
+            throw new NotSupportedException("Unsupported file format.");
         }
+
 
 
 
@@ -296,22 +286,19 @@ namespace ChatGPTFileProcessor
 
         // Definitions Prompt
         // Definitions Prompt with Chunking
+        // Simplify each content type's processing method:
         private async Task<string> GenerateDefinitions(string content, string model)
         {
-            var maxTokens = modelContextLimits.ContainsKey(model) ? modelContextLimits[model] : 4096;
+            var maxTokens = modelDetails[model].maxTokens;
             var chunks = SplitTextIntoChunks(content, maxTokens);
             StringBuilder definitionsResult = new StringBuilder();
 
             foreach (var chunk in chunks)
             {
-                // Direct the model to avoid numbering in the response
                 var generatedDefinition = await SendToChatGPT(chunk, model,
-                    "Provide definitions for key terms in the following text without numbering each item. " +
-                    "Format each definition separately with a line break for clarity. No bullet points or numbering is needed.");
-
-                // Append each chunk's result, with an additional line separator between entries
+                    "Provide definitions for key terms in this text without numbering. Separate each definition with a blank line for clarity.");
                 definitionsResult.AppendLine(generatedDefinition.Trim());
-                definitionsResult.AppendLine("\n"); // Add a line break between definitions for readability
+                definitionsResult.AppendLine("\n");
             }
 
             return definitionsResult.ToString();
@@ -549,26 +536,22 @@ namespace ChatGPTFileProcessor
             Word.Application wordApp = new Word.Application();
             Word.Document doc = wordApp.Documents.Add();
 
-            // Add section title
             Word.Paragraph titlePara = doc.Content.Paragraphs.Add();
             titlePara.Range.Text = sectionTitle;
             titlePara.Range.Font.Bold = 1;
             titlePara.Range.Font.Size = 14;
-            titlePara.Format.SpaceAfter = 10;  // Space after title
+            titlePara.Format.SpaceAfter = 10;
             titlePara.Range.InsertParagraphAfter();
 
-            // Add the content
             Word.Paragraph contentPara = doc.Content.Paragraphs.Add();
             contentPara.Range.Text = content;
             contentPara.Range.Font.Bold = 0;
-            contentPara.Format.SpaceAfter = 10;  // Space after each item
+            contentPara.Format.SpaceAfter = 10;
             contentPara.Range.InsertParagraphAfter();
 
-            // Save the document
             doc.SaveAs2(filePath);
             doc.Close();
             wordApp.Quit();
-
             UpdateStatus($"Results saved successfully to {filePath}");
         }
 
@@ -714,17 +697,10 @@ namespace ChatGPTFileProcessor
 
             foreach (var line in lines)
             {
-                // Remove leading dashes or any extra whitespace
                 string cleanedLine = line.TrimStart('-', ' ');
-
-                // Ensure the line is valid and add it to formatted definitions
                 if (!string.IsNullOrWhiteSpace(cleanedLine))
-                {
                     formattedDefinitions.Add(cleanedLine);
-                }
             }
-
-            // Join cleaned definitions with a line break for consistent formatting
             return string.Join("\n\n", formattedDefinitions);
         }
 
