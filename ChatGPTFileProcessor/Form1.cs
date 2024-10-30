@@ -29,10 +29,15 @@ namespace ChatGPTFileProcessor
         private readonly string modelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "model.txt");
 
         // Define output file paths for each section
-        private readonly string definitionsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Definitions_Output.docx");
-        private readonly string mcqsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MCQs_Output.docx");
-        private readonly string flashcardsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Flashcards_Output.docx");
-        private readonly string vocabularyFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Vocabulary_Output.docx");
+        // Get selected model name to include in the filename
+        //string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "default-model";
+
+        //// Define output file paths with timestamp and model name
+        //private readonly string definitionsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"Definitions_Output_{selectedModel}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
+        //private readonly string mcqsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"MCQs_Output_{selectedModel}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
+        //private readonly string flashcardsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"Flashcards_Output_{selectedModel}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
+        //private readonly string vocabularyFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"Vocabulary_Output_{selectedModel}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
+
 
 
 
@@ -149,6 +154,15 @@ namespace ChatGPTFileProcessor
         // Modified buttonProcessFile_Click to call individual file-saving methods
         private async void buttonProcessFile_Click(object sender, EventArgs e)
         {
+            string selectedModelName = comboBoxModel.SelectedItem?.ToString() ?? "default-model";
+
+            // Define output file paths with unique names including model and timestamp
+            string definitionsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"Definitions_{selectedModelName}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
+            string mcqsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"MCQs_{selectedModelName}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
+            string flashcardsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"Flashcards_{selectedModelName}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
+            string vocabularyFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"Vocabulary_{selectedModelName}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
+
+
             string filePath = labelFileName.Text;
 
             if (filePath == "No file selected")
