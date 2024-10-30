@@ -304,11 +304,19 @@ namespace ChatGPTFileProcessor
 
             foreach (var chunk in chunks)
             {
-                definitionsResult.AppendLine(await SendToChatGPT(chunk, model, "Extract detailed definitions for key terms from the page."));
+                // Direct the model to avoid numbering in the response
+                var generatedDefinition = await SendToChatGPT(chunk, model,
+                    "Provide definitions for key terms in the following text without numbering each item. " +
+                    "Format each definition separately with a line break for clarity. No bullet points or numbering is needed.");
+
+                // Append each chunk's result, with an additional line separator between entries
+                definitionsResult.AppendLine(generatedDefinition.Trim());
+                definitionsResult.AppendLine("\n"); // Add a line break between definitions for readability
             }
 
             return definitionsResult.ToString();
         }
+
 
 
         // MCQs Prompt with Explicit Answer Key Request and Chunking
