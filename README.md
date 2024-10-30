@@ -7,7 +7,9 @@
 - [Features](#features)
 - [Installation](#installation)
   - [Prerequisites](#prerequisites)
-  - [Setup Steps](#setup-steps)
+  - [Installation Methods](#installation-methods)
+    - [Method 1: Building from Source](#method-1-building-from-source)
+    - [Method 2: Installing via Releases](#method-2-installing-via-releases)
 - [Creating Your OpenAI ChatGPT API Key](#creating-your-openai-chatgpt-api-key)
 - [Usage](#usage)
   - [Steps to Process a File](#steps-to-process-a-file)
@@ -39,11 +41,19 @@
 
 ### Prerequisites
 
+Before installing **ChatGPTFileProcessor**, ensure you have the following prerequisites:
+
 - **.NET 5.0 or higher**
 - **OpenAI API Key**
 - **Microsoft Office** (for Word document processing)
 
-### Setup Steps
+### Installation Methods
+
+You can install **ChatGPTFileProcessor** using one of the following methods based on your preference:
+
+#### Method 1: Building from Source
+
+Follow these steps to build and run the application from the source code.
 
 1. **Clone the Repository**:
 
@@ -70,6 +80,39 @@
 
     - Start the application from Visual Studio.
     - Ensure that the API key is correctly entered to proceed with document processing.
+
+#### Method 2: Installing via Releases
+
+If you prefer not to build the application from source, you can download precompiled releases.
+
+1. **Navigate to the Releases Page**:
+
+    - Go to the [ChatGPTFileProcessor Releases](https://github.com/MohammedTsmu/ChatGPTFileProcessor/releases) page on GitHub.
+
+2. **Download the Latest Release**:
+
+    - Find the latest stable release.
+    - Download the appropriate installer or executable for your operating system (e.g., `.exe` for Windows).
+
+3. **Install the Application**:
+
+    - **Windows**:
+        - Run the downloaded `.exe` file.
+        - Follow the on-screen instructions to complete the installation.
+    - **macOS/Linux**:
+        - Depending on the release assets, follow the provided instructions or extract the downloaded archive.
+        - Ensure you have the necessary permissions to run the executable.
+
+4. **Launch the Application**:
+
+    - After installation, open **ChatGPTFileProcessor** from your applications menu or installation directory.
+
+5. **Configure Your API Key**:
+
+    - In the application's UI, navigate to the **API Key** section.
+    - Input your OpenAI API key to enable API access.
+
+> **⚠️ Note**: Always ensure you download releases from the official [GitHub Releases](https://github.com/MohammedTsmu/ChatGPTFileProcessor/releases) page to avoid malicious software.
 
 ## Creating Your OpenAI ChatGPT API Key
 
@@ -109,18 +152,18 @@ To use **ChatGPTFileProcessor**, you need an OpenAI API key. Follow the detailed
 1. **Generate a New Key**:
    
    - Click on the **"Create new secret key"** button.
-   
+
    ![Create New API Key](https://i.imgur.com/your-image-link.png)  
    *_Figure: Creating a new API key_*
 
 2. **Name Your Key**:
    
    - Provide a recognizable name for your API key (e.g., `ChatGPTFileProcessor Key`).
-   
+
 3. **Copy the API Key**:
    
    - Once generated, **copy the API key immediately**. For security reasons, this is the only time the full key will be displayed.
-   
+
    ![Copy API Key](https://i.imgur.com/your-image-link.png)  
    *_Figure: Copying your new API key_*
 
@@ -142,7 +185,7 @@ To use **ChatGPTFileProcessor**, you need an OpenAI API key. Follow the detailed
 
 1. **Open the Application**:
    
-   - Launch **ChatGPTFileProcessor** from Visual Studio.
+   - Launch **ChatGPTFileProcessor** from Visual Studio or your installed applications.
 
 2. **Navigate to API Key Section**:
    
@@ -151,7 +194,7 @@ To use **ChatGPTFileProcessor**, you need an OpenAI API key. Follow the detailed
 3. **Input Your API Key**:
    
    - Paste the copied API key into the designated field.
-   
+
    ![API Key Input](https://i.imgur.com/your-image-link.png)  
    *_Figure: Inputting your API key into the application_*
 
