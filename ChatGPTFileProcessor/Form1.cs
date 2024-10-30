@@ -28,19 +28,6 @@ namespace ChatGPTFileProcessor
         private readonly string apiKeyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "api_key.txt");
         private readonly string modelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "model.txt");
 
-        // Define output file paths for each section
-        // Get selected model name to include in the filename
-        //string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "default-model";
-
-        //// Define output file paths with timestamp and model name
-        //private readonly string definitionsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"Definitions_Output_{selectedModel}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
-        //private readonly string mcqsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"MCQs_Output_{selectedModel}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
-        //private readonly string flashcardsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"Flashcards_Output_{selectedModel}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
-        //private readonly string vocabularyFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"Vocabulary_Output_{selectedModel}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
-
-
-
-
         private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
         {
             {
@@ -215,11 +202,6 @@ namespace ChatGPTFileProcessor
         }
 
 
-
-
-
-
-
         private string ReadTextFile(string filePath)
         {
             return File.ReadAllText(filePath);
@@ -300,7 +282,6 @@ namespace ChatGPTFileProcessor
 
         // Definitions Prompt
         // Definitions Prompt with Chunking
-        // Simplify each content type's processing method:
         private async Task<string> GenerateDefinitions(string content, string model)
         {
             var maxTokens = modelDetails[model].maxTokens;
@@ -360,20 +341,6 @@ namespace ChatGPTFileProcessor
 
 
         //// Flashcards Prompt with Chunking
-        //private async Task<string> GenerateFlashcards(string content, string model)
-        //{
-        //    var maxTokens = modelContextLimits.ContainsKey(model) ? modelContextLimits[model] : 4096;
-        //    var chunks = SplitTextIntoChunks(content, maxTokens);
-        //    StringBuilder flashcardsResult = new StringBuilder();
-
-        //    foreach (var chunk in chunks)
-        //    {
-        //        flashcardsResult.AppendLine(await SendToChatGPT(chunk, model, "Create flashcards for key terms and concepts."));
-        //    }
-
-        //    return flashcardsResult.ToString();
-        //}
-        // Flashcards Prompt with Chunking and Formatting
         private async Task<string> GenerateFlashcards(string content, string model)
         {
             var maxTokens = modelContextLimits.ContainsKey(model) ? modelContextLimits[model] : 4096;
@@ -394,8 +361,6 @@ namespace ChatGPTFileProcessor
             return flashcardsResult.ToString();
         }
 
-        // Vocabulary Prompt with Chunking
-        // Vocabulary Prompt with Chunking
         // Vocabulary Prompt with Chunking and Formatting
         private async Task<string> GenerateVocabulary(string content, string model)
         {
@@ -412,11 +377,6 @@ namespace ChatGPTFileProcessor
             // Apply formatting to clean up the output
             return FormatVocabulary(vocabularyResult.ToString());
         }
-
-
-
-
-
 
         private int GetChunkSizeForModel()
         {
@@ -475,60 +435,6 @@ namespace ChatGPTFileProcessor
         }
 
 
-
-        //private void SaveResultsToWord(string outputContent)
-        //{
-        //    Word.Application wordApp = new Word.Application();
-        //    Word.Document doc = wordApp.Documents.Add();
-
-        //    // Split content into sections for organization
-        //    string[] sections = outputContent.Split(new[] { "Definitions:", "MCQs:", "Flashcards:", "Vocabulary:" }, StringSplitOptions.RemoveEmptyEntries);
-
-        //    // Define section titles
-        //    string[] sectionTitles = { "Definitions", "MCQs", "Flashcards", "Vocabulary" };
-
-        //    // Iterate over each section to format and add to Word doc
-        //    for (int i = 0; i < sections.Length; i++)
-        //    {
-        //        // Add section title
-        //        Word.Paragraph titlePara = doc.Content.Paragraphs.Add();
-        //        titlePara.Range.Text = sectionTitles[i] + ":";
-        //        titlePara.Range.Font.Size = 14; // Larger font for titles
-        //        titlePara.Range.Font.Bold = 0;
-        //        titlePara.Range.InsertParagraphAfter();
-
-        //        // Add section content
-        //        string[] entries = sections[i].Split(new[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
-        //        foreach (string entry in entries)
-        //        {
-        //            Word.Paragraph entryPara = doc.Content.Paragraphs.Add();
-        //            entryPara.Range.Text = entry.Trim();
-        //            entryPara.Range.Font.Size = 12; // Regular font size for content
-        //            entryPara.Range.Font.Bold = 0;
-        //            entryPara.Range.InsertParagraphAfter();
-
-        //            // Add a line separator after each entry for clarity
-        //            Word.Paragraph separatorPara = doc.Content.Paragraphs.Add();
-        //            separatorPara.Range.Text = new string('_', 70);
-        //            separatorPara.Range.Font.Size = 10;
-        //            separatorPara.Range.InsertParagraphAfter();
-        //        }
-
-        //        // Add a page break after each section for organization
-        //        if (i < sections.Length - 1)
-        //        {
-        //            doc.Content.Paragraphs.Add().Range.InsertBreak(Word.WdBreakType.wdPageBreak);
-        //        }
-        //    }
-
-        //    // Save the document
-        //    string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ChatGPT_Processed_Output_Formatted.docx");
-        //    doc.SaveAs2(outputPath);
-        //    doc.Close();
-        //    wordApp.Quit();
-
-        //    UpdateStatus($"Results saved successfully to {outputPath}");
-        //}
         private void SaveResultsToWord(string outputContent)
         {
             Word.Application wordApp = new Word.Application();
@@ -707,26 +613,6 @@ namespace ChatGPTFileProcessor
 
 
         // Function to format definitions
-        //private string FormatDefinitions(string text)
-        //    {
-        //        var formattedDefinitions = new List<string>();
-        //        var lines = text.Split('\n');
-        //        int count = 1;
-
-        //        foreach (var line in lines)
-        //        {
-        //            // Enforce "1. Term: Definition" format
-        //            var match = Regex.Match(line, @"^(?<term>.+): (?<definition>.+)$");
-        //            if (match.Success)
-        //            {
-        //                formattedDefinitions.Add($"{count}. {match.Groups["term"].Value}: {match.Groups["definition"].Value}");
-        //                count++;
-        //            }
-        //        }
-        //        return string.Join("\n", formattedDefinitions);
-        //    }
-        // Function to format definitions
-        // Function to format definitions
         private string FormatDefinitions(string text)
         {
             var formattedDefinitions = new List<string>();
@@ -743,7 +629,6 @@ namespace ChatGPTFileProcessor
 
 
 
-        // Function to format MCQs with an answer key
         // Function to format MCQs with an answer key
         private string FormatMCQs(string text)
         {
@@ -771,21 +656,6 @@ namespace ChatGPTFileProcessor
 
 
         // Function to format flashcards
-        //private string FormatFlashcards(string text)
-        //    {
-        //        var formattedFlashcards = new List<string>();
-        //        var flashcardBlocks = text.Split(new[] { "Front:", "Back:" }, StringSplitOptions.RemoveEmptyEntries);
-
-        //        for (int i = 0; i < flashcardBlocks.Length; i += 2)
-        //        {
-        //            var term = flashcardBlocks[i].Trim();
-        //            var definition = i + 1 < flashcardBlocks.Length ? flashcardBlocks[i + 1].Trim() : "[Definition missing]";
-        //            formattedFlashcards.Add($"Front: {term}\nBack: {definition}");
-        //        }
-        //        return string.Join("\n\n", formattedFlashcards);
-        //    }
-        // Function to format flashcards with front and back separation
-        // Function to format flashcards with explicit pairing
         private string FormatFlashcards(string text)
         {
             var formattedFlashcards = new List<string>();
@@ -822,9 +692,6 @@ namespace ChatGPTFileProcessor
 
 
         // Function to format vocabulary
-        // Function to format vocabulary
-        // Improved Function to Format Vocabulary
-        // Revised FormatVocabulary function
         private string FormatVocabulary(string text)
         {
             var formattedVocabulary = new List<string>();

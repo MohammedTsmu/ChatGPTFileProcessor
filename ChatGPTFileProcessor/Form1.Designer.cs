@@ -38,7 +38,6 @@
             this.labelFileName = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.buttonProcessFile = new System.Windows.Forms.Button();
             this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
@@ -47,7 +46,6 @@
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.SuspendLayout();
@@ -55,7 +53,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 22);
+            this.label1.Location = new System.Drawing.Point(6, 18);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(115, 16);
             this.label1.TabIndex = 0;
@@ -140,36 +138,27 @@
             this.groupBox1.Controls.Add(this.buttonEditAPIKey);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(678, 119);
+            this.groupBox1.Size = new System.Drawing.Size(678, 143);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "API Key Section";
+            this.groupBox1.Text = "API KEY";
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.buttonProcessFile);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.buttonBrowseFile);
             this.groupBox2.Controls.Add(this.labelFileName);
-            this.groupBox2.Location = new System.Drawing.Point(12, 137);
+            this.groupBox2.Location = new System.Drawing.Point(12, 161);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1004, 123);
+            this.groupBox2.Size = new System.Drawing.Size(1004, 138);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "File Selection";
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.buttonProcessFile);
-            this.groupBox3.Location = new System.Drawing.Point(848, 12);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(168, 123);
-            this.groupBox3.TabIndex = 12;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Process";
+            this.groupBox2.Text = "FILE AND PROCESS";
             // 
             // buttonProcessFile
             // 
-            this.buttonProcessFile.Location = new System.Drawing.Point(6, 21);
+            this.buttonProcessFile.Location = new System.Drawing.Point(164, 37);
             this.buttonProcessFile.Name = "buttonProcessFile";
             this.buttonProcessFile.Size = new System.Drawing.Size(152, 44);
             this.buttonProcessFile.TabIndex = 8;
@@ -187,33 +176,33 @@
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxStatus.Size = new System.Drawing.Size(992, 237);
+            this.textBoxStatus.Size = new System.Drawing.Size(992, 263);
             this.textBoxStatus.TabIndex = 9;
             // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.comboBoxModel);
             this.groupBox4.Controls.Add(this.label3);
-            this.groupBox4.Location = new System.Drawing.Point(696, 16);
+            this.groupBox4.Location = new System.Drawing.Point(696, 12);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(146, 119);
+            this.groupBox4.Size = new System.Drawing.Size(320, 143);
             this.groupBox4.TabIndex = 11;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Models Section";
+            this.groupBox4.Text = "MODELS";
             // 
             // comboBoxModel
             // 
             this.comboBoxModel.FormattingEnabled = true;
-            this.comboBoxModel.Location = new System.Drawing.Point(12, 42);
+            this.comboBoxModel.Location = new System.Drawing.Point(6, 37);
             this.comboBoxModel.Name = "comboBoxModel";
-            this.comboBoxModel.Size = new System.Drawing.Size(122, 24);
+            this.comboBoxModel.Size = new System.Drawing.Size(308, 24);
             this.comboBoxModel.TabIndex = 1;
             this.comboBoxModel.SelectedIndexChanged += new System.EventHandler(this.comboBoxModel_SelectedIndexChanged);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(9, 22);
+            this.label3.Location = new System.Drawing.Point(6, 18);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(98, 16);
             this.label3.TabIndex = 0;
@@ -222,21 +211,20 @@
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.textBoxStatus);
-            this.groupBox5.Location = new System.Drawing.Point(12, 266);
+            this.groupBox5.Location = new System.Drawing.Point(12, 305);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(1004, 264);
+            this.groupBox5.Size = new System.Drawing.Size(1004, 290);
             this.groupBox5.TabIndex = 13;
             this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Status Section";
+            this.groupBox5.Text = "STATUS";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1028, 542);
+            this.ClientSize = new System.Drawing.Size(1028, 607);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
-            this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -248,7 +236,6 @@
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.groupBox5.ResumeLayout(false);
@@ -269,7 +256,6 @@
         private System.Windows.Forms.Label labelFileName;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox textBoxStatus;
         private System.Windows.Forms.Button buttonProcessFile;
         private System.Windows.Forms.GroupBox groupBox4;
