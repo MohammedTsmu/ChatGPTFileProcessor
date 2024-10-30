@@ -25,8 +25,9 @@ namespace ChatGPTFileProcessor
 {
     public partial class Form1 : Form
     {
-        private readonly string apiKeyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "api_key.txt");
-        private readonly string modelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "model.txt");
+        private readonly string apiKeyPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ChatGPTFileProcessor", "api_key.txt");
+        private readonly string modelPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ChatGPTFileProcessor", "model.txt");
+
 
         private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
         {
@@ -541,7 +542,7 @@ namespace ChatGPTFileProcessor
             File.WriteAllText(modelPath, selectedModel);
         }
 
-
+        // Create the directory in AppData if it doesn’t exist
         private void EnsureConfigDirectoryExists()
         {
             var configDirectory = Path.GetDirectoryName(apiKeyPath);
