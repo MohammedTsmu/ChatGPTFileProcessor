@@ -139,6 +139,6 @@ Contributions are welcome! Please follow these steps to contribute:
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [AGPL-3.0 License](https://github.com/MohammedTsmu/ChatGPTFileProcessor/tree/master?tab=AGPL-3.0-1-ov-file#readme).
 
 ---
