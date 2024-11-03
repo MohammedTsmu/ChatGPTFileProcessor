@@ -195,7 +195,7 @@ To use **ChatGPTFileProcessor**, you need an OpenAI API key. Follow the detailed
    
    - Paste the copied API key into the designated field.
 
-   ![API Key Input](https://i.imgur.com/your-image-link.png)  
+   ![API Key Input](https://github.com/MohammedTsmu/ChatGPTFileProcessor/blob/master/screenshots/API%20Key%20Input.png)  
    *_Figure: Inputting your API key into the application_*
 
 4. **Save and Confirm**:
