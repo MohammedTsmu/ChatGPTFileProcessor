@@ -144,7 +144,7 @@ To use **ChatGPTFileProcessor**, you need an OpenAI API key. Follow the detailed
    - Once logged in, click on your profile icon located at the top-right corner.
    - From the dropdown menu, select **"API Keys"**.
 
-   ![API Keys Navigation](https://i.imgur.com/your-image-link.png)  
+   ![API Keys Navigation](https://github.com/MohammedTsmu/ChatGPTFileProcessor/blob/master/screenshots/API-Keys-Navigation.png)  
    *_Figure: Navigating to API Keys section_*
 
 ### Step 3: Create a New API Key
@@ -153,7 +153,7 @@ To use **ChatGPTFileProcessor**, you need an OpenAI API key. Follow the detailed
    
    - Click on the **"Create new secret key"** button.
 
-   ![Create New API Key](https://i.imgur.com/your-image-link.png)  
+   ![Create New API Key](https://github.com/MohammedTsmu/ChatGPTFileProcessor/blob/master/screenshots/Create-New-API-Key.png)  
    *_Figure: Creating a new API key_*
 
 2. **Name Your Key**:
@@ -164,7 +164,7 @@ To use **ChatGPTFileProcessor**, you need an OpenAI API key. Follow the detailed
    
    - Once generated, **copy the API key immediately**. For security reasons, this is the only time the full key will be displayed.
 
-   ![Copy API Key](https://i.imgur.com/your-image-link.png)  
+   ![Copy API Key](https://github.com/MohammedTsmu/ChatGPTFileProcessor/blob/master/screenshots/Copy-API-Key.png)  
    *_Figure: Copying your new API key_*
 
 4. **Store the Key Securely**:
