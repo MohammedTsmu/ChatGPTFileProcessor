@@ -32,6 +32,11 @@ namespace ChatGPTFileProcessor
         private int selectedFromPage = 1;
         private int selectedToPage = 1;
 
+        private Panel overlayPanel;
+        private Label statusLabel;
+        private PictureBox loadingIcon;
+
+
 
         private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
         {
@@ -89,6 +94,8 @@ namespace ChatGPTFileProcessor
         {
             InitializeComponent();
             LoadAPIKey();  // Load API key on app start
+
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -106,8 +113,11 @@ namespace ChatGPTFileProcessor
             comboBoxModel.Items.Add("o4-mini");
             comboBoxModel.Items.Add("gpt-4o Choose it Image Based Processing"); // Add gpt-4o model
 
+            InitializeOverlay();
+
             // Load API key and model selection
             LoadApiKeyAndModel();
+
         }
 
 
@@ -275,19 +285,174 @@ namespace ChatGPTFileProcessor
         //        UpdateStatus("Error reading file: " + ex.Message);
         //    }
         //}
+
+
+
+
+        //private async void buttonProcessFile_Click(object sender, EventArgs e)
+        //{
+        //    string filePath = labelFileName.Text;
+        //    string apiKey = textBoxAPIKey.Text;
+
+        //    // 🔒 Validate API key
+        //    if (string.IsNullOrWhiteSpace(apiKey))
+        //    {
+        //        MessageBox.Show("Please enter your API key.", "API Key Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //        return;
+        //    }
+
+        //    // 📄 Validate selected file
+        //    if (filePath == "No file selected" || !File.Exists(filePath))
+        //    {
+        //        MessageBox.Show("Please select a valid PDF file.", "File Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //        return;
+        //    }
+
+        //    try
+        //    {
+        //        UpdateStatus("⏳ Starting Vision-Based PDF Processing...");
+
+        //        // 🧠 Vision-based full content extraction
+        //        string extractedContent = await ProcessPdfWithVision(filePath, apiKey);
+
+        //        if (string.IsNullOrWhiteSpace(extractedContent))
+        //        {
+        //            UpdateStatus("⚠️ No content was extracted. Please verify the file and API key.");
+        //            return;
+        //        }
+
+        //        memoEditResult.Text = extractedContent;
+        //        UpdateStatus("✅ Vision-based content extraction completed successfully.");
+
+        //        // 🗂 Save extracted text into formatted documents (optional)
+        //        string modelName = "gpt-4o";  // force model used for vision
+        //        string timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+
+        //        string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        //        string definitionsFilePath = Path.Combine(basePath, $"Definitions_{modelName}_{timeStamp}.docx");
+        //        string mcqsFilePath = Path.Combine(basePath, $"MCQs_{modelName}_{timeStamp}.docx");
+        //        string flashcardsFilePath = Path.Combine(basePath, $"Flashcards_{modelName}_{timeStamp}.docx");
+        //        string vocabularyFilePath = Path.Combine(basePath, $"Vocabulary_{modelName}_{timeStamp}.docx");
+
+        //        UpdateStatus("⏳ Generating definitions...");
+        //        string definitions = await GenerateDefinitions(extractedContent, modelName);
+        //        SaveContentToFile(FormatDefinitions(definitions), definitionsFilePath, "Definitions");
+
+        //        UpdateStatus("⏳ Generating MCQs...");
+        //        string mcqs = await GenerateMCQs(extractedContent, modelName);
+        //        SaveContentToFile(mcqs, mcqsFilePath, "MCQs");
+
+        //        UpdateStatus("⏳ Generating flashcards...");
+        //        string flashcards = await GenerateFlashcards(extractedContent, modelName);
+        //        SaveContentToFile(flashcards, flashcardsFilePath, "Flashcards");
+
+        //        UpdateStatus("⏳ Generating vocabulary...");
+        //        string vocabulary = await GenerateVocabulary(extractedContent, modelName);
+        //        SaveContentToFile(vocabulary, vocabularyFilePath, "Vocabulary");
+
+        //        UpdateStatus("✅ All files processed and saved to desktop.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("❌ Error: " + ex.Message, "Processing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        UpdateStatus("❌ An error occurred during processing.");
+        //    }
+        //}
+
+
+
+
+        //private async void buttonProcessFile_Click(object sender, EventArgs e)
+        //{
+        //    string filePath = labelFileName.Text;
+        //    string apiKey = textBoxAPIKey.Text;
+
+        //    if (string.IsNullOrWhiteSpace(apiKey))
+        //    {
+        //        MessageBox.Show("Please enter your API key.", "API Key Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //        return;
+        //    }
+
+        //    if (filePath == "No file selected" || !File.Exists(filePath))
+        //    {
+        //        MessageBox.Show("Please select a valid PDF file.", "File Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //        return;
+        //    }
+
+        //    try
+        //    {
+        //        string modelName = "gpt-4o";
+        //        string timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+        //        string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+        //        string definitionsFilePath = Path.Combine(basePath, $"Definitions_{modelName}_{timeStamp}.docx");
+        //        string mcqsFilePath = Path.Combine(basePath, $"MCQs_{modelName}_{timeStamp}.docx");
+        //        string flashcardsFilePath = Path.Combine(basePath, $"Flashcards_{modelName}_{timeStamp}.docx");
+        //        string vocabularyFilePath = Path.Combine(basePath, $"Vocabulary_{modelName}_{timeStamp}.docx");
+
+        //        UpdateStatus("⏳ Starting Vision-Based PDF Processing...");
+        //        //Application.DoEvents();
+        //        System.Windows.Forms.Application.DoEvents();
+
+
+        //        string extractedContent = await ProcessPdfWithVision(filePath, apiKey);
+
+        //        if (string.IsNullOrWhiteSpace(extractedContent))
+        //        {
+        //            UpdateStatus("⚠️ No content was extracted. Please verify the file and API key.");
+        //            return;
+        //        }
+
+        //        memoEditResult.Text = extractedContent;
+        //        UpdateStatus("✅ Vision-based content extraction completed successfully.");
+        //        //Application.DoEvents();
+        //        System.Windows.Forms.Application.DoEvents();
+
+
+        //        UpdateStatus("⏳ Generating definitions...");
+        //        //Application.DoEvents();
+        //        System.Windows.Forms.Application.DoEvents();
+        //        string definitions = await GenerateDefinitions(extractedContent, modelName);
+        //        SaveContentToFile(FormatDefinitions(definitions), definitionsFilePath, "Definitions");
+
+        //        UpdateStatus("⏳ Generating MCQs...");
+        //        //Application.DoEvents();
+        //        System.Windows.Forms.Application.DoEvents();
+        //        string mcqs = await GenerateMCQs(extractedContent, modelName);
+        //        SaveContentToFile(mcqs, mcqsFilePath, "MCQs");
+
+        //        UpdateStatus("⏳ Generating flashcards...");
+        //        //Application.DoEvents();
+        //        System.Windows.Forms.Application.DoEvents();
+        //        string flashcards = await GenerateFlashcards(extractedContent, modelName);
+        //        SaveContentToFile(flashcards, flashcardsFilePath, "Flashcards");
+
+        //        UpdateStatus("⏳ Generating vocabulary...");
+        //        //Application.DoEvents();
+        //        System.Windows.Forms.Application.DoEvents();
+        //        string vocabulary = await GenerateVocabulary(extractedContent, modelName);
+        //        SaveContentToFile(vocabulary, vocabularyFilePath, "Vocabulary");
+
+        //        UpdateStatus("✅ All files processed and saved to desktop.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("❌ Error: " + ex.Message, "Processing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        UpdateStatus("❌ An error occurred during processing.");
+        //    }
+        //}
+
         private async void buttonProcessFile_Click(object sender, EventArgs e)
         {
             string filePath = labelFileName.Text;
             string apiKey = textBoxAPIKey.Text;
 
-            // 🔒 Validate API key
             if (string.IsNullOrWhiteSpace(apiKey))
             {
                 MessageBox.Show("Please enter your API key.", "API Key Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // 📄 Validate selected file
             if (filePath == "No file selected" || !File.Exists(filePath))
             {
                 MessageBox.Show("Please select a valid PDF file.", "File Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -296,9 +461,25 @@ namespace ChatGPTFileProcessor
 
             try
             {
-                UpdateStatus("⏳ Starting Vision-Based PDF Processing...");
+                // Disable buttons to prevent multiple clicks during processing
+                buttonProcessFile.Enabled = false;
+                buttonBrowseFile.Enabled = false;
 
-                // 🧠 Vision-based full content extraction
+
+                ShowOverlay("🔄 Processing, please wait...");
+
+                string modelName = "gpt-4o";
+                string timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+                string definitionsFilePath = Path.Combine(basePath, $"Definitions_{modelName}_{timeStamp}.docx");
+                string mcqsFilePath = Path.Combine(basePath, $"MCQs_{modelName}_{timeStamp}.docx");
+                string flashcardsFilePath = Path.Combine(basePath, $"Flashcards_{modelName}_{timeStamp}.docx");
+                string vocabularyFilePath = Path.Combine(basePath, $"Vocabulary_{modelName}_{timeStamp}.docx");
+
+                UpdateStatus("⏳ Starting Vision-Based PDF Processing...");
+                System.Windows.Forms.Application.DoEvents();
+
                 string extractedContent = await ProcessPdfWithVision(filePath, apiKey);
 
                 if (string.IsNullOrWhiteSpace(extractedContent))
@@ -309,16 +490,6 @@ namespace ChatGPTFileProcessor
 
                 memoEditResult.Text = extractedContent;
                 UpdateStatus("✅ Vision-based content extraction completed successfully.");
-
-                // 🗂 Save extracted text into formatted documents (optional)
-                string modelName = "gpt-4o";  // force model used for vision
-                string timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-
-                string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                string definitionsFilePath = Path.Combine(basePath, $"Definitions_{modelName}_{timeStamp}.docx");
-                string mcqsFilePath = Path.Combine(basePath, $"MCQs_{modelName}_{timeStamp}.docx");
-                string flashcardsFilePath = Path.Combine(basePath, $"Flashcards_{modelName}_{timeStamp}.docx");
-                string vocabularyFilePath = Path.Combine(basePath, $"Vocabulary_{modelName}_{timeStamp}.docx");
 
                 UpdateStatus("⏳ Generating definitions...");
                 string definitions = await GenerateDefinitions(extractedContent, modelName);
@@ -343,7 +514,17 @@ namespace ChatGPTFileProcessor
                 MessageBox.Show("❌ Error: " + ex.Message, "Processing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 UpdateStatus("❌ An error occurred during processing.");
             }
+            finally
+            {
+
+                // Re-enable buttons after processing is complete
+                buttonProcessFile.Enabled = true;
+                buttonBrowseFile.Enabled = true;
+
+                HideOverlay(); // ✅ Hide it whether successful or failed
+            }
         }
+
 
 
 
@@ -1038,6 +1219,90 @@ namespace ChatGPTFileProcessor
             }
 
             return finalText.ToString();
+        }
+
+        //private void InitializeOverlay()
+        //{
+        //    overlayPanel = new Panel()
+        //    {
+        //        Size = this.ClientSize,
+        //        BackColor = Color.FromArgb(150, Color.Black),
+        //        Visible = false,
+        //        Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
+        //    };
+
+        //    statusLabel = new Label()
+        //    {
+        //        AutoSize = false,
+        //        Size = new Size(400, 60),
+        //        TextAlign = ContentAlignment.MiddleCenter,
+        //        ForeColor = Color.White,
+        //        Font = new System.Drawing.Font("Segoe UI", 12, FontStyle.Bold),
+        //        Location = new System.Drawing.Point((overlayPanel.Width - 400) / 2, overlayPanel.Height / 2)
+        //    };
+
+        //    loadingIcon = new PictureBox()
+        //    {
+        //        //Size = new Size(40, 40),
+        //        Size = new Size(120, 120),
+        //        Location = new  System.Drawing.Point(statusLabel.Left + 180, statusLabel.Top - 50),
+        //        SizeMode = PictureBoxSizeMode.StretchImage,
+        //        Image = Properties.Resources.loading_gif // ↩️ أضف GIF متحرك في الموارد
+        //    };
+
+        //    overlayPanel.Controls.Add(statusLabel);
+        //    overlayPanel.Controls.Add(loadingIcon);
+        //    this.Controls.Add(overlayPanel);
+        //}
+
+        private void InitializeOverlay()
+        {
+            overlayPanel = new Panel()
+            {
+                Size = this.ClientSize,
+                BackColor = Color.FromArgb(150, Color.Black),
+                Visible = false,
+                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
+            };
+
+            // Center coordinates
+            int centerX = overlayPanel.Width / 2;
+
+            loadingIcon = new PictureBox()
+            {
+                Size = new Size(120, 120),
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                Image = Properties.Resources.loading_gif,
+                Location = new System.Drawing.Point(centerX - 60, overlayPanel.Height / 2 - 100) // Center horizontally, a bit higher vertically
+            };
+
+            statusLabel = new Label()
+            {
+                AutoSize = false,
+                Size = new Size(400, 40),
+                TextAlign = ContentAlignment.MiddleCenter,
+                ForeColor = Color.White,
+                Font = new System.Drawing.Font("Segoe UI", 12, FontStyle.Bold),
+                Location = new System.Drawing.Point(centerX - 200, loadingIcon.Bottom + 10) // Center below the loading GIF
+            };
+
+            overlayPanel.Controls.Add(loadingIcon);
+            overlayPanel.Controls.Add(statusLabel);
+            this.Controls.Add(overlayPanel);
+        }
+
+
+        private void ShowOverlay(string message)
+        {
+            statusLabel.Text = message;
+            overlayPanel.BringToFront();
+            overlayPanel.Visible = true;
+            overlayPanel.Refresh();
+        }
+
+        private void HideOverlay()
+        {
+            overlayPanel.Visible = false;
         }
 
 

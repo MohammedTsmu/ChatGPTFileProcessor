@@ -40,6 +40,8 @@
             this.labelFileName = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.statusLabe = new DevExpress.XtraEditors.LabelControl();
+            this.memoEditResult = new DevExpress.XtraEditors.MemoEdit();
             this.buttonProcessFile = new System.Windows.Forms.Button();
             this.developerProfileLinkLabel = new System.Windows.Forms.LinkLabel();
             this.textBoxStatus = new System.Windows.Forms.TextBox();
@@ -49,12 +51,11 @@
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.buttonsToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.labelsToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.memoEditResult = new DevExpress.XtraEditors.MemoEdit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.memoEditResult.Properties)).BeginInit();
             this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.memoEditResult.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -159,6 +160,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.statusLabe);
             this.groupBox2.Controls.Add(this.memoEditResult);
             this.groupBox2.Controls.Add(this.buttonProcessFile);
             this.groupBox2.Controls.Add(this.label2);
@@ -170,6 +172,21 @@
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "FILE AND PROCESS";
+            // 
+            // statusLabe
+            // 
+            this.statusLabe.Location = new System.Drawing.Point(323, 37);
+            this.statusLabe.Name = "statusLabe";
+            this.statusLabe.Size = new System.Drawing.Size(75, 16);
+            this.statusLabe.TabIndex = 10;
+            this.statusLabe.Text = "labelControl1";
+            // 
+            // memoEditResult
+            // 
+            this.memoEditResult.Location = new System.Drawing.Point(574, 18);
+            this.memoEditResult.Name = "memoEditResult";
+            this.memoEditResult.Size = new System.Drawing.Size(284, 96);
+            this.memoEditResult.TabIndex = 9;
             // 
             // buttonProcessFile
             // 
@@ -262,13 +279,6 @@
             this.labelsToolTip.InitialDelay = 500;
             this.labelsToolTip.ReshowDelay = 100;
             // 
-            // memoEditResult
-            // 
-            this.memoEditResult.Location = new System.Drawing.Point(574, 18);
-            this.memoEditResult.Name = "memoEditResult";
-            this.memoEditResult.Size = new System.Drawing.Size(284, 96);
-            this.memoEditResult.TabIndex = 9;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -289,11 +299,11 @@
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.memoEditResult.Properties)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.memoEditResult.Properties)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -321,6 +331,7 @@
         private System.Windows.Forms.ToolTip labelsToolTip;
         private System.Windows.Forms.LinkLabel developerProfileLinkLabel;
         private DevExpress.XtraEditors.MemoEdit memoEditResult;
+        private DevExpress.XtraEditors.LabelControl statusLabe;
     }
 }
 

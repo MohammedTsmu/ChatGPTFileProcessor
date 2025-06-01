@@ -283,6 +283,7 @@
     <Content Include="pdfium.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\loading_gif.gif" />
     <None Include="Resources\png_256px.png" />
     <None Include="Resources\png_128px.png" />
     <None Include="Resources\png_96px.png" />
