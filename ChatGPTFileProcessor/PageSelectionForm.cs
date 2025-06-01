@@ -63,7 +63,28 @@ namespace ChatGPTFileProcessor
 
 
 
-            galleryControl1.Gallery.ImageSize = new Size(200, 280);
+            //galleryControl1.Gallery.ImageSize = new Size(200, 280);
+            galleryControl1.Gallery.ImageSize = new Size(300, 380);
+
+            //galleryControl1.Gallery.ShowScrollBar = true;
+            galleryControl1.Gallery.ShowGroupCaption = true;
+            galleryControl1.Gallery.ShowItemText = true;
+            galleryControl1.Gallery.ShowItemImage = true;
+            galleryControl1.Gallery.ShowItemImage = true;
+            galleryControl1.Gallery.BackColor = Color.FromArgb(0xFD, 0xF0, 0xF0, 0xF0); // لون الخلفية
+            //galleryControl1.Gallery.Appearance.GroupCaption.Font = new Font("Arial", 22, FontStyle.Bold);
+            //galleryControl1.Gallery.Appearance.ItemDescriptionAppearance.Normal.Font = new Font("Arial", 22, FontStyle.Regular);
+
+            //galleryControl1.Gallery.ShowItemCaption = true;
+            //galleryControl1.Gallery.ShowItemDescription = false;
+            //galleryControl1.Gallery.ShowItemImageBorder = true;
+            //galleryControl1.Gallery.ShowItemImageShadow = true;
+            //galleryControl1.Gallery.ShowItemImageBorderColor = Color.FromArgb(0xFF, 0x00, 0x00, 0x00); // لون الحدود
+            //galleryControl1.Gallery.ShowItemImageBorderColor = Color.FromArgb(0xFF, 0x00, 0x00, 0x00);
+            //galleryControl1.Gallery.ShowItemImageShadowColor = Color.FromArgb(0xFF, 0x80, 0x80, 0x80);
+            //galleryControl1.Gallery.ShowItemImageBorderWidth = 2;
+            //galleryControl1.Gallery.ShowItemImageShadowWidth = 2;
+
             galleryControl1.Gallery.Groups.Clear();
 
             var group = new GalleryItemGroup();
