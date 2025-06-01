@@ -16,7 +16,7 @@ using System.Data.SqlClient;
 using Word = Microsoft.Office.Interop.Word;
 using System.Text.Json.Nodes;  // Add this at the top of your file if not present
 using System.Text.RegularExpressions;
-using iText.Commons.Utils;
+//using iText.Commons.Utils;
 using System.Drawing;
 
 
@@ -35,6 +35,7 @@ namespace ChatGPTFileProcessor
         private Panel overlayPanel;
         private Label statusLabel;
         private PictureBox loadingIcon;
+        private TextBox logTextBox;
 
 
 
@@ -467,6 +468,7 @@ namespace ChatGPTFileProcessor
 
 
                 ShowOverlay("🔄 Processing, please wait...");
+                UpdateOverlayLog("🚀 Starting GPT-4o vision processing...");
 
                 string modelName = "gpt-4o";
                 string timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
@@ -478,6 +480,8 @@ namespace ChatGPTFileProcessor
                 string vocabularyFilePath = Path.Combine(basePath, $"Vocabulary_{modelName}_{timeStamp}.docx");
 
                 UpdateStatus("⏳ Starting Vision-Based PDF Processing...");
+                UpdateOverlayLog("⏳ Starting Vision-Based PDF Processing...");
+
                 System.Windows.Forms.Application.DoEvents();
 
                 string extractedContent = await ProcessPdfWithVision(filePath, apiKey);
@@ -490,29 +494,36 @@ namespace ChatGPTFileProcessor
 
                 memoEditResult.Text = extractedContent;
                 UpdateStatus("✅ Vision-based content extraction completed successfully.");
+                UpdateOverlayLog("✅ Vision-based content extraction completed successfully.");
 
                 UpdateStatus("⏳ Generating definitions...");
+                UpdateOverlayLog("⏳ Generating definitions...");
                 string definitions = await GenerateDefinitions(extractedContent, modelName);
                 SaveContentToFile(FormatDefinitions(definitions), definitionsFilePath, "Definitions");
 
                 UpdateStatus("⏳ Generating MCQs...");
+                UpdateOverlayLog("⏳ Generating MCQs...");
                 string mcqs = await GenerateMCQs(extractedContent, modelName);
                 SaveContentToFile(mcqs, mcqsFilePath, "MCQs");
 
                 UpdateStatus("⏳ Generating flashcards...");
+                UpdateOverlayLog("⏳ Generating flashcards...");
                 string flashcards = await GenerateFlashcards(extractedContent, modelName);
                 SaveContentToFile(flashcards, flashcardsFilePath, "Flashcards");
 
                 UpdateStatus("⏳ Generating vocabulary...");
+                UpdateOverlayLog("⏳ Generating vocabulary...");
                 string vocabulary = await GenerateVocabulary(extractedContent, modelName);
                 SaveContentToFile(vocabulary, vocabularyFilePath, "Vocabulary");
 
                 UpdateStatus("✅ All files processed and saved to desktop.");
+                UpdateOverlayLog("✅ All files processed and saved to desktop.");
             }
             catch (Exception ex)
             {
                 MessageBox.Show("❌ Error: " + ex.Message, "Processing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 UpdateStatus("❌ An error occurred during processing.");
+                UpdateOverlayLog("❌ An error occurred during processing: " + ex.Message);
             }
             finally
             {
@@ -1210,13 +1221,23 @@ namespace ChatGPTFileProcessor
             var allPages = ConvertPdfToImages(filePath);
             StringBuilder finalText = new StringBuilder();
 
+            //foreach (var (pageNumber, image) in allPages)
+            //{
+            //    string result = await SendImageToGPTAsync(image, apiKey); // ✅ مرر apiKey هنا
+            //    finalText.AppendLine($"===== Page {pageNumber} =====");
+            //    finalText.AppendLine(result);
+            //    finalText.AppendLine();
+            //}
             foreach (var (pageNumber, image) in allPages)
             {
-                string result = await SendImageToGPTAsync(image, apiKey); // ✅ مرر apiKey هنا
+                UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT...");
+                string result = await SendImageToGPTAsync(image, apiKey);
                 finalText.AppendLine($"===== Page {pageNumber} =====");
                 finalText.AppendLine(result);
                 finalText.AppendLine();
+                UpdateOverlayLog($"✅ Page {pageNumber} done.");
             }
+
 
             return finalText.ToString();
         }
@@ -1255,9 +1276,45 @@ namespace ChatGPTFileProcessor
         //    this.Controls.Add(overlayPanel);
         //}
 
+        //private void InitializeOverlay()
+        //{
+        //    overlayPanel = new Panel()
+        //    {
+        //        Size = this.ClientSize,
+        //        BackColor = Color.FromArgb(150, Color.Black),
+        //        Visible = false,
+        //        Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
+        //    };
+
+        //    // Center coordinates
+        //    int centerX = overlayPanel.Width / 2;
+
+        //    loadingIcon = new PictureBox()
+        //    {
+        //        Size = new Size(120, 120),
+        //        SizeMode = PictureBoxSizeMode.StretchImage,
+        //        Image = Properties.Resources.loading_gif,
+        //        Location = new System.Drawing.Point(centerX - 60, overlayPanel.Height / 2 - 100) // Center horizontally, a bit higher vertically
+        //    };
+
+        //    statusLabel = new Label()
+        //    {
+        //        AutoSize = false,
+        //        Size = new Size(400, 40),
+        //        TextAlign = ContentAlignment.MiddleCenter,
+        //        ForeColor = Color.White,
+        //        Font = new System.Drawing.Font("Segoe UI", 12, FontStyle.Bold),
+        //        Location = new System.Drawing.Point(centerX - 200, loadingIcon.Bottom + 10) // Center below the loading GIF
+        //    };
+
+        //    overlayPanel.Controls.Add(loadingIcon);
+        //    overlayPanel.Controls.Add(statusLabel);
+        //    this.Controls.Add(overlayPanel);
+        //}
+
         private void InitializeOverlay()
         {
-            overlayPanel = new Panel()
+            overlayPanel = new Panel
             {
                 Size = this.ClientSize,
                 BackColor = Color.FromArgb(150, Color.Black),
@@ -1265,31 +1322,91 @@ namespace ChatGPTFileProcessor
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
             };
 
-            // Center coordinates
             int centerX = overlayPanel.Width / 2;
 
-            loadingIcon = new PictureBox()
+            loadingIcon = new PictureBox
             {
                 Size = new Size(120, 120),
                 SizeMode = PictureBoxSizeMode.StretchImage,
                 Image = Properties.Resources.loading_gif,
-                Location = new System.Drawing.Point(centerX - 60, overlayPanel.Height / 2 - 100) // Center horizontally, a bit higher vertically
+                Location = new System.Drawing.Point(centerX - 60, overlayPanel.Height / 2 - 150)
             };
 
-            statusLabel = new Label()
+            statusLabel = new Label
             {
                 AutoSize = false,
                 Size = new Size(400, 40),
                 TextAlign = ContentAlignment.MiddleCenter,
                 ForeColor = Color.White,
                 Font = new System.Drawing.Font("Segoe UI", 12, FontStyle.Bold),
-                Location = new System.Drawing.Point(centerX - 200, loadingIcon.Bottom + 10) // Center below the loading GIF
+                Location = new System.Drawing.Point(centerX - 200, loadingIcon.Bottom + 10),
+                Text = "⏳ Processing, please wait..."
             };
+
+            //logTextBox = new TextBox
+            //{
+            //    Size = new Size(500, 100),
+            //    Multiline = true,
+            //    ReadOnly = true,
+            //    ScrollBars = ScrollBars.Vertical,
+            //    BackColor = Color.Black,
+            //    ForeColor = Color.White,
+            //    Font = new System.Drawing.Font("Consolas", 10),
+            //    Location = new System.Drawing.Point(centerX - 250, statusLabel.Bottom + 10)
+            //};
+
+            logTextBox = new TextBox
+            {
+                Size = new Size(500, 100),
+                Multiline = true,
+                ReadOnly = true,
+                ScrollBars = ScrollBars.Vertical,
+                BackColor = Color.Black,
+                ForeColor = Color.White,
+                Font = new System.Drawing.Font("Consolas", 10),
+                Location = new System.Drawing.Point(centerX - 250, statusLabel.Bottom + 10)
+            };
+
 
             overlayPanel.Controls.Add(loadingIcon);
             overlayPanel.Controls.Add(statusLabel);
+            overlayPanel.Controls.Add(logTextBox);
             this.Controls.Add(overlayPanel);
         }
+
+        //private void UpdateOverlayLog(string message)
+        //{
+        //    if (logTextBox.InvokeRequired)
+        //    {
+        //        logTextBox.Invoke(new Action(() => logTextBox.AppendText(message + Environment.NewLine)));
+        //    }
+        //    else
+        //    {
+        //        logTextBox.AppendText(message + Environment.NewLine);
+        //    }
+        //}
+
+        private void UpdateOverlayLog(string message)
+        {
+            if (logTextBox == null) return; // prevent error if not initialized
+
+            if (logTextBox.InvokeRequired)
+            {
+                //logTextBox.Invoke(new Action(() =>
+                //{
+                //    logTextBox.AppendText(message + Environment.NewLine);
+                //}));
+                logTextBox.Invoke(new System.Action(() => logTextBox.AppendText(message + Environment.NewLine)));
+
+            }
+            else
+            {
+                logTextBox.AppendText(message + Environment.NewLine);
+            }
+        }
+
+
+
 
 
         private void ShowOverlay(string message)
