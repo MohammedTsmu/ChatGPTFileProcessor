@@ -49,10 +49,12 @@
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.buttonsToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.labelsToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.memoEditResult = new DevExpress.XtraEditors.MemoEdit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.memoEditResult.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -157,6 +159,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.memoEditResult);
             this.groupBox2.Controls.Add(this.buttonProcessFile);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.buttonBrowseFile);
@@ -220,6 +223,7 @@
             // 
             this.comboBoxModel.FormattingEnabled = true;
             this.comboBoxModel.Location = new System.Drawing.Point(6, 37);
+            this.comboBoxModel.MaxDropDownItems = 15;
             this.comboBoxModel.Name = "comboBoxModel";
             this.comboBoxModel.Size = new System.Drawing.Size(308, 24);
             this.comboBoxModel.TabIndex = 1;
@@ -258,6 +262,13 @@
             this.labelsToolTip.InitialDelay = 500;
             this.labelsToolTip.ReshowDelay = 100;
             // 
+            // memoEditResult
+            // 
+            this.memoEditResult.Location = new System.Drawing.Point(574, 18);
+            this.memoEditResult.Name = "memoEditResult";
+            this.memoEditResult.Size = new System.Drawing.Size(284, 96);
+            this.memoEditResult.TabIndex = 9;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -282,6 +293,7 @@
             this.groupBox4.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.memoEditResult.Properties)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -308,6 +320,7 @@
         private System.Windows.Forms.ToolTip buttonsToolTip;
         private System.Windows.Forms.ToolTip labelsToolTip;
         private System.Windows.Forms.LinkLabel developerProfileLinkLabel;
+        private DevExpress.XtraEditors.MemoEdit memoEditResult;
     }
 }
 

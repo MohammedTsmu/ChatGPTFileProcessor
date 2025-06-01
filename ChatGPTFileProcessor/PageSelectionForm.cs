@@ -6,6 +6,11 @@ using DevExpress.XtraBars.Ribbon;
 using DevExpress.XtraBars.Ribbon.Gallery; // مهم للمكتبة
 using PdfiumViewer;
 using DevExpress.Utils.Drawing;
+using Newtonsoft.Json;
+using System.IO;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 
 namespace ChatGPTFileProcessor
@@ -119,5 +124,7 @@ namespace ChatGPTFileProcessor
             }
             return pages;
         }
+
+        
     }
 }

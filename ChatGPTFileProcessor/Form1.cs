@@ -17,6 +17,7 @@ using Word = Microsoft.Office.Interop.Word;
 using System.Text.Json.Nodes;  // Add this at the top of your file if not present
 using System.Text.RegularExpressions;
 using iText.Commons.Utils;
+using System.Drawing;
 
 
 
@@ -72,7 +73,12 @@ namespace ChatGPTFileProcessor
             {
                 "o4-mini",
                 (128000, "Analyze each page with this structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nNo numbering or bold. Use a blank line to separate each entry.")
+            },
+            {
+                "gpt-4o",
+                (128000, "Analyze each page with this structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nNo numbering or bold. Use a blank line to separate each entry.")
             }
+
 
 
         };
@@ -98,6 +104,7 @@ namespace ChatGPTFileProcessor
             comboBoxModel.Items.Add("gpt-4.1-nano");
             comboBoxModel.Items.Add("o3");
             comboBoxModel.Items.Add("o4-mini");
+            comboBoxModel.Items.Add("gpt-4o Choose it Image Based Processing"); // Add gpt-4o model
 
             // Load API key and model selection
             LoadApiKeyAndModel();
@@ -198,56 +205,147 @@ namespace ChatGPTFileProcessor
 
 
 
-        // Modified buttonProcessFile_Click to call individual file-saving methods
+
+        //private async void buttonProcessFile_Click(object sender, EventArgs e)
+        //{
+        //    string selectedModelName = comboBoxModel.SelectedItem?.ToString() ?? "default-model";
+
+        //    string definitionsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"Definitions_{selectedModelName}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
+        //    string mcqsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"MCQs_{selectedModelName}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
+        //    string flashcardsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"Flashcards_{selectedModelName}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
+        //    string vocabularyFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"Vocabulary_{selectedModelName}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
+
+        //    string filePath = labelFileName.Text;
+
+        //    if (filePath == "No file selected")
+        //    {
+        //        UpdateStatus("Please select a file to process.");
+        //        return;
+        //    }
+
+        //    if (string.IsNullOrEmpty(selectedPdfPath))
+        //    {
+        //        UpdateStatus("No PDF file selected.");
+        //        return;
+        //    }
+
+
+
+
+        //    UpdateStatus("⏳ Starting Vision-Based Processing...");
+
+        //    //string apiKey = txtApiKey.Text.Trim();
+        //    string apiKey = textBoxAPIKey.Text.Trim();
+
+        //    if (string.IsNullOrWhiteSpace(apiKey))
+        //    {
+        //        UpdateStatus("Please enter your OpenAI API key.");
+        //        return;
+        //    }
+
+        //    string extractedContent = await ProcessPdfWithVision(selectedPdfPath, apiKey);
+        //    memoEditResult.Text = extractedContent;
+
+
+
+        //    try
+        //    {
+        //        string fileContent = extractedContent; // 👈 Full vision output
+
+        //        UpdateStatus("Processing definitions...");
+        //        string definitionsContent = await GenerateDefinitions(fileContent, selectedModelName);
+        //        SaveContentToFile(FormatDefinitions(definitionsContent), definitionsFilePath, "Definitions");
+
+        //        UpdateStatus("Processing MCQs...");
+        //        string mcqsContent = await GenerateMCQs(fileContent, selectedModelName);
+        //        SaveContentToFile(mcqsContent, mcqsFilePath, "MCQs");
+
+        //        UpdateStatus("Processing flashcards...");
+        //        string flashcardsContent = await GenerateFlashcards(fileContent, selectedModelName);
+        //        SaveContentToFile(flashcardsContent, flashcardsFilePath, "Flashcards");
+
+        //        UpdateStatus("Processing vocabulary...");
+        //        string vocabularyContent = await GenerateVocabulary(fileContent, selectedModelName);
+        //        SaveContentToFile(vocabularyContent, vocabularyFilePath, "Vocabulary");
+
+        //        UpdateStatus("All sections processed and saved successfully.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        UpdateStatus("Error reading file: " + ex.Message);
+        //    }
+        //}
         private async void buttonProcessFile_Click(object sender, EventArgs e)
         {
-            string selectedModelName = comboBoxModel.SelectedItem?.ToString() ?? "default-model";
-
-            // Define output file paths with unique names including model and timestamp
-            string definitionsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"Definitions_{selectedModelName}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
-            string mcqsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"MCQs_{selectedModelName}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
-            string flashcardsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"Flashcards_{selectedModelName}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
-            string vocabularyFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"Vocabulary_{selectedModelName}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
-
-
             string filePath = labelFileName.Text;
+            string apiKey = textBoxAPIKey.Text;
 
-            if (filePath == "No file selected")
+            // 🔒 Validate API key
+            if (string.IsNullOrWhiteSpace(apiKey))
             {
-                UpdateStatus("Please select a file to process.");
+                MessageBox.Show("Please enter your API key.", "API Key Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 📄 Validate selected file
+            if (filePath == "No file selected" || !File.Exists(filePath))
+            {
+                MessageBox.Show("Please select a valid PDF file.", "File Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             try
             {
-                string fileContent = ReadFileContent(filePath);
-                UpdateStatus("File content read successfully.");
+                UpdateStatus("⏳ Starting Vision-Based PDF Processing...");
 
-                string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "gpt-3.5-turbo";
+                // 🧠 Vision-based full content extraction
+                string extractedContent = await ProcessPdfWithVision(filePath, apiKey);
 
-                UpdateStatus("Processing definitions...");
-                string definitionsContent = await GenerateDefinitions(fileContent, selectedModel);
-                SaveContentToFile(FormatDefinitions(definitionsContent), definitionsFilePath, "Definitions");
+                if (string.IsNullOrWhiteSpace(extractedContent))
+                {
+                    UpdateStatus("⚠️ No content was extracted. Please verify the file and API key.");
+                    return;
+                }
 
-                UpdateStatus("Processing MCQs...");
-                string mcqsContent = await GenerateMCQs(fileContent, selectedModel);
-                SaveContentToFile(mcqsContent, mcqsFilePath, "MCQs");
+                memoEditResult.Text = extractedContent;
+                UpdateStatus("✅ Vision-based content extraction completed successfully.");
 
-                UpdateStatus("Processing flashcards...");
-                string flashcardsContent = await GenerateFlashcards(fileContent, selectedModel);
-                SaveContentToFile(flashcardsContent, flashcardsFilePath, "Flashcards");
+                // 🗂 Save extracted text into formatted documents (optional)
+                string modelName = "gpt-4o";  // force model used for vision
+                string timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
 
-                UpdateStatus("Processing vocabulary...");
-                string vocabularyContent = await GenerateVocabulary(fileContent, selectedModel);
-                SaveContentToFile(vocabularyContent, vocabularyFilePath, "Vocabulary");
+                string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                string definitionsFilePath = Path.Combine(basePath, $"Definitions_{modelName}_{timeStamp}.docx");
+                string mcqsFilePath = Path.Combine(basePath, $"MCQs_{modelName}_{timeStamp}.docx");
+                string flashcardsFilePath = Path.Combine(basePath, $"Flashcards_{modelName}_{timeStamp}.docx");
+                string vocabularyFilePath = Path.Combine(basePath, $"Vocabulary_{modelName}_{timeStamp}.docx");
 
-                UpdateStatus("All sections processed and saved successfully.");
+                UpdateStatus("⏳ Generating definitions...");
+                string definitions = await GenerateDefinitions(extractedContent, modelName);
+                SaveContentToFile(FormatDefinitions(definitions), definitionsFilePath, "Definitions");
+
+                UpdateStatus("⏳ Generating MCQs...");
+                string mcqs = await GenerateMCQs(extractedContent, modelName);
+                SaveContentToFile(mcqs, mcqsFilePath, "MCQs");
+
+                UpdateStatus("⏳ Generating flashcards...");
+                string flashcards = await GenerateFlashcards(extractedContent, modelName);
+                SaveContentToFile(flashcards, flashcardsFilePath, "Flashcards");
+
+                UpdateStatus("⏳ Generating vocabulary...");
+                string vocabulary = await GenerateVocabulary(extractedContent, modelName);
+                SaveContentToFile(vocabulary, vocabularyFilePath, "Vocabulary");
+
+                UpdateStatus("✅ All files processed and saved to desktop.");
             }
             catch (Exception ex)
             {
-                UpdateStatus("Error reading file: " + ex.Message);
+                MessageBox.Show("❌ Error: " + ex.Message, "Processing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UpdateStatus("❌ An error occurred during processing.");
             }
         }
+
+
 
         private string ReadFileContent(string filePath)
         {
@@ -367,7 +465,11 @@ namespace ChatGPTFileProcessor
             { "gpt-4.1-mini", 1000000 },
             { "gpt-4.1-nano", 1000000 },
             { "o3", 128000 },
-            { "o4-mini", 128000 }
+            { "o4-mini", 128000 },
+            // Add more models and their context limits as needed
+
+            //Only this one works since it depends on images processing in gpt itself not local process to text or chunks
+            {"gpt-4o", 128000 }
 
         };
 
@@ -375,7 +477,15 @@ namespace ChatGPTFileProcessor
         // Definitions Prompt with Chunking
         private async Task<string> GenerateDefinitions(string content, string model)
         {
+            //var maxTokens = modelDetails[model].maxTokens;
+            if (!modelDetails.ContainsKey(model))
+            {
+                UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
+                model = "gpt-3.5-turbo"; // fallback
+            }
             var maxTokens = modelDetails[model].maxTokens;
+
+
             var chunks = SplitTextIntoChunks(content, maxTokens);
             StringBuilder definitionsResult = new StringBuilder();
 
@@ -864,5 +974,72 @@ namespace ChatGPTFileProcessor
             // Open the link in the default browser
             System.Diagnostics.Process.Start("https://github.com/MohammedTsmu/ChatGPTFileProcessor");
         }
+
+        private List<(int pageNumber, Image image)> ConvertPdfToImages(string filePath, int dpi = 300)
+        {
+            var pages = new List<(int, Image)>();
+            using (var document = PdfiumViewer.PdfDocument.Load(filePath))
+            {
+                for (int i = 0; i < document.PageCount; i++)
+                {
+                    // high DPI (300+) for better image quality
+                    var img = document.Render(i, dpi, dpi, true);
+                    pages.Add((i + 1, img));
+                }
+            }
+            return pages;
+        }
+        
+        public async Task<string> SendImageToGPTAsync(Image image, string apiKey)
+        {
+            using (var ms = new MemoryStream())
+            {
+                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                var base64 = Convert.ToBase64String(ms.ToArray());
+
+                var jsonBody = new
+                {
+                    model = "gpt-4o",
+                    messages = new[] {
+                new {
+                    role = "user",
+                    content = new object[] {
+                        new { type = "image_url", image_url = new { url = $"data:image/png;base64,{base64}" } },
+                        new { type = "text", text = "Please extract all readable content from this page including equations, tables, and diagrams if present." }
+                    }
+                }
+            }
+                };
+
+                using (var http = new HttpClient())
+                {
+                    http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
+
+                    var content = new StringContent(JsonConvert.SerializeObject(jsonBody), Encoding.UTF8, "application/json");
+                    var response = await http.PostAsync("https://api.openai.com/v1/chat/completions", content);
+                    var result = await response.Content.ReadAsStringAsync();
+
+                    return result;
+                }
+            }
+        }
+
+        public async Task<string> ProcessPdfWithVision(string filePath, string apiKey)
+        {
+            var allPages = ConvertPdfToImages(filePath);
+            StringBuilder finalText = new StringBuilder();
+
+            foreach (var (pageNumber, image) in allPages)
+            {
+                string result = await SendImageToGPTAsync(image, apiKey); // ✅ مرر apiKey هنا
+                finalText.AppendLine($"===== Page {pageNumber} =====");
+                finalText.AppendLine(result);
+                finalText.AppendLine();
+            }
+
+            return finalText.ToString();
+        }
+
+
     }
 }
