@@ -42,50 +42,9 @@ namespace ChatGPTFileProcessor
         private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
         {
             {
-                "gpt-3.5-turbo",
-                (4096, "Summarize each page with the following structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nAvoid using numbering or bold text. Place a blank line after each entry for clarity.")
-            },
-            {
-                "gpt-3.5-turbo-16k",
-                (16384, "For each page, use the following structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nAvoid numbering and bold text. Add a blank line after each entry for clarity.")
-            },
-            {
-                "gpt-4",
-                (8192, "Analyze each page with this structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nNo numbering or bold. Use a blank line to separate each entry.")
-            },
-            {
-                "gpt-4-turbo",
-                (128000, "Provide a comprehensive response per page with the following structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nAvoid numbering and bold text. Place a blank line after each entry.")
-            },
-
-
-
-            {
-                "gpt-4.1",
-                (1000000, "Analyze each page with this structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nNo numbering or bold. Use a blank line to separate each entry.")
-            },
-            {
-                "gpt-4.1-mini",
-                (1000000, "Analyze each page with this structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nNo numbering or bold. Use a blank line to separate each entry.")
-            },
-            {
-                "gpt-4.1-nano",
-                (1000000, "Analyze each page with this structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nNo numbering or bold. Use a blank line to separate each entry.")
-            },
-            {
-                "o3",
-                (128000, "Analyze each page with this structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nNo numbering or bold. Use a blank line to separate each entry.")
-            },
-            {
-                "o4-mini",
-                (128000, "Analyze each page with this structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nNo numbering or bold. Use a blank line to separate each entry.")
-            },
-            {
                 "gpt-4o",
                 (128000, "Analyze each page with this structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nNo numbering or bold. Use a blank line to separate each entry.")
             }
-
-
 
         };
 
@@ -101,18 +60,7 @@ namespace ChatGPTFileProcessor
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            // Populate ComboBox with available models
-            comboBoxModel.Items.Add("gpt-3.5-turbo");
-            comboBoxModel.Items.Add("gpt-3.5-turbo-16k");
-            comboBoxModel.Items.Add("gpt-4");
-            comboBoxModel.Items.Add("gpt-4-turbo");
-
-            comboBoxModel.Items.Add("gpt-4.1");
-            comboBoxModel.Items.Add("gpt-4.1-mini");
-            comboBoxModel.Items.Add("gpt-4.1-nano");
-            comboBoxModel.Items.Add("o3");
-            comboBoxModel.Items.Add("o4-mini");
-            comboBoxModel.Items.Add("gpt-4o Choose it Image Based Processing"); // Add gpt-4o model
+            comboBoxModel.Items.Add("gpt-4o"); // Add gpt-4o model
 
             InitializeOverlay();
 
@@ -175,21 +123,7 @@ namespace ChatGPTFileProcessor
             textBoxStatus.AppendText(message + Environment.NewLine);
         }
 
-        //private void buttonBrowseFile_Click(object sender, EventArgs e)
-        //{
-        //    using (OpenFileDialog openFileDialog = new OpenFileDialog())
-        //    {
-        //        openFileDialog.Filter = "Text Files (*.txt)|*.txt|PDF Files (*.pdf)|*.pdf|Word Files (*.docx)|*.docx";
-        //        openFileDialog.Title = "Select a File";
-
-        //        if (openFileDialog.ShowDialog() == DialogResult.OK)
-        //        {
-        //            // Display the selected file path
-        //            labelFileName.Text = openFileDialog.FileName;
-        //            UpdateStatus("File selected: " + openFileDialog.FileName);
-        //        }
-        //    }
-        //}
+       
 
         private void buttonBrowseFile_Click(object sender, EventArgs e)
         {
@@ -215,233 +149,6 @@ namespace ChatGPTFileProcessor
         }
 
 
-
-
-        //private async void buttonProcessFile_Click(object sender, EventArgs e)
-        //{
-        //    string selectedModelName = comboBoxModel.SelectedItem?.ToString() ?? "default-model";
-
-        //    string definitionsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"Definitions_{selectedModelName}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
-        //    string mcqsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"MCQs_{selectedModelName}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
-        //    string flashcardsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"Flashcards_{selectedModelName}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
-        //    string vocabularyFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"Vocabulary_{selectedModelName}_{DateTime.Now:yyyyMMdd_HHmmss}.docx");
-
-        //    string filePath = labelFileName.Text;
-
-        //    if (filePath == "No file selected")
-        //    {
-        //        UpdateStatus("Please select a file to process.");
-        //        return;
-        //    }
-
-        //    if (string.IsNullOrEmpty(selectedPdfPath))
-        //    {
-        //        UpdateStatus("No PDF file selected.");
-        //        return;
-        //    }
-
-
-
-
-        //    UpdateStatus("⏳ Starting Vision-Based Processing...");
-
-        //    //string apiKey = txtApiKey.Text.Trim();
-        //    string apiKey = textBoxAPIKey.Text.Trim();
-
-        //    if (string.IsNullOrWhiteSpace(apiKey))
-        //    {
-        //        UpdateStatus("Please enter your OpenAI API key.");
-        //        return;
-        //    }
-
-        //    string extractedContent = await ProcessPdfWithVision(selectedPdfPath, apiKey);
-        //    memoEditResult.Text = extractedContent;
-
-
-
-        //    try
-        //    {
-        //        string fileContent = extractedContent; // 👈 Full vision output
-
-        //        UpdateStatus("Processing definitions...");
-        //        string definitionsContent = await GenerateDefinitions(fileContent, selectedModelName);
-        //        SaveContentToFile(FormatDefinitions(definitionsContent), definitionsFilePath, "Definitions");
-
-        //        UpdateStatus("Processing MCQs...");
-        //        string mcqsContent = await GenerateMCQs(fileContent, selectedModelName);
-        //        SaveContentToFile(mcqsContent, mcqsFilePath, "MCQs");
-
-        //        UpdateStatus("Processing flashcards...");
-        //        string flashcardsContent = await GenerateFlashcards(fileContent, selectedModelName);
-        //        SaveContentToFile(flashcardsContent, flashcardsFilePath, "Flashcards");
-
-        //        UpdateStatus("Processing vocabulary...");
-        //        string vocabularyContent = await GenerateVocabulary(fileContent, selectedModelName);
-        //        SaveContentToFile(vocabularyContent, vocabularyFilePath, "Vocabulary");
-
-        //        UpdateStatus("All sections processed and saved successfully.");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        UpdateStatus("Error reading file: " + ex.Message);
-        //    }
-        //}
-
-
-
-
-        //private async void buttonProcessFile_Click(object sender, EventArgs e)
-        //{
-        //    string filePath = labelFileName.Text;
-        //    string apiKey = textBoxAPIKey.Text;
-
-        //    // 🔒 Validate API key
-        //    if (string.IsNullOrWhiteSpace(apiKey))
-        //    {
-        //        MessageBox.Show("Please enter your API key.", "API Key Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //        return;
-        //    }
-
-        //    // 📄 Validate selected file
-        //    if (filePath == "No file selected" || !File.Exists(filePath))
-        //    {
-        //        MessageBox.Show("Please select a valid PDF file.", "File Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //        return;
-        //    }
-
-        //    try
-        //    {
-        //        UpdateStatus("⏳ Starting Vision-Based PDF Processing...");
-
-        //        // 🧠 Vision-based full content extraction
-        //        string extractedContent = await ProcessPdfWithVision(filePath, apiKey);
-
-        //        if (string.IsNullOrWhiteSpace(extractedContent))
-        //        {
-        //            UpdateStatus("⚠️ No content was extracted. Please verify the file and API key.");
-        //            return;
-        //        }
-
-        //        memoEditResult.Text = extractedContent;
-        //        UpdateStatus("✅ Vision-based content extraction completed successfully.");
-
-        //        // 🗂 Save extracted text into formatted documents (optional)
-        //        string modelName = "gpt-4o";  // force model used for vision
-        //        string timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-
-        //        string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-        //        string definitionsFilePath = Path.Combine(basePath, $"Definitions_{modelName}_{timeStamp}.docx");
-        //        string mcqsFilePath = Path.Combine(basePath, $"MCQs_{modelName}_{timeStamp}.docx");
-        //        string flashcardsFilePath = Path.Combine(basePath, $"Flashcards_{modelName}_{timeStamp}.docx");
-        //        string vocabularyFilePath = Path.Combine(basePath, $"Vocabulary_{modelName}_{timeStamp}.docx");
-
-        //        UpdateStatus("⏳ Generating definitions...");
-        //        string definitions = await GenerateDefinitions(extractedContent, modelName);
-        //        SaveContentToFile(FormatDefinitions(definitions), definitionsFilePath, "Definitions");
-
-        //        UpdateStatus("⏳ Generating MCQs...");
-        //        string mcqs = await GenerateMCQs(extractedContent, modelName);
-        //        SaveContentToFile(mcqs, mcqsFilePath, "MCQs");
-
-        //        UpdateStatus("⏳ Generating flashcards...");
-        //        string flashcards = await GenerateFlashcards(extractedContent, modelName);
-        //        SaveContentToFile(flashcards, flashcardsFilePath, "Flashcards");
-
-        //        UpdateStatus("⏳ Generating vocabulary...");
-        //        string vocabulary = await GenerateVocabulary(extractedContent, modelName);
-        //        SaveContentToFile(vocabulary, vocabularyFilePath, "Vocabulary");
-
-        //        UpdateStatus("✅ All files processed and saved to desktop.");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("❌ Error: " + ex.Message, "Processing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        UpdateStatus("❌ An error occurred during processing.");
-        //    }
-        //}
-
-
-
-
-        //private async void buttonProcessFile_Click(object sender, EventArgs e)
-        //{
-        //    string filePath = labelFileName.Text;
-        //    string apiKey = textBoxAPIKey.Text;
-
-        //    if (string.IsNullOrWhiteSpace(apiKey))
-        //    {
-        //        MessageBox.Show("Please enter your API key.", "API Key Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //        return;
-        //    }
-
-        //    if (filePath == "No file selected" || !File.Exists(filePath))
-        //    {
-        //        MessageBox.Show("Please select a valid PDF file.", "File Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //        return;
-        //    }
-
-        //    try
-        //    {
-        //        string modelName = "gpt-4o";
-        //        string timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-        //        string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-
-        //        string definitionsFilePath = Path.Combine(basePath, $"Definitions_{modelName}_{timeStamp}.docx");
-        //        string mcqsFilePath = Path.Combine(basePath, $"MCQs_{modelName}_{timeStamp}.docx");
-        //        string flashcardsFilePath = Path.Combine(basePath, $"Flashcards_{modelName}_{timeStamp}.docx");
-        //        string vocabularyFilePath = Path.Combine(basePath, $"Vocabulary_{modelName}_{timeStamp}.docx");
-
-        //        UpdateStatus("⏳ Starting Vision-Based PDF Processing...");
-        //        //Application.DoEvents();
-        //        System.Windows.Forms.Application.DoEvents();
-
-
-        //        string extractedContent = await ProcessPdfWithVision(filePath, apiKey);
-
-        //        if (string.IsNullOrWhiteSpace(extractedContent))
-        //        {
-        //            UpdateStatus("⚠️ No content was extracted. Please verify the file and API key.");
-        //            return;
-        //        }
-
-        //        memoEditResult.Text = extractedContent;
-        //        UpdateStatus("✅ Vision-based content extraction completed successfully.");
-        //        //Application.DoEvents();
-        //        System.Windows.Forms.Application.DoEvents();
-
-
-        //        UpdateStatus("⏳ Generating definitions...");
-        //        //Application.DoEvents();
-        //        System.Windows.Forms.Application.DoEvents();
-        //        string definitions = await GenerateDefinitions(extractedContent, modelName);
-        //        SaveContentToFile(FormatDefinitions(definitions), definitionsFilePath, "Definitions");
-
-        //        UpdateStatus("⏳ Generating MCQs...");
-        //        //Application.DoEvents();
-        //        System.Windows.Forms.Application.DoEvents();
-        //        string mcqs = await GenerateMCQs(extractedContent, modelName);
-        //        SaveContentToFile(mcqs, mcqsFilePath, "MCQs");
-
-        //        UpdateStatus("⏳ Generating flashcards...");
-        //        //Application.DoEvents();
-        //        System.Windows.Forms.Application.DoEvents();
-        //        string flashcards = await GenerateFlashcards(extractedContent, modelName);
-        //        SaveContentToFile(flashcards, flashcardsFilePath, "Flashcards");
-
-        //        UpdateStatus("⏳ Generating vocabulary...");
-        //        //Application.DoEvents();
-        //        System.Windows.Forms.Application.DoEvents();
-        //        string vocabulary = await GenerateVocabulary(extractedContent, modelName);
-        //        SaveContentToFile(vocabulary, vocabularyFilePath, "Vocabulary");
-
-        //        UpdateStatus("✅ All files processed and saved to desktop.");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("❌ Error: " + ex.Message, "Processing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        UpdateStatus("❌ An error occurred during processing.");
-        //    }
-        //}
 
         private async void buttonProcessFile_Click(object sender, EventArgs e)
         {
@@ -568,19 +275,6 @@ namespace ChatGPTFileProcessor
             return text;
         }
 
-        //private string ReadPdfFile(string filePath)
-        //{
-        //    StringBuilder text = new StringBuilder();
-        //    using (PdfReader pdfReader = new PdfReader(filePath))
-        //    using (PdfDocument pdfDoc = new PdfDocument(pdfReader))
-        //    {
-        //        for (int i = 1; i <= pdfDoc.GetNumberOfPages(); i++)
-        //        {
-        //            text.Append(PdfTextExtractor.GetTextFromPage(pdfDoc.GetPage(i)));
-        //        }
-        //    }
-        //    return text.ToString();
-        //}
         private string ReadPdfFile(string filePath)
         {
             StringBuilder text = new StringBuilder();
@@ -623,46 +317,11 @@ namespace ChatGPTFileProcessor
         }
 
 
-        
-
-        //private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
-        //{
-        //    {
-        //        "gpt-3.5-turbo",
-        //        (4096, "Summarize each page with the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nEnsure each section is labeled and formatted as specified.")
-        //    },
-        //    {
-        //        "gpt-3.5-turbo-16k",
-        //        (16384, "For each page, use the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nMake sure each section is labeled and formatted consistently with this structure.")
-        //    },
-        //    {
-        //        "gpt-4",
-        //        (8192, "Analyze each page and follow this structured format:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nUse consistent labels and formatting as specified in this structure.")
-        //    },
-        //    {
-        //        "gpt-4-turbo",
-        //        (128000, "For each page, provide a comprehensive response using the following structure:\n\nDefinitions:\n1. Term: Definition\n\nMCQs:\n1. Question?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: [Correct Option]\n\nFlashcards:\nFront: [Term]\nBack: [Definition]\n\nVocabulary:\n1. English Term - Arabic Translation\n\nEnsure each section strictly follows the specified format and includes labels and answer keys.")
-        //    }
-        //};
 
         private readonly Dictionary<string, int> modelContextLimits = new Dictionary<string, int>
         {
-            { "gpt-3.5-turbo", 4096 },
-            { "gpt-3.5-turbo-16k", 16384 },
-            { "gpt-4", 8192 },
-            { "gpt-4-turbo", 128000 },
-
-
-            { "gpt-4.1", 1000000 },
-            { "gpt-4.1-mini", 1000000 },
-            { "gpt-4.1-nano", 1000000 },
-            { "o3", 128000 },
-            { "o4-mini", 128000 },
-            // Add more models and their context limits as needed
-
             //Only this one works since it depends on images processing in gpt itself not local process to text or chunks
             {"gpt-4o", 128000 }
-
         };
 
         // Definitions Prompt
@@ -1221,13 +880,6 @@ namespace ChatGPTFileProcessor
             var allPages = ConvertPdfToImages(filePath);
             StringBuilder finalText = new StringBuilder();
 
-            //foreach (var (pageNumber, image) in allPages)
-            //{
-            //    string result = await SendImageToGPTAsync(image, apiKey); // ✅ مرر apiKey هنا
-            //    finalText.AppendLine($"===== Page {pageNumber} =====");
-            //    finalText.AppendLine(result);
-            //    finalText.AppendLine();
-            //}
             foreach (var (pageNumber, image) in allPages)
             {
                 UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT...");
@@ -1242,75 +894,7 @@ namespace ChatGPTFileProcessor
             return finalText.ToString();
         }
 
-        //private void InitializeOverlay()
-        //{
-        //    overlayPanel = new Panel()
-        //    {
-        //        Size = this.ClientSize,
-        //        BackColor = Color.FromArgb(150, Color.Black),
-        //        Visible = false,
-        //        Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
-        //    };
-
-        //    statusLabel = new Label()
-        //    {
-        //        AutoSize = false,
-        //        Size = new Size(400, 60),
-        //        TextAlign = ContentAlignment.MiddleCenter,
-        //        ForeColor = Color.White,
-        //        Font = new System.Drawing.Font("Segoe UI", 12, FontStyle.Bold),
-        //        Location = new System.Drawing.Point((overlayPanel.Width - 400) / 2, overlayPanel.Height / 2)
-        //    };
-
-        //    loadingIcon = new PictureBox()
-        //    {
-        //        //Size = new Size(40, 40),
-        //        Size = new Size(120, 120),
-        //        Location = new  System.Drawing.Point(statusLabel.Left + 180, statusLabel.Top - 50),
-        //        SizeMode = PictureBoxSizeMode.StretchImage,
-        //        Image = Properties.Resources.loading_gif // ↩️ أضف GIF متحرك في الموارد
-        //    };
-
-        //    overlayPanel.Controls.Add(statusLabel);
-        //    overlayPanel.Controls.Add(loadingIcon);
-        //    this.Controls.Add(overlayPanel);
-        //}
-
-        //private void InitializeOverlay()
-        //{
-        //    overlayPanel = new Panel()
-        //    {
-        //        Size = this.ClientSize,
-        //        BackColor = Color.FromArgb(150, Color.Black),
-        //        Visible = false,
-        //        Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
-        //    };
-
-        //    // Center coordinates
-        //    int centerX = overlayPanel.Width / 2;
-
-        //    loadingIcon = new PictureBox()
-        //    {
-        //        Size = new Size(120, 120),
-        //        SizeMode = PictureBoxSizeMode.StretchImage,
-        //        Image = Properties.Resources.loading_gif,
-        //        Location = new System.Drawing.Point(centerX - 60, overlayPanel.Height / 2 - 100) // Center horizontally, a bit higher vertically
-        //    };
-
-        //    statusLabel = new Label()
-        //    {
-        //        AutoSize = false,
-        //        Size = new Size(400, 40),
-        //        TextAlign = ContentAlignment.MiddleCenter,
-        //        ForeColor = Color.White,
-        //        Font = new System.Drawing.Font("Segoe UI", 12, FontStyle.Bold),
-        //        Location = new System.Drawing.Point(centerX - 200, loadingIcon.Bottom + 10) // Center below the loading GIF
-        //    };
-
-        //    overlayPanel.Controls.Add(loadingIcon);
-        //    overlayPanel.Controls.Add(statusLabel);
-        //    this.Controls.Add(overlayPanel);
-        //}
+        
 
         private void InitializeOverlay()
         {
@@ -1343,17 +927,6 @@ namespace ChatGPTFileProcessor
                 Text = "⏳ Processing, please wait..."
             };
 
-            //logTextBox = new TextBox
-            //{
-            //    Size = new Size(500, 100),
-            //    Multiline = true,
-            //    ReadOnly = true,
-            //    ScrollBars = ScrollBars.Vertical,
-            //    BackColor = Color.Black,
-            //    ForeColor = Color.White,
-            //    Font = new System.Drawing.Font("Consolas", 10),
-            //    Location = new System.Drawing.Point(centerX - 250, statusLabel.Bottom + 10)
-            //};
 
             logTextBox = new TextBox
             {
@@ -1374,17 +947,7 @@ namespace ChatGPTFileProcessor
             this.Controls.Add(overlayPanel);
         }
 
-        //private void UpdateOverlayLog(string message)
-        //{
-        //    if (logTextBox.InvokeRequired)
-        //    {
-        //        logTextBox.Invoke(new Action(() => logTextBox.AppendText(message + Environment.NewLine)));
-        //    }
-        //    else
-        //    {
-        //        logTextBox.AppendText(message + Environment.NewLine);
-        //    }
-        //}
+      
 
         private void UpdateOverlayLog(string message)
         {
@@ -1404,9 +967,6 @@ namespace ChatGPTFileProcessor
                 logTextBox.AppendText(message + Environment.NewLine);
             }
         }
-
-
-
 
 
         private void ShowOverlay(string message)
