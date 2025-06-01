@@ -831,8 +831,14 @@ namespace ChatGPTFileProcessor
             var pages = new List<(int, Image)>();
             using (var document = PdfiumViewer.PdfDocument.Load(filePath))
             {
-                for (int i = 0; i < document.PageCount; i++)
+                //for (int i = 0; i < document.PageCount; i++)
+                int from = Math.Max(0, selectedFromPage - 1);
+                int to = Math.Min(document.PageCount - 1, selectedToPage - 1);
+
+                for (int i = from; i <= to; i++)
                 {
+                    //UpdateOverlayLog($"🖼️ Sending page {i + 1} of selected range to GPT...");
+
                     // high DPI (300+) for better image quality
                     var img = document.Render(i, dpi, dpi, true);
                     pages.Add((i + 1, img));

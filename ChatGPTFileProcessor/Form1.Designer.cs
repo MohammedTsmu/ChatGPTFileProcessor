@@ -55,7 +55,6 @@
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.memoEditResult.Properties)).BeginInit();
             this.groupBox4.SuspendLayout();
-            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -160,7 +159,7 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.statusLabe);
+            this.groupBox2.Controls.Add(this.textBoxStatus);
             this.groupBox2.Controls.Add(this.memoEditResult);
             this.groupBox2.Controls.Add(this.buttonProcessFile);
             this.groupBox2.Controls.Add(this.label2);
@@ -168,14 +167,14 @@
             this.groupBox2.Controls.Add(this.labelFileName);
             this.groupBox2.Location = new System.Drawing.Point(12, 161);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1004, 138);
+            this.groupBox2.Size = new System.Drawing.Size(1004, 397);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "FILE AND PROCESS";
             // 
             // statusLabe
             // 
-            this.statusLabe.Location = new System.Drawing.Point(323, 37);
+            this.statusLabe.Location = new System.Drawing.Point(307, 601);
             this.statusLabe.Name = "statusLabe";
             this.statusLabe.Size = new System.Drawing.Size(75, 16);
             this.statusLabe.TabIndex = 10;
@@ -183,9 +182,15 @@
             // 
             // memoEditResult
             // 
-            this.memoEditResult.Location = new System.Drawing.Point(574, 18);
+            this.memoEditResult.Location = new System.Drawing.Point(323, 27);
             this.memoEditResult.Name = "memoEditResult";
-            this.memoEditResult.Size = new System.Drawing.Size(284, 96);
+            this.memoEditResult.Properties.Appearance.BackColor = System.Drawing.Color.Black;
+            this.memoEditResult.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.memoEditResult.Properties.Appearance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.memoEditResult.Properties.Appearance.Options.UseBackColor = true;
+            this.memoEditResult.Properties.Appearance.Options.UseFont = true;
+            this.memoEditResult.Properties.Appearance.Options.UseForeColor = true;
+            this.memoEditResult.Size = new System.Drawing.Size(675, 352);
             this.memoEditResult.TabIndex = 9;
             // 
             // buttonProcessFile
@@ -215,12 +220,12 @@
             this.textBoxStatus.BackColor = System.Drawing.Color.DarkMagenta;
             this.textBoxStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxStatus.ForeColor = System.Drawing.Color.AliceBlue;
-            this.textBoxStatus.Location = new System.Drawing.Point(6, 21);
+            this.textBoxStatus.Location = new System.Drawing.Point(6, 116);
             this.textBoxStatus.Multiline = true;
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxStatus.Size = new System.Drawing.Size(992, 263);
+            this.textBoxStatus.Size = new System.Drawing.Size(310, 263);
             this.textBoxStatus.TabIndex = 9;
             this.labelsToolTip.SetToolTip(this.textBoxStatus, "Application Log Area Were any Action Or Changes Will Be Written Here To Inform Th" +
         "e User");
@@ -258,10 +263,9 @@
             // 
             // groupBox5
             // 
-            this.groupBox5.Controls.Add(this.textBoxStatus);
-            this.groupBox5.Location = new System.Drawing.Point(12, 305);
+            this.groupBox5.Location = new System.Drawing.Point(12, 564);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(1004, 290);
+            this.groupBox5.Size = new System.Drawing.Size(1004, 31);
             this.groupBox5.TabIndex = 13;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "STATUS";
@@ -285,6 +289,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1028, 625);
             this.Controls.Add(this.developerProfileLinkLabel);
+            this.Controls.Add(this.statusLabe);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox2);
@@ -302,8 +307,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.memoEditResult.Properties)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
