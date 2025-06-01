@@ -190,6 +190,7 @@
             this.memoEditResult.Properties.Appearance.Options.UseBackColor = true;
             this.memoEditResult.Properties.Appearance.Options.UseFont = true;
             this.memoEditResult.Properties.Appearance.Options.UseForeColor = true;
+            this.memoEditResult.Properties.TextPadding = new System.Windows.Forms.Padding(5);
             this.memoEditResult.Size = new System.Drawing.Size(675, 352);
             this.memoEditResult.TabIndex = 9;
             // 
