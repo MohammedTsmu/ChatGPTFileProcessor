@@ -27,6 +27,9 @@ namespace ChatGPTFileProcessor
     {
         private readonly string apiKeyPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ChatGPTFileProcessor", "api_key.txt");
         private readonly string modelPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ChatGPTFileProcessor", "model.txt");
+        private string selectedPdfPath;
+        private int selectedFromPage = 1;
+        private int selectedToPage = 1;
 
 
         private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
@@ -46,7 +49,32 @@ namespace ChatGPTFileProcessor
             {
                 "gpt-4-turbo",
                 (128000, "Provide a comprehensive response per page with the following structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nAvoid numbering and bold text. Place a blank line after each entry.")
+            },
+
+
+
+            {
+                "gpt-4.1",
+                (1000000, "Analyze each page with this structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nNo numbering or bold. Use a blank line to separate each entry.")
+            },
+            {
+                "gpt-4.1-mini",
+                (1000000, "Analyze each page with this structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nNo numbering or bold. Use a blank line to separate each entry.")
+            },
+            {
+                "gpt-4.1-nano",
+                (1000000, "Analyze each page with this structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nNo numbering or bold. Use a blank line to separate each entry.")
+            },
+            {
+                "o3",
+                (128000, "Analyze each page with this structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nNo numbering or bold. Use a blank line to separate each entry.")
+            },
+            {
+                "o4-mini",
+                (128000, "Analyze each page with this structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nNo numbering or bold. Use a blank line to separate each entry.")
             }
+
+
         };
 
 
@@ -64,6 +92,12 @@ namespace ChatGPTFileProcessor
             comboBoxModel.Items.Add("gpt-3.5-turbo-16k");
             comboBoxModel.Items.Add("gpt-4");
             comboBoxModel.Items.Add("gpt-4-turbo");
+
+            comboBoxModel.Items.Add("gpt-4.1");
+            comboBoxModel.Items.Add("gpt-4.1-mini");
+            comboBoxModel.Items.Add("gpt-4.1-nano");
+            comboBoxModel.Items.Add("o3");
+            comboBoxModel.Items.Add("o4-mini");
 
             // Load API key and model selection
             LoadApiKeyAndModel();
@@ -123,21 +157,46 @@ namespace ChatGPTFileProcessor
             textBoxStatus.AppendText(message + Environment.NewLine);
         }
 
+        //private void buttonBrowseFile_Click(object sender, EventArgs e)
+        //{
+        //    using (OpenFileDialog openFileDialog = new OpenFileDialog())
+        //    {
+        //        openFileDialog.Filter = "Text Files (*.txt)|*.txt|PDF Files (*.pdf)|*.pdf|Word Files (*.docx)|*.docx";
+        //        openFileDialog.Title = "Select a File";
+
+        //        if (openFileDialog.ShowDialog() == DialogResult.OK)
+        //        {
+        //            // Display the selected file path
+        //            labelFileName.Text = openFileDialog.FileName;
+        //            UpdateStatus("File selected: " + openFileDialog.FileName);
+        //        }
+        //    }
+        //}
+
         private void buttonBrowseFile_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Filter = "Text Files (*.txt)|*.txt|PDF Files (*.pdf)|*.pdf|Word Files (*.docx)|*.docx";
-                openFileDialog.Title = "Select a File";
-
+                openFileDialog.Filter = "PDF Files (*.pdf)|*.pdf";
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    // Display the selected file path
-                    labelFileName.Text = openFileDialog.FileName;
-                    UpdateStatus("File selected: " + openFileDialog.FileName);
+                    selectedPdfPath = openFileDialog.FileName;
+
+                    using (var pageForm = new PageSelectionForm())
+                    {
+                        pageForm.LoadPdfPreview(selectedPdfPath);
+                        if (pageForm.ShowDialog() == DialogResult.OK)
+                        {
+                            selectedFromPage = pageForm.FromPage;
+                            selectedToPage = pageForm.ToPage;
+                            labelFileName.Text = selectedPdfPath;
+                        }
+                    }
                 }
             }
         }
+
+
 
         // Modified buttonProcessFile_Click to call individual file-saving methods
         private async void buttonProcessFile_Click(object sender, EventArgs e)
@@ -219,19 +278,42 @@ namespace ChatGPTFileProcessor
             return text;
         }
 
+        //private string ReadPdfFile(string filePath)
+        //{
+        //    StringBuilder text = new StringBuilder();
+        //    using (PdfReader pdfReader = new PdfReader(filePath))
+        //    using (PdfDocument pdfDoc = new PdfDocument(pdfReader))
+        //    {
+        //        for (int i = 1; i <= pdfDoc.GetNumberOfPages(); i++)
+        //        {
+        //            text.Append(PdfTextExtractor.GetTextFromPage(pdfDoc.GetPage(i)));
+        //        }
+        //    }
+        //    return text.ToString();
+        //}
         private string ReadPdfFile(string filePath)
         {
             StringBuilder text = new StringBuilder();
+
             using (PdfReader pdfReader = new PdfReader(filePath))
             using (PdfDocument pdfDoc = new PdfDocument(pdfReader))
             {
-                for (int i = 1; i <= pdfDoc.GetNumberOfPages(); i++)
+                int totalPages = pdfDoc.GetNumberOfPages();
+
+                // تأكد أن القيم ضمن الحدود الصحيحة
+                int from = Math.Max(1, Math.Min(selectedFromPage, totalPages));
+                int to = Math.Max(1, Math.Min(selectedToPage, totalPages));
+
+                for (int i = from; i <= to; i++)
                 {
                     text.Append(PdfTextExtractor.GetTextFromPage(pdfDoc.GetPage(i)));
+                    text.AppendLine();
                 }
             }
+
             return text.ToString();
         }
+
 
         // Function to split text into manageable chunks based on model token limits
         private List<string> SplitTextIntoChunks(string text, int maxTokens, int overlapTokens = 50)
@@ -278,7 +360,15 @@ namespace ChatGPTFileProcessor
             { "gpt-3.5-turbo", 4096 },
             { "gpt-3.5-turbo-16k", 16384 },
             { "gpt-4", 8192 },
-            { "gpt-4-turbo", 128000 }
+            { "gpt-4-turbo", 128000 },
+
+
+            { "gpt-4.1", 1000000 },
+            { "gpt-4.1-mini", 1000000 },
+            { "gpt-4.1-nano", 1000000 },
+            { "o3", 128000 },
+            { "o4-mini", 128000 }
+
         };
 
         // Definitions Prompt

@@ -40,8 +40,8 @@
             this.labelFileName = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.developerProfileLinkLabel = new System.Windows.Forms.LinkLabel();
             this.buttonProcessFile = new System.Windows.Forms.Button();
+            this.developerProfileLinkLabel = new System.Windows.Forms.LinkLabel();
             this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.comboBoxModel = new System.Windows.Forms.ComboBox();
@@ -168,17 +168,6 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "FILE AND PROCESS";
             // 
-            // developerProfileLinkLabel
-            // 
-            this.developerProfileLinkLabel.AutoSize = true;
-            this.developerProfileLinkLabel.Location = new System.Drawing.Point(12, 598);
-            this.developerProfileLinkLabel.Name = "developerProfileLinkLabel";
-            this.developerProfileLinkLabel.Size = new System.Drawing.Size(185, 16);
-            this.developerProfileLinkLabel.TabIndex = 9;
-            this.developerProfileLinkLabel.TabStop = true;
-            this.developerProfileLinkLabel.Text = "Dr. Mohammed Studio [v1.0.0]";
-            this.developerProfileLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.developerProfileLinkLabel_LinkClicked);
-            // 
             // buttonProcessFile
             // 
             this.buttonProcessFile.Location = new System.Drawing.Point(164, 37);
@@ -189,6 +178,17 @@
             this.buttonsToolTip.SetToolTip(this.buttonProcessFile, "Start Generating Process");
             this.buttonProcessFile.UseVisualStyleBackColor = true;
             this.buttonProcessFile.Click += new System.EventHandler(this.buttonProcessFile_Click);
+            // 
+            // developerProfileLinkLabel
+            // 
+            this.developerProfileLinkLabel.AutoSize = true;
+            this.developerProfileLinkLabel.Location = new System.Drawing.Point(12, 598);
+            this.developerProfileLinkLabel.Name = "developerProfileLinkLabel";
+            this.developerProfileLinkLabel.Size = new System.Drawing.Size(185, 16);
+            this.developerProfileLinkLabel.TabIndex = 9;
+            this.developerProfileLinkLabel.TabStop = true;
+            this.developerProfileLinkLabel.Text = "Dr. Mohammed Studio [v1.0.0]";
+            this.developerProfileLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.developerProfileLinkLabel_LinkClicked);
             // 
             // textBoxStatus
             // 
