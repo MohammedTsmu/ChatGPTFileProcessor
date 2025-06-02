@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 using Task = System.Threading.Tasks.Task;
 using Word = Microsoft.Office.Interop.Word;
 
@@ -136,12 +137,14 @@ namespace ChatGPTFileProcessor
             string filePath = labelFileName.Text;
             string apiKey = textBoxAPIKey.Text;
 
+            // 1) التحقق من مفتاح الـAPI
             if (string.IsNullOrWhiteSpace(apiKey))
             {
                 MessageBox.Show("Please enter your API key.", "API Key Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
+            // 2) التحقق من مسار الملف
             if (filePath == "No file selected" || !File.Exists(filePath))
             {
                 MessageBox.Show("Please select a valid PDF file.", "File Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -150,69 +153,119 @@ namespace ChatGPTFileProcessor
 
             try
             {
-                // Disable buttons to prevent multiple clicks during processing
+                // منع النقرات المتكررة أثناء المعالجة
                 buttonProcessFile.Enabled = false;
                 buttonBrowseFile.Enabled = false;
 
-
                 ShowOverlay("🔄 Processing, please wait...");
-                UpdateOverlayLog("🚀 Starting GPT-4o vision processing...");
+                UpdateOverlayLog("🚀 Starting GPT-4o multimodal processing...");
 
-                //string modelName = "gpt-4o";
+                // اسم النموذج والـ timestamp لإنشاء مسارات الملفات
                 string modelName = comboBoxModel.SelectedItem?.ToString() ?? "gpt-4o";
                 string timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
+                // مسارات ملفات التعاريف و MCQs و Flashcards و Vocabulary
                 string definitionsFilePath = Path.Combine(basePath, $"Definitions_{modelName}_{timeStamp}.docx");
                 string mcqsFilePath = Path.Combine(basePath, $"MCQs_{modelName}_{timeStamp}.docx");
                 string flashcardsFilePath = Path.Combine(basePath, $"Flashcards_{modelName}_{timeStamp}.docx");
                 string vocabularyFilePath = Path.Combine(basePath, $"Vocabulary_{modelName}_{timeStamp}.docx");
 
-                UpdateStatus("⏳ Starting Vision-Based PDF Processing...");
-                UpdateOverlayLog("⏳ Starting Vision-Based PDF Processing...");
+                // 3) إعداد الـ prompts لكل قسم
+                // 3.1) prompt التعاريف (إنجليزي–عربي، مصطلح: شرح):
+                string definitionsPrompt =
+                    "Provide concise definitions (in English only) for each key medical term on this page. " +
+                    "For each term, write:\n" +
+                    "- The term itself as a heading\n" +
+                    "- Then a one- or two-sentence definition in English\n\n" +
+                    "Separate every entry by a blank line, without numbering.";
 
-                System.Windows.Forms.Application.DoEvents();
 
-                string extractedContent = await ProcessPdfWithVision(filePath, apiKey);
+                // 3.2) prompt الأسئلة (MCQs) بالكامل بالإنجليزية:
+                string mcqsPrompt =
+                    "Generate multiple-choice questions (only in English) based on the content of this page. Use EXACTLY this format (no deviations):\n\n" +
+                    "Question: [Write the question in English]\n" +
+                    "A) [Option A]\n" +
+                    "B) [Option B]\n" +
+                    "C) [Option C]\n" +
+                    "D) [Option D]\n" +
+                    "Answer: [Correct Letter]\n\n" +
+                    "Separate each question block with a blank line.";
 
-                if (string.IsNullOrWhiteSpace(extractedContent))
+                // 3.3) prompt البطاقات (Flashcards) بالكامل بالإنجليزية:
+                string flashcardsPrompt =
+                    "Create flashcards in English for each key medical or pharmaceutical term on this page. " +
+                    "Use EXACTLY this format (no deviations):\n\n" +
+                    "Front: [Term]\n" +
+                    "Back:  [Definition in English]\n\n" +
+                    "Leave exactly one blank line between each card.";
+
+                // 3.4) prompt المفردات (Vocabulary) ثنائي اللغة (إنجليزي–عربي):
+                string vocabularyPrompt =
+                    "Extract important vocabulary terms from this page and translate them to Arabic. " +
+                    "Use EXACTLY this format (no bullets, no numbering):\n\n" +
+                    "EnglishTerm – ArabicTranslation\n\n" +
+                    "Leave exactly one blank line between each entry.";
+
+                // 4) استخراج صور كل الصفحات المحددة في الواجهة
+                var allPages = ConvertPdfToImages(filePath);
+
+                // 5) إنشاء StringBuilder لكل قسم من الأقسام الأربع
+                StringBuilder allDefinitions = new StringBuilder();
+                StringBuilder allMCQs = new StringBuilder();
+                StringBuilder allFlashcards = new StringBuilder();
+                StringBuilder allVocabulary = new StringBuilder();
+
+                // 6) حلقة لمعالجة كل صفحة عبر Multimodal (صورة + نص)
+                foreach (var (pageNumber, image) in allPages)
                 {
-                    UpdateStatus("⚠️ No content was extracted. Please verify the file and API key.");
-                    buttonProcessFile.Enabled = true;
-                    buttonBrowseFile.Enabled = true;
-                    HideOverlay();
-                    return;
+                    UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Definitions)...");
+                    string pageDef = await ProcessPdfPageMultimodal(image, apiKey, definitionsPrompt);
+                    allDefinitions.AppendLine($"===== Page {pageNumber} =====");
+                    allDefinitions.AppendLine(pageDef);
+                    allDefinitions.AppendLine();
+
+                    UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (MCQs)...");
+                    string pageMCQs = await ProcessPdfPageMultimodal(image, apiKey, mcqsPrompt);
+                    allMCQs.AppendLine($"===== Page {pageNumber} =====");
+                    allMCQs.AppendLine(pageMCQs);
+                    allMCQs.AppendLine();
+
+                    UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Flashcards)...");
+                    string pageFlash = await ProcessPdfPageMultimodal(image, apiKey, flashcardsPrompt);
+                    allFlashcards.AppendLine($"===== Page {pageNumber} =====");
+                    allFlashcards.AppendLine(pageFlash);
+                    allFlashcards.AppendLine();
+
+                    UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Vocabulary)...");
+                    string pageVocab = await ProcessPdfPageMultimodal(image, apiKey, vocabularyPrompt);
+                    allVocabulary.AppendLine($"===== Page {pageNumber} =====");
+                    allVocabulary.AppendLine(pageVocab);
+                    allVocabulary.AppendLine();
+
+                    UpdateOverlayLog($"✅ Page {pageNumber} done.");
                 }
 
-                
-                UpdateStatus("✅ Vision-based content extraction completed successfully.");
-                UpdateOverlayLog("✅ Vision-based content extraction completed successfully.");
+                // 7) تحويل StringBuilder إلى نصٍّ نهائي وحفظه في ملفات Word منسّقة
+                // 7.1) ملف التعاريف
+                string definitionsText = allDefinitions.ToString();
+                SaveContentToFile(FormatDefinitions(definitionsText), definitionsFilePath, "Definitions");
 
-                UpdateStatus("⏳ Generating definitions...");
-                UpdateOverlayLog("⏳ Generating definitions...");
-                string definitions = await GenerateDefinitions(extractedContent, modelName);
-                SaveContentToFile(FormatDefinitions(definitions), definitionsFilePath, "Definitions");
+                // 7.2) ملف MCQs (يمكن تكييف تنسيق MCQs إذا أردتم تنسيقًا أضبط)
+                string mcqsText = allMCQs.ToString();
+                SaveContentToFile(mcqsText, mcqsFilePath, "MCQs");
 
-                UpdateStatus("⏳ Generating MCQs...");
-                UpdateOverlayLog("⏳ Generating MCQs...");
-                string mcqs = await GenerateMCQs(extractedContent, modelName);
-                SaveContentToFile(mcqs, mcqsFilePath, "MCQs");
+                // 7.3) ملف Flashcards
+                string flashcardsText = allFlashcards.ToString();
+                SaveContentToFile(flashcardsText, flashcardsFilePath, "Flashcards");
 
-                UpdateStatus("⏳ Generating flashcards...");
-                UpdateOverlayLog("⏳ Generating flashcards...");
-                string flashcards = await GenerateFlashcards(extractedContent, modelName);
-                SaveContentToFile(flashcards, flashcardsFilePath, "Flashcards");
+                // 7.4) ملف Vocabulary (بعد تطبيق FormatVocabulary على الناتج)
+                string vocabularyText = FormatVocabulary(allVocabulary.ToString());
+                SaveContentToFile(vocabularyText, vocabularyFilePath, "Vocabulary");
 
-
-
-
-                UpdateStatus("⏳ Generating vocabulary...");
-                UpdateOverlayLog("⏳ Generating vocabulary...");
-                string vocabulary = await GenerateVocabulary(extractedContent, modelName);
-                SaveContentToFile(vocabulary, vocabularyFilePath, "Vocabulary");
-
-                UpdateStatus("✅ All files processed and saved to desktop.");
-                UpdateOverlayLog("✅ All files processed and saved to desktop.");
+                // 8) إظهار رسالة انتهاء المعالجة
+                UpdateStatus("✅ All pages processed and saved to desktop as Definitions, MCQs, Flashcards, and Vocabulary.");
+                UpdateOverlayLog("✅ All pages processed and saved to desktop as Definitions, MCQs, Flashcards, and Vocabulary.");
             }
             catch (Exception ex)
             {
@@ -222,14 +275,13 @@ namespace ChatGPTFileProcessor
             }
             finally
             {
-
-                // Re-enable buttons after processing is complete
                 buttonProcessFile.Enabled = true;
                 buttonBrowseFile.Enabled = true;
-
-                HideOverlay(); // ✅ Hide it whether successful or failed
+                HideOverlay();
             }
         }
+
+
 
 
 
@@ -280,33 +332,6 @@ namespace ChatGPTFileProcessor
 
 
 
-        //// MCQs Prompt with Explicit Answer Key Request and Chunking
-        //private async Task<string> GenerateMCQs(string content, string model)
-        //{   
-        //    if (!modelDetails.ContainsKey(model))
-        //    {
-        //        UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
-        //        model = "gpt-3.5-turbo";
-        //    }
-        //    int maxTokens = modelDetails[model].maxTokens;
-        //    // ...
-
-        //    var chunks = SplitTextIntoChunks(content, maxTokens);
-        //    StringBuilder mcqsResult = new StringBuilder();
-
-        //    foreach (var chunk in chunks)
-        //    {
-        //        string mcqResponse = await SendToChatGPT(chunk, model,
-        //            "Generate multiple-choice questions based on the content. For each question, provide four answer options labeled A, B, C, and D, followed by the correct answer as 'Answer: [Correct Option]'.");
-
-        //        // Apply formatting to ensure consistency
-        //        string processedMCQ = FormatMCQs(mcqResponse);
-        //        mcqsResult.AppendLine(processedMCQ);
-        //        mcqsResult.AppendLine();  // Separate each MCQ for readability
-        //    }
-
-        //    return mcqsResult.ToString();
-        //}
         private async Task<string> GenerateMCQs(string content, string model)
         {
             // توحيد المنبع لاستخدام modelDetails فقط
@@ -334,49 +359,6 @@ namespace ChatGPTFileProcessor
         }
 
 
-
-        //// Flashcards Prompt with Chunking and Strict Formatting
-        //private async Task<string> GenerateFlashcards(string content, string model)
-        //{
-        //    if (!modelDetails.ContainsKey(model))
-        //    {
-        //        UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
-        //        model = "gpt-3.5-turbo";
-        //    }
-        //    int maxTokens = modelDetails[model].maxTokens;
-
-
-        //    var chunks = SplitTextIntoChunks(content, maxTokens);
-        //    StringBuilder flashcardsResult = new StringBuilder();
-
-        //    foreach (var chunk in chunks)
-        //    {
-        //        // Use a strict “Front:/Back:” prompt so GPT always outputs exactly that format
-        //        string rawFlashcards = await SendToChatGPT(chunk, model,
-        //            "Create flashcards for each key medical and pharmacy term in this text, using EXACTLY this format (do NOT deviate):\n\n" +
-        //            "Front: [Term]\n" +
-        //            "Back:  [Definition]\n\n" +
-        //            "Leave exactly one blank line between each card. Do not number or bullet anything.");
-
-        //        // DEBUG: write raw GPT output to a file on Desktop, so you can inspect if something still isn't parsed
-        //        try
-        //        {
-        //            string debugPath = Path.Combine(
-        //                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-        //                "Flashcards_RawDebug.txt"
-        //            );
-        //            File.AppendAllText(debugPath, rawFlashcards + "\n\n---- End of chunk ----\n\n");
-        //        }
-        //        catch { /* ignore any file‐write errors */ }
-
-        //        // Format it—this routine will pick up “Front:”/“Back:” or fallback on “Term – Definition” style
-        //        string formattedFlashcards = FormatFlashcards(rawFlashcards);
-        //        flashcardsResult.AppendLine(formattedFlashcards);
-        //        flashcardsResult.AppendLine();
-        //    }
-
-        //    return flashcardsResult.ToString();
-        //}
         private async Task<string> GenerateFlashcards(string content, string model)
         {
             if (!modelDetails.ContainsKey(model))
@@ -417,29 +399,32 @@ namespace ChatGPTFileProcessor
 
 
 
-        //// Vocabulary Prompt with Chunking and Formatting
-        //private async Task<string> GenerateVocabulary(string content, string model)
-        //{
-        //    if (!modelDetails.ContainsKey(model))
-        //    {
-        //        UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
-        //        model = "gpt-3.5-turbo";
-        //    }
-        //    int maxTokens = modelDetails[model].maxTokens;
+        // Vocabulary Prompt with Chunking and Formatting
+        private async Task<string> GenerateVocabulary(string content, string model)
+        {
+            if (!modelDetails.ContainsKey(model))
+            {
+                UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
+                model = "gpt-3.5-turbo";
+            }
+            int maxTokens = modelDetails[model];
 
-        //    var chunks = SplitTextIntoChunks(content, maxTokens);
-        //    StringBuilder vocabularyResult = new StringBuilder();
+            var chunks = SplitTextIntoChunks(content, maxTokens);
+            StringBuilder vocabularyResult = new StringBuilder();
 
-        //    foreach (var chunk in chunks)
-        //    {
-        //        //var rawVocabulary = await SendToChatGPT(chunk, model, "Extract important vocabulary terms and translate them to Arabic. Use the format: 'English Term - Arabic Translation'. Avoid numbering or bullets, and place a blank line after each entry.");
-        //        var rawVocabulary = await SendToChatGPT(chunk, model, "Extract important vocabulary terms and translate them to Arabic.\r\nUse EXACTLY this format (no deviations):\r\n\r\nEnglishTerm - ArabicTranslation\r\n\r\nPlace exactly one blank line between each entry. Do NOT add any bullet, dash إضافي، أو numbering.\r\n");
-        //        vocabularyResult.AppendLine(rawVocabulary);
-        //    }
+            foreach (var chunk in chunks)
+            {
+                // نُشدد على الشكل الصارم للـ prompt
+                var rawVocabulary = await SendToChatGPT(chunk, model,
+                    "Extract important vocabulary terms and translate them to Arabic. Use EXACTLY this format (no deviations):\n\n" +
+                    "EnglishTerm - ArabicTranslation\n\n" +
+                    "Leave exactly one blank line between each entry. No bullets, no numbering, no extra dashes.");
 
-        //    // Apply formatting to clean up the output
-        //    return FormatVocabulary(vocabularyResult.ToString());
-        //}
+                vocabularyResult.AppendLine(rawVocabulary);
+            }
+
+            return FormatVocabulary(vocabularyResult.ToString());
+        }
 
 
         // Centralized function to handle ChatGPT API calls
@@ -684,60 +669,8 @@ namespace ChatGPTFileProcessor
             return string.Join("\n\n", flashcards);
         }
 
-        //// Function to format vocabulary terms
-        //private string FormatVocabulary(string text)
-        //{
-        //    var formattedVocabulary = new List<string>();
-        //    var terms = text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        
 
-        //    foreach (var line in terms)
-        //    {
-        //        // نمط جديد يقبل dash أو en-dash أو colon، ويتجاهل المسافات الزائدة
-        //        var match = Regex.Match(line, @"^(?<english>.+?)\s*[-–:]\s*(?<arabic>.+)$");
-        //        if (match.Success)
-        //        {
-        //            string english = match.Groups["english"].Value.Trim();
-        //            string arabic = match.Groups["arabic"].Value.Trim();
-        //            formattedVocabulary.Add($"{english} - {arabic}");
-        //        }
-        //        else
-        //        {
-        //            // إذا لم يتعرف النمط، نعلّق السطر، لكن لا نضيف أكثر من مرة "[Translation Needed]"
-        //            string trimmed = line.Trim();
-        //            if (!string.IsNullOrWhiteSpace(trimmed))
-        //            {
-        //                formattedVocabulary.Add($"{trimmed} - [Translation Needed]");
-        //            }
-        //        }
-        //    }
-
-        //    return string.Join("\n", formattedVocabulary);
-        //}
-        private async Task<string> GenerateVocabulary(string content, string model)
-        {
-            if (!modelDetails.ContainsKey(model))
-            {
-                UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
-                model = "gpt-3.5-turbo";
-            }
-            int maxTokens = modelDetails[model];
-
-            var chunks = SplitTextIntoChunks(content, maxTokens);
-            StringBuilder vocabularyResult = new StringBuilder();
-
-            foreach (var chunk in chunks)
-            {
-                // نُشدد على الشكل الصارم للـ prompt
-                var rawVocabulary = await SendToChatGPT(chunk, model,
-                    "Extract important vocabulary terms and translate them to Arabic. Use EXACTLY this format (no deviations):\n\n" +
-                    "EnglishTerm - ArabicTranslation\n\n" +
-                    "Leave exactly one blank line between each entry. No bullets, no numbering, no extra dashes.");
-
-                vocabularyResult.AppendLine(rawVocabulary);
-            }
-
-            return FormatVocabulary(vocabularyResult.ToString());
-        }
 
         private string FormatVocabulary(string text)
         {
@@ -866,23 +799,93 @@ namespace ChatGPTFileProcessor
         }
 
 
-        public async Task<string> ProcessPdfWithVision(string filePath, string apiKey)
+        //public async Task<string> ProcessPdfWithVision(string filePath, string apiKey)
+        //{
+        //    var allPages = ConvertPdfToImages(filePath);
+        //    StringBuilder finalText = new StringBuilder();
+
+        //    foreach (var (pageNumber, image) in allPages)
+        //    {
+        //        UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT...");
+        //        string result = await SendImageToGPTAsync(image, apiKey);
+        //        finalText.AppendLine($"===== Page {pageNumber} =====");
+        //        finalText.AppendLine(result);
+        //        finalText.AppendLine();
+        //        UpdateOverlayLog($"✅ Page {pageNumber} done.");
+        //    }
+
+
+        //    return finalText.ToString();
+        //}
+
+
+
+
+        /// يعالج صفحةً واحدةً (كـ صورة) بطريقة Multimodal: يرسل الصورة + التعليمات النصّية دفعةً واحدة إلى GPT-4o.
+        /// يرجع النصّ الناتج (مثل التعاريف أو الأسئلة) مباشرة.
+        private async Task<string> ProcessPdfPageMultimodal(Image image, string apiKey, string taskPrompt)
         {
-            var allPages = ConvertPdfToImages(filePath);
-            StringBuilder finalText = new StringBuilder();
-
-            foreach (var (pageNumber, image) in allPages)
+            // 1. تحويل الصورة إلى Base64
+            //using var ms = new MemoryStream();
+            using (var ms = new MemoryStream())
             {
-                UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT...");
-                string result = await SendImageToGPTAsync(image, apiKey);
-                finalText.AppendLine($"===== Page {pageNumber} =====");
-                finalText.AppendLine(result);
-                finalText.AppendLine();
-                UpdateOverlayLog($"✅ Page {pageNumber} done.");
+                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                string base64 = Convert.ToBase64String(ms.ToArray());
+
+                // 2. بناء JSON payload لإرسال الصورة مع النص دفعةً واحدة
+                var requestBody = new
+                {
+                    model = "gpt-4o",
+                    messages = new object[]
+                    {
+            new
+            {
+                role = "user",
+                content = new object[]
+                {
+                    new
+                    {
+                        type = "image_url",
+                        image_url = new { url = $"data:image/png;base64,{base64}" }
+                    },
+                    new
+                    {
+                        type = "text",
+                        text = taskPrompt
+                    }
+                }
             }
+                    }
+                };
+
+                string jsonContent = System.Text.Json.JsonSerializer.Serialize(
+                    requestBody,
+                    new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }
+                );
 
 
-            return finalText.ToString();
+
+                // 3. إرسال الطلب للـ Chat Completion endpoint
+                using (var client = new HttpClient())
+                {
+
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + apiKey);
+
+                    var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string error = await response.Content.ReadAsStringAsync();
+                        throw new Exception($"API Error: {response.StatusCode} - {error}");
+                    }
+
+                    // 4. قراءة النتيجة (النص الناتج) وإرجاعه
+                    string resultJson = await response.Content.ReadAsStringAsync();
+                    var jsonNode = JsonNode.Parse(resultJson);
+                    return jsonNode?["choices"]?[0]?["message"]?["content"]?.ToString() ?? "";
+                }
+            }
         }
 
 

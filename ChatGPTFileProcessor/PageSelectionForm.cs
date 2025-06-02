@@ -50,13 +50,6 @@ namespace ChatGPTFileProcessor
 
         public void LoadPdfPreview(string filePath)
         {
-            //if (!File.Exists("pdfium.dll"))
-            //{
-            //    MessageBox.Show("Missing 'pdfium.dll'. Please ensure it's placed next to the executable.", "Missing Dependency", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //    return;
-            //}
-
-
             galleryControl1.Gallery.ItemImageLayout = ImageLayoutMode.ZoomInside;
 
 
@@ -70,18 +63,7 @@ namespace ChatGPTFileProcessor
             galleryControl1.Gallery.ShowItemImage = true;
             galleryControl1.Gallery.ShowItemImage = true;
             galleryControl1.Gallery.BackColor = Color.FromArgb(0xFD, 0xF0, 0xF0, 0xF0); // لون الخلفية
-            //galleryControl1.Gallery.Appearance.GroupCaption.Font = new Font("Arial", 22, FontStyle.Bold);
-            //galleryControl1.Gallery.Appearance.ItemDescriptionAppearance.Normal.Font = new Font("Arial", 22, FontStyle.Regular);
-
-            //galleryControl1.Gallery.ShowItemCaption = true;
-            //galleryControl1.Gallery.ShowItemDescription = false;
-            //galleryControl1.Gallery.ShowItemImageBorder = true;
-            //galleryControl1.Gallery.ShowItemImageShadow = true;
-            //galleryControl1.Gallery.ShowItemImageBorderColor = Color.FromArgb(0xFF, 0x00, 0x00, 0x00); // لون الحدود
-            //galleryControl1.Gallery.ShowItemImageBorderColor = Color.FromArgb(0xFF, 0x00, 0x00, 0x00);
-            //galleryControl1.Gallery.ShowItemImageShadowColor = Color.FromArgb(0xFF, 0x80, 0x80, 0x80);
-            //galleryControl1.Gallery.ShowItemImageBorderWidth = 2;
-            //galleryControl1.Gallery.ShowItemImageShadowWidth = 2;
+            
 
             galleryControl1.Gallery.Groups.Clear();
 
