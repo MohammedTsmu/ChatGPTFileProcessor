@@ -16,6 +16,9 @@ using Word = Microsoft.Office.Interop.Word;
 
 
 
+
+
+
 namespace ChatGPTFileProcessor
 {
     public partial class Form1 : Form
@@ -47,9 +50,6 @@ namespace ChatGPTFileProcessor
         public Form1()
         {
             InitializeComponent();
-            LoadAPIKey();  // Load API key on app start
-
-
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -63,20 +63,6 @@ namespace ChatGPTFileProcessor
 
         }
 
-
-        private void LoadAPIKey()
-        {
-            if (File.Exists(apiKeyPath))
-            {
-                // Read the API key from the config file
-                textBoxAPIKey.Text = File.ReadAllText(apiKeyPath);
-                UpdateStatus("API Key loaded successfully.");
-            }
-            else
-            {
-                UpdateStatus("No API Key found. Please enter and save your API Key.");
-            }
-        }
 
         private void buttonSaveAPIKey_Click(object sender, EventArgs e)
         {
@@ -116,7 +102,6 @@ namespace ChatGPTFileProcessor
         {
             textBoxStatus.AppendText(message + Environment.NewLine);
         }
-
 
 
         private void buttonBrowseFile_Click(object sender, EventArgs e)
@@ -171,7 +156,8 @@ namespace ChatGPTFileProcessor
                 ShowOverlay("🔄 Processing, please wait...");
                 UpdateOverlayLog("🚀 Starting GPT-4o vision processing...");
 
-                string modelName = "gpt-4o";
+                //string modelName = "gpt-4o";
+                string modelName = comboBoxModel.SelectedItem?.ToString() ?? "gpt-4o";
                 string timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
@@ -196,7 +182,7 @@ namespace ChatGPTFileProcessor
                     return;
                 }
 
-                memoEditResult.Text = extractedContent;
+                
                 UpdateStatus("✅ Vision-based content extraction completed successfully.");
                 UpdateOverlayLog("✅ Vision-based content extraction completed successfully.");
 
@@ -430,22 +416,28 @@ namespace ChatGPTFileProcessor
             Word.Application wordApp = new Word.Application();
             Word.Document doc = wordApp.Documents.Add();
 
-            Word.Paragraph titlePara = doc.Content.Paragraphs.Add();
-            titlePara.Range.Text = sectionTitle;
-            titlePara.Range.Font.Bold = 1;
-            titlePara.Range.Font.Size = 14;
-            titlePara.Format.SpaceAfter = 10;
-            titlePara.Range.InsertParagraphAfter();
+            try
+            {
+                Word.Paragraph titlePara = doc.Content.Paragraphs.Add();
+                titlePara.Range.Text = sectionTitle;
+                titlePara.Range.Font.Bold = 1;
+                titlePara.Range.Font.Size = 14;
+                titlePara.Format.SpaceAfter = 10;
+                titlePara.Range.InsertParagraphAfter();
 
-            Word.Paragraph contentPara = doc.Content.Paragraphs.Add();
-            contentPara.Range.Text = content;
-            contentPara.Range.Font.Bold = 0;
-            contentPara.Format.SpaceAfter = 10;
-            contentPara.Range.InsertParagraphAfter();
+                Word.Paragraph contentPara = doc.Content.Paragraphs.Add();
+                contentPara.Range.Text = content;
+                contentPara.Range.Font.Bold = 0;
+                contentPara.Format.SpaceAfter = 10;
+                contentPara.Range.InsertParagraphAfter();
 
-            doc.SaveAs2(filePath);
-            doc.Close();
-            wordApp.Quit();
+                doc.SaveAs2(filePath);
+            }
+            finally
+            {
+                doc.Close();
+                wordApp.Quit();
+            }
             UpdateStatus($"Results saved successfully to {filePath}");
         }
 
