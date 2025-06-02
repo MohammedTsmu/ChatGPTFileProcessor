@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using DevExpress.Utils.Drawing;
 using DevExpress.XtraBars.Ribbon;
 using PdfiumViewer;
-
 
 namespace ChatGPTFileProcessor
 {
@@ -18,10 +16,9 @@ namespace ChatGPTFileProcessor
         {
             InitializeComponent();
 
-
-
             galleryControl1.Gallery.ItemClick += Gallery_ItemClick;
         }
+
 
         private void Gallery_ItemClick(object sender, GalleryItemClickEventArgs e)
         {
@@ -50,40 +47,67 @@ namespace ChatGPTFileProcessor
 
         public void LoadPdfPreview(string filePath)
         {
-            galleryControl1.Gallery.ItemImageLayout = ImageLayoutMode.ZoomInside;
+            // 1) تخطيط الصورة داخل العنصر (ZoomInside)
+            galleryControl1.Gallery.ItemImageLayout = DevExpress.Utils.Drawing.ImageLayoutMode.ZoomInside;
 
+            // 2) حجم الصورة داخل كل عنصر (عريـض x ارتفاع)
+            // يمكنك تعديل الأرقام حسب احتياجك
+            galleryControl1.Gallery.ImageSize = new Size(240, 320);
 
+            // 3) لون الخلفية العام (لون فاتح جداً ليبرز الصور)
+            galleryControl1.Gallery.BackColor = Color.FromArgb(0xF5, 0xF5, 0xF5);
 
-            //galleryControl1.Gallery.ImageSize = new Size(200, 280);
-            galleryControl1.Gallery.ImageSize = new Size(300, 380);
+            // 4) إظهار شريط التمرير عند الحاجة
+            galleryControl1.Gallery.ShowScrollBar = DevExpress.XtraBars.Ribbon.Gallery.ShowScrollBar.Auto;
 
-            //galleryControl1.Gallery.ShowScrollBar = true;
-            galleryControl1.Gallery.ShowGroupCaption = true;
+            // 5) إخفاء عنوان المجموعة لأننا نضيف مجموعة واحدة فقط
+            galleryControl1.Gallery.ShowGroupCaption = false;
+
+            // 6) إظهار نص العنصر (العنوان أسفل كل صورة)
             galleryControl1.Gallery.ShowItemText = true;
-            galleryControl1.Gallery.ShowItemImage = true;
-            galleryControl1.Gallery.ShowItemImage = true;
-            galleryControl1.Gallery.BackColor = Color.FromArgb(0xFD, 0xF0, 0xF0, 0xF0); // لون الخلفية
-            
 
+            // 7) إظهار الصورة داخل العنصر
+            galleryControl1.Gallery.ShowItemImage = true;
+
+            // 8) مسح أيّ مجموعات سابقة وإضافة مجموعة جديدة
             galleryControl1.Gallery.Groups.Clear();
-
-            var group = new GalleryItemGroup();
+            var group = new DevExpress.XtraBars.Ribbon.GalleryItemGroup();
             galleryControl1.Gallery.Groups.Add(group);
 
+            // 9) تحميل صور صفحات الـPDF
             var images = ExtractPdfPageImages(filePath);
             for (int i = 0; i < images.Count; i++)
             {
-                var item = new GalleryItem(images[i], $"Page {i + 1}", "");
+                // عنوان العنصر: "Page 1", "Page 2", ...
+                var item = new DevExpress.XtraBars.Ribbon.GalleryItem
+                {
+                    Image = images[i],
+                    Caption = $"Page {i + 1}"
+                };
+                
+                // ضبط خصائص العنصر
+                item.AppearanceCaption.Normal.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+                item.AppearanceCaption.Hovered.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+                item.AppearanceCaption.Normal.ForeColor = Color.DimGray;
+
                 item.Tag = i + 1;
                 group.Items.Add(item);
             }
 
+            // 10) ضبط SpinEdit لاختيار النطاق (من وإلى) بناءً على عدد الصفحات
             spinFrom.Properties.MinValue = 1;
             spinFrom.Properties.MaxValue = images.Count;
             spinTo.Properties.MinValue = 1;
             spinTo.Properties.MaxValue = images.Count;
             spinTo.Value = images.Count;
+
+            // 11) تحسين مظهر SpinEdit (اختياري)
+            spinFrom.Properties.Appearance.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            spinFrom.Properties.Appearance.Options.UseFont = true;
+            spinTo.Properties.Appearance.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            spinTo.Properties.Appearance.Options.UseFont = true;
         }
+
 
         private List<Image> ExtractPdfPageImages(string filePath)
         {

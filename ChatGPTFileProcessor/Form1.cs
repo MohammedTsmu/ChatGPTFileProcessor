@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json.Nodes;  // Add this at the top of your file if not present
@@ -10,7 +9,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 using Task = System.Threading.Tasks.Task;
 using Word = Microsoft.Office.Interop.Word;
 
@@ -32,21 +30,6 @@ namespace ChatGPTFileProcessor
         private Label statusLabel;
         private PictureBox loadingIcon;
         private TextBox logTextBox;
-
-
-
-        //private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
-        //{
-        //    {
-        //        "gpt-4o",
-        //        (128000, "Analyze each page with this structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nNo numbering or bold. Use a blank line to separate each entry.")
-        //    }
-        //};
-
-        private readonly Dictionary<string, int> modelDetails = new Dictionary<string, int>
-        {
-            { "gpt-4o", 128000 }
-        };
 
 
 
@@ -282,198 +265,6 @@ namespace ChatGPTFileProcessor
         }
 
 
-
-
-
-
-        // Function to split text into manageable chunks based on model token limits
-        private List<string> SplitTextIntoChunks(string text, int maxTokens, int overlapTokens = 50)
-        {
-            var words = text.Split(new[] { ' ', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-            var chunks = new List<string>();
-            int totalWords = words.Length;
-            int maxWords = (int)(maxTokens * 0.5); // Approximate words per chunk; adjust as needed
-
-            for (int i = 0; i < totalWords; i += maxWords - overlapTokens)
-            {
-                var chunk = string.Join(" ", words.Skip(i).Take(maxWords));
-                chunks.Add(chunk);
-            }
-
-            return chunks;
-        }
-
-
-
-        // Definitions Prompt
-        private async Task<string> GenerateDefinitions(string content, string model)
-        {
-            if (!modelDetails.ContainsKey(model))
-            {
-                UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
-                model = "gpt-3.5-turbo"; // fallback
-            }
-            var maxTokens = modelDetails[model];
-
-
-            var chunks = SplitTextIntoChunks(content, maxTokens);
-            StringBuilder definitionsResult = new StringBuilder();
-
-            foreach (var chunk in chunks)
-            {
-                var generatedDefinition = await SendToChatGPT(chunk, model,
-                    "Provide definitions for key terms in this text without numbering. Separate each definition with a blank line for clarity.");
-                definitionsResult.AppendLine(generatedDefinition.Trim());
-                definitionsResult.AppendLine("\n");
-            }
-
-            return definitionsResult.ToString();
-        }
-
-
-
-        private async Task<string> GenerateMCQs(string content, string model)
-        {
-            // توحيد المنبع لاستخدام modelDetails فقط
-            if (!modelDetails.ContainsKey(model))
-            {
-                UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
-                model = "gpt-3.5-turbo";
-            }
-            int maxTokens = modelDetails[model];
-
-            var chunks = SplitTextIntoChunks(content, maxTokens);
-            StringBuilder mcqsResult = new StringBuilder();
-
-            foreach (var chunk in chunks)
-            {
-                string mcqResponse = await SendToChatGPT(chunk, model,
-                    "Generate multiple-choice questions based on the content. For each question, provide four answer options labeled A, B, C, and D, followed by the correct answer as 'Answer: [Correct Option]'.");
-
-                string processedMCQ = FormatMCQs(mcqResponse);
-                mcqsResult.AppendLine(processedMCQ);
-                mcqsResult.AppendLine();
-            }
-
-            return mcqsResult.ToString();
-        }
-
-
-        private async Task<string> GenerateFlashcards(string content, string model)
-        {
-            if (!modelDetails.ContainsKey(model))
-            {
-                UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
-                model = "gpt-3.5-turbo";
-            }
-            int maxTokens = modelDetails[model];
-
-            var chunks = SplitTextIntoChunks(content, maxTokens);
-            StringBuilder flashcardsResult = new StringBuilder();
-
-            foreach (var chunk in chunks)
-            {
-                string rawFlashcards = await SendToChatGPT(chunk, model,
-                    "Create flashcards for each key medical and pharmacy term in this text, using EXACTLY this format (do NOT deviate):\n\n" +
-                    "Front: [Term]\n" +
-                    "Back:  [Definition]\n\n" +
-                    "Leave exactly one blank line between each card. Do not number or bullet anything.");
-
-                try
-                {
-                    string debugPath = Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                        "Flashcards_RawDebug.txt"
-                    );
-                    File.AppendAllText(debugPath, rawFlashcards + "\n\n---- End of chunk ----\n\n");
-                }
-                catch { /* تجاهل خطأ الكتابة */ }
-
-                string formattedFlashcards = FormatFlashcards(rawFlashcards);
-                flashcardsResult.AppendLine(formattedFlashcards);
-                flashcardsResult.AppendLine();
-            }
-
-            return flashcardsResult.ToString();
-        }
-
-
-
-        // Vocabulary Prompt with Chunking and Formatting
-        private async Task<string> GenerateVocabulary(string content, string model)
-        {
-            if (!modelDetails.ContainsKey(model))
-            {
-                UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
-                model = "gpt-3.5-turbo";
-            }
-            int maxTokens = modelDetails[model];
-
-            var chunks = SplitTextIntoChunks(content, maxTokens);
-            StringBuilder vocabularyResult = new StringBuilder();
-
-            foreach (var chunk in chunks)
-            {
-                // نُشدد على الشكل الصارم للـ prompt
-                var rawVocabulary = await SendToChatGPT(chunk, model,
-                    "Extract important vocabulary terms and translate them to Arabic. Use EXACTLY this format (no deviations):\n\n" +
-                    "EnglishTerm - ArabicTranslation\n\n" +
-                    "Leave exactly one blank line between each entry. No bullets, no numbering, no extra dashes.");
-
-                vocabularyResult.AppendLine(rawVocabulary);
-            }
-
-            return FormatVocabulary(vocabularyResult.ToString());
-        }
-
-
-        // Centralized function to handle ChatGPT API calls
-        private async Task<string> SendToChatGPT(string pageContent, string model, string taskPrompt)
-        {
-            string apiKey = textBoxAPIKey.Text.Trim();
-            if (string.IsNullOrEmpty(apiKey))
-            {
-                UpdateStatus("API Key is missing. Please enter and save your API Key.");
-                return string.Empty;
-            }
-
-            using (HttpClient client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + apiKey);
-
-                var requestContent = new
-                {
-                    model = model,
-                    messages = new[]
-                    {
-                new { role = "system", content = taskPrompt },
-                new { role = "user", content = pageContent }
-            }
-                };
-
-                string jsonContent = System.Text.Json.JsonSerializer.Serialize(requestContent, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase });
-                StringContent httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-                HttpResponseMessage response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
-                if (response.IsSuccessStatusCode)
-                {
-                    string result = await response.Content.ReadAsStringAsync();
-                    var jsonObject = JsonNode.Parse(result);
-                    return jsonObject?["choices"]?[0]?["message"]?["content"]?.ToString() ?? "No content extracted.";
-                }
-                else
-                {
-                    string errorResponse = await response.Content.ReadAsStringAsync();
-                    UpdateStatus($"Error from ChatGPT: {response.StatusCode} - {errorResponse}");
-                    return string.Empty;
-                }
-            }
-        }
-
-
-
-
-
         // Method to save content to specific file
         private void SaveContentToFile(string content, string filePath, string sectionTitle)
         {
@@ -583,93 +374,8 @@ namespace ChatGPTFileProcessor
 
 
 
-        // Function to format MCQs with an answer key
-        private string FormatMCQs(string text)
-        {
-            var formattedMCQs = new List<string>();
-            var mcqBlocks = text.Split(new[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (var block in mcqBlocks)
-            {
-                // Remove any numbering by using regex to strip numbers or bullets at the beginning of lines
-                var cleanBlock = Regex.Replace(block, @"^\d+\.\s*", string.Empty).Trim();
-
-                // Check if the block includes an "Answer" field; if not, add a placeholder
-                if (!cleanBlock.Contains("Answer:"))
-                {
-                    cleanBlock += "\nAnswer: [To be provided]";
-                }
-
-                // Add the cleaned and standardized MCQ to the list, with consistent spacing
-                formattedMCQs.Add(cleanBlock);
-            }
-
-            return string.Join("\n\n", formattedMCQs);
-        }
 
 
-
-        // Function to format flashcards
-
-        private string FormatFlashcards(string text)
-        {
-            var flashcards = new List<string>();
-            var lines = text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-            for (int i = 0; i < lines.Length; i++)
-            {
-                string trimmed = lines[i].Trim();
-
-                // 1) If GPT correctly used “Front:”/“Back:”
-                if (trimmed.StartsWith("Front:", StringComparison.OrdinalIgnoreCase))
-                {
-                    string term = trimmed.Substring(6).Trim();  // remove “Front:”
-                    string definition = "[Definition missing]";
-                    if (i + 1 < lines.Length && lines[i + 1].StartsWith("Back:", StringComparison.OrdinalIgnoreCase))
-                    {
-                        definition = lines[i + 1].Substring(5).Trim();  // remove “Back:”
-                        i++;
-                    }
-                    flashcards.Add($"Front: {term}\nBack: {definition}");
-                }
-                else
-                {
-                    // 2) Fallback: if line contains “–” (en dash) or “-” (hyphen), split into term/definition
-                    var dashSplit = trimmed.Split(new[] { "–" }, 2, StringSplitOptions.None);
-                    if (dashSplit.Length == 2)
-                    {
-                        string term = dashSplit[0].Trim();
-                        string definition = dashSplit[1].Trim();
-                        flashcards.Add($"Front: {term}\nBack: {definition}");
-                    }
-                    else
-                    {
-                        var hyphenSplit = trimmed.Split(new[] { '-' }, 2);
-                        if (hyphenSplit.Length == 2 && hyphenSplit[1].Trim().Length > 0)
-                        {
-                            string term = hyphenSplit[0].Trim();
-                            string definition = hyphenSplit[1].Trim();
-                            flashcards.Add($"Front: {term}\nBack: {definition}");
-                        }
-                        else
-                        {
-                            // 3) Another fallback: “Term: Definition” style
-                            var colonSplit = trimmed.Split(new[] { ':' }, 2);
-                            if (colonSplit.Length == 2 && colonSplit[1].Trim().Length > 0)
-                            {
-                                string term = colonSplit[0].Trim();
-                                string definition = colonSplit[1].Trim();
-                                flashcards.Add($"Front: {term}\nBack: {definition}");
-                            }
-                        }
-                    }
-                }
-            }
-
-            return string.Join("\n\n", flashcards);
-        }
-
-        
 
 
         private string FormatVocabulary(string text)
@@ -797,27 +503,6 @@ namespace ChatGPTFileProcessor
                 return null; // Should not reach here
             }
         }
-
-
-        //public async Task<string> ProcessPdfWithVision(string filePath, string apiKey)
-        //{
-        //    var allPages = ConvertPdfToImages(filePath);
-        //    StringBuilder finalText = new StringBuilder();
-
-        //    foreach (var (pageNumber, image) in allPages)
-        //    {
-        //        UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT...");
-        //        string result = await SendImageToGPTAsync(image, apiKey);
-        //        finalText.AppendLine($"===== Page {pageNumber} =====");
-        //        finalText.AppendLine(result);
-        //        finalText.AppendLine();
-        //        UpdateOverlayLog($"✅ Page {pageNumber} done.");
-        //    }
-
-
-        //    return finalText.ToString();
-        //}
-
 
 
 
