@@ -40,6 +40,10 @@
             this.labelFileName = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.chkVocabulary = new DevExpress.XtraEditors.CheckEdit();
+            this.chkFlashcards = new DevExpress.XtraEditors.CheckEdit();
+            this.chkMCQs = new DevExpress.XtraEditors.CheckEdit();
+            this.chkDefinitions = new DevExpress.XtraEditors.CheckEdit();
             this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.buttonProcessFile = new System.Windows.Forms.Button();
             this.statusLabe = new DevExpress.XtraEditors.LabelControl();
@@ -52,6 +56,10 @@
             this.labelsToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chkVocabulary.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkFlashcards.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkMCQs.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkDefinitions.Properties)).BeginInit();
             this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -157,6 +165,10 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.chkVocabulary);
+            this.groupBox2.Controls.Add(this.chkFlashcards);
+            this.groupBox2.Controls.Add(this.chkMCQs);
+            this.groupBox2.Controls.Add(this.chkDefinitions);
             this.groupBox2.Controls.Add(this.textBoxStatus);
             this.groupBox2.Controls.Add(this.buttonProcessFile);
             this.groupBox2.Controls.Add(this.label2);
@@ -168,6 +180,50 @@
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "FILE AND PROCESS";
+            // 
+            // chkVocabulary
+            // 
+            this.chkVocabulary.Location = new System.Drawing.Point(642, 48);
+            this.chkVocabulary.Name = "chkVocabulary";
+            this.chkVocabulary.Properties.Appearance.Font = new System.Drawing.Font("LBC", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkVocabulary.Properties.Appearance.Options.UseFont = true;
+            this.chkVocabulary.Properties.Caption = "Generate Vocabulary";
+            this.chkVocabulary.Size = new System.Drawing.Size(233, 30);
+            this.chkVocabulary.TabIndex = 13;
+            this.chkVocabulary.CheckedChanged += new System.EventHandler(this.chkVocabulary_CheckedChanged);
+            // 
+            // chkFlashcards
+            // 
+            this.chkFlashcards.Location = new System.Drawing.Point(403, 48);
+            this.chkFlashcards.Name = "chkFlashcards";
+            this.chkFlashcards.Properties.Appearance.Font = new System.Drawing.Font("LBC", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkFlashcards.Properties.Appearance.Options.UseFont = true;
+            this.chkFlashcards.Properties.Caption = "Generate Flashcards";
+            this.chkFlashcards.Size = new System.Drawing.Size(233, 30);
+            this.chkFlashcards.TabIndex = 12;
+            this.chkFlashcards.CheckedChanged += new System.EventHandler(this.chkFlashcards_CheckedChanged);
+            // 
+            // chkMCQs
+            // 
+            this.chkMCQs.Location = new System.Drawing.Point(642, 12);
+            this.chkMCQs.Name = "chkMCQs";
+            this.chkMCQs.Properties.Appearance.Font = new System.Drawing.Font("LBC", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkMCQs.Properties.Appearance.Options.UseFont = true;
+            this.chkMCQs.Properties.Caption = "Generate MCQs";
+            this.chkMCQs.Size = new System.Drawing.Size(233, 30);
+            this.chkMCQs.TabIndex = 11;
+            this.chkMCQs.CheckedChanged += new System.EventHandler(this.chkMCQs_CheckedChanged);
+            // 
+            // chkDefinitions
+            // 
+            this.chkDefinitions.Location = new System.Drawing.Point(403, 12);
+            this.chkDefinitions.Name = "chkDefinitions";
+            this.chkDefinitions.Properties.Appearance.Font = new System.Drawing.Font("LBC", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkDefinitions.Properties.Appearance.Options.UseFont = true;
+            this.chkDefinitions.Properties.Caption = "Generate Definitions";
+            this.chkDefinitions.Size = new System.Drawing.Size(233, 30);
+            this.chkDefinitions.TabIndex = 10;
+            this.chkDefinitions.CheckedChanged += new System.EventHandler(this.chkDefinitions_CheckedChanged);
             // 
             // textBoxStatus
             // 
@@ -288,6 +344,10 @@
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chkVocabulary.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkFlashcards.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkMCQs.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkDefinitions.Properties)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
@@ -317,6 +377,10 @@
         private System.Windows.Forms.ToolTip labelsToolTip;
         private System.Windows.Forms.LinkLabel developerProfileLinkLabel;
         private DevExpress.XtraEditors.LabelControl statusLabe;
+        private DevExpress.XtraEditors.CheckEdit chkVocabulary;
+        private DevExpress.XtraEditors.CheckEdit chkFlashcards;
+        private DevExpress.XtraEditors.CheckEdit chkMCQs;
+        private DevExpress.XtraEditors.CheckEdit chkDefinitions;
     }
 }
 
