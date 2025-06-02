@@ -17,6 +17,7 @@ using Word = Microsoft.Office.Interop.Word;
 using System.Text.Json.Nodes;  // Add this at the top of your file if not present
 using System.Text.RegularExpressions;
 using System.Drawing;
+using Task = System.Threading.Tasks.Task;
 
 
 
@@ -845,8 +846,44 @@ namespace ChatGPTFileProcessor
             }
             return pages;
         }
+
+        //public async Task<string> SendImageToGPTAsync(Image image, string apiKey)
+        //{
+        //    using (var ms = new MemoryStream())
+        //    {
+        //        image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+        //        var base64 = Convert.ToBase64String(ms.ToArray());
+
+        //        var jsonBody = new
+        //        {
+        //            model = "gpt-4o",
+        //            messages = new[] {
+        //        new {
+        //            role = "user",
+        //            content = new object[] {
+        //                new { type = "image_url", image_url = new { url = $"data:image/png;base64,{base64}" } },
+        //                new { type = "text", text = "Please extract all readable content from this page including equations, tables, and diagrams if present." }
+        //            }
+        //        }
+        //    }
+        //        };
+
+        //        using (var http = new HttpClient())
+        //        {
+        //            http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
+
+        //            var content = new StringContent(JsonConvert.SerializeObject(jsonBody), Encoding.UTF8, "application/json");
+        //            var response = await http.PostAsync("https://api.openai.com/v1/chat/completions", content);
+        //            var result = await response.Content.ReadAsStringAsync();
+
+        //            return result;
+        //        }
+        //    }
+        //}
         
-        public async Task<string> SendImageToGPTAsync(Image image, string apiKey)
+        
+        //public async Task<string> SendImageToGPTAsync(Image image, string apiKey)
+        public async System.Threading.Tasks.Task<string> SendImageToGPTAsync(Image image, string apiKey)
         {
             using (var ms = new MemoryStream())
             {
@@ -856,10 +893,13 @@ namespace ChatGPTFileProcessor
                 var jsonBody = new
                 {
                     model = "gpt-4o",
-                    messages = new[] {
-                new {
+                    messages = new[]
+                    {
+                new
+                {
                     role = "user",
-                    content = new object[] {
+                    content = new object[]
+                    {
                         new { type = "image_url", image_url = new { url = $"data:image/png;base64,{base64}" } },
                         new { type = "text", text = "Please extract all readable content from this page including equations, tables, and diagrams if present." }
                     }
@@ -867,18 +907,39 @@ namespace ChatGPTFileProcessor
             }
                 };
 
-                using (var http = new HttpClient())
+                const int maxRetries = 3;
+                const int delayMs = 1500;
+
+                for (int attempt = 1; attempt <= maxRetries; attempt++)
                 {
-                    http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
+                    try
+                    {
+                        using (var http = new HttpClient())
+                        {
+                            http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
 
-                    var content = new StringContent(JsonConvert.SerializeObject(jsonBody), Encoding.UTF8, "application/json");
-                    var response = await http.PostAsync("https://api.openai.com/v1/chat/completions", content);
-                    var result = await response.Content.ReadAsStringAsync();
+                            var content = new StringContent(JsonConvert.SerializeObject(jsonBody), Encoding.UTF8, "application/json");
+                            var response = await http.PostAsync("https://api.openai.com/v1/chat/completions", content);
 
-                    return result;
+                            response.EnsureSuccessStatusCode(); // Throws if not 2xx
+
+                            var result = await response.Content.ReadAsStringAsync();
+                            return result;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        if (attempt == maxRetries)
+                            throw new Exception($"❌ Failed after {maxRetries} attempts. Last error: {ex.Message}");
+
+                        await Task.Delay(delayMs);
+                    }
                 }
+
+                return null; // Should not reach here
             }
         }
+
 
         public async Task<string> ProcessPdfWithVision(string filePath, string apiKey)
         {
