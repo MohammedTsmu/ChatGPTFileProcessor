@@ -16,7 +16,6 @@ using System.Data.SqlClient;
 using Word = Microsoft.Office.Interop.Word;
 using System.Text.Json.Nodes;  // Add this at the top of your file if not present
 using System.Text.RegularExpressions;
-//using iText.Commons.Utils;
 using System.Drawing;
 
 
@@ -246,57 +245,57 @@ namespace ChatGPTFileProcessor
 
 
 
-        private string ReadFileContent(string filePath)
-        {
-            if (filePath.EndsWith(".txt"))
-                return File.ReadAllText(filePath);
-            if (filePath.EndsWith(".docx"))
-                return ReadWordFile(filePath);
-            if (filePath.EndsWith(".pdf"))
-                return ReadPdfFile(filePath);
+        //private string ReadFileContent(string filePath)
+        //{
+        //    if (filePath.EndsWith(".txt"))
+        //        return File.ReadAllText(filePath);
+        //    if (filePath.EndsWith(".docx"))
+        //        return ReadWordFile(filePath);
+        //    if (filePath.EndsWith(".pdf"))
+        //        return ReadPdfFile(filePath);
 
-            throw new NotSupportedException("Unsupported file format.");
-        }
+        //    throw new NotSupportedException("Unsupported file format.");
+        //}
 
 
-        private string ReadTextFile(string filePath)
-        {
-            return File.ReadAllText(filePath);
-        }
+        //private string ReadTextFile(string filePath)
+        //{
+        //    return File.ReadAllText(filePath);
+        //}
 
-        private string ReadWordFile(string filePath)
-        {
-            Microsoft.Office.Interop.Word.Application wordApp = new Microsoft.Office.Interop.Word.Application();
-            Document doc = wordApp.Documents.Open(filePath);
-            string text = doc.Content.Text;
-            doc.Close(false);  // Close the document without saving changes
-            wordApp.Quit(false);  // Quit Word Application
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(wordApp);
-            return text;
-        }
+        //private string ReadWordFile(string filePath)
+        //{
+        //    Microsoft.Office.Interop.Word.Application wordApp = new Microsoft.Office.Interop.Word.Application();
+        //    Document doc = wordApp.Documents.Open(filePath);
+        //    string text = doc.Content.Text;
+        //    doc.Close(false);  // Close the document without saving changes
+        //    wordApp.Quit(false);  // Quit Word Application
+        //    System.Runtime.InteropServices.Marshal.ReleaseComObject(wordApp);
+        //    return text;
+        //}
 
-        private string ReadPdfFile(string filePath)
-        {
-            StringBuilder text = new StringBuilder();
+        //private string ReadPdfFile(string filePath)
+        //{
+        //    StringBuilder text = new StringBuilder();
 
-            using (PdfReader pdfReader = new PdfReader(filePath))
-            using (PdfDocument pdfDoc = new PdfDocument(pdfReader))
-            {
-                int totalPages = pdfDoc.GetNumberOfPages();
+        //    using (PdfReader pdfReader = new PdfReader(filePath))
+        //    using (PdfDocument pdfDoc = new PdfDocument(pdfReader))
+        //    {
+        //        int totalPages = pdfDoc.GetNumberOfPages();
 
-                // تأكد أن القيم ضمن الحدود الصحيحة
-                int from = Math.Max(1, Math.Min(selectedFromPage, totalPages));
-                int to = Math.Max(1, Math.Min(selectedToPage, totalPages));
+        //        // تأكد أن القيم ضمن الحدود الصحيحة
+        //        int from = Math.Max(1, Math.Min(selectedFromPage, totalPages));
+        //        int to = Math.Max(1, Math.Min(selectedToPage, totalPages));
 
-                for (int i = from; i <= to; i++)
-                {
-                    text.Append(PdfTextExtractor.GetTextFromPage(pdfDoc.GetPage(i)));
-                    text.AppendLine();
-                }
-            }
+        //        for (int i = from; i <= to; i++)
+        //        {
+        //            text.Append(PdfTextExtractor.GetTextFromPage(pdfDoc.GetPage(i)));
+        //            text.AppendLine();
+        //        }
+        //    }
 
-            return text.ToString();
-        }
+        //    return text.ToString();
+        //}
 
 
         // Function to split text into manageable chunks based on model token limits
@@ -430,16 +429,16 @@ namespace ChatGPTFileProcessor
             return FormatVocabulary(vocabularyResult.ToString());
         }
 
-        private int GetChunkSizeForModel()
-        {
-            string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "gpt-3.5-turbo";
-            if (modelDetails.ContainsKey(selectedModel))
-            {
-                int maxTokens = modelDetails[selectedModel].maxTokens;
-                return (int)(maxTokens * 0.80);  // Use 80% of max tokens for buffer
-            }
-            return 4096;  // Default chunk size if model not found
-        }
+        //private int GetChunkSizeForModel()
+        //{
+        //    string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "gpt-3.5-turbo";
+        //    if (modelDetails.ContainsKey(selectedModel))
+        //    {
+        //        int maxTokens = modelDetails[selectedModel].maxTokens;
+        //        return (int)(maxTokens * 0.80);  // Use 80% of max tokens for buffer
+        //    }
+        //    return 4096;  // Default chunk size if model not found
+        //}
 
 
 
@@ -487,42 +486,42 @@ namespace ChatGPTFileProcessor
         }
 
 
-        private void SaveResultsToWord(string outputContent)
-        {
-            Word.Application wordApp = new Word.Application();
-            Word.Document doc = wordApp.Documents.Add();
+        //private void SaveResultsToWord(string outputContent)
+        //{
+        //    Word.Application wordApp = new Word.Application();
+        //    Word.Document doc = wordApp.Documents.Add();
 
-            // Split content by main sections and remove extraneous symbols
-            string[] sections = outputContent.Split(new[] { "Definitions:", "MCQs:", "Flashcards:", "Vocabulary:" }, StringSplitOptions.None);
+        //    // Split content by main sections and remove extraneous symbols
+        //    string[] sections = outputContent.Split(new[] { "Definitions:", "MCQs:", "Flashcards:", "Vocabulary:" }, StringSplitOptions.None);
 
-            // Process each section individually, with uniform formatting
-            string[] sectionHeaders = { "Definitions", "MCQs", "Flashcards", "Vocabulary" };
-            for (int i = 1; i < sections.Length; i++)
-            {
-                // Add section header in bold
-                Word.Paragraph headerPara = doc.Content.Paragraphs.Add();
-                headerPara.Range.Text = $"{sectionHeaders[i - 1]}:";
-                headerPara.Range.Font.Bold = 1;
-                headerPara.Range.InsertParagraphAfter();
+        //    // Process each section individually, with uniform formatting
+        //    string[] sectionHeaders = { "Definitions", "MCQs", "Flashcards", "Vocabulary" };
+        //    for (int i = 1; i < sections.Length; i++)
+        //    {
+        //        // Add section header in bold
+        //        Word.Paragraph headerPara = doc.Content.Paragraphs.Add();
+        //        headerPara.Range.Text = $"{sectionHeaders[i - 1]}:";
+        //        headerPara.Range.Font.Bold = 1;
+        //        headerPara.Range.InsertParagraphAfter();
 
-                // Insert section content without bolding
-                Word.Paragraph contentPara = doc.Content.Paragraphs.Add();
-                contentPara.Range.Text = PostProcessContent(sections[i]);
-                contentPara.Range.Font.Bold = 0;
-                contentPara.Range.InsertParagraphAfter();
+        //        // Insert section content without bolding
+        //        Word.Paragraph contentPara = doc.Content.Paragraphs.Add();
+        //        contentPara.Range.Text = PostProcessContent(sections[i]);
+        //        contentPara.Range.Font.Bold = 0;
+        //        contentPara.Range.InsertParagraphAfter();
 
-                // Add spacing after each section
-                contentPara.Range.InsertParagraphAfter();
-            }
+        //        // Add spacing after each section
+        //        contentPara.Range.InsertParagraphAfter();
+        //    }
 
-            // Save the document
-            string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ChatGPT_Processed_Output_Formatted.docx");
-            doc.SaveAs2(outputPath);
-            doc.Close();
-            wordApp.Quit();
+        //    // Save the document
+        //    string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ChatGPT_Processed_Output_Formatted.docx");
+        //    doc.SaveAs2(outputPath);
+        //    doc.Close();
+        //    wordApp.Quit();
 
-            UpdateStatus($"Results saved successfully to {outputPath}");
-        }
+        //    UpdateStatus($"Results saved successfully to {outputPath}");
+        //}
 
 
         // Method to save content to specific file
@@ -772,50 +771,50 @@ namespace ChatGPTFileProcessor
 
 
 
-        private async Task<string> TranslateVocabularyToArabic(string vocabularyText)
-        {
-            string apiKey = textBoxAPIKey.Text.Trim();
-            if (string.IsNullOrEmpty(apiKey))
-            {
-                UpdateStatus("API Key is missing. Please enter and save your API Key.");
-                return string.Empty;
-            }
+        //private async Task<string> TranslateVocabularyToArabic(string vocabularyText)
+        //{
+        //    string apiKey = textBoxAPIKey.Text.Trim();
+        //    if (string.IsNullOrEmpty(apiKey))
+        //    {
+        //        UpdateStatus("API Key is missing. Please enter and save your API Key.");
+        //        return string.Empty;
+        //    }
 
-            using (HttpClient client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + apiKey);
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        client.DefaultRequestHeaders.Add("Authorization", "Bearer " + apiKey);
 
-                var requestContent = new
-                {
-                    model = "gpt-3.5-turbo",
-                    messages = new[]
-                    {
-                new { role = "system", content = "Translate the following vocabulary terms from English to Arabic. Use this format:\n\n1. English Term - Arabic Translation" },
-                new { role = "user", content = vocabularyText }
-            }
-                };
+        //        var requestContent = new
+        //        {
+        //            model = "gpt-3.5-turbo",
+        //            messages = new[]
+        //            {
+        //        new { role = "system", content = "Translate the following vocabulary terms from English to Arabic. Use this format:\n\n1. English Term - Arabic Translation" },
+        //        new { role = "user", content = vocabularyText }
+        //    }
+        //        };
 
-                string jsonContent = System.Text.Json.JsonSerializer.Serialize(requestContent, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase });
-                StringContent httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+        //        string jsonContent = System.Text.Json.JsonSerializer.Serialize(requestContent, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase });
+        //        StringContent httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
-                if (response.IsSuccessStatusCode)
-                {
-                    string result = await response.Content.ReadAsStringAsync();
+        //        HttpResponseMessage response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            string result = await response.Content.ReadAsStringAsync();
 
-                    // Parse JSON response to get only the content
-                    var jsonObject = JsonNode.Parse(result);
-                    string content = jsonObject?["choices"]?[0]?["message"]?["content"]?.ToString();
-                    return content ?? "Translation not available.";
-                }
-                else
-                {
-                    string errorResponse = await response.Content.ReadAsStringAsync();
-                    UpdateStatus($"Error from ChatGPT: {response.StatusCode} - {errorResponse}");
-                    return string.Empty;
-                }
-            }
-        }
+        //            // Parse JSON response to get only the content
+        //            var jsonObject = JsonNode.Parse(result);
+        //            string content = jsonObject?["choices"]?[0]?["message"]?["content"]?.ToString();
+        //            return content ?? "Translation not available.";
+        //        }
+        //        else
+        //        {
+        //            string errorResponse = await response.Content.ReadAsStringAsync();
+        //            UpdateStatus($"Error from ChatGPT: {response.StatusCode} - {errorResponse}");
+        //            return string.Empty;
+        //        }
+        //    }
+        //}
 
         private void developerProfileLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
