@@ -1,23 +1,17 @@
 ﻿using System;
-using System.IO;
-using System.Text;
-using System.Windows.Forms;
-using System.Xml.Linq;
-using iText.Kernel.Pdf.Canvas.Parser;
-using iText.Kernel.Pdf;
-using Microsoft.Office.Interop.Word;
-using System.Net.Http;
-using System.Linq;
 using System.Collections.Generic;
-using System.Text.Json;
-using Newtonsoft.Json;
-using System.Threading.Tasks;
-using System.Data.SqlClient;
-using Word = Microsoft.Office.Interop.Word;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Text.Json.Nodes;  // Add this at the top of your file if not present
 using System.Text.RegularExpressions;
-using System.Drawing;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Newtonsoft.Json;
 using Task = System.Threading.Tasks.Task;
+using Word = Microsoft.Office.Interop.Word;
 
 
 
@@ -123,7 +117,7 @@ namespace ChatGPTFileProcessor
             textBoxStatus.AppendText(message + Environment.NewLine);
         }
 
-       
+
 
         private void buttonBrowseFile_Click(object sender, EventArgs e)
         {
@@ -196,6 +190,9 @@ namespace ChatGPTFileProcessor
                 if (string.IsNullOrWhiteSpace(extractedContent))
                 {
                     UpdateStatus("⚠️ No content was extracted. Please verify the file and API key.");
+                    buttonProcessFile.Enabled = true;
+                    buttonBrowseFile.Enabled = true;
+                    HideOverlay();
                     return;
                 }
 
@@ -217,6 +214,9 @@ namespace ChatGPTFileProcessor
                 UpdateOverlayLog("⏳ Generating flashcards...");
                 string flashcards = await GenerateFlashcards(extractedContent, modelName);
                 SaveContentToFile(flashcards, flashcardsFilePath, "Flashcards");
+
+
+
 
                 UpdateStatus("⏳ Generating vocabulary...");
                 UpdateOverlayLog("⏳ Generating vocabulary...");
@@ -244,59 +244,6 @@ namespace ChatGPTFileProcessor
         }
 
 
-
-
-        //private string ReadFileContent(string filePath)
-        //{
-        //    if (filePath.EndsWith(".txt"))
-        //        return File.ReadAllText(filePath);
-        //    if (filePath.EndsWith(".docx"))
-        //        return ReadWordFile(filePath);
-        //    if (filePath.EndsWith(".pdf"))
-        //        return ReadPdfFile(filePath);
-
-        //    throw new NotSupportedException("Unsupported file format.");
-        //}
-
-
-        //private string ReadTextFile(string filePath)
-        //{
-        //    return File.ReadAllText(filePath);
-        //}
-
-        //private string ReadWordFile(string filePath)
-        //{
-        //    Microsoft.Office.Interop.Word.Application wordApp = new Microsoft.Office.Interop.Word.Application();
-        //    Document doc = wordApp.Documents.Open(filePath);
-        //    string text = doc.Content.Text;
-        //    doc.Close(false);  // Close the document without saving changes
-        //    wordApp.Quit(false);  // Quit Word Application
-        //    System.Runtime.InteropServices.Marshal.ReleaseComObject(wordApp);
-        //    return text;
-        //}
-
-        //private string ReadPdfFile(string filePath)
-        //{
-        //    StringBuilder text = new StringBuilder();
-
-        //    using (PdfReader pdfReader = new PdfReader(filePath))
-        //    using (PdfDocument pdfDoc = new PdfDocument(pdfReader))
-        //    {
-        //        int totalPages = pdfDoc.GetNumberOfPages();
-
-        //        // تأكد أن القيم ضمن الحدود الصحيحة
-        //        int from = Math.Max(1, Math.Min(selectedFromPage, totalPages));
-        //        int to = Math.Max(1, Math.Min(selectedToPage, totalPages));
-
-        //        for (int i = from; i <= to; i++)
-        //        {
-        //            text.Append(PdfTextExtractor.GetTextFromPage(pdfDoc.GetPage(i)));
-        //            text.AppendLine();
-        //        }
-        //    }
-
-        //    return text.ToString();
-        //}
 
 
         // Function to split text into manageable chunks based on model token limits
@@ -375,24 +322,7 @@ namespace ChatGPTFileProcessor
         }
 
 
-        // Function to ensure each MCQ includes an answer key
-        private string EnsureAnswerKeyInMCQs(string mcqContent)
-        {
-            var mcqsWithAnswers = new List<string>();
-            var mcqBlocks = mcqContent.Split(new[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            foreach (var block in mcqBlocks)
-            {
-                // Check if the block includes an answer key; if not, add a placeholder
-                string mcqWithAnswer = block.Contains("Answer:") ? block : block + "\nAnswer: [To be provided]";
-                mcqsWithAnswers.Add(mcqWithAnswer);
-            }
-
-            return string.Join("\n\n", mcqsWithAnswers);
-        }
-
-
-        //// Flashcards Prompt with Chunking
         private async Task<string> GenerateFlashcards(string content, string model)
         {
             var maxTokens = modelContextLimits.ContainsKey(model) ? modelContextLimits[model] : 4096;
@@ -401,17 +331,33 @@ namespace ChatGPTFileProcessor
 
             foreach (var chunk in chunks)
             {
-                // Generate flashcards without predefined structure
-                string rawFlashcards = await SendToChatGPT(chunk, model, "Create flashcards for key terms and concepts with a 'Front' for term and 'Back' for definition.");
+                // Use a strict “Front:/Back:” prompt so GPT always outputs exactly that format
+                string rawFlashcards = await SendToChatGPT(chunk, model,
+                    "Create flashcards for each key medical and pharmacy term in this text, using EXACTLY this format (do NOT deviate):\n\n" +
+                    "Front: [Term]\n" +
+                    "Back:  [Definition]\n\n" +
+                    "Leave exactly one blank line between each card. Do not number or bullet anything.");
 
-                // Apply formatting to each flashcard entry
+                // DEBUG: write raw GPT output to a file on Desktop, so you can inspect if something still isn't parsed
+                try
+                {
+                    string debugPath = Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                        "Flashcards_RawDebug.txt"
+                    );
+                    File.AppendAllText(debugPath, rawFlashcards + "\n\n---- End of chunk ----\n\n");
+                }
+                catch { /* ignore any file‐write errors */ }
+
+                // Format it—this routine will pick up “Front:”/“Back:” or fallback on “Term – Definition” style
                 string formattedFlashcards = FormatFlashcards(rawFlashcards);
                 flashcardsResult.AppendLine(formattedFlashcards);
-                flashcardsResult.AppendLine();  // Space between flashcard sets
+                flashcardsResult.AppendLine();
             }
 
             return flashcardsResult.ToString();
         }
+
 
         // Vocabulary Prompt with Chunking and Formatting
         private async Task<string> GenerateVocabulary(string content, string model)
@@ -429,18 +375,6 @@ namespace ChatGPTFileProcessor
             // Apply formatting to clean up the output
             return FormatVocabulary(vocabularyResult.ToString());
         }
-
-        //private int GetChunkSizeForModel()
-        //{
-        //    string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "gpt-3.5-turbo";
-        //    if (modelDetails.ContainsKey(selectedModel))
-        //    {
-        //        int maxTokens = modelDetails[selectedModel].maxTokens;
-        //        return (int)(maxTokens * 0.80);  // Use 80% of max tokens for buffer
-        //    }
-        //    return 4096;  // Default chunk size if model not found
-        //}
-
 
 
         // Centralized function to handle ChatGPT API calls
@@ -487,42 +421,7 @@ namespace ChatGPTFileProcessor
         }
 
 
-        //private void SaveResultsToWord(string outputContent)
-        //{
-        //    Word.Application wordApp = new Word.Application();
-        //    Word.Document doc = wordApp.Documents.Add();
 
-        //    // Split content by main sections and remove extraneous symbols
-        //    string[] sections = outputContent.Split(new[] { "Definitions:", "MCQs:", "Flashcards:", "Vocabulary:" }, StringSplitOptions.None);
-
-        //    // Process each section individually, with uniform formatting
-        //    string[] sectionHeaders = { "Definitions", "MCQs", "Flashcards", "Vocabulary" };
-        //    for (int i = 1; i < sections.Length; i++)
-        //    {
-        //        // Add section header in bold
-        //        Word.Paragraph headerPara = doc.Content.Paragraphs.Add();
-        //        headerPara.Range.Text = $"{sectionHeaders[i - 1]}:";
-        //        headerPara.Range.Font.Bold = 1;
-        //        headerPara.Range.InsertParagraphAfter();
-
-        //        // Insert section content without bolding
-        //        Word.Paragraph contentPara = doc.Content.Paragraphs.Add();
-        //        contentPara.Range.Text = PostProcessContent(sections[i]);
-        //        contentPara.Range.Font.Bold = 0;
-        //        contentPara.Range.InsertParagraphAfter();
-
-        //        // Add spacing after each section
-        //        contentPara.Range.InsertParagraphAfter();
-        //    }
-
-        //    // Save the document
-        //    string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ChatGPT_Processed_Output_Formatted.docx");
-        //    doc.SaveAs2(outputPath);
-        //    doc.Close();
-        //    wordApp.Quit();
-
-        //    UpdateStatus($"Results saved successfully to {outputPath}");
-        //}
 
 
         // Method to save content to specific file
@@ -611,59 +510,6 @@ namespace ChatGPTFileProcessor
 
 
 
-        //Create Post-Processing Functions
-        //Create functions to check each section’s structure and reformat as needed after generation.
-        // Function to post-process generated content
-        private string PostProcessContent(string generatedContent)
-        {
-            // Define expected section titles in the correct order
-            string[] sectionHeaders = { "Definitions:", "MCQs:", "Flashcards:", "Vocabulary:" };
-            StringBuilder processedContent = new StringBuilder();
-
-            // Split content by main sections; ignore empty entries
-            string[] sections = generatedContent.Split(sectionHeaders, StringSplitOptions.RemoveEmptyEntries);
-
-            for (int i = 0; i < sectionHeaders.Length; i++)
-            {
-                // Verify that the section exists in the array to avoid index errors
-                if (i < sections.Length)
-                {
-                    // Add section title
-                    processedContent.AppendLine(sectionHeaders[i]);
-                    processedContent.AppendLine();
-
-                    // Process the section content to ensure clean formatting
-                    string formattedSectionContent = FormatSectionContent(sections[i].Trim());
-                    processedContent.AppendLine(formattedSectionContent);
-                    processedContent.AppendLine();
-                }
-                else
-                {
-                    // Log missing section data if it’s absent
-                    UpdateStatus($"{sectionHeaders[i].Replace(":", "")} section is missing in the generated content.");
-                }
-            }
-            return processedContent.ToString();
-        }
-
-        // Example helper to ensure clean, non-numbered formatting within each section
-        private string FormatSectionContent(string sectionText)
-        {
-            StringBuilder formattedContent = new StringBuilder();
-            string[] lines = sectionText.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (var line in lines)
-            {
-                // Trim and add blank lines to space out each entry
-                formattedContent.AppendLine(line.Trim());
-                formattedContent.AppendLine();  // Space between each entry
-            }
-            return formattedContent.ToString();
-        }
-
-
-
-
         // Function to format definitions
         private string FormatDefinitions(string text)
         {
@@ -708,38 +554,66 @@ namespace ChatGPTFileProcessor
 
 
         // Function to format flashcards
+
         private string FormatFlashcards(string text)
         {
-            var formattedFlashcards = new List<string>();
+            var flashcards = new List<string>();
             var lines = text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
             for (int i = 0; i < lines.Length; i++)
             {
-                // Trim each line to avoid whitespace issues
-                string line = lines[i].Trim();
+                string trimmed = lines[i].Trim();
 
-                // Check if line is a "Front" term
-                if (line.StartsWith("Front:", StringComparison.OrdinalIgnoreCase))
+                // 1) If GPT correctly used “Front:”/“Back:”
+                if (trimmed.StartsWith("Front:", StringComparison.OrdinalIgnoreCase))
                 {
-                    // Get the term and proceed to find its "Back" definition
-                    string term = line.Substring(6).Trim();  // Remove "Front:" prefix
-
-                    // Move to the next line to check for "Back"
-                    string definition = "[Definition missing]";  // Default if no "Back" is found
+                    string term = trimmed.Substring(6).Trim();  // remove “Front:”
+                    string definition = "[Definition missing]";
                     if (i + 1 < lines.Length && lines[i + 1].StartsWith("Back:", StringComparison.OrdinalIgnoreCase))
                     {
-                        definition = lines[i + 1].Substring(5).Trim();  // Extract "Back" definition
-                        i++;  // Skip to next line as "Back" has been processed
+                        definition = lines[i + 1].Substring(5).Trim();  // remove “Back:”
+                        i++;
                     }
-
-                    // Append formatted flashcard entry
-                    formattedFlashcards.Add($"Front: {term}\nBack: {definition}");
+                    flashcards.Add($"Front: {term}\nBack: {definition}");
+                }
+                else
+                {
+                    // 2) Fallback: if line contains “–” (en dash) or “-” (hyphen), split into term/definition
+                    var dashSplit = trimmed.Split(new[] { "–" }, 2, StringSplitOptions.None);
+                    if (dashSplit.Length == 2)
+                    {
+                        string term = dashSplit[0].Trim();
+                        string definition = dashSplit[1].Trim();
+                        flashcards.Add($"Front: {term}\nBack: {definition}");
+                    }
+                    else
+                    {
+                        var hyphenSplit = trimmed.Split(new[] { '-' }, 2);
+                        if (hyphenSplit.Length == 2 && hyphenSplit[1].Trim().Length > 0)
+                        {
+                            string term = hyphenSplit[0].Trim();
+                            string definition = hyphenSplit[1].Trim();
+                            flashcards.Add($"Front: {term}\nBack: {definition}");
+                        }
+                        else
+                        {
+                            // 3) Another fallback: “Term: Definition” style
+                            var colonSplit = trimmed.Split(new[] { ':' }, 2);
+                            if (colonSplit.Length == 2 && colonSplit[1].Trim().Length > 0)
+                            {
+                                string term = colonSplit[0].Trim();
+                                string definition = colonSplit[1].Trim();
+                                flashcards.Add($"Front: {term}\nBack: {definition}");
+                            }
+                        }
+                    }
                 }
             }
 
-            // Join all flashcards with line breaks for clarity
-            return string.Join("\n\n", formattedFlashcards);
+            return string.Join("\n\n", flashcards);
         }
+
+
 
 
 
@@ -772,51 +646,6 @@ namespace ChatGPTFileProcessor
 
 
 
-        //private async Task<string> TranslateVocabularyToArabic(string vocabularyText)
-        //{
-        //    string apiKey = textBoxAPIKey.Text.Trim();
-        //    if (string.IsNullOrEmpty(apiKey))
-        //    {
-        //        UpdateStatus("API Key is missing. Please enter and save your API Key.");
-        //        return string.Empty;
-        //    }
-
-        //    using (HttpClient client = new HttpClient())
-        //    {
-        //        client.DefaultRequestHeaders.Add("Authorization", "Bearer " + apiKey);
-
-        //        var requestContent = new
-        //        {
-        //            model = "gpt-3.5-turbo",
-        //            messages = new[]
-        //            {
-        //        new { role = "system", content = "Translate the following vocabulary terms from English to Arabic. Use this format:\n\n1. English Term - Arabic Translation" },
-        //        new { role = "user", content = vocabularyText }
-        //    }
-        //        };
-
-        //        string jsonContent = System.Text.Json.JsonSerializer.Serialize(requestContent, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase });
-        //        StringContent httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-        //        HttpResponseMessage response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            string result = await response.Content.ReadAsStringAsync();
-
-        //            // Parse JSON response to get only the content
-        //            var jsonObject = JsonNode.Parse(result);
-        //            string content = jsonObject?["choices"]?[0]?["message"]?["content"]?.ToString();
-        //            return content ?? "Translation not available.";
-        //        }
-        //        else
-        //        {
-        //            string errorResponse = await response.Content.ReadAsStringAsync();
-        //            UpdateStatus($"Error from ChatGPT: {response.StatusCode} - {errorResponse}");
-        //            return string.Empty;
-        //        }
-        //    }
-        //}
-
         private void developerProfileLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             // Mark the link as visited
@@ -837,8 +666,6 @@ namespace ChatGPTFileProcessor
 
                 for (int i = from; i <= to; i++)
                 {
-                    //UpdateOverlayLog($"🖼️ Sending page {i + 1} of selected range to GPT...");
-
                     // high DPI (300+) for better image quality
                     var img = document.Render(i, dpi, dpi, true);
                     pages.Add((i + 1, img));
@@ -847,41 +674,8 @@ namespace ChatGPTFileProcessor
             return pages;
         }
 
-        //public async Task<string> SendImageToGPTAsync(Image image, string apiKey)
-        //{
-        //    using (var ms = new MemoryStream())
-        //    {
-        //        image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-        //        var base64 = Convert.ToBase64String(ms.ToArray());
 
-        //        var jsonBody = new
-        //        {
-        //            model = "gpt-4o",
-        //            messages = new[] {
-        //        new {
-        //            role = "user",
-        //            content = new object[] {
-        //                new { type = "image_url", image_url = new { url = $"data:image/png;base64,{base64}" } },
-        //                new { type = "text", text = "Please extract all readable content from this page including equations, tables, and diagrams if present." }
-        //            }
-        //        }
-        //    }
-        //        };
 
-        //        using (var http = new HttpClient())
-        //        {
-        //            http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
-
-        //            var content = new StringContent(JsonConvert.SerializeObject(jsonBody), Encoding.UTF8, "application/json");
-        //            var response = await http.PostAsync("https://api.openai.com/v1/chat/completions", content);
-        //            var result = await response.Content.ReadAsStringAsync();
-
-        //            return result;
-        //        }
-        //    }
-        //}
-        
-        
         //public async Task<string> SendImageToGPTAsync(Image image, string apiKey)
         public async System.Threading.Tasks.Task<string> SendImageToGPTAsync(Image image, string apiKey)
         {
@@ -919,7 +713,13 @@ namespace ChatGPTFileProcessor
                             http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
 
                             var content = new StringContent(JsonConvert.SerializeObject(jsonBody), Encoding.UTF8, "application/json");
+                            //var response = await http.PostAsync("https://api.openai.com/v1/chat/completions", content);
                             var response = await http.PostAsync("https://api.openai.com/v1/chat/completions", content);
+                            if (!response.IsSuccessStatusCode)
+                            {
+                                throw new Exception($"API Error: {response.StatusCode} - {await response.Content.ReadAsStringAsync()}");
+                            }
+
 
                             response.EnsureSuccessStatusCode(); // Throws if not 2xx
 
@@ -960,7 +760,7 @@ namespace ChatGPTFileProcessor
             return finalText.ToString();
         }
 
-        
+
 
         private void InitializeOverlay()
         {
@@ -1013,7 +813,7 @@ namespace ChatGPTFileProcessor
             this.Controls.Add(overlayPanel);
         }
 
-      
+
 
         private void UpdateOverlayLog(string message)
         {
@@ -1021,12 +821,7 @@ namespace ChatGPTFileProcessor
 
             if (logTextBox.InvokeRequired)
             {
-                //logTextBox.Invoke(new Action(() =>
-                //{
-                //    logTextBox.AppendText(message + Environment.NewLine);
-                //}));
                 logTextBox.Invoke(new System.Action(() => logTextBox.AppendText(message + Environment.NewLine)));
-
             }
             else
             {

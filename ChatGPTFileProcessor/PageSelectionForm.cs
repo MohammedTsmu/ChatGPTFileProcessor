@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using DevExpress.XtraBars.Ribbon;
-using DevExpress.XtraBars.Ribbon.Gallery; // مهم للمكتبة
-using PdfiumViewer;
 using DevExpress.Utils.Drawing;
-using Newtonsoft.Json;
-using System.IO;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
+using DevExpress.XtraBars.Ribbon;
+using PdfiumViewer;
 
 
 namespace ChatGPTFileProcessor
@@ -53,7 +46,7 @@ namespace ChatGPTFileProcessor
                 spinTo.Value = temp;
             }
         }
-            
+
 
         public void LoadPdfPreview(string filePath)
         {
@@ -125,6 +118,6 @@ namespace ChatGPTFileProcessor
             return pages;
         }
 
-        
+
     }
 }
