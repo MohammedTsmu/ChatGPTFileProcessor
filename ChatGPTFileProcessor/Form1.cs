@@ -17,8 +17,6 @@ using Word = Microsoft.Office.Interop.Word;
 
 
 
-
-
 namespace ChatGPTFileProcessor
 {
     public partial class Form1 : Form
@@ -278,16 +276,42 @@ namespace ChatGPTFileProcessor
 
 
 
-        // MCQs Prompt with Explicit Answer Key Request and Chunking
+        //// MCQs Prompt with Explicit Answer Key Request and Chunking
+        //private async Task<string> GenerateMCQs(string content, string model)
+        //{   
+        //    if (!modelDetails.ContainsKey(model))
+        //    {
+        //        UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
+        //        model = "gpt-3.5-turbo";
+        //    }
+        //    int maxTokens = modelDetails[model].maxTokens;
+        //    // ...
+
+        //    var chunks = SplitTextIntoChunks(content, maxTokens);
+        //    StringBuilder mcqsResult = new StringBuilder();
+
+        //    foreach (var chunk in chunks)
+        //    {
+        //        string mcqResponse = await SendToChatGPT(chunk, model,
+        //            "Generate multiple-choice questions based on the content. For each question, provide four answer options labeled A, B, C, and D, followed by the correct answer as 'Answer: [Correct Option]'.");
+
+        //        // Apply formatting to ensure consistency
+        //        string processedMCQ = FormatMCQs(mcqResponse);
+        //        mcqsResult.AppendLine(processedMCQ);
+        //        mcqsResult.AppendLine();  // Separate each MCQ for readability
+        //    }
+
+        //    return mcqsResult.ToString();
+        //}
         private async Task<string> GenerateMCQs(string content, string model)
-        {   
+        {
+            // توحيد المنبع لاستخدام modelDetails فقط
             if (!modelDetails.ContainsKey(model))
             {
                 UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
                 model = "gpt-3.5-turbo";
             }
             int maxTokens = modelDetails[model].maxTokens;
-            // ...
 
             var chunks = SplitTextIntoChunks(content, maxTokens);
             StringBuilder mcqsResult = new StringBuilder();
@@ -297,14 +321,14 @@ namespace ChatGPTFileProcessor
                 string mcqResponse = await SendToChatGPT(chunk, model,
                     "Generate multiple-choice questions based on the content. For each question, provide four answer options labeled A, B, C, and D, followed by the correct answer as 'Answer: [Correct Option]'.");
 
-                // Apply formatting to ensure consistency
                 string processedMCQ = FormatMCQs(mcqResponse);
                 mcqsResult.AppendLine(processedMCQ);
-                mcqsResult.AppendLine();  // Separate each MCQ for readability
+                mcqsResult.AppendLine();
             }
 
             return mcqsResult.ToString();
         }
+
 
 
         // Flashcards Prompt with Chunking and Strict Formatting
@@ -351,28 +375,29 @@ namespace ChatGPTFileProcessor
         }
 
 
-        // Vocabulary Prompt with Chunking and Formatting
-        private async Task<string> GenerateVocabulary(string content, string model)
-        {
-            if (!modelDetails.ContainsKey(model))
-            {
-                UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
-                model = "gpt-3.5-turbo";
-            }
-            int maxTokens = modelDetails[model].maxTokens;
+        //// Vocabulary Prompt with Chunking and Formatting
+        //private async Task<string> GenerateVocabulary(string content, string model)
+        //{
+        //    if (!modelDetails.ContainsKey(model))
+        //    {
+        //        UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
+        //        model = "gpt-3.5-turbo";
+        //    }
+        //    int maxTokens = modelDetails[model].maxTokens;
 
-            var chunks = SplitTextIntoChunks(content, maxTokens);
-            StringBuilder vocabularyResult = new StringBuilder();
+        //    var chunks = SplitTextIntoChunks(content, maxTokens);
+        //    StringBuilder vocabularyResult = new StringBuilder();
 
-            foreach (var chunk in chunks)
-            {
-                var rawVocabulary = await SendToChatGPT(chunk, model, "Extract important vocabulary terms and translate them to Arabic. Use the format: 'English Term - Arabic Translation'. Avoid numbering or bullets, and place a blank line after each entry.");
-                vocabularyResult.AppendLine(rawVocabulary);
-            }
+        //    foreach (var chunk in chunks)
+        //    {
+        //        //var rawVocabulary = await SendToChatGPT(chunk, model, "Extract important vocabulary terms and translate them to Arabic. Use the format: 'English Term - Arabic Translation'. Avoid numbering or bullets, and place a blank line after each entry.");
+        //        var rawVocabulary = await SendToChatGPT(chunk, model, "Extract important vocabulary terms and translate them to Arabic.\r\nUse EXACTLY this format (no deviations):\r\n\r\nEnglishTerm - ArabicTranslation\r\n\r\nPlace exactly one blank line between each entry. Do NOT add any bullet, dash إضافي، أو numbering.\r\n");
+        //        vocabularyResult.AppendLine(rawVocabulary);
+        //    }
 
-            // Apply formatting to clean up the output
-            return FormatVocabulary(vocabularyResult.ToString());
-        }
+        //    // Apply formatting to clean up the output
+        //    return FormatVocabulary(vocabularyResult.ToString());
+        //}
 
 
         // Centralized function to handle ChatGPT API calls
@@ -617,20 +642,70 @@ namespace ChatGPTFileProcessor
             return string.Join("\n\n", flashcards);
         }
 
+        //// Function to format vocabulary terms
+        //private string FormatVocabulary(string text)
+        //{
+        //    var formattedVocabulary = new List<string>();
+        //    var terms = text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
+        //    foreach (var line in terms)
+        //    {
+        //        // نمط جديد يقبل dash أو en-dash أو colon، ويتجاهل المسافات الزائدة
+        //        var match = Regex.Match(line, @"^(?<english>.+?)\s*[-–:]\s*(?<arabic>.+)$");
+        //        if (match.Success)
+        //        {
+        //            string english = match.Groups["english"].Value.Trim();
+        //            string arabic = match.Groups["arabic"].Value.Trim();
+        //            formattedVocabulary.Add($"{english} - {arabic}");
+        //        }
+        //        else
+        //        {
+        //            // إذا لم يتعرف النمط، نعلّق السطر، لكن لا نضيف أكثر من مرة "[Translation Needed]"
+        //            string trimmed = line.Trim();
+        //            if (!string.IsNullOrWhiteSpace(trimmed))
+        //            {
+        //                formattedVocabulary.Add($"{trimmed} - [Translation Needed]");
+        //            }
+        //        }
+        //    }
 
+        //    return string.Join("\n", formattedVocabulary);
+        //}
+        private async Task<string> GenerateVocabulary(string content, string model)
+        {
+            if (!modelDetails.ContainsKey(model))
+            {
+                UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
+                model = "gpt-3.5-turbo";
+            }
+            int maxTokens = modelDetails[model].maxTokens;
 
+            var chunks = SplitTextIntoChunks(content, maxTokens);
+            StringBuilder vocabularyResult = new StringBuilder();
 
-        // Function to format vocabulary
+            foreach (var chunk in chunks)
+            {
+                // نُشدد على الشكل الصارم للـ prompt
+                var rawVocabulary = await SendToChatGPT(chunk, model,
+                    "Extract important vocabulary terms and translate them to Arabic. Use EXACTLY this format (no deviations):\n\n" +
+                    "EnglishTerm - ArabicTranslation\n\n" +
+                    "Leave exactly one blank line between each entry. No bullets, no numbering, no extra dashes.");
+
+                vocabularyResult.AppendLine(rawVocabulary);
+            }
+
+            return FormatVocabulary(vocabularyResult.ToString());
+        }
+
         private string FormatVocabulary(string text)
         {
             var formattedVocabulary = new List<string>();
-            var terms = text.Split('\n');
+            var terms = text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var line in terms)
             {
-                // Use regular expression to match vocabulary terms in the correct "English - Arabic" format
-                var match = Regex.Match(line, @"^(?<english>[^-]+) - (?<arabic>.+)$");
+                // نمط يلتقط dash أو en-dash أو colon، ويتجاهل المسافات الزائدة
+                var match = Regex.Match(line, @"^(?<english>.+?)\s*[-–:]\s*(?<arabic>.+)$");
                 if (match.Success)
                 {
                     string english = match.Groups["english"].Value.Trim();
@@ -639,14 +714,18 @@ namespace ChatGPTFileProcessor
                 }
                 else
                 {
-                    // If the format doesn't match, add a placeholder or flag for review
-                    formattedVocabulary.Add($"{line.Trim()} - [Translation Needed]");
+                    string trimmed = line.Trim();
+                    if (!string.IsNullOrWhiteSpace(trimmed))
+                    {
+                        formattedVocabulary.Add($"{trimmed} - [Translation Needed]");
+                    }
                 }
             }
 
-            // Join the cleaned and formatted vocabulary list without numbering
             return string.Join("\n", formattedVocabulary);
         }
+
+
 
 
 
