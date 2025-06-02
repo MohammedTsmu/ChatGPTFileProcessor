@@ -34,13 +34,17 @@ namespace ChatGPTFileProcessor
 
 
 
-        private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
-        {
-            {
-                "gpt-4o",
-                (128000, "Analyze each page with this structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nNo numbering or bold. Use a blank line to separate each entry.")
-            }
+        //private readonly Dictionary<string, (int maxTokens, string prompt)> modelDetails = new Dictionary<string, (int, string)>
+        //{
+        //    {
+        //        "gpt-4o",
+        //        (128000, "Analyze each page with this structure:\n\nDefinitions:\nTerm: Definition\n\nMCQs:\nQuestion?\n   A) Option 1\n   B) Option 2\n   C) Option 3\n   D) Option 4\n   Answer: Correct Option\n\nFlashcards:\nFront: Term\nBack: Definition\n\nVocabulary:\nEnglish Term - Arabic Translation\n\nNo numbering or bold. Use a blank line to separate each entry.")
+        //    }
+        //};
 
+        private readonly Dictionary<string, int> modelDetails = new Dictionary<string, int>
+        {
+            { "gpt-4o", 128000 }
         };
 
 
@@ -257,7 +261,7 @@ namespace ChatGPTFileProcessor
                 UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
                 model = "gpt-3.5-turbo"; // fallback
             }
-            var maxTokens = modelDetails[model].maxTokens;
+            var maxTokens = modelDetails[model];
 
 
             var chunks = SplitTextIntoChunks(content, maxTokens);
@@ -311,7 +315,7 @@ namespace ChatGPTFileProcessor
                 UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
                 model = "gpt-3.5-turbo";
             }
-            int maxTokens = modelDetails[model].maxTokens;
+            int maxTokens = modelDetails[model];
 
             var chunks = SplitTextIntoChunks(content, maxTokens);
             StringBuilder mcqsResult = new StringBuilder();
@@ -331,7 +335,48 @@ namespace ChatGPTFileProcessor
 
 
 
-        // Flashcards Prompt with Chunking and Strict Formatting
+        //// Flashcards Prompt with Chunking and Strict Formatting
+        //private async Task<string> GenerateFlashcards(string content, string model)
+        //{
+        //    if (!modelDetails.ContainsKey(model))
+        //    {
+        //        UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
+        //        model = "gpt-3.5-turbo";
+        //    }
+        //    int maxTokens = modelDetails[model].maxTokens;
+
+
+        //    var chunks = SplitTextIntoChunks(content, maxTokens);
+        //    StringBuilder flashcardsResult = new StringBuilder();
+
+        //    foreach (var chunk in chunks)
+        //    {
+        //        // Use a strict “Front:/Back:” prompt so GPT always outputs exactly that format
+        //        string rawFlashcards = await SendToChatGPT(chunk, model,
+        //            "Create flashcards for each key medical and pharmacy term in this text, using EXACTLY this format (do NOT deviate):\n\n" +
+        //            "Front: [Term]\n" +
+        //            "Back:  [Definition]\n\n" +
+        //            "Leave exactly one blank line between each card. Do not number or bullet anything.");
+
+        //        // DEBUG: write raw GPT output to a file on Desktop, so you can inspect if something still isn't parsed
+        //        try
+        //        {
+        //            string debugPath = Path.Combine(
+        //                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+        //                "Flashcards_RawDebug.txt"
+        //            );
+        //            File.AppendAllText(debugPath, rawFlashcards + "\n\n---- End of chunk ----\n\n");
+        //        }
+        //        catch { /* ignore any file‐write errors */ }
+
+        //        // Format it—this routine will pick up “Front:”/“Back:” or fallback on “Term – Definition” style
+        //        string formattedFlashcards = FormatFlashcards(rawFlashcards);
+        //        flashcardsResult.AppendLine(formattedFlashcards);
+        //        flashcardsResult.AppendLine();
+        //    }
+
+        //    return flashcardsResult.ToString();
+        //}
         private async Task<string> GenerateFlashcards(string content, string model)
         {
             if (!modelDetails.ContainsKey(model))
@@ -339,22 +384,19 @@ namespace ChatGPTFileProcessor
                 UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
                 model = "gpt-3.5-turbo";
             }
-            int maxTokens = modelDetails[model].maxTokens;
-
+            int maxTokens = modelDetails[model];
 
             var chunks = SplitTextIntoChunks(content, maxTokens);
             StringBuilder flashcardsResult = new StringBuilder();
 
             foreach (var chunk in chunks)
             {
-                // Use a strict “Front:/Back:” prompt so GPT always outputs exactly that format
                 string rawFlashcards = await SendToChatGPT(chunk, model,
                     "Create flashcards for each key medical and pharmacy term in this text, using EXACTLY this format (do NOT deviate):\n\n" +
                     "Front: [Term]\n" +
                     "Back:  [Definition]\n\n" +
                     "Leave exactly one blank line between each card. Do not number or bullet anything.");
 
-                // DEBUG: write raw GPT output to a file on Desktop, so you can inspect if something still isn't parsed
                 try
                 {
                     string debugPath = Path.Combine(
@@ -363,9 +405,8 @@ namespace ChatGPTFileProcessor
                     );
                     File.AppendAllText(debugPath, rawFlashcards + "\n\n---- End of chunk ----\n\n");
                 }
-                catch { /* ignore any file‐write errors */ }
+                catch { /* تجاهل خطأ الكتابة */ }
 
-                // Format it—this routine will pick up “Front:”/“Back:” or fallback on “Term – Definition” style
                 string formattedFlashcards = FormatFlashcards(rawFlashcards);
                 flashcardsResult.AppendLine(formattedFlashcards);
                 flashcardsResult.AppendLine();
@@ -373,6 +414,7 @@ namespace ChatGPTFileProcessor
 
             return flashcardsResult.ToString();
         }
+
 
 
         //// Vocabulary Prompt with Chunking and Formatting
@@ -678,7 +720,7 @@ namespace ChatGPTFileProcessor
                 UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
                 model = "gpt-3.5-turbo";
             }
-            int maxTokens = modelDetails[model].maxTokens;
+            int maxTokens = modelDetails[model];
 
             var chunks = SplitTextIntoChunks(content, maxTokens);
             StringBuilder vocabularyResult = new StringBuilder();
