@@ -251,17 +251,9 @@ namespace ChatGPTFileProcessor
 
 
 
-        private readonly Dictionary<string, int> modelContextLimits = new Dictionary<string, int>
-        {
-            //Only this one works since it depends on images processing in gpt itself not local process to text or chunks
-            {"gpt-4o", 128000 }
-        };
-
         // Definitions Prompt
-        // Definitions Prompt with Chunking
         private async Task<string> GenerateDefinitions(string content, string model)
         {
-            //var maxTokens = modelDetails[model].maxTokens;
             if (!modelDetails.ContainsKey(model))
             {
                 UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
@@ -288,8 +280,15 @@ namespace ChatGPTFileProcessor
 
         // MCQs Prompt with Explicit Answer Key Request and Chunking
         private async Task<string> GenerateMCQs(string content, string model)
-        {
-            var maxTokens = modelContextLimits.ContainsKey(model) ? modelContextLimits[model] : 4096;
+        {   
+            if (!modelDetails.ContainsKey(model))
+            {
+                UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
+                model = "gpt-3.5-turbo";
+            }
+            int maxTokens = modelDetails[model].maxTokens;
+            // ...
+
             var chunks = SplitTextIntoChunks(content, maxTokens);
             StringBuilder mcqsResult = new StringBuilder();
 
@@ -308,10 +307,17 @@ namespace ChatGPTFileProcessor
         }
 
 
-
+        // Flashcards Prompt with Chunking and Strict Formatting
         private async Task<string> GenerateFlashcards(string content, string model)
         {
-            var maxTokens = modelContextLimits.ContainsKey(model) ? modelContextLimits[model] : 4096;
+            if (!modelDetails.ContainsKey(model))
+            {
+                UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
+                model = "gpt-3.5-turbo";
+            }
+            int maxTokens = modelDetails[model].maxTokens;
+
+
             var chunks = SplitTextIntoChunks(content, maxTokens);
             StringBuilder flashcardsResult = new StringBuilder();
 
@@ -348,7 +354,13 @@ namespace ChatGPTFileProcessor
         // Vocabulary Prompt with Chunking and Formatting
         private async Task<string> GenerateVocabulary(string content, string model)
         {
-            var maxTokens = modelContextLimits.ContainsKey(model) ? modelContextLimits[model] : 4096;
+            if (!modelDetails.ContainsKey(model))
+            {
+                UpdateStatus($"❌ Model '{model}' not found in modelDetails. Falling back to gpt-3.5-turbo.");
+                model = "gpt-3.5-turbo";
+            }
+            int maxTokens = modelDetails[model].maxTokens;
+
             var chunks = SplitTextIntoChunks(content, maxTokens);
             StringBuilder vocabularyResult = new StringBuilder();
 
