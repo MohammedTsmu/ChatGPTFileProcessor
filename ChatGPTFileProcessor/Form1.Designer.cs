@@ -57,6 +57,7 @@
             this.buttonsToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.labelsToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.developerProfileLinkLabel = new System.Windows.Forms.LinkLabel();
+            this.chkMedicalMaterial = new DevExpress.XtraEditors.CheckEdit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.cmbVocabLang.Properties)).BeginInit();
@@ -67,6 +68,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.chkDefinitions.Properties)).BeginInit();
             this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chkMedicalMaterial.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -171,6 +173,7 @@
             // groupBox2
             // 
             this.groupBox2.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.groupBox2.Controls.Add(this.chkMedicalMaterial);
             this.groupBox2.Controls.Add(this.buttonProcessFile);
             this.groupBox2.Controls.Add(this.buttonBrowseFile);
             this.groupBox2.Controls.Add(this.labelControl2);
@@ -423,6 +426,17 @@
             this.developerProfileLinkLabel.Text = "Dr. Mohammed Studio [v1.0.0]";
             this.developerProfileLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.developerProfileLinkLabel_LinkClicked);
             // 
+            // chkMedicalMaterial
+            // 
+            this.chkMedicalMaterial.Location = new System.Drawing.Point(484, 152);
+            this.chkMedicalMaterial.Name = "chkMedicalMaterial";
+            this.chkMedicalMaterial.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkMedicalMaterial.Properties.Appearance.Options.UseFont = true;
+            this.chkMedicalMaterial.Properties.Caption = "Medical Material Only";
+            this.chkMedicalMaterial.Size = new System.Drawing.Size(233, 26);
+            this.chkMedicalMaterial.TabIndex = 20;
+            this.chkMedicalMaterial.CheckedChanged += new System.EventHandler(this.chkMedicalMaterial_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -453,6 +467,7 @@
             this.groupBox4.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chkMedicalMaterial.Properties)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -487,6 +502,7 @@
         private DevExpress.XtraEditors.SimpleButton buttonEditAPIKey;
         private DevExpress.XtraEditors.SimpleButton buttonSaveAPIKey;
         private System.Windows.Forms.LinkLabel developerProfileLinkLabel;
+        private DevExpress.XtraEditors.CheckEdit chkMedicalMaterial;
     }
 }
 

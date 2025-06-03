@@ -94,5 +94,17 @@ namespace ChatGPTFileProcessor.Properties {
                 this["VocabLanguage"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool MedicalMaterial {
+            get {
+                return ((bool)(this["MedicalMaterial"]));
+            }
+            set {
+                this["MedicalMaterial"] = value;
+            }
+        }
     }
 }

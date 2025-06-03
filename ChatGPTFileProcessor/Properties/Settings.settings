@@ -20,5 +20,8 @@
     <Setting Name="VocabLanguage" Type="System.String" Scope="User">
       <Value Profile="(Default)">Arabic</Value>
     </Setting>
+    <Setting Name="MedicalMaterial" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
