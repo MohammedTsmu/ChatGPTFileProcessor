@@ -30,8 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            DevExpress.Utils.SuperToolTip superToolTip7 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipItem toolTipItem7 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip1 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem1 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip2 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem2 = new DevExpress.Utils.ToolTipItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.labelControl5 = new DevExpress.XtraEditors.LabelControl();
             this.textEditAPIKey = new DevExpress.XtraEditors.TextEdit();
@@ -54,6 +56,8 @@
             this.chkDefinitions = new DevExpress.XtraEditors.CheckEdit();
             this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.svgImageBoxAbout = new DevExpress.XtraEditors.SvgImageBox();
+            this.comboBoxEditModel = new DevExpress.XtraEditors.ComboBoxEdit();
             this.labelControl4 = new DevExpress.XtraEditors.LabelControl();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.buttonsToolTip = new System.Windows.Forms.ToolTip(this.components);
@@ -63,7 +67,6 @@
             this.panelBottom = new System.Windows.Forms.Panel();
             this.panelTop = new System.Windows.Forms.Panel();
             this.panelFill = new System.Windows.Forms.Panel();
-            this.comboBoxEditModel = new DevExpress.XtraEditors.ComboBoxEdit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textEditAPIKey.Properties)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -75,13 +78,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.chkMCQs.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkDefinitions.Properties)).BeginInit();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.svgImageBoxAbout)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.comboBoxEditModel.Properties)).BeginInit();
             this.groupBox5.SuspendLayout();
             this.panelTopLeft.SuspendLayout();
             this.panelTopRight.SuspendLayout();
             this.panelBottom.SuspendLayout();
             this.panelTop.SuspendLayout();
             this.panelFill.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.comboBoxEditModel.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -216,11 +220,11 @@
             this.labelFileName.Name = "labelFileName";
             this.labelFileName.Padding = new System.Windows.Forms.Padding(5);
             this.labelFileName.Size = new System.Drawing.Size(1046, 32);
-            toolTipItem7.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem7.Appearance.Options.UseFont = true;
-            toolTipItem7.Text = "Selected File Path";
-            superToolTip7.Items.Add(toolTipItem7);
-            this.labelFileName.SuperTip = superToolTip7;
+            toolTipItem1.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem1.Appearance.Options.UseFont = true;
+            toolTipItem1.Text = "Selected File Path";
+            superToolTip1.Items.Add(toolTipItem1);
+            this.labelFileName.SuperTip = superToolTip1;
             this.labelFileName.TabIndex = 21;
             this.labelFileName.Text = "No file selected";
             // 
@@ -400,6 +404,7 @@
             // groupBox4
             // 
             this.groupBox4.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.groupBox4.Controls.Add(this.svgImageBoxAbout);
             this.groupBox4.Controls.Add(this.comboBoxEditModel);
             this.groupBox4.Controls.Add(this.labelControl4);
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -410,6 +415,52 @@
             this.groupBox4.TabIndex = 11;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "MODELS";
+            // 
+            // svgImageBoxAbout
+            // 
+            this.svgImageBoxAbout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.svgImageBoxAbout.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.svgImageBoxAbout.Location = new System.Drawing.Point(384, 115);
+            this.svgImageBoxAbout.Margin = new System.Windows.Forms.Padding(4);
+            this.svgImageBoxAbout.Name = "svgImageBoxAbout";
+            this.svgImageBoxAbout.Size = new System.Drawing.Size(48, 44);
+            toolTipItem2.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem2.Appearance.Options.UseFont = true;
+            toolTipItem2.Text = "About This Application";
+            superToolTip2.Items.Add(toolTipItem2);
+            this.svgImageBoxAbout.SuperTip = superToolTip2;
+            this.svgImageBoxAbout.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("svgImageBoxAbout.SvgImage")));
+            this.svgImageBoxAbout.TabIndex = 23;
+            this.svgImageBoxAbout.Text = "svgImageBox1";
+            this.svgImageBoxAbout.Click += new System.EventHandler(this.svgImageBoxAbout_Click);
+            // 
+            // comboBoxEditModel
+            // 
+            this.comboBoxEditModel.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.comboBoxEditModel.Location = new System.Drawing.Point(3, 56);
+            this.comboBoxEditModel.Name = "comboBoxEditModel";
+            this.comboBoxEditModel.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.comboBoxEditModel.Properties.Appearance.Options.UseFont = true;
+            this.comboBoxEditModel.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.comboBoxEditModel.Properties.AppearanceDisabled.Options.UseFont = true;
+            this.comboBoxEditModel.Properties.AppearanceDropDown.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.comboBoxEditModel.Properties.AppearanceDropDown.Options.UseFont = true;
+            this.comboBoxEditModel.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.comboBoxEditModel.Properties.AppearanceFocused.Options.UseFont = true;
+            this.comboBoxEditModel.Properties.AppearanceItemDisabled.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.comboBoxEditModel.Properties.AppearanceItemDisabled.Options.UseFont = true;
+            this.comboBoxEditModel.Properties.AppearanceItemHighlight.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.comboBoxEditModel.Properties.AppearanceItemHighlight.Options.UseFont = true;
+            this.comboBoxEditModel.Properties.AppearanceItemSelected.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.comboBoxEditModel.Properties.AppearanceItemSelected.Options.UseFont = true;
+            this.comboBoxEditModel.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.comboBoxEditModel.Properties.AppearanceReadOnly.Options.UseFont = true;
+            this.comboBoxEditModel.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+            this.comboBoxEditModel.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
+            this.comboBoxEditModel.Size = new System.Drawing.Size(429, 28);
+            this.comboBoxEditModel.TabIndex = 24;
+            this.comboBoxEditModel.SelectedIndexChanged += new System.EventHandler(this.comboBoxEditModel_SelectedIndexChanged);
             // 
             // labelControl4
             // 
@@ -497,34 +548,6 @@
             this.panelFill.Size = new System.Drawing.Size(1062, 284);
             this.panelFill.TabIndex = 25;
             // 
-            // comboBoxEditModel
-            // 
-            this.comboBoxEditModel.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.comboBoxEditModel.Location = new System.Drawing.Point(3, 56);
-            this.comboBoxEditModel.Name = "comboBoxEditModel";
-            this.comboBoxEditModel.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
-            this.comboBoxEditModel.Properties.Appearance.Options.UseFont = true;
-            this.comboBoxEditModel.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
-            this.comboBoxEditModel.Properties.AppearanceDisabled.Options.UseFont = true;
-            this.comboBoxEditModel.Properties.AppearanceDropDown.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
-            this.comboBoxEditModel.Properties.AppearanceDropDown.Options.UseFont = true;
-            this.comboBoxEditModel.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
-            this.comboBoxEditModel.Properties.AppearanceFocused.Options.UseFont = true;
-            this.comboBoxEditModel.Properties.AppearanceItemDisabled.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
-            this.comboBoxEditModel.Properties.AppearanceItemDisabled.Options.UseFont = true;
-            this.comboBoxEditModel.Properties.AppearanceItemHighlight.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
-            this.comboBoxEditModel.Properties.AppearanceItemHighlight.Options.UseFont = true;
-            this.comboBoxEditModel.Properties.AppearanceItemSelected.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
-            this.comboBoxEditModel.Properties.AppearanceItemSelected.Options.UseFont = true;
-            this.comboBoxEditModel.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
-            this.comboBoxEditModel.Properties.AppearanceReadOnly.Options.UseFont = true;
-            this.comboBoxEditModel.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-            this.comboBoxEditModel.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
-            this.comboBoxEditModel.Size = new System.Drawing.Size(429, 28);
-            this.comboBoxEditModel.TabIndex = 24;
-            this.comboBoxEditModel.SelectedIndexChanged += new System.EventHandler(this.comboBoxEditModel_SelectedIndexChanged);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -553,6 +576,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.chkDefinitions.Properties)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.svgImageBoxAbout)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.comboBoxEditModel.Properties)).EndInit();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             this.panelTopLeft.ResumeLayout(false);
@@ -560,7 +585,6 @@
             this.panelBottom.ResumeLayout(false);
             this.panelTop.ResumeLayout(false);
             this.panelFill.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.comboBoxEditModel.Properties)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -598,6 +622,7 @@
         private DevExpress.XtraEditors.LabelControl labelControl5;
         private DevExpress.XtraEditors.LabelControl labelControl4;
         private DevExpress.XtraEditors.ComboBoxEdit comboBoxEditModel;
+        private DevExpress.XtraEditors.SvgImageBox svgImageBoxAbout;
     }
 }
 

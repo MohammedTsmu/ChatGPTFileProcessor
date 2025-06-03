@@ -141,6 +141,195 @@ namespace ChatGPTFileProcessor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Notebook_Book_Read_ICNS {
+            get {
+                object obj = ResourceManager.GetObject("Notebook_Book_Read_ICNS", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Notebook_Book_Read_ICO_128 {
+            get {
+                object obj = ResourceManager.GetObject("Notebook_Book_Read_ICO_128", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Notebook_Book_Read_ICO_256 {
+            get {
+                object obj = ResourceManager.GetObject("Notebook_Book_Read_ICO_256", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Notebook_Book_Read_ICO_32 {
+            get {
+                object obj = ResourceManager.GetObject("Notebook_Book_Read_ICO_32", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Notebook_Book_Read_ICO_48 {
+            get {
+                object obj = ResourceManager.GetObject("Notebook_Book_Read_ICO_48", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Notebook_Book_Read_ICO_512 {
+            get {
+                object obj = ResourceManager.GetObject("Notebook_Book_Read_ICO_512", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Notebook_Book_Read_ICO_5121 {
+            get {
+                object obj = ResourceManager.GetObject("Notebook_Book_Read_ICO_5121", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Notebook_Book_Read_ICO_64 {
+            get {
+                object obj = ResourceManager.GetObject("Notebook_Book_Read_ICO_64", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Notebook_Book_Read_ICO_72 {
+            get {
+                object obj = ResourceManager.GetObject("Notebook_Book_Read_ICO_72", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Notebook_Book_Read_ICO_96 {
+            get {
+                object obj = ResourceManager.GetObject("Notebook_Book_Read_ICO_96", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://icon-icons.com/icon/notebook-book-read/231485.
+        /// </summary>
+        internal static string Notebook_Book_Read_Link {
+            get {
+                return ResourceManager.GetString("Notebook_Book_Read_Link", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Notebook_Book_Read_PNG_128 {
+            get {
+                object obj = ResourceManager.GetObject("Notebook_Book_Read_PNG_128", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Notebook_Book_Read_PNG_256 {
+            get {
+                object obj = ResourceManager.GetObject("Notebook_Book_Read_PNG_256", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Notebook_Book_Read_PNG_32 {
+            get {
+                object obj = ResourceManager.GetObject("Notebook_Book_Read_PNG_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Notebook_Book_Read_PNG_48 {
+            get {
+                object obj = ResourceManager.GetObject("Notebook_Book_Read_PNG_48", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Notebook_Book_Read_PNG_512 {
+            get {
+                object obj = ResourceManager.GetObject("Notebook_Book_Read_PNG_512", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Notebook_Book_Read_PNG_64 {
+            get {
+                object obj = ResourceManager.GetObject("Notebook_Book_Read_PNG_64", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Notebook_Book_Read_PNG_72 {
+            get {
+                object obj = ResourceManager.GetObject("Notebook_Book_Read_PNG_72", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Notebook_Book_Read_PNG_96 {
+            get {
+                object obj = ResourceManager.GetObject("Notebook_Book_Read_PNG_96", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap png_128px {

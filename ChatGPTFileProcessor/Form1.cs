@@ -1084,5 +1084,10 @@ namespace ChatGPTFileProcessor
             ("vi", "Tiếng Việt — Vietnamese"),
         };
 
+        private void svgImageBoxAbout_Click(object sender, EventArgs e)
+        {
+            var aboutForm = new About();
+            aboutForm.ShowDialog(this);
+        }
     }
 }

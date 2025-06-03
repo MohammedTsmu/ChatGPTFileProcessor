@@ -123,7 +123,5 @@ namespace ChatGPTFileProcessor
             }
             return pages;
         }
-
-
     }
 }

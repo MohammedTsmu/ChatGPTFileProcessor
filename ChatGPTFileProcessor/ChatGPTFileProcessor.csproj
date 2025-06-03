@@ -51,7 +51,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\icon_256px.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Notebook_Book_Read_ICO_512.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -233,6 +233,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="About.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="About.Designer.cs">
+      <DependentUpon>About.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -247,6 +253,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="About.resx">
+      <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -283,6 +292,25 @@
     <Content Include="pdfium.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\Notebook_Book_Read_ICO_5121.ico" />
+    <None Include="Resources\Notebook_Book_Read_PNG_512.png" />
+    <None Include="Resources\Notebook_Book_Read_PNG_256.png" />
+    <None Include="Resources\Notebook_Book_Read_PNG_128.png" />
+    <None Include="Resources\Notebook_Book_Read_PNG_96.png" />
+    <None Include="Resources\Notebook_Book_Read_PNG_72.png" />
+    <None Include="Resources\Notebook_Book_Read_PNG_64.png" />
+    <None Include="Resources\Notebook_Book_Read_PNG_48.png" />
+    <None Include="Resources\Notebook_Book_Read_PNG_32.png" />
+    <None Include="Resources\Notebook_Book_Read_ICO_32.ico" />
+    <None Include="Resources\Notebook_Book_Read_ICO_48.ico" />
+    <None Include="Resources\Notebook_Book_Read_ICO_64.ico" />
+    <None Include="Resources\Notebook_Book_Read_ICO_72.ico" />
+    <None Include="Resources\Notebook_Book_Read_ICO_96.ico" />
+    <None Include="Resources\Notebook_Book_Read_ICO_128.ico" />
+    <None Include="Resources\Notebook_Book_Read_ICO_256.ico" />
+    <None Include="Resources\Notebook_Book_Read_ICO_512.ico" />
+    <None Include="Resources\Notebook_Book_Read_ICNS.icns" />
+    <None Include="Resources\Notebook_Book_Read_Link.txt" />
     <None Include="Resources\loading_gif.gif" />
     <None Include="Resources\png_256px.png" />
     <None Include="Resources\png_128px.png" />

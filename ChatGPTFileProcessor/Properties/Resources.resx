@@ -142,6 +142,60 @@
   <data name="loading_gif" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\loading_gif.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Notebook_Book_Read_ICNS" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Notebook_Book_Read_ICNS.icns;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Notebook_Book_Read_ICO_128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Notebook_Book_Read_ICO_128.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Notebook_Book_Read_ICO_256" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Notebook_Book_Read_ICO_256.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Notebook_Book_Read_ICO_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Notebook_Book_Read_ICO_32.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Notebook_Book_Read_ICO_48" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Notebook_Book_Read_ICO_48.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Notebook_Book_Read_ICO_512" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Notebook_Book_Read_ICO_512.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Notebook_Book_Read_ICO_64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Notebook_Book_Read_ICO_64.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Notebook_Book_Read_ICO_72" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Notebook_Book_Read_ICO_72.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Notebook_Book_Read_ICO_96" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Notebook_Book_Read_ICO_96.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Notebook_Book_Read_Link" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Notebook_Book_Read_Link.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Notebook_Book_Read_PNG_128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Notebook_Book_Read_PNG_128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Notebook_Book_Read_PNG_256" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Notebook_Book_Read_PNG_256.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Notebook_Book_Read_PNG_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Notebook_Book_Read_PNG_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Notebook_Book_Read_PNG_48" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Notebook_Book_Read_PNG_48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Notebook_Book_Read_PNG_512" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Notebook_Book_Read_PNG_512.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Notebook_Book_Read_PNG_64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Notebook_Book_Read_PNG_64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Notebook_Book_Read_PNG_72" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Notebook_Book_Read_PNG_72.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Notebook_Book_Read_PNG_96" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Notebook_Book_Read_PNG_96.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="png_128px" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\png_128px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -162,5 +216,8 @@
   </data>
   <data name="png_96px" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\png_96px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Notebook_Book_Read_ICO_5121" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Notebook_Book_Read_ICO_5121.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

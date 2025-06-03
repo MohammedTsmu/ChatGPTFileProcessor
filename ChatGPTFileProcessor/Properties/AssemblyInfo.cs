@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ChatGPTFileProcessor")]
-[assembly: AssemblyDescription("Converts study files into questions, answers, multiple-choice questions, vocabularies, and two-sided flashcards using ChatGPT API models.")]
+[assembly: AssemblyTitle("ChatGPT File Processor")]
+[assembly: AssemblyDescription("Converts Study Material PDFs (with or without images) into (Definitions, MCQs, Flashcards, and Translated two languages Vocabulary) using ChatGPT API Services.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Dr. Mohammed Studio")]
 [assembly: AssemblyProduct("ChatGPTFileProcessor")]
@@ -29,6 +29,6 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.0.4")]
+[assembly: AssemblyFileVersion("1.0.0.4")]
 [assembly: NeutralResourcesLanguage("en")]
