@@ -30,8 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            DevExpress.Utils.SuperToolTip superToolTip2 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipItem toolTipItem2 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip4 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem4 = new DevExpress.Utils.ToolTipItem();
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxAPIKey = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -58,8 +58,12 @@
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.buttonsToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.labelsToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.developerProfileLinkLabel = new System.Windows.Forms.LinkLabel();
             this.labelFileName = new DevExpress.XtraEditors.LabelControl();
+            this.panelTopLeft = new System.Windows.Forms.Panel();
+            this.panelTopRight = new System.Windows.Forms.Panel();
+            this.panelBottom = new System.Windows.Forms.Panel();
+            this.panelTop = new System.Windows.Forms.Panel();
+            this.panelFill = new System.Windows.Forms.Panel();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chkMedicalMaterial.Properties)).BeginInit();
@@ -71,6 +75,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.chkDefinitions.Properties)).BeginInit();
             this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
+            this.panelTopLeft.SuspendLayout();
+            this.panelTopRight.SuspendLayout();
+            this.panelBottom.SuspendLayout();
+            this.panelTop.SuspendLayout();
+            this.panelFill.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -86,20 +95,20 @@
             // textBoxAPIKey
             // 
             this.textBoxAPIKey.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxAPIKey.Location = new System.Drawing.Point(6, 50);
+            this.textBoxAPIKey.Location = new System.Drawing.Point(3, 50);
             this.textBoxAPIKey.Name = "textBoxAPIKey";
             this.textBoxAPIKey.PasswordChar = '*';
-            this.textBoxAPIKey.Size = new System.Drawing.Size(666, 29);
+            this.textBoxAPIKey.Size = new System.Drawing.Size(665, 29);
             this.textBoxAPIKey.TabIndex = 1;
             this.labelsToolTip.SetToolTip(this.textBoxAPIKey, "Enter You Api Key Generated From ChatGPT Website");
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(6, 151);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(97, 22);
+            this.label2.Size = new System.Drawing.Size(100, 22);
             this.label2.TabIndex = 5;
             this.label2.Text = "Select File:";
             // 
@@ -111,10 +120,11 @@
             this.groupBox1.Controls.Add(this.buttonEditAPIKey);
             this.groupBox1.Controls.Add(this.textBoxAPIKey);
             this.groupBox1.Controls.Add(this.buttonSaveAPIKey);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Location = new System.Drawing.Point(5, 5);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(678, 143);
+            this.groupBox1.Size = new System.Drawing.Size(674, 131);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "API KEY";
@@ -160,6 +170,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.groupBox2.BackColor = System.Drawing.SystemColors.ControlLight;
             this.groupBox2.Controls.Add(this.labelFileName);
             this.groupBox2.Controls.Add(this.chkMedicalMaterial);
@@ -175,9 +186,9 @@
             this.groupBox2.Controls.Add(this.chkDefinitions);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox2.Location = new System.Drawing.Point(12, 161);
+            this.groupBox2.Location = new System.Drawing.Point(29, 8);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1004, 269);
+            this.groupBox2.Size = new System.Drawing.Size(1011, 308);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "FILE AND PROCESS";
@@ -242,23 +253,23 @@
             // cmbVocabLang
             // 
             this.cmbVocabLang.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cmbVocabLang.Location = new System.Drawing.Point(520, 123);
+            this.cmbVocabLang.Location = new System.Drawing.Point(436, 123);
             this.cmbVocabLang.Name = "cmbVocabLang";
-            this.cmbVocabLang.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmbVocabLang.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbVocabLang.Properties.Appearance.Options.UseFont = true;
-            this.cmbVocabLang.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbVocabLang.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbVocabLang.Properties.AppearanceDisabled.Options.UseFont = true;
-            this.cmbVocabLang.Properties.AppearanceDropDown.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbVocabLang.Properties.AppearanceDropDown.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbVocabLang.Properties.AppearanceDropDown.Options.UseFont = true;
-            this.cmbVocabLang.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbVocabLang.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbVocabLang.Properties.AppearanceFocused.Options.UseFont = true;
-            this.cmbVocabLang.Properties.AppearanceItemDisabled.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbVocabLang.Properties.AppearanceItemDisabled.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbVocabLang.Properties.AppearanceItemDisabled.Options.UseFont = true;
-            this.cmbVocabLang.Properties.AppearanceItemHighlight.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbVocabLang.Properties.AppearanceItemHighlight.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbVocabLang.Properties.AppearanceItemHighlight.Options.UseFont = true;
-            this.cmbVocabLang.Properties.AppearanceItemSelected.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbVocabLang.Properties.AppearanceItemSelected.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbVocabLang.Properties.AppearanceItemSelected.Options.UseFont = true;
-            this.cmbVocabLang.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbVocabLang.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbVocabLang.Properties.AppearanceReadOnly.Options.UseFont = true;
             this.cmbVocabLang.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
@@ -270,23 +281,23 @@
             // cmbGeneralLang
             // 
             this.cmbGeneralLang.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cmbGeneralLang.Location = new System.Drawing.Point(520, 89);
+            this.cmbGeneralLang.Location = new System.Drawing.Point(436, 89);
             this.cmbGeneralLang.Name = "cmbGeneralLang";
-            this.cmbGeneralLang.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmbGeneralLang.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbGeneralLang.Properties.Appearance.Options.UseFont = true;
-            this.cmbGeneralLang.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbGeneralLang.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbGeneralLang.Properties.AppearanceDisabled.Options.UseFont = true;
-            this.cmbGeneralLang.Properties.AppearanceDropDown.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbGeneralLang.Properties.AppearanceDropDown.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbGeneralLang.Properties.AppearanceDropDown.Options.UseFont = true;
-            this.cmbGeneralLang.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbGeneralLang.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbGeneralLang.Properties.AppearanceFocused.Options.UseFont = true;
-            this.cmbGeneralLang.Properties.AppearanceItemDisabled.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbGeneralLang.Properties.AppearanceItemDisabled.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbGeneralLang.Properties.AppearanceItemDisabled.Options.UseFont = true;
-            this.cmbGeneralLang.Properties.AppearanceItemHighlight.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbGeneralLang.Properties.AppearanceItemHighlight.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbGeneralLang.Properties.AppearanceItemHighlight.Options.UseFont = true;
-            this.cmbGeneralLang.Properties.AppearanceItemSelected.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbGeneralLang.Properties.AppearanceItemSelected.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbGeneralLang.Properties.AppearanceItemSelected.Options.UseFont = true;
-            this.cmbGeneralLang.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbGeneralLang.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbGeneralLang.Properties.AppearanceReadOnly.Options.UseFont = true;
             this.cmbGeneralLang.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
@@ -342,14 +353,15 @@
             // textBoxStatus
             // 
             this.textBoxStatus.BackColor = System.Drawing.Color.Black;
+            this.textBoxStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxStatus.ForeColor = System.Drawing.Color.White;
-            this.textBoxStatus.Location = new System.Drawing.Point(6, 28);
+            this.textBoxStatus.Location = new System.Drawing.Point(3, 25);
             this.textBoxStatus.Multiline = true;
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxStatus.Size = new System.Drawing.Size(992, 145);
+            this.textBoxStatus.Size = new System.Drawing.Size(1032, 125);
             this.textBoxStatus.TabIndex = 9;
             this.labelsToolTip.SetToolTip(this.textBoxStatus, "Application Log Area Were any Action Or Changes Will Be Written Here To Inform Th" +
         "e User");
@@ -359,10 +371,11 @@
             this.groupBox4.BackColor = System.Drawing.SystemColors.ControlLight;
             this.groupBox4.Controls.Add(this.comboBoxModel);
             this.groupBox4.Controls.Add(this.label3);
+            this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox4.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox4.Location = new System.Drawing.Point(696, 12);
+            this.groupBox4.Location = new System.Drawing.Point(5, 5);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(320, 143);
+            this.groupBox4.Size = new System.Drawing.Size(308, 131);
             this.groupBox4.TabIndex = 11;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "MODELS";
@@ -373,7 +386,7 @@
             this.comboBoxModel.Location = new System.Drawing.Point(6, 50);
             this.comboBoxModel.MaxDropDownItems = 15;
             this.comboBoxModel.Name = "comboBoxModel";
-            this.comboBoxModel.Size = new System.Drawing.Size(308, 30);
+            this.comboBoxModel.Size = new System.Drawing.Size(296, 30);
             this.comboBoxModel.TabIndex = 1;
             this.labelsToolTip.SetToolTip(this.comboBoxModel, "Select One Of ChatGPT AI Models To Be Used In Generating Process");
             this.comboBoxModel.SelectedIndexChanged += new System.EventHandler(this.comboBoxModel_SelectedIndexChanged);
@@ -390,12 +403,13 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.groupBox5.BackColor = System.Drawing.SystemColors.ControlLight;
             this.groupBox5.Controls.Add(this.textBoxStatus);
             this.groupBox5.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox5.Location = new System.Drawing.Point(12, 436);
+            this.groupBox5.Location = new System.Drawing.Point(12, 8);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(1004, 159);
+            this.groupBox5.Size = new System.Drawing.Size(1038, 153);
             this.groupBox5.TabIndex = 13;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "STATUS";
@@ -413,18 +427,6 @@
             this.labelsToolTip.InitialDelay = 500;
             this.labelsToolTip.ReshowDelay = 100;
             // 
-            // developerProfileLinkLabel
-            // 
-            this.developerProfileLinkLabel.AutoSize = true;
-            this.developerProfileLinkLabel.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.developerProfileLinkLabel.Location = new System.Drawing.Point(12, 598);
-            this.developerProfileLinkLabel.Name = "developerProfileLinkLabel";
-            this.developerProfileLinkLabel.Size = new System.Drawing.Size(244, 22);
-            this.developerProfileLinkLabel.TabIndex = 9;
-            this.developerProfileLinkLabel.TabStop = true;
-            this.developerProfileLinkLabel.Text = "Dr. Mohammed Studio [v1.0.0]";
-            this.developerProfileLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.developerProfileLinkLabel_LinkClicked);
-            // 
             // labelFileName
             // 
             this.labelFileName.Appearance.BackColor = System.Drawing.Color.LightGray;
@@ -438,24 +440,72 @@
             this.labelFileName.Name = "labelFileName";
             this.labelFileName.Padding = new System.Windows.Forms.Padding(5);
             this.labelFileName.Size = new System.Drawing.Size(992, 32);
-            toolTipItem2.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem2.Appearance.Options.UseFont = true;
-            toolTipItem2.Text = "Selected File Path";
-            superToolTip2.Items.Add(toolTipItem2);
-            this.labelFileName.SuperTip = superToolTip2;
+            toolTipItem4.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem4.Appearance.Options.UseFont = true;
+            toolTipItem4.Text = "Selected File Path";
+            superToolTip4.Items.Add(toolTipItem4);
+            this.labelFileName.SuperTip = superToolTip4;
             this.labelFileName.TabIndex = 21;
             this.labelFileName.Text = "No file selected";
+            // 
+            // panelTopLeft
+            // 
+            this.panelTopLeft.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.panelTopLeft.Controls.Add(this.groupBox1);
+            this.panelTopLeft.Location = new System.Drawing.Point(29, 21);
+            this.panelTopLeft.Name = "panelTopLeft";
+            this.panelTopLeft.Padding = new System.Windows.Forms.Padding(5);
+            this.panelTopLeft.Size = new System.Drawing.Size(684, 141);
+            this.panelTopLeft.TabIndex = 22;
+            // 
+            // panelTopRight
+            // 
+            this.panelTopRight.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.panelTopRight.Controls.Add(this.groupBox4);
+            this.panelTopRight.Location = new System.Drawing.Point(719, 21);
+            this.panelTopRight.Name = "panelTopRight";
+            this.panelTopRight.Padding = new System.Windows.Forms.Padding(5);
+            this.panelTopRight.Size = new System.Drawing.Size(318, 141);
+            this.panelTopRight.TabIndex = 23;
+            // 
+            // panelBottom
+            // 
+            this.panelBottom.Controls.Add(this.groupBox5);
+            this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panelBottom.Location = new System.Drawing.Point(0, 500);
+            this.panelBottom.Name = "panelBottom";
+            this.panelBottom.Padding = new System.Windows.Forms.Padding(5);
+            this.panelBottom.Size = new System.Drawing.Size(1062, 173);
+            this.panelBottom.TabIndex = 24;
+            // 
+            // panelTop
+            // 
+            this.panelTop.Controls.Add(this.panelTopRight);
+            this.panelTop.Controls.Add(this.panelTopLeft);
+            this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelTop.Location = new System.Drawing.Point(0, 0);
+            this.panelTop.Name = "panelTop";
+            this.panelTop.Size = new System.Drawing.Size(1062, 176);
+            this.panelTop.TabIndex = 22;
+            // 
+            // panelFill
+            // 
+            this.panelFill.Controls.Add(this.groupBox2);
+            this.panelFill.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelFill.Location = new System.Drawing.Point(0, 176);
+            this.panelFill.Name = "panelFill";
+            this.panelFill.Padding = new System.Windows.Forms.Padding(5);
+            this.panelFill.Size = new System.Drawing.Size(1062, 324);
+            this.panelFill.TabIndex = 25;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1028, 625);
-            this.Controls.Add(this.developerProfileLinkLabel);
-            this.Controls.Add(this.groupBox5);
-            this.Controls.Add(this.groupBox4);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
+            this.ClientSize = new System.Drawing.Size(1062, 673);
+            this.Controls.Add(this.panelFill);
+            this.Controls.Add(this.panelTop);
+            this.Controls.Add(this.panelBottom);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
@@ -477,8 +527,12 @@
             this.groupBox4.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
+            this.panelTopLeft.ResumeLayout(false);
+            this.panelTopRight.ResumeLayout(false);
+            this.panelBottom.ResumeLayout(false);
+            this.panelTop.ResumeLayout(false);
+            this.panelFill.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -509,9 +563,13 @@
         private DevExpress.XtraEditors.SimpleButton buttonClearAPIKey;
         private DevExpress.XtraEditors.SimpleButton buttonEditAPIKey;
         private DevExpress.XtraEditors.SimpleButton buttonSaveAPIKey;
-        private System.Windows.Forms.LinkLabel developerProfileLinkLabel;
         private DevExpress.XtraEditors.CheckEdit chkMedicalMaterial;
         private DevExpress.XtraEditors.LabelControl labelFileName;
+        private System.Windows.Forms.Panel panelTopLeft;
+        private System.Windows.Forms.Panel panelTopRight;
+        private System.Windows.Forms.Panel panelBottom;
+        private System.Windows.Forms.Panel panelTop;
+        private System.Windows.Forms.Panel panelFill;
     }
 }
 

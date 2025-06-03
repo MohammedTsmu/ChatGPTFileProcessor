@@ -607,11 +607,11 @@ namespace ChatGPTFileProcessor
 
         private void developerProfileLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            // Mark the link as visited
-            developerProfileLinkLabel.LinkVisited = true;
+            //// Mark the link as visited
+            //developerProfileLinkLabel.LinkVisited = true;
 
-            // Open the link in the default browser
-            System.Diagnostics.Process.Start("https://github.com/MohammedTsmu/ChatGPTFileProcessor");
+            //// Open the link in the default browser
+            //System.Diagnostics.Process.Start("https://github.com/MohammedTsmu/ChatGPTFileProcessor");
         }
 
         private List<(int pageNumber, Image image)> ConvertPdfToImages(string filePath, int dpi = 300)
@@ -867,6 +867,14 @@ namespace ChatGPTFileProcessor
 
         private void chkDefinitions_CheckedChanged(object sender, EventArgs e)
         {
+            if (chkDefinitions.Checked)
+            {
+                UpdateStatus("Definitions...Activated");
+            }
+            else
+            {
+                UpdateStatus("Definitions...Deactivated");
+            }
             // Save the state of the checkbox
             Properties.Settings.Default.GenerateDefinitions = chkDefinitions.Checked;
             Properties.Settings.Default.Save();
@@ -874,6 +882,14 @@ namespace ChatGPTFileProcessor
 
         private void chkMCQs_CheckedChanged(object sender, EventArgs e)
         {
+            if (chkMCQs.Checked)
+            {
+                UpdateStatus("MCQs...Activated");
+            }
+            else
+            {
+                UpdateStatus("MCQs...Deactivated");
+            }
             // Save the state of the checkbox
             Properties.Settings.Default.GenerateMCQs = chkMCQs.Checked;
             Properties.Settings.Default.Save();
@@ -881,6 +897,14 @@ namespace ChatGPTFileProcessor
 
         private void chkFlashcards_CheckedChanged(object sender, EventArgs e)
         {
+            if (chkFlashcards.Checked)
+            {
+                UpdateStatus("Flashcards...Activated");
+            }
+            else
+            {
+                UpdateStatus("Flashcards...Deactivated");
+            }
             // Save the state of the checkbox
             Properties.Settings.Default.GenerateFlashcards = chkFlashcards.Checked;
             Properties.Settings.Default.Save();
@@ -888,6 +912,14 @@ namespace ChatGPTFileProcessor
 
         private void chkVocabulary_CheckedChanged(object sender, EventArgs e)
         {
+            if (chkVocabulary.Checked)
+            {
+                UpdateStatus("Vocabulary...Activated");
+            }
+            else
+            {
+                UpdateStatus("Vocabulary...Deactivated");
+            }
             // Save the state of the checkbox
             Properties.Settings.Default.GenerateVocabulary = chkVocabulary.Checked;
             Properties.Settings.Default.Save();
@@ -895,6 +927,14 @@ namespace ChatGPTFileProcessor
 
         private void chkMedicalMaterial_CheckedChanged(object sender, EventArgs e)
         {
+            if (chkMedicalMaterial.Checked)
+            {
+                UpdateStatus("Medical Material...Activated");
+            }
+            else
+            {
+                UpdateStatus("Medical Material...Deactivated");
+            }
             // store the MedicalMaterial setting
             Properties.Settings.Default.MedicalMaterial = chkMedicalMaterial.Checked;
             Properties.Settings.Default.Save();
@@ -902,6 +942,8 @@ namespace ChatGPTFileProcessor
 
         private void cmbGeneralLang_SelectedIndexChanged(object sender, EventArgs e)
         {
+            UpdateStatus("General Language...Changed");
+            
             // store the DisplayName of the selected language
             var selectedDisplay = cmbGeneralLang.SelectedItem as string;
             if (!string.IsNullOrWhiteSpace(selectedDisplay))
@@ -913,6 +955,7 @@ namespace ChatGPTFileProcessor
 
         private void cmbVocabLang_SelectedIndexChanged(object sender, EventArgs e)
         {
+            UpdateStatus("Vocabulary Language...Changed");
             var selectedDisplay = cmbVocabLang.SelectedItem as string;
             if (!string.IsNullOrWhiteSpace(selectedDisplay))
             {
