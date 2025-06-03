@@ -30,8 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            DevExpress.Utils.SuperToolTip superToolTip7 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipItem toolTipItem7 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip8 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem8 = new DevExpress.Utils.ToolTipItem();
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxAPIKey = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -124,7 +124,7 @@
             this.groupBox1.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(5, 5);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(674, 131);
+            this.groupBox1.Size = new System.Drawing.Size(1052, 166);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "API KEY";
@@ -375,7 +375,7 @@
             this.groupBox4.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox4.Location = new System.Drawing.Point(5, 5);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(308, 131);
+            this.groupBox4.Size = new System.Drawing.Size(308, 166);
             this.groupBox4.TabIndex = 11;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "MODELS";
@@ -440,31 +440,32 @@
             this.labelFileName.Name = "labelFileName";
             this.labelFileName.Padding = new System.Windows.Forms.Padding(5);
             this.labelFileName.Size = new System.Drawing.Size(992, 32);
-            toolTipItem7.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem7.Appearance.Options.UseFont = true;
-            toolTipItem7.Text = "Selected File Path";
-            superToolTip7.Items.Add(toolTipItem7);
-            this.labelFileName.SuperTip = superToolTip7;
+            toolTipItem8.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem8.Appearance.Options.UseFont = true;
+            toolTipItem8.Text = "Selected File Path";
+            superToolTip8.Items.Add(toolTipItem8);
+            this.labelFileName.SuperTip = superToolTip8;
             this.labelFileName.TabIndex = 21;
             this.labelFileName.Text = "No file selected";
             // 
             // panelTopLeft
             // 
             this.panelTopLeft.Controls.Add(this.groupBox1);
-            this.panelTopLeft.Location = new System.Drawing.Point(29, 21);
+            this.panelTopLeft.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelTopLeft.Location = new System.Drawing.Point(0, 0);
             this.panelTopLeft.Name = "panelTopLeft";
             this.panelTopLeft.Padding = new System.Windows.Forms.Padding(5);
-            this.panelTopLeft.Size = new System.Drawing.Size(684, 141);
+            this.panelTopLeft.Size = new System.Drawing.Size(1062, 176);
             this.panelTopLeft.TabIndex = 22;
             // 
             // panelTopRight
             // 
-            this.panelTopRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panelTopRight.Controls.Add(this.groupBox4);
-            this.panelTopRight.Location = new System.Drawing.Point(719, 21);
+            this.panelTopRight.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panelTopRight.Location = new System.Drawing.Point(744, 0);
             this.panelTopRight.Name = "panelTopRight";
             this.panelTopRight.Padding = new System.Windows.Forms.Padding(5);
-            this.panelTopRight.Size = new System.Drawing.Size(318, 141);
+            this.panelTopRight.Size = new System.Drawing.Size(318, 176);
             this.panelTopRight.TabIndex = 23;
             // 
             // panelBottom
