@@ -101,11 +101,11 @@ namespace ChatGPTFileProcessor
             spinTo.Properties.MaxValue = images.Count;
             spinTo.Value = images.Count;
 
-            // 11) تحسين مظهر SpinEdit (اختياري)
-            spinFrom.Properties.Appearance.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
-            spinFrom.Properties.Appearance.Options.UseFont = true;
-            spinTo.Properties.Appearance.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
-            spinTo.Properties.Appearance.Options.UseFont = true;
+            //// 11) تحسين مظهر SpinEdit (اختياري)
+            //spinFrom.Properties.Appearance.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            //spinFrom.Properties.Appearance.Options.UseFont = true;
+            //spinTo.Properties.Appearance.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            //spinTo.Properties.Appearance.Options.UseFont = true;
         }
 
 
