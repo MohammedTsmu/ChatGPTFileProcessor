@@ -95,7 +95,6 @@ namespace ChatGPTFileProcessor
 
         private void buttonSaveAPIKey_Click(object sender, EventArgs e)
         {
-            //string apiKey = textBoxAPIKey.Text.Trim();
             string apiKey = textEditAPIKey.Text.Trim();
             if (!string.IsNullOrEmpty(apiKey))
             {
@@ -119,7 +118,6 @@ namespace ChatGPTFileProcessor
 
         private void buttonEditAPIKey_Click(object sender, EventArgs e)
         {
-            //textBoxAPIKey.ReadOnly = false;  // Allow editing
             textEditAPIKey.ReadOnly = false;  // Allow editing
             UpdateStatus("Editing API Key. Don't forget to save after changes.");
         }
@@ -129,7 +127,6 @@ namespace ChatGPTFileProcessor
             if (File.Exists(apiKeyPath))
             {
                 File.Delete(apiKeyPath);
-                //textBoxAPIKey.Clear();
                 textEditAPIKey.Clear(); // Clear the text edit control
                 UpdateStatus("API Key cleared successfully.");
             }
@@ -206,7 +203,6 @@ namespace ChatGPTFileProcessor
                 UpdateOverlayLog("🚀 Starting GPT-4o multimodal processing...");
 
                 // اسم النموذج والـ timestamp لإنشاء مسارات الملفات
-                //string modelName = comboBoxModel.SelectedItem?.ToString() ?? "gpt-4o";
                 string modelName = comboBoxEditModel.SelectedItem?.ToString() ?? "gpt-4o"; // Use the new combo box for model selection
                 string timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -217,84 +213,6 @@ namespace ChatGPTFileProcessor
                 string mcqsFilePath = Path.Combine(basePath, $"MCQs_{modelName}_{timeStamp}.docx");
                 string flashcardsFilePath = Path.Combine(basePath, $"Flashcards_{modelName}_{timeStamp}.docx");
                 string vocabularyFilePath = Path.Combine(basePath, $"Vocabulary_{modelName}_{timeStamp}.docx");
-
-                //// 3) إعداد الـ prompts لكل قسم
-                //string definitionsPrompt =
-                //    "Provide concise definitions (in English only) for each key medical term on this page. " +
-                //    "For each term, write:\n" +
-                //    "- The term itself as a heading\n" +
-                //    "- Then a one- or two-sentence definition in English\n\n" +
-                //    "Separate every entry by a blank line, without numbering.";
-
-                //// 3.2) prompt الأسئلة (MCQs) بالكامل بالإنجليزية:
-                //string mcqsPrompt =
-                //    "Generate multiple-choice questions (only in English) based on the content of this page. Use EXACTLY this format (no deviations):\n\n" +
-                //    "Question: [Write the question in English]\n" +
-                //    "A) [Option A]\n" +
-                //    "B) [Option B]\n" +
-                //    "C) [Option C]\n" +
-                //    "D) [Option D]\n" +
-                //    "Answer: [Correct Letter]\n\n" +
-                //    "Separate each question block with a blank line.";
-
-                //// 3.3) prompt البطاقات (Flashcards) بالكامل بالإنجليزية:
-                //string flashcardsPrompt =
-                //    "Create flashcards in English for each key medical or pharmaceutical term on this page. " +
-                //    "Use EXACTLY this format (no deviations):\n\n" +
-                //    "Front: [Term]\n" +
-                //    "Back:  [Definition in English]\n\n" +
-                //    "Leave exactly one blank line between each card.";
-
-                //// 3.4) prompt المفردات (Vocabulary) ثنائي اللغة (إنجليزي–عربي):
-                //string vocabularyPrompt =
-                //    "Extract important vocabulary terms from this page and translate them to Arabic. " +
-                //    "Use EXACTLY this format (no bullets, no numbering):\n\n" +
-                //    "EnglishTerm – ArabicTranslation\n\n" +
-                //    "Leave exactly one blank line between each entry.";
-
-
-
-
-
-
-
-                ////// 3.1) prompt for Definitions in “GeneralLanguage” (e.g. user picks “French”)
-                //string generalLangName = cmbGeneralLang.SelectedItem as string; // e.g. “French”
-                //string definitionsPrompt =
-                //    $"Provide concise definitions (in {generalLangName}) " +
-                //    $"for each key medical term on this page. " +
-                //    $"For each term, write:\n" +
-                //    $"- The term itself as a heading\n" +
-                //    $"- Then a one- or two-sentence definition in {generalLangName}\n\n" +
-                //    $"Separate every entry by a blank line, without numbering.";
-
-                //// 3.2) prompt MCQs in “GeneralLanguage”
-                //string mcqsPrompt =
-                //    $"Generate multiple‐choice questions (only in {generalLangName}) based on the content of this page. " +
-                //    $"Use EXACTLY this format (no deviations):\n\n" +
-                //    $"Question: [Write the question in {generalLangName}]\n" +
-                //    $"A) [Option A in {generalLangName}]\n" +
-                //    $"B) [Option B in {generalLangName}]\n" +
-                //    $"C) [Option C in {generalLangName}]\n" +
-                //    $"D) [Option D in {generalLangName}]\n" +
-                //    $"Answer: [Correct Letter]\n\n" +
-                //    $"Separate each question block with a blank line.";
-
-                //// 3.3) prompt Flashcards in “GeneralLanguage”
-                //string flashcardsPrompt =
-                //    $"Create flashcards in {generalLangName} for each key medical or pharmaceutical term on this page. " +
-                //    $"Use EXACTLY this format (no deviations):\n\n" +
-                //    $"Front: [Term in {generalLangName}]\n" +
-                //    $"Back:  [Definition in {generalLangName}]\n\n" +
-                //    $"Leave exactly one blank line between each card.";
-
-                //// 3.4) prompt Vocabulary in “VocabLanguage” (target language)
-                //string vocabLangName = cmbVocabLang.SelectedItem as string; // e.g. “French”
-                //string vocabularyPrompt =
-                //    $"Extract important vocabulary terms from this page and translate them to {vocabLangName}. " +
-                //    $"Use EXACTLY this format (no bullets, no numbering):\n\n" +
-                //    $"EnglishTerm – {vocabLangName}Translation\n\n" +
-                //    $"Leave exactly one blank line between each entry.";
 
 
                 // 3.1) prompt for Definitions in “GeneralLanguage” (e.g. user picks “French”)
@@ -398,48 +316,121 @@ namespace ChatGPTFileProcessor
                     return;
                 }
 
+                bool useThreePageMode = chkThreePageMode.Checked;
 
-                // 6) حلقة لمعالجة كل صفحة عبر Multimodal (صورة + نص)
-                // 6) Loop through each page, only calling ProcessPdfPageMultimodal if that section is enabled:
-                foreach (var (pageNumber, image) in allPages)
+                if (!useThreePageMode)
                 {
-                    if (chkDefinitions.Checked)
+
+                    // ─── One‐page‐at‐a‐time mode ───
+
+                    // 6) حلقة لمعالجة كل صفحة عبر Multimodal (صورة + نص)
+                    // 6) Loop through each page, only calling ProcessPdfPageMultimodal if that section is enabled:
+                    foreach (var (pageNumber, image) in allPages)
                     {
-                        UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Definitions)...");
-                        string pageDef = await ProcessPdfPageMultimodal(image, apiKey, definitionsPrompt);
-                        allDefinitions.AppendLine($"===== Page {pageNumber} =====");
-                        allDefinitions.AppendLine(pageDef);
-                        allDefinitions.AppendLine();
+                        if (chkDefinitions.Checked)
+                        {
+                            UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Definitions)...");
+                            string pageDef = await ProcessPdfPageMultimodal(image, apiKey, definitionsPrompt);
+                            allDefinitions.AppendLine($"===== Page {pageNumber} =====");
+                            allDefinitions.AppendLine(pageDef);
+                            allDefinitions.AppendLine();
+                        }
+
+                        if (chkMCQs.Checked)
+                        {
+                            UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (MCQs)...");
+                            string pageMCQs = await ProcessPdfPageMultimodal(image, apiKey, mcqsPrompt);
+                            allMCQs.AppendLine($"===== Page {pageNumber} =====");
+                            allMCQs.AppendLine(pageMCQs);
+                            allMCQs.AppendLine();
+                        }
+
+                        if (chkFlashcards.Checked)
+                        {
+                            UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Flashcards)...");
+                            string pageFlash = await ProcessPdfPageMultimodal(image, apiKey, flashcardsPrompt);
+                            allFlashcards.AppendLine($"===== Page {pageNumber} =====");
+                            allFlashcards.AppendLine(pageFlash);
+                            allFlashcards.AppendLine();
+                        }
+
+                        if (chkVocabulary.Checked)
+                        {
+                            UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Vocabulary)...");
+                            string pageVocab = await ProcessPdfPageMultimodal(image, apiKey, vocabularyPrompt);
+                            allVocabulary.AppendLine($"===== Page {pageNumber} =====");
+                            allVocabulary.AppendLine(pageVocab);
+                            allVocabulary.AppendLine();
+                        }
+
+                        UpdateOverlayLog($"✅ Page {pageNumber} done.");
                     }
 
-                    if (chkMCQs.Checked)
-                    {
-                        UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (MCQs)...");
-                        string pageMCQs = await ProcessPdfPageMultimodal(image, apiKey, mcqsPrompt);
-                        allMCQs.AppendLine($"===== Page {pageNumber} =====");
-                        allMCQs.AppendLine(pageMCQs);
-                        allMCQs.AppendLine();
-                    }
+                }
+                else
+                {
 
-                    if (chkFlashcards.Checked)
-                    {
-                        UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Flashcards)...");
-                        string pageFlash = await ProcessPdfPageMultimodal(image, apiKey, flashcardsPrompt);
-                        allFlashcards.AppendLine($"===== Page {pageNumber} =====");
-                        allFlashcards.AppendLine(pageFlash);
-                        allFlashcards.AppendLine();
-                    }
+                    // ─── Three‐page‐batch mode ───
 
-                    if (chkVocabulary.Checked)
+                    // 6) Instead of one‐by‐one, we chunk into groups of three pages at a time:
+                    for (int i = 0; i < allPages.Count; i += 3)
                     {
-                        UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Vocabulary)...");
-                        string pageVocab = await ProcessPdfPageMultimodal(image, apiKey, vocabularyPrompt);
-                        allVocabulary.AppendLine($"===== Page {pageNumber} =====");
-                        allVocabulary.AppendLine(pageVocab);
-                        allVocabulary.AppendLine();
-                    }
+                        // Build up to a 3‐page slice
+                        var pageGroup = new List<(int pageNumber, Image image)>();
+                        for (int j = i; j < i + 3 && j < allPages.Count; j++)
+                        {
+                            pageGroup.Add(allPages[j]);
+                        }
 
-                    UpdateOverlayLog($"✅ Page {pageNumber} done.");
+                        // We’ll label them by “Pages X–Y” or “Page X” if only one in the group
+                        int startPage = pageGroup.First().pageNumber;
+                        int endPage = pageGroup.Last().pageNumber;
+                        string header = (startPage == endPage)
+                            ? $"===== Page {startPage} ====="
+                            : $"===== Pages {startPage}–{endPage} =====";
+
+                        // 6a) Definitions
+                        if (chkDefinitions.Checked)
+                        {
+                            UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Definitions)...");
+                            string pagesDef = await ProcessPdfPagesMultimodal(pageGroup, apiKey, definitionsPrompt);
+                            allDefinitions.AppendLine(header);
+                            allDefinitions.AppendLine(pagesDef);
+                            allDefinitions.AppendLine();
+                        }
+
+                        // 6b) MCQs
+                        if (chkMCQs.Checked)
+                        {
+                            UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (MCQs)...");
+                            string pagesMCQs = await ProcessPdfPagesMultimodal(pageGroup, apiKey, mcqsPrompt);
+                            allMCQs.AppendLine(header);
+                            allMCQs.AppendLine(pagesMCQs);
+                            allMCQs.AppendLine();
+                        }
+
+                        // 6c) Flashcards
+                        if (chkFlashcards.Checked)
+                        {
+                            UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Flashcards)...");
+                            string pagesFlash = await ProcessPdfPagesMultimodal(pageGroup, apiKey, flashcardsPrompt);
+                            allFlashcards.AppendLine(header);
+                            allFlashcards.AppendLine(pagesFlash);
+                            allFlashcards.AppendLine();
+                        }
+
+                        // 6d) Vocabulary
+                        if (chkVocabulary.Checked)
+                        {
+                            UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Vocabulary)...");
+                            string pagesVocab = await ProcessPdfPagesMultimodal(pageGroup, apiKey, vocabularyPrompt);
+                            allVocabulary.AppendLine(header);
+                            allVocabulary.AppendLine(pagesVocab);
+                            allVocabulary.AppendLine();
+                        }
+
+                        UpdateOverlayLog($"✅ Pages {startPage}–{endPage} done.");
+                    }
                 }
 
                 // 7) تحويل StringBuilder إلى نصٍّ نهائي وحفظه في ملفات Word منسّقة
@@ -540,7 +531,6 @@ namespace ChatGPTFileProcessor
             // Load API key
             if (File.Exists(apiKeyPath))
             {
-                //textBoxAPIKey.Text = File.ReadAllText(apiKeyPath).Trim();
                 textEditAPIKey.Text = File.ReadAllText(apiKeyPath).Trim(); // Use the new text edit control
             }
 
@@ -548,21 +538,17 @@ namespace ChatGPTFileProcessor
             if (File.Exists(modelPath))
             {
                 string savedModel = File.ReadAllText(modelPath).Trim();
-                //if (comboBoxModel.Items.Contains(savedModel))
                 if (comboBoxEditModel.Properties.Items.Contains(savedModel))
                 {
-                    //comboBoxModel.SelectedItem = savedModel;
                     comboBoxEditModel.SelectedItem = savedModel; // Use the new combo box for model selection
                 }
                 else
                 {
-                    //comboBoxModel.SelectedIndex = 0;  // Default to first item if model is not in options
                     comboBoxEditModel.SelectedIndex = 0;  // Default to first item if model is not in options
                 }
             }
             else
             {
-                //comboBoxModel.SelectedIndex = 0;  // Default if model file is missing
                 comboBoxEditModel.SelectedIndex = 0;  // Default if model file is missing
             }
         }
@@ -572,12 +558,10 @@ namespace ChatGPTFileProcessor
             EnsureConfigDirectoryExists();
 
             // Save API key
-            //string apiKey = textBoxAPIKey.Text.Trim();
             string apiKey = textEditAPIKey.Text.Trim(); // Use the new text edit control
             File.WriteAllText(apiKeyPath, apiKey);
 
             // Save selected model
-            //string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "gpt-3.5-turbo";
             string selectedModel = comboBoxEditModel.SelectedItem?.ToString() ?? "gpt-4o"; // Use the new combo box for model selection
             File.WriteAllText(modelPath, selectedModel);
         }
@@ -592,7 +576,7 @@ namespace ChatGPTFileProcessor
             }
         }
 
-        //private void comboBoxModel_SelectedIndexChanged(object sender, EventArgs e)
+
         private void comboBoxModel_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateStatus("Model changed, saving selection...");
@@ -652,15 +636,6 @@ namespace ChatGPTFileProcessor
         }
 
 
-        private void developerProfileLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            //// Mark the link as visited
-            //developerProfileLinkLabel.LinkVisited = true;
-
-            //// Open the link in the default browser
-            //System.Diagnostics.Process.Start("https://github.com/MohammedTsmu/ChatGPTFileProcessor");
-        }
-
         private List<(int pageNumber, Image image)> ConvertPdfToImages(string filePath, int dpi = 300)
         {
             var pages = new List<(int, Image)>();
@@ -682,7 +657,6 @@ namespace ChatGPTFileProcessor
 
 
 
-        //public async Task<string> SendImageToGPTAsync(Image image, string apiKey)
         public async System.Threading.Tasks.Task<string> SendImageToGPTAsync(Image image, string apiKey)
         {
             using (var ms = new MemoryStream())
@@ -719,7 +693,6 @@ namespace ChatGPTFileProcessor
                             http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
 
                             var content = new StringContent(JsonConvert.SerializeObject(jsonBody), Encoding.UTF8, "application/json");
-                            //var response = await http.PostAsync("https://api.openai.com/v1/chat/completions", content);
                             var response = await http.PostAsync("https://api.openai.com/v1/chat/completions", content);
                             if (!response.IsSuccessStatusCode)
                             {
@@ -753,7 +726,6 @@ namespace ChatGPTFileProcessor
         private async Task<string> ProcessPdfPageMultimodal(Image image, string apiKey, string taskPrompt)
         {
             // 1. تحويل الصورة إلى Base64
-            //using var ms = new MemoryStream();
             using (var ms = new MemoryStream())
             {
                 image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
@@ -815,6 +787,77 @@ namespace ChatGPTFileProcessor
                 }
             }
         }
+
+
+        /// <summary>
+        /// Sends up to three page‐images in one shot (multimodal) to GPT-4o, along with a single text prompt.
+        /// </summary>
+        private async Task<string> ProcessPdfPagesMultimodal(
+            List<(int pageNumber, Image image)> pageGroup,
+            string apiKey,
+            string taskPrompt
+        )
+        {
+            // Build a single “messages” list that contains each image_url entry first, then the text prompt
+            var multimodalContent = new List<object>();
+
+            foreach (var (pageNumber, image) in pageGroup)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                    string base64 = Convert.ToBase64String(ms.ToArray());
+                    multimodalContent.Add(new
+                    {
+                        type = "image_url",
+                        image_url = new { url = $"data:image/png;base64,{base64}" }
+                    });
+                }
+            }
+
+            // Finally, add the single text prompt (task instructions) as the last content element
+            multimodalContent.Add(new
+            {
+                type = "text",
+                text = taskPrompt
+            });
+
+            var requestBody = new
+            {
+                model = "gpt-4o",
+                messages = new object[]
+                {
+                new
+                {
+                    role = "user",
+                    content = multimodalContent.ToArray()
+                }
+                }
+            };
+
+            string jsonContent = System.Text.Json.JsonSerializer.Serialize(
+                requestBody,
+                new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }
+            );
+
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + apiKey);
+                var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    string error = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"API Error: {response.StatusCode} - {error}");
+                }
+
+                string resultJson = await response.Content.ReadAsStringAsync();
+                var jsonNode = JsonNode.Parse(resultJson);
+                return jsonNode?["choices"]?[0]?["message"]?["content"]?.ToString() ?? "";
+            }
+        }
+
 
 
 
