@@ -94,7 +94,8 @@ namespace ChatGPTFileProcessor
 
         private void buttonSaveAPIKey_Click(object sender, EventArgs e)
         {
-            string apiKey = textBoxAPIKey.Text.Trim();
+            //string apiKey = textBoxAPIKey.Text.Trim();
+            string apiKey = textEditAPIKey.Text.Trim();
             if (!string.IsNullOrEmpty(apiKey))
             {
                 File.WriteAllText(apiKeyPath, apiKey);
@@ -108,7 +109,8 @@ namespace ChatGPTFileProcessor
 
         private void buttonEditAPIKey_Click(object sender, EventArgs e)
         {
-            textBoxAPIKey.ReadOnly = false;  // Allow editing
+            //textBoxAPIKey.ReadOnly = false;  // Allow editing
+            textEditAPIKey.ReadOnly = false;  // Allow editing
             UpdateStatus("Editing API Key. Don't forget to save after changes.");
         }
 
@@ -117,7 +119,8 @@ namespace ChatGPTFileProcessor
             if (File.Exists(apiKeyPath))
             {
                 File.Delete(apiKeyPath);
-                textBoxAPIKey.Clear();
+                //textBoxAPIKey.Clear();
+                textEditAPIKey.Clear(); // Clear the text edit control
                 UpdateStatus("API Key cleared successfully.");
             }
             else
@@ -160,7 +163,8 @@ namespace ChatGPTFileProcessor
         private async void buttonProcessFile_Click(object sender, EventArgs e)
         {
             string filePath = labelFileName.Text;
-            string apiKey = textBoxAPIKey.Text;
+            //string apiKey = textBoxAPIKey.Text;
+            string apiKey = textEditAPIKey.Text.Trim(); // Use the new text edit control
 
             // 1) التحقق من مفتاح الـAPI
             if (string.IsNullOrWhiteSpace(apiKey))
@@ -506,7 +510,8 @@ namespace ChatGPTFileProcessor
             // Load API key
             if (File.Exists(apiKeyPath))
             {
-                textBoxAPIKey.Text = File.ReadAllText(apiKeyPath).Trim();
+                //textBoxAPIKey.Text = File.ReadAllText(apiKeyPath).Trim();
+                textEditAPIKey.Text = File.ReadAllText(apiKeyPath).Trim(); // Use the new text edit control
             }
 
             // Load selected model
@@ -533,7 +538,8 @@ namespace ChatGPTFileProcessor
             EnsureConfigDirectoryExists();
 
             // Save API key
-            string apiKey = textBoxAPIKey.Text.Trim();
+            //string apiKey = textBoxAPIKey.Text.Trim();
+            string apiKey = textEditAPIKey.Text.Trim(); // Use the new text edit control
             File.WriteAllText(apiKeyPath, apiKey);
 
             // Save selected model

@@ -30,16 +30,16 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            DevExpress.Utils.SuperToolTip superToolTip8 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipItem toolTipItem8 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip3 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem3 = new DevExpress.Utils.ToolTipItem();
             this.label1 = new System.Windows.Forms.Label();
-            this.textBoxAPIKey = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.buttonClearAPIKey = new DevExpress.XtraEditors.SimpleButton();
             this.buttonEditAPIKey = new DevExpress.XtraEditors.SimpleButton();
             this.buttonSaveAPIKey = new DevExpress.XtraEditors.SimpleButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.labelFileName = new DevExpress.XtraEditors.LabelControl();
             this.chkMedicalMaterial = new DevExpress.XtraEditors.CheckEdit();
             this.buttonProcessFile = new DevExpress.XtraEditors.SimpleButton();
             this.buttonBrowseFile = new DevExpress.XtraEditors.SimpleButton();
@@ -58,12 +58,12 @@
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.buttonsToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.labelsToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.labelFileName = new DevExpress.XtraEditors.LabelControl();
             this.panelTopLeft = new System.Windows.Forms.Panel();
             this.panelTopRight = new System.Windows.Forms.Panel();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.panelTop = new System.Windows.Forms.Panel();
             this.panelFill = new System.Windows.Forms.Panel();
+            this.textEditAPIKey = new DevExpress.XtraEditors.TextEdit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chkMedicalMaterial.Properties)).BeginInit();
@@ -80,6 +80,7 @@
             this.panelBottom.SuspendLayout();
             this.panelTop.SuspendLayout();
             this.panelFill.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.textEditAPIKey.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -88,19 +89,9 @@
             this.label1.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(6, 25);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(147, 22);
+            this.label1.Size = new System.Drawing.Size(143, 22);
             this.label1.TabIndex = 0;
-            this.label1.Text = "ChatGPT API Key:";
-            // 
-            // textBoxAPIKey
-            // 
-            this.textBoxAPIKey.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxAPIKey.Location = new System.Drawing.Point(3, 50);
-            this.textBoxAPIKey.Name = "textBoxAPIKey";
-            this.textBoxAPIKey.PasswordChar = '*';
-            this.textBoxAPIKey.Size = new System.Drawing.Size(665, 29);
-            this.textBoxAPIKey.TabIndex = 1;
-            this.labelsToolTip.SetToolTip(this.textBoxAPIKey, "Enter You Api Key Generated From ChatGPT Website");
+            this.label1.Text = "ChatGPT API Key";
             // 
             // label2
             // 
@@ -115,10 +106,10 @@
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.groupBox1.Controls.Add(this.textEditAPIKey);
             this.groupBox1.Controls.Add(this.buttonClearAPIKey);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.buttonEditAPIKey);
-            this.groupBox1.Controls.Add(this.textBoxAPIKey);
             this.groupBox1.Controls.Add(this.buttonSaveAPIKey);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -135,7 +126,7 @@
             this.buttonClearAPIKey.Appearance.Options.UseFont = true;
             this.buttonClearAPIKey.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("buttonClearAPIKey.ImageOptions.SvgImage")));
             this.buttonClearAPIKey.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
-            this.buttonClearAPIKey.Location = new System.Drawing.Point(386, 85);
+            this.buttonClearAPIKey.Location = new System.Drawing.Point(386, 84);
             this.buttonClearAPIKey.Name = "buttonClearAPIKey";
             this.buttonClearAPIKey.Size = new System.Drawing.Size(184, 44);
             this.buttonClearAPIKey.TabIndex = 22;
@@ -148,7 +139,7 @@
             this.buttonEditAPIKey.Appearance.Options.UseFont = true;
             this.buttonEditAPIKey.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("buttonEditAPIKey.ImageOptions.SvgImage")));
             this.buttonEditAPIKey.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
-            this.buttonEditAPIKey.Location = new System.Drawing.Point(196, 85);
+            this.buttonEditAPIKey.Location = new System.Drawing.Point(196, 84);
             this.buttonEditAPIKey.Name = "buttonEditAPIKey";
             this.buttonEditAPIKey.Size = new System.Drawing.Size(184, 44);
             this.buttonEditAPIKey.TabIndex = 21;
@@ -161,7 +152,7 @@
             this.buttonSaveAPIKey.Appearance.Options.UseFont = true;
             this.buttonSaveAPIKey.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("buttonSaveAPIKey.ImageOptions.SvgImage")));
             this.buttonSaveAPIKey.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
-            this.buttonSaveAPIKey.Location = new System.Drawing.Point(6, 85);
+            this.buttonSaveAPIKey.Location = new System.Drawing.Point(6, 84);
             this.buttonSaveAPIKey.Name = "buttonSaveAPIKey";
             this.buttonSaveAPIKey.Size = new System.Drawing.Size(184, 44);
             this.buttonSaveAPIKey.TabIndex = 20;
@@ -188,10 +179,32 @@
             this.groupBox2.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox2.Location = new System.Drawing.Point(5, 5);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1052, 314);
+            this.groupBox2.Size = new System.Drawing.Size(1052, 274);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "FILE AND PROCESS";
+            // 
+            // labelFileName
+            // 
+            this.labelFileName.Appearance.BackColor = System.Drawing.Color.LightGray;
+            this.labelFileName.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.labelFileName.Appearance.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.labelFileName.Appearance.Options.UseBackColor = true;
+            this.labelFileName.Appearance.Options.UseFont = true;
+            this.labelFileName.Appearance.Options.UseForeColor = true;
+            this.labelFileName.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
+            this.labelFileName.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.labelFileName.Location = new System.Drawing.Point(3, 239);
+            this.labelFileName.Name = "labelFileName";
+            this.labelFileName.Padding = new System.Windows.Forms.Padding(5);
+            this.labelFileName.Size = new System.Drawing.Size(1046, 32);
+            toolTipItem3.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem3.Appearance.Options.UseFont = true;
+            toolTipItem3.Text = "Selected File Path";
+            superToolTip3.Items.Add(toolTipItem3);
+            this.labelFileName.SuperTip = superToolTip3;
+            this.labelFileName.TabIndex = 21;
+            this.labelFileName.Text = "No file selected";
             // 
             // chkMedicalMaterial
             // 
@@ -361,7 +374,7 @@
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxStatus.Size = new System.Drawing.Size(1046, 135);
+            this.textBoxStatus.Size = new System.Drawing.Size(1046, 175);
             this.textBoxStatus.TabIndex = 9;
             this.labelsToolTip.SetToolTip(this.textBoxStatus, "Application Log Area Were any Action Or Changes Will Be Written Here To Inform Th" +
         "e User");
@@ -375,7 +388,7 @@
             this.groupBox4.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox4.Location = new System.Drawing.Point(5, 5);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(308, 166);
+            this.groupBox4.Size = new System.Drawing.Size(439, 166);
             this.groupBox4.TabIndex = 11;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "MODELS";
@@ -386,7 +399,7 @@
             this.comboBoxModel.Location = new System.Drawing.Point(6, 50);
             this.comboBoxModel.MaxDropDownItems = 15;
             this.comboBoxModel.Name = "comboBoxModel";
-            this.comboBoxModel.Size = new System.Drawing.Size(296, 30);
+            this.comboBoxModel.Size = new System.Drawing.Size(426, 30);
             this.comboBoxModel.TabIndex = 1;
             this.labelsToolTip.SetToolTip(this.comboBoxModel, "Select One Of ChatGPT AI Models To Be Used In Generating Process");
             this.comboBoxModel.SelectedIndexChanged += new System.EventHandler(this.comboBoxModel_SelectedIndexChanged);
@@ -409,7 +422,7 @@
             this.groupBox5.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox5.Location = new System.Drawing.Point(5, 5);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(1052, 163);
+            this.groupBox5.Size = new System.Drawing.Size(1052, 203);
             this.groupBox5.TabIndex = 13;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "STATUS";
@@ -427,27 +440,6 @@
             this.labelsToolTip.InitialDelay = 500;
             this.labelsToolTip.ReshowDelay = 100;
             // 
-            // labelFileName
-            // 
-            this.labelFileName.Appearance.BackColor = System.Drawing.Color.LightGray;
-            this.labelFileName.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
-            this.labelFileName.Appearance.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.labelFileName.Appearance.Options.UseBackColor = true;
-            this.labelFileName.Appearance.Options.UseFont = true;
-            this.labelFileName.Appearance.Options.UseForeColor = true;
-            this.labelFileName.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
-            this.labelFileName.Location = new System.Drawing.Point(6, 226);
-            this.labelFileName.Name = "labelFileName";
-            this.labelFileName.Padding = new System.Windows.Forms.Padding(5);
-            this.labelFileName.Size = new System.Drawing.Size(992, 32);
-            toolTipItem8.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem8.Appearance.Options.UseFont = true;
-            toolTipItem8.Text = "Selected File Path";
-            superToolTip8.Items.Add(toolTipItem8);
-            this.labelFileName.SuperTip = superToolTip8;
-            this.labelFileName.TabIndex = 21;
-            this.labelFileName.Text = "No file selected";
-            // 
             // panelTopLeft
             // 
             this.panelTopLeft.Controls.Add(this.groupBox1);
@@ -462,20 +454,20 @@
             // 
             this.panelTopRight.Controls.Add(this.groupBox4);
             this.panelTopRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelTopRight.Location = new System.Drawing.Point(744, 0);
+            this.panelTopRight.Location = new System.Drawing.Point(613, 0);
             this.panelTopRight.Name = "panelTopRight";
             this.panelTopRight.Padding = new System.Windows.Forms.Padding(5);
-            this.panelTopRight.Size = new System.Drawing.Size(318, 176);
+            this.panelTopRight.Size = new System.Drawing.Size(449, 176);
             this.panelTopRight.TabIndex = 23;
             // 
             // panelBottom
             // 
             this.panelBottom.Controls.Add(this.groupBox5);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(0, 500);
+            this.panelBottom.Location = new System.Drawing.Point(0, 460);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Padding = new System.Windows.Forms.Padding(5);
-            this.panelBottom.Size = new System.Drawing.Size(1062, 173);
+            this.panelBottom.Size = new System.Drawing.Size(1062, 213);
             this.panelBottom.TabIndex = 24;
             // 
             // panelTop
@@ -495,8 +487,25 @@
             this.panelFill.Location = new System.Drawing.Point(0, 176);
             this.panelFill.Name = "panelFill";
             this.panelFill.Padding = new System.Windows.Forms.Padding(5);
-            this.panelFill.Size = new System.Drawing.Size(1062, 324);
+            this.panelFill.Size = new System.Drawing.Size(1062, 284);
             this.panelFill.TabIndex = 25;
+            // 
+            // textEditAPIKey
+            // 
+            this.textEditAPIKey.Location = new System.Drawing.Point(6, 50);
+            this.textEditAPIKey.Name = "textEditAPIKey";
+            this.textEditAPIKey.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.textEditAPIKey.Properties.Appearance.Options.UseFont = true;
+            this.textEditAPIKey.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.textEditAPIKey.Properties.AppearanceDisabled.Options.UseFont = true;
+            this.textEditAPIKey.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.textEditAPIKey.Properties.AppearanceFocused.Options.UseFont = true;
+            this.textEditAPIKey.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.textEditAPIKey.Properties.AppearanceReadOnly.Options.UseFont = true;
+            this.textEditAPIKey.Properties.NullText = "ChatGPT API Key ... Enter Here";
+            this.textEditAPIKey.Properties.PasswordChar = '*';
+            this.textEditAPIKey.Size = new System.Drawing.Size(564, 28);
+            this.textEditAPIKey.TabIndex = 23;
             // 
             // Form1
             // 
@@ -532,6 +541,7 @@
             this.panelBottom.ResumeLayout(false);
             this.panelTop.ResumeLayout(false);
             this.panelFill.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.textEditAPIKey.Properties)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -539,7 +549,6 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBoxAPIKey;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
@@ -570,6 +579,7 @@
         private System.Windows.Forms.Panel panelBottom;
         private System.Windows.Forms.Panel panelTop;
         private System.Windows.Forms.Panel panelFill;
+        private DevExpress.XtraEditors.TextEdit textEditAPIKey;
     }
 }
 
