@@ -30,10 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            DevExpress.Utils.SuperToolTip superToolTip3 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipItem toolTipItem3 = new DevExpress.Utils.ToolTipItem();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            DevExpress.Utils.SuperToolTip superToolTip2 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem2 = new DevExpress.Utils.ToolTipItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.buttonClearAPIKey = new DevExpress.XtraEditors.SimpleButton();
             this.buttonEditAPIKey = new DevExpress.XtraEditors.SimpleButton();
@@ -54,7 +52,6 @@
             this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.comboBoxModel = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.buttonsToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.labelsToolTip = new System.Windows.Forms.ToolTip(this.components);
@@ -64,6 +61,9 @@
             this.panelTop = new System.Windows.Forms.Panel();
             this.panelFill = new System.Windows.Forms.Panel();
             this.textEditAPIKey = new DevExpress.XtraEditors.TextEdit();
+            this.labelControl3 = new DevExpress.XtraEditors.LabelControl();
+            this.labelControl4 = new DevExpress.XtraEditors.LabelControl();
+            this.labelControl5 = new DevExpress.XtraEditors.LabelControl();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chkMedicalMaterial.Properties)).BeginInit();
@@ -83,32 +83,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.textEditAPIKey.Properties)).BeginInit();
             this.SuspendLayout();
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(6, 25);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(143, 22);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "ChatGPT API Key";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(6, 151);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(100, 22);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Select File:";
-            // 
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.groupBox1.Controls.Add(this.labelControl5);
             this.groupBox1.Controls.Add(this.textEditAPIKey);
             this.groupBox1.Controls.Add(this.buttonClearAPIKey);
-            this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.buttonEditAPIKey);
             this.groupBox1.Controls.Add(this.buttonSaveAPIKey);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -126,7 +106,7 @@
             this.buttonClearAPIKey.Appearance.Options.UseFont = true;
             this.buttonClearAPIKey.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("buttonClearAPIKey.ImageOptions.SvgImage")));
             this.buttonClearAPIKey.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
-            this.buttonClearAPIKey.Location = new System.Drawing.Point(386, 84);
+            this.buttonClearAPIKey.Location = new System.Drawing.Point(386, 90);
             this.buttonClearAPIKey.Name = "buttonClearAPIKey";
             this.buttonClearAPIKey.Size = new System.Drawing.Size(184, 44);
             this.buttonClearAPIKey.TabIndex = 22;
@@ -139,7 +119,7 @@
             this.buttonEditAPIKey.Appearance.Options.UseFont = true;
             this.buttonEditAPIKey.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("buttonEditAPIKey.ImageOptions.SvgImage")));
             this.buttonEditAPIKey.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
-            this.buttonEditAPIKey.Location = new System.Drawing.Point(196, 84);
+            this.buttonEditAPIKey.Location = new System.Drawing.Point(196, 90);
             this.buttonEditAPIKey.Name = "buttonEditAPIKey";
             this.buttonEditAPIKey.Size = new System.Drawing.Size(184, 44);
             this.buttonEditAPIKey.TabIndex = 21;
@@ -152,7 +132,7 @@
             this.buttonSaveAPIKey.Appearance.Options.UseFont = true;
             this.buttonSaveAPIKey.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("buttonSaveAPIKey.ImageOptions.SvgImage")));
             this.buttonSaveAPIKey.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
-            this.buttonSaveAPIKey.Location = new System.Drawing.Point(6, 84);
+            this.buttonSaveAPIKey.Location = new System.Drawing.Point(6, 90);
             this.buttonSaveAPIKey.Name = "buttonSaveAPIKey";
             this.buttonSaveAPIKey.Size = new System.Drawing.Size(184, 44);
             this.buttonSaveAPIKey.TabIndex = 20;
@@ -162,6 +142,7 @@
             // groupBox2
             // 
             this.groupBox2.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.groupBox2.Controls.Add(this.labelControl3);
             this.groupBox2.Controls.Add(this.labelFileName);
             this.groupBox2.Controls.Add(this.chkMedicalMaterial);
             this.groupBox2.Controls.Add(this.buttonProcessFile);
@@ -174,7 +155,6 @@
             this.groupBox2.Controls.Add(this.chkFlashcards);
             this.groupBox2.Controls.Add(this.chkMCQs);
             this.groupBox2.Controls.Add(this.chkDefinitions);
-            this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox2.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox2.Location = new System.Drawing.Point(5, 5);
@@ -198,17 +178,17 @@
             this.labelFileName.Name = "labelFileName";
             this.labelFileName.Padding = new System.Windows.Forms.Padding(5);
             this.labelFileName.Size = new System.Drawing.Size(1046, 32);
-            toolTipItem3.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem3.Appearance.Options.UseFont = true;
-            toolTipItem3.Text = "Selected File Path";
-            superToolTip3.Items.Add(toolTipItem3);
-            this.labelFileName.SuperTip = superToolTip3;
+            toolTipItem2.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem2.Appearance.Options.UseFont = true;
+            toolTipItem2.Text = "Selected File Path";
+            superToolTip2.Items.Add(toolTipItem2);
+            this.labelFileName.SuperTip = superToolTip2;
             this.labelFileName.TabIndex = 21;
             this.labelFileName.Text = "No file selected";
             // 
             // chkMedicalMaterial
             // 
-            this.chkMedicalMaterial.Location = new System.Drawing.Point(6, 60);
+            this.chkMedicalMaterial.Location = new System.Drawing.Point(7, 60);
             this.chkMedicalMaterial.Name = "chkMedicalMaterial";
             this.chkMedicalMaterial.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkMedicalMaterial.Properties.Appearance.Options.UseFont = true;
@@ -223,7 +203,7 @@
             this.buttonProcessFile.Appearance.Options.UseFont = true;
             this.buttonProcessFile.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("buttonProcessFile.ImageOptions.SvgImage")));
             this.buttonProcessFile.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
-            this.buttonProcessFile.Location = new System.Drawing.Point(196, 176);
+            this.buttonProcessFile.Location = new System.Drawing.Point(197, 182);
             this.buttonProcessFile.Name = "buttonProcessFile";
             this.buttonProcessFile.Size = new System.Drawing.Size(184, 44);
             this.buttonProcessFile.TabIndex = 19;
@@ -236,7 +216,7 @@
             this.buttonBrowseFile.Appearance.Options.UseFont = true;
             this.buttonBrowseFile.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("buttonBrowseFile.ImageOptions.SvgImage")));
             this.buttonBrowseFile.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
-            this.buttonBrowseFile.Location = new System.Drawing.Point(6, 176);
+            this.buttonBrowseFile.Location = new System.Drawing.Point(7, 182);
             this.buttonBrowseFile.Name = "buttonBrowseFile";
             this.buttonBrowseFile.Size = new System.Drawing.Size(184, 44);
             this.buttonBrowseFile.TabIndex = 18;
@@ -247,7 +227,7 @@
             // 
             this.labelControl2.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelControl2.Appearance.Options.UseFont = true;
-            this.labelControl2.Location = new System.Drawing.Point(6, 126);
+            this.labelControl2.Location = new System.Drawing.Point(7, 126);
             this.labelControl2.Name = "labelControl2";
             this.labelControl2.Size = new System.Drawing.Size(346, 22);
             this.labelControl2.TabIndex = 17;
@@ -257,7 +237,7 @@
             // 
             this.labelControl1.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelControl1.Appearance.Options.UseFont = true;
-            this.labelControl1.Location = new System.Drawing.Point(6, 92);
+            this.labelControl1.Location = new System.Drawing.Point(7, 92);
             this.labelControl1.Name = "labelControl1";
             this.labelControl1.Size = new System.Drawing.Size(394, 22);
             this.labelControl1.TabIndex = 16;
@@ -266,7 +246,7 @@
             // cmbVocabLang
             // 
             this.cmbVocabLang.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cmbVocabLang.Location = new System.Drawing.Point(436, 123);
+            this.cmbVocabLang.Location = new System.Drawing.Point(437, 123);
             this.cmbVocabLang.Name = "cmbVocabLang";
             this.cmbVocabLang.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbVocabLang.Properties.Appearance.Options.UseFont = true;
@@ -294,7 +274,7 @@
             // cmbGeneralLang
             // 
             this.cmbGeneralLang.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cmbGeneralLang.Location = new System.Drawing.Point(436, 89);
+            this.cmbGeneralLang.Location = new System.Drawing.Point(437, 89);
             this.cmbGeneralLang.Name = "cmbGeneralLang";
             this.cmbGeneralLang.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbGeneralLang.Properties.Appearance.Options.UseFont = true;
@@ -321,7 +301,7 @@
             // 
             // chkVocabulary
             // 
-            this.chkVocabulary.Location = new System.Drawing.Point(723, 28);
+            this.chkVocabulary.Location = new System.Drawing.Point(724, 28);
             this.chkVocabulary.Name = "chkVocabulary";
             this.chkVocabulary.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkVocabulary.Properties.Appearance.Options.UseFont = true;
@@ -332,7 +312,7 @@
             // 
             // chkFlashcards
             // 
-            this.chkFlashcards.Location = new System.Drawing.Point(484, 28);
+            this.chkFlashcards.Location = new System.Drawing.Point(485, 28);
             this.chkFlashcards.Name = "chkFlashcards";
             this.chkFlashcards.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkFlashcards.Properties.Appearance.Options.UseFont = true;
@@ -343,7 +323,7 @@
             // 
             // chkMCQs
             // 
-            this.chkMCQs.Location = new System.Drawing.Point(245, 28);
+            this.chkMCQs.Location = new System.Drawing.Point(246, 28);
             this.chkMCQs.Name = "chkMCQs";
             this.chkMCQs.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkMCQs.Properties.Appearance.Options.UseFont = true;
@@ -354,7 +334,7 @@
             // 
             // chkDefinitions
             // 
-            this.chkDefinitions.Location = new System.Drawing.Point(6, 28);
+            this.chkDefinitions.Location = new System.Drawing.Point(7, 28);
             this.chkDefinitions.Name = "chkDefinitions";
             this.chkDefinitions.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkDefinitions.Properties.Appearance.Options.UseFont = true;
@@ -382,8 +362,8 @@
             // groupBox4
             // 
             this.groupBox4.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.groupBox4.Controls.Add(this.labelControl4);
             this.groupBox4.Controls.Add(this.comboBoxModel);
-            this.groupBox4.Controls.Add(this.label3);
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox4.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox4.Location = new System.Drawing.Point(5, 5);
@@ -396,23 +376,13 @@
             // comboBoxModel
             // 
             this.comboBoxModel.FormattingEnabled = true;
-            this.comboBoxModel.Location = new System.Drawing.Point(6, 50);
+            this.comboBoxModel.Location = new System.Drawing.Point(6, 56);
             this.comboBoxModel.MaxDropDownItems = 15;
             this.comboBoxModel.Name = "comboBoxModel";
             this.comboBoxModel.Size = new System.Drawing.Size(426, 30);
             this.comboBoxModel.TabIndex = 1;
             this.labelsToolTip.SetToolTip(this.comboBoxModel, "Select One Of ChatGPT AI Models To Be Used In Generating Process");
             this.comboBoxModel.SelectedIndexChanged += new System.EventHandler(this.comboBoxModel_SelectedIndexChanged);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(6, 25);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(127, 22);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Choose Model:";
             // 
             // groupBox5
             // 
@@ -492,7 +462,7 @@
             // 
             // textEditAPIKey
             // 
-            this.textEditAPIKey.Location = new System.Drawing.Point(6, 50);
+            this.textEditAPIKey.Location = new System.Drawing.Point(6, 56);
             this.textEditAPIKey.Name = "textEditAPIKey";
             this.textEditAPIKey.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
             this.textEditAPIKey.Properties.Appearance.Options.UseFont = true;
@@ -506,6 +476,36 @@
             this.textEditAPIKey.Properties.PasswordChar = '*';
             this.textEditAPIKey.Size = new System.Drawing.Size(564, 28);
             this.textEditAPIKey.TabIndex = 23;
+            // 
+            // labelControl3
+            // 
+            this.labelControl3.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelControl3.Appearance.Options.UseFont = true;
+            this.labelControl3.Location = new System.Drawing.Point(7, 154);
+            this.labelControl3.Name = "labelControl3";
+            this.labelControl3.Size = new System.Drawing.Size(86, 22);
+            this.labelControl3.TabIndex = 22;
+            this.labelControl3.Text = "Select File";
+            // 
+            // labelControl4
+            // 
+            this.labelControl4.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelControl4.Appearance.Options.UseFont = true;
+            this.labelControl4.Location = new System.Drawing.Point(6, 28);
+            this.labelControl4.Name = "labelControl4";
+            this.labelControl4.Size = new System.Drawing.Size(113, 22);
+            this.labelControl4.TabIndex = 23;
+            this.labelControl4.Text = "Choose Model";
+            // 
+            // labelControl5
+            // 
+            this.labelControl5.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelControl5.Appearance.Options.UseFont = true;
+            this.labelControl5.Location = new System.Drawing.Point(7, 28);
+            this.labelControl5.Name = "labelControl5";
+            this.labelControl5.Size = new System.Drawing.Size(134, 22);
+            this.labelControl5.TabIndex = 24;
+            this.labelControl5.Text = "ChatGPT API Key";
             // 
             // Form1
             // 
@@ -547,15 +547,11 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TextBox textBoxStatus;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.ComboBox comboBoxModel;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.ToolTip buttonsToolTip;
         private System.Windows.Forms.ToolTip labelsToolTip;
@@ -580,6 +576,9 @@
         private System.Windows.Forms.Panel panelTop;
         private System.Windows.Forms.Panel panelFill;
         private DevExpress.XtraEditors.TextEdit textEditAPIKey;
+        private DevExpress.XtraEditors.LabelControl labelControl3;
+        private DevExpress.XtraEditors.LabelControl labelControl5;
+        private DevExpress.XtraEditors.LabelControl labelControl4;
     }
 }
 
