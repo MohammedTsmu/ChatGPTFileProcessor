@@ -70,5 +70,29 @@ namespace ChatGPTFileProcessor.Properties {
                 this["GenerateVocabulary"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("English")]
+        public string GeneralLanguage {
+            get {
+                return ((string)(this["GeneralLanguage"]));
+            }
+            set {
+                this["GeneralLanguage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Arabic")]
+        public string VocabLanguage {
+            get {
+                return ((string)(this["VocabLanguage"]));
+            }
+            set {
+                this["VocabLanguage"] = value;
+            }
+        }
     }
 }

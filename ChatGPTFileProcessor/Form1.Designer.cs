@@ -40,6 +40,10 @@
             this.labelFileName = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.labelControl2 = new DevExpress.XtraEditors.LabelControl();
+            this.labelControl1 = new DevExpress.XtraEditors.LabelControl();
+            this.cmbVocabLang = new DevExpress.XtraEditors.ComboBoxEdit();
+            this.cmbGeneralLang = new DevExpress.XtraEditors.ComboBoxEdit();
             this.chkVocabulary = new DevExpress.XtraEditors.CheckEdit();
             this.chkFlashcards = new DevExpress.XtraEditors.CheckEdit();
             this.chkMCQs = new DevExpress.XtraEditors.CheckEdit();
@@ -56,6 +60,8 @@
             this.labelsToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.cmbVocabLang.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.cmbGeneralLang.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkVocabulary.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkFlashcards.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkMCQs.Properties)).BeginInit();
@@ -118,7 +124,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 18);
+            this.label2.Location = new System.Drawing.Point(10, 168);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(73, 16);
             this.label2.TabIndex = 5;
@@ -126,7 +132,7 @@
             // 
             // buttonBrowseFile
             // 
-            this.buttonBrowseFile.Location = new System.Drawing.Point(6, 37);
+            this.buttonBrowseFile.Location = new System.Drawing.Point(10, 187);
             this.buttonBrowseFile.Name = "buttonBrowseFile";
             this.buttonBrowseFile.Size = new System.Drawing.Size(152, 44);
             this.buttonBrowseFile.TabIndex = 6;
@@ -141,7 +147,7 @@
             this.labelFileName.BackColor = System.Drawing.Color.DarkMagenta;
             this.labelFileName.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelFileName.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.labelFileName.Location = new System.Drawing.Point(6, 84);
+            this.labelFileName.Location = new System.Drawing.Point(10, 234);
             this.labelFileName.Name = "labelFileName";
             this.labelFileName.Size = new System.Drawing.Size(125, 20);
             this.labelFileName.TabIndex = 7;
@@ -165,6 +171,10 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.labelControl2);
+            this.groupBox2.Controls.Add(this.labelControl1);
+            this.groupBox2.Controls.Add(this.cmbVocabLang);
+            this.groupBox2.Controls.Add(this.cmbGeneralLang);
             this.groupBox2.Controls.Add(this.chkVocabulary);
             this.groupBox2.Controls.Add(this.chkFlashcards);
             this.groupBox2.Controls.Add(this.chkMCQs);
@@ -181,9 +191,85 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "FILE AND PROCESS";
             // 
+            // labelControl2
+            // 
+            this.labelControl2.Appearance.Font = new System.Drawing.Font("LBC", 12F);
+            this.labelControl2.Appearance.Options.UseFont = true;
+            this.labelControl2.Location = new System.Drawing.Point(6, 95);
+            this.labelControl2.Name = "labelControl2";
+            this.labelControl2.Size = new System.Drawing.Size(402, 26);
+            this.labelControl2.TabIndex = 17;
+            this.labelControl2.Text = "Translation Language (Vocabulary → Target):";
+            // 
+            // labelControl1
+            // 
+            this.labelControl1.Appearance.Font = new System.Drawing.Font("LBC", 12F);
+            this.labelControl1.Appearance.Options.UseFont = true;
+            this.labelControl1.Location = new System.Drawing.Point(6, 57);
+            this.labelControl1.Name = "labelControl1";
+            this.labelControl1.Size = new System.Drawing.Size(451, 26);
+            this.labelControl1.TabIndex = 16;
+            this.labelControl1.Text = "General Language (Definition - Mcqs - Flashcards):";
+            // 
+            // cmbVocabLang
+            // 
+            this.cmbVocabLang.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cmbVocabLang.Location = new System.Drawing.Point(520, 92);
+            this.cmbVocabLang.Name = "cmbVocabLang";
+            this.cmbVocabLang.Properties.Appearance.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbVocabLang.Properties.Appearance.Options.UseFont = true;
+            this.cmbVocabLang.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbVocabLang.Properties.AppearanceDisabled.Options.UseFont = true;
+            this.cmbVocabLang.Properties.AppearanceDropDown.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbVocabLang.Properties.AppearanceDropDown.Options.UseFont = true;
+            this.cmbVocabLang.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbVocabLang.Properties.AppearanceFocused.Options.UseFont = true;
+            this.cmbVocabLang.Properties.AppearanceItemDisabled.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbVocabLang.Properties.AppearanceItemDisabled.Options.UseFont = true;
+            this.cmbVocabLang.Properties.AppearanceItemHighlight.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbVocabLang.Properties.AppearanceItemHighlight.Options.UseFont = true;
+            this.cmbVocabLang.Properties.AppearanceItemSelected.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbVocabLang.Properties.AppearanceItemSelected.Options.UseFont = true;
+            this.cmbVocabLang.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbVocabLang.Properties.AppearanceReadOnly.Options.UseFont = true;
+            this.cmbVocabLang.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+            this.cmbVocabLang.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
+            this.cmbVocabLang.Size = new System.Drawing.Size(324, 32);
+            this.cmbVocabLang.TabIndex = 15;
+            this.cmbVocabLang.SelectedIndexChanged += new System.EventHandler(this.cmbVocabLang_SelectedIndexChanged);
+            // 
+            // cmbGeneralLang
+            // 
+            this.cmbGeneralLang.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cmbGeneralLang.Location = new System.Drawing.Point(520, 54);
+            this.cmbGeneralLang.Name = "cmbGeneralLang";
+            this.cmbGeneralLang.Properties.Appearance.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbGeneralLang.Properties.Appearance.Options.UseFont = true;
+            this.cmbGeneralLang.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbGeneralLang.Properties.AppearanceDisabled.Options.UseFont = true;
+            this.cmbGeneralLang.Properties.AppearanceDropDown.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbGeneralLang.Properties.AppearanceDropDown.Options.UseFont = true;
+            this.cmbGeneralLang.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbGeneralLang.Properties.AppearanceFocused.Options.UseFont = true;
+            this.cmbGeneralLang.Properties.AppearanceItemDisabled.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbGeneralLang.Properties.AppearanceItemDisabled.Options.UseFont = true;
+            this.cmbGeneralLang.Properties.AppearanceItemHighlight.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbGeneralLang.Properties.AppearanceItemHighlight.Options.UseFont = true;
+            this.cmbGeneralLang.Properties.AppearanceItemSelected.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbGeneralLang.Properties.AppearanceItemSelected.Options.UseFont = true;
+            this.cmbGeneralLang.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 12F);
+            this.cmbGeneralLang.Properties.AppearanceReadOnly.Options.UseFont = true;
+            this.cmbGeneralLang.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+            this.cmbGeneralLang.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
+            this.cmbGeneralLang.Size = new System.Drawing.Size(324, 32);
+            this.cmbGeneralLang.TabIndex = 14;
+            this.cmbGeneralLang.SelectedIndexChanged += new System.EventHandler(this.cmbGeneralLang_SelectedIndexChanged);
+            // 
             // chkVocabulary
             // 
-            this.chkVocabulary.Location = new System.Drawing.Point(642, 48);
+            this.chkVocabulary.Location = new System.Drawing.Point(678, 21);
             this.chkVocabulary.Name = "chkVocabulary";
             this.chkVocabulary.Properties.Appearance.Font = new System.Drawing.Font("LBC", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkVocabulary.Properties.Appearance.Options.UseFont = true;
@@ -194,7 +280,7 @@
             // 
             // chkFlashcards
             // 
-            this.chkFlashcards.Location = new System.Drawing.Point(403, 48);
+            this.chkFlashcards.Location = new System.Drawing.Point(439, 21);
             this.chkFlashcards.Name = "chkFlashcards";
             this.chkFlashcards.Properties.Appearance.Font = new System.Drawing.Font("LBC", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkFlashcards.Properties.Appearance.Options.UseFont = true;
@@ -205,7 +291,7 @@
             // 
             // chkMCQs
             // 
-            this.chkMCQs.Location = new System.Drawing.Point(642, 12);
+            this.chkMCQs.Location = new System.Drawing.Point(249, 21);
             this.chkMCQs.Name = "chkMCQs";
             this.chkMCQs.Properties.Appearance.Font = new System.Drawing.Font("LBC", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkMCQs.Properties.Appearance.Options.UseFont = true;
@@ -216,7 +302,7 @@
             // 
             // chkDefinitions
             // 
-            this.chkDefinitions.Location = new System.Drawing.Point(403, 12);
+            this.chkDefinitions.Location = new System.Drawing.Point(10, 21);
             this.chkDefinitions.Name = "chkDefinitions";
             this.chkDefinitions.Properties.Appearance.Font = new System.Drawing.Font("LBC", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkDefinitions.Properties.Appearance.Options.UseFont = true;
@@ -230,19 +316,19 @@
             this.textBoxStatus.BackColor = System.Drawing.Color.DarkMagenta;
             this.textBoxStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxStatus.ForeColor = System.Drawing.Color.AliceBlue;
-            this.textBoxStatus.Location = new System.Drawing.Point(6, 116);
+            this.textBoxStatus.Location = new System.Drawing.Point(6, 303);
             this.textBoxStatus.Multiline = true;
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxStatus.Size = new System.Drawing.Size(992, 263);
+            this.textBoxStatus.Size = new System.Drawing.Size(992, 88);
             this.textBoxStatus.TabIndex = 9;
             this.labelsToolTip.SetToolTip(this.textBoxStatus, "Application Log Area Were any Action Or Changes Will Be Written Here To Inform Th" +
         "e User");
             // 
             // buttonProcessFile
             // 
-            this.buttonProcessFile.Location = new System.Drawing.Point(164, 37);
+            this.buttonProcessFile.Location = new System.Drawing.Point(168, 187);
             this.buttonProcessFile.Name = "buttonProcessFile";
             this.buttonProcessFile.Size = new System.Drawing.Size(152, 44);
             this.buttonProcessFile.TabIndex = 8;
@@ -344,6 +430,8 @@
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.cmbVocabLang.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.cmbGeneralLang.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkVocabulary.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkFlashcards.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkMCQs.Properties)).EndInit();
@@ -381,6 +469,10 @@
         private DevExpress.XtraEditors.CheckEdit chkFlashcards;
         private DevExpress.XtraEditors.CheckEdit chkMCQs;
         private DevExpress.XtraEditors.CheckEdit chkDefinitions;
+        private DevExpress.XtraEditors.ComboBoxEdit cmbVocabLang;
+        private DevExpress.XtraEditors.ComboBoxEdit cmbGeneralLang;
+        private DevExpress.XtraEditors.LabelControl labelControl2;
+        private DevExpress.XtraEditors.LabelControl labelControl1;
     }
 }
 

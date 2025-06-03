@@ -14,5 +14,11 @@
     <Setting Name="GenerateVocabulary" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="GeneralLanguage" Type="System.String" Scope="User">
+      <Value Profile="(Default)">English</Value>
+    </Setting>
+    <Setting Name="VocabLanguage" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Arabic</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
