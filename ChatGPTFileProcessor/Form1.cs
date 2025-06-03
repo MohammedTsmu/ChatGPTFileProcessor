@@ -198,7 +198,7 @@ namespace ChatGPTFileProcessor
                 buttonBrowseFile.Enabled = false;
 
                 ShowOverlay("🔄 Processing, please wait...");
-                UpdateOverlayLog("*********** S T A R T _ G E N E R A T I N G ***********");
+                UpdateOverlayLog("S T A R T   G E N E R A T I N G...");
                 UpdateOverlayLog("🚀 Starting GPT-4o multimodal processing...");
 
                 // اسم النموذج والـ timestamp لإنشاء مسارات الملفات
@@ -463,7 +463,7 @@ namespace ChatGPTFileProcessor
                 // 8) إظهار رسالة انتهاء المعالجة
                 UpdateStatus("✅ Processing complete. Files saved to Desktop.");
                 UpdateOverlayLog("✅ Processing complete. Files saved to Desktop as selected outputs.");
-                UpdateOverlayLog("*********** E N D _ G E N E R A T I N G ***********");
+                UpdateOverlayLog("E N D   G E N E R A T I N G...");
                 UpdateOverlayLog("-----------------------------------------------------");
             }
             catch (Exception ex)
