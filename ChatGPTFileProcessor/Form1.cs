@@ -129,182 +129,47 @@ namespace ChatGPTFileProcessor
 
 
 
-        //private async void buttonProcessFile_Click(object sender, EventArgs e)
-        //{
-        //    string filePath = labelFileName.Text;
-        //    string apiKey = textBoxAPIKey.Text;
-
-        //    // 1) التحقق من مفتاح الـAPI
-        //    if (string.IsNullOrWhiteSpace(apiKey))
-        //    {
-        //        MessageBox.Show("Please enter your API key.", "API Key Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //        return;
-        //    }
-
-        //    // 2) التحقق من مسار الملف
-        //    if (filePath == "No file selected" || !File.Exists(filePath))
-        //    {
-        //        MessageBox.Show("Please select a valid PDF file.", "File Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //        return;
-        //    }
-
-        //    try
-        //    {
-        //        // منع النقرات المتكررة أثناء المعالجة
-        //        buttonProcessFile.Enabled = false;
-        //        buttonBrowseFile.Enabled = false;
-
-        //        ShowOverlay("🔄 Processing, please wait...");
-        //        UpdateOverlayLog("🚀 Starting GPT-4o multimodal processing...");
-
-        //        // اسم النموذج والـ timestamp لإنشاء مسارات الملفات
-        //        string modelName = comboBoxModel.SelectedItem?.ToString() ?? "gpt-4o";
-        //        string timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-        //        string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-
-        //        // مسارات ملفات التعاريف و MCQs و Flashcards و Vocabulary
-        //        string definitionsFilePath = Path.Combine(basePath, $"Definitions_{modelName}_{timeStamp}.docx");
-        //        string mcqsFilePath = Path.Combine(basePath, $"MCQs_{modelName}_{timeStamp}.docx");
-        //        string flashcardsFilePath = Path.Combine(basePath, $"Flashcards_{modelName}_{timeStamp}.docx");
-        //        string vocabularyFilePath = Path.Combine(basePath, $"Vocabulary_{modelName}_{timeStamp}.docx");
-
-        //        // 3) إعداد الـ prompts لكل قسم
-        //        // 3.1) prompt التعاريف (إنجليزي، مصطلح: شرح):
-        //        string definitionsPrompt =
-        //            "Provide concise definitions (in English only) for each key medical term on this page. " +
-        //            "For each term, write:\n" +
-        //            "- The term itself as a heading\n" +
-        //            "- Then a one- or two-sentence definition in English\n\n" +
-        //            "Separate every entry by a blank line, without numbering.";
-
-
-        //        // 3.2) prompt الأسئلة (MCQs) بالكامل بالإنجليزية:
-        //        string mcqsPrompt =
-        //            "Generate multiple-choice questions (only in English) based on the content of this page. Use EXACTLY this format (no deviations):\n\n" +
-        //            "Question: [Write the question in English]\n" +
-        //            "A) [Option A]\n" +
-        //            "B) [Option B]\n" +
-        //            "C) [Option C]\n" +
-        //            "D) [Option D]\n" +
-        //            "Answer: [Correct Letter]\n\n" +
-        //            "Separate each question block with a blank line.";
-
-        //        // 3.3) prompt البطاقات (Flashcards) بالكامل بالإنجليزية:
-        //        string flashcardsPrompt =
-        //            "Create flashcards in English for each key medical or pharmaceutical term on this page. " +
-        //            "Use EXACTLY this format (no deviations):\n\n" +
-        //            "Front: [Term]\n" +
-        //            "Back:  [Definition in English]\n\n" +
-        //            "Leave exactly one blank line between each card.";
-
-        //        // 3.4) prompt المفردات (Vocabulary) ثنائي اللغة (إنجليزي–عربي):
-        //        string vocabularyPrompt =
-        //            "Extract important vocabulary terms from this page and translate them to Arabic. " +
-        //            "Use EXACTLY this format (no bullets, no numbering):\n\n" +
-        //            "EnglishTerm – ArabicTranslation\n\n" +
-        //            "Leave exactly one blank line between each entry.";
-
-        //        // 4) استخراج صور كل الصفحات المحددة في الواجهة
-        //        var allPages = ConvertPdfToImages(filePath);
-
-        //        // 5) إنشاء StringBuilder لكل قسم من الأقسام الأربع
-        //        StringBuilder allDefinitions = new StringBuilder();
-        //        StringBuilder allMCQs = new StringBuilder();
-        //        StringBuilder allFlashcards = new StringBuilder();
-        //        StringBuilder allVocabulary = new StringBuilder();
-
-
-        //        // 6) حلقة لمعالجة كل صفحة عبر Multimodal (صورة + نص)
-        //        foreach (var (pageNumber, image) in allPages)
-        //        {
-        //            UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Definitions)...");
-        //            string pageDef = await ProcessPdfPageMultimodal(image, apiKey, definitionsPrompt);
-        //            allDefinitions.AppendLine($"===== Page {pageNumber} =====");
-        //            allDefinitions.AppendLine(pageDef);
-        //            allDefinitions.AppendLine();
-
-        //            UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (MCQs)...");
-        //            string pageMCQs = await ProcessPdfPageMultimodal(image, apiKey, mcqsPrompt);
-        //            allMCQs.AppendLine($"===== Page {pageNumber} =====");
-        //            allMCQs.AppendLine(pageMCQs);
-        //            allMCQs.AppendLine();
-
-        //            UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Flashcards)...");
-        //            string pageFlash = await ProcessPdfPageMultimodal(image, apiKey, flashcardsPrompt);
-        //            allFlashcards.AppendLine($"===== Page {pageNumber} =====");
-        //            allFlashcards.AppendLine(pageFlash);
-        //            allFlashcards.AppendLine();
-
-        //            UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Vocabulary)...");
-        //            string pageVocab = await ProcessPdfPageMultimodal(image, apiKey, vocabularyPrompt);
-        //            allVocabulary.AppendLine($"===== Page {pageNumber} =====");
-        //            allVocabulary.AppendLine(pageVocab);
-        //            allVocabulary.AppendLine();
-
-        //            UpdateOverlayLog($"✅ Page {pageNumber} done.");
-        //        }
-
-        //        // 7) تحويل StringBuilder إلى نصٍّ نهائي وحفظه في ملفات Word منسّقة
-        //        // 7.1) ملف التعاريف
-        //        string definitionsText = allDefinitions.ToString();
-        //        SaveContentToFile(FormatDefinitions(definitionsText), definitionsFilePath, "Definitions");
-
-        //        // 7.2) ملف MCQs (يمكن تكييف تنسيق MCQs إذا أردتم تنسيقًا أضبط)
-        //        string mcqsText = allMCQs.ToString();
-        //        SaveContentToFile(mcqsText, mcqsFilePath, "MCQs");
-
-        //        // 7.3) ملف Flashcards
-        //        string flashcardsText = allFlashcards.ToString();
-        //        SaveContentToFile(flashcardsText, flashcardsFilePath, "Flashcards");
-
-        //        // 7.4) ملف Vocabulary (بعد تطبيق FormatVocabulary على الناتج)
-        //        string vocabularyText = FormatVocabulary(allVocabulary.ToString());
-        //        SaveContentToFile(vocabularyText, vocabularyFilePath, "Vocabulary");
-
-        //        // 8) إظهار رسالة انتهاء المعالجة
-        //        UpdateStatus("✅ All pages processed and saved to desktop as Definitions, MCQs, Flashcards, and Vocabulary.");
-        //        UpdateOverlayLog("✅ All pages processed and saved to desktop as Definitions, MCQs, Flashcards, and Vocabulary.");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("❌ Error: " + ex.Message, "Processing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        UpdateStatus("❌ An error occurred during processing.");
-        //        UpdateOverlayLog("❌ An error occurred during processing: " + ex.Message);
-        //    }
-        //    finally
-        //    {
-        //        buttonProcessFile.Enabled = true;
-        //        buttonBrowseFile.Enabled = true;
-        //        HideOverlay();
-        //    }
-        //}
-
         private async void buttonProcessFile_Click(object sender, EventArgs e)
         {
             string filePath = labelFileName.Text;
             string apiKey = textBoxAPIKey.Text;
 
-            // … (validate API key & file as before) …
+            // 1) التحقق من مفتاح الـAPI
+            if (string.IsNullOrWhiteSpace(apiKey))
+            {
+                MessageBox.Show("Please enter your API key.", "API Key Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 2) التحقق من مسار الملف
+            if (filePath == "No file selected" || !File.Exists(filePath))
+            {
+                MessageBox.Show("Please select a valid PDF file.", "File Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             try
             {
+                // منع النقرات المتكررة أثناء المعالجة
                 buttonProcessFile.Enabled = false;
                 buttonBrowseFile.Enabled = false;
 
                 ShowOverlay("🔄 Processing, please wait...");
                 UpdateOverlayLog("🚀 Starting GPT-4o multimodal processing...");
 
+                // اسم النموذج والـ timestamp لإنشاء مسارات الملفات
                 string modelName = comboBoxModel.SelectedItem?.ToString() ?? "gpt-4o";
                 string timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
                 // Prepare file‐paths
+                // مسارات ملفات التعاريف و MCQs و Flashcards و Vocabulary
                 string definitionsFilePath = Path.Combine(basePath, $"Definitions_{modelName}_{timeStamp}.docx");
                 string mcqsFilePath = Path.Combine(basePath, $"MCQs_{modelName}_{timeStamp}.docx");
                 string flashcardsFilePath = Path.Combine(basePath, $"Flashcards_{modelName}_{timeStamp}.docx");
                 string vocabularyFilePath = Path.Combine(basePath, $"Vocabulary_{modelName}_{timeStamp}.docx");
 
-                // Define prompts (as you already have them)
+                // 3) إعداد الـ prompts لكل قسم
                 string definitionsPrompt =
                     "Provide concise definitions (in English only) for each key medical term on this page. " +
                     "For each term, write:\n" +
@@ -312,6 +177,7 @@ namespace ChatGPTFileProcessor
                     "- Then a one- or two-sentence definition in English\n\n" +
                     "Separate every entry by a blank line, without numbering.";
 
+                // 3.2) prompt الأسئلة (MCQs) بالكامل بالإنجليزية:
                 string mcqsPrompt =
                     "Generate multiple-choice questions (only in English) based on the content of this page. Use EXACTLY this format (no deviations):\n\n" +
                     "Question: [Write the question in English]\n" +
@@ -322,6 +188,7 @@ namespace ChatGPTFileProcessor
                     "Answer: [Correct Letter]\n\n" +
                     "Separate each question block with a blank line.";
 
+                // 3.3) prompt البطاقات (Flashcards) بالكامل بالإنجليزية:
                 string flashcardsPrompt =
                     "Create flashcards in English for each key medical or pharmaceutical term on this page. " +
                     "Use EXACTLY this format (no deviations):\n\n" +
@@ -329,21 +196,33 @@ namespace ChatGPTFileProcessor
                     "Back:  [Definition in English]\n\n" +
                     "Leave exactly one blank line between each card.";
 
+                // 3.4) prompt المفردات (Vocabulary) ثنائي اللغة (إنجليزي–عربي):
                 string vocabularyPrompt =
                     "Extract important vocabulary terms from this page and translate them to Arabic. " +
                     "Use EXACTLY this format (no bullets, no numbering):\n\n" +
                     "EnglishTerm – ArabicTranslation\n\n" +
                     "Leave exactly one blank line between each entry.";
 
-                // 4) Extract images of all selected pages
+                // 4) استخراج صور كل الصفحات المحددة في الواجهة
                 var allPages = ConvertPdfToImages(filePath);
 
+                // 5) إنشاء StringBuilder لكل قسم من الأقسام الأربع
                 // 5) Prepare StringBuilders for whichever sections are checked
                 StringBuilder allDefinitions = chkDefinitions.Checked ? new StringBuilder() : null;
                 StringBuilder allMCQs = chkMCQs.Checked ? new StringBuilder() : null;
                 StringBuilder allFlashcards = chkFlashcards.Checked ? new StringBuilder() : null;
                 StringBuilder allVocabulary = chkVocabulary.Checked ? new StringBuilder() : null;
+                if (allDefinitions == null && allMCQs == null && allFlashcards == null && allVocabulary == null)
+                {
+                    MessageBox.Show("Please select at least one section to process.", "No Sections Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    buttonProcessFile.Enabled = true;
+                    buttonBrowseFile.Enabled = true;
+                    HideOverlay();
+                    return;
+                }
 
+
+                // 6) حلقة لمعالجة كل صفحة عبر Multimodal (صورة + نص)
                 // 6) Loop through each page, only calling ProcessPdfPageMultimodal if that section is enabled:
                 foreach (var (pageNumber, image) in allPages)
                 {
@@ -386,6 +265,8 @@ namespace ChatGPTFileProcessor
                     UpdateOverlayLog($"✅ Page {pageNumber} done.");
                 }
 
+                // 7) تحويل StringBuilder إلى نصٍّ نهائي وحفظه في ملفات Word منسّقة
+                // 7.1) ملف التعاريف
                 // 7) Save out only those StringBuilders that were created (i.e. their CheckEdit was checked)
                 if (chkDefinitions.Checked)
                 {
@@ -393,24 +274,28 @@ namespace ChatGPTFileProcessor
                     SaveContentToFile(FormatDefinitions(definitionsText), definitionsFilePath, "Definitions");
                 }
 
+                // 7.2) ملف MCQs (يمكن تكييف تنسيق MCQs إذا أردتم تنسيقًا أضبط)
                 if (chkMCQs.Checked)
                 {
                     string mcqsText = allMCQs.ToString();
                     SaveContentToFile(mcqsText, mcqsFilePath, "MCQs");
                 }
 
+                // 7.3) ملف Flashcards
                 if (chkFlashcards.Checked)
                 {
                     string flashcardsText = allFlashcards.ToString();
                     SaveContentToFile(flashcardsText, flashcardsFilePath, "Flashcards");
                 }
 
+                // 7.4) ملف Vocabulary (بعد تطبيق FormatVocabulary على الناتج)
                 if (chkVocabulary.Checked)
                 {
                     string vocabularyText = FormatVocabulary(allVocabulary.ToString());
                     SaveContentToFile(vocabularyText, vocabularyFilePath, "Vocabulary");
                 }
 
+                // 8) إظهار رسالة انتهاء المعالجة
                 UpdateStatus("✅ Processing complete. Files saved to Desktop.");
                 UpdateOverlayLog("✅ Processing complete. Files saved to Desktop as selected outputs.");
             }
