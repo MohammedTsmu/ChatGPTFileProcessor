@@ -30,8 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            DevExpress.Utils.SuperToolTip superToolTip4 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipItem toolTipItem4 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip5 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem5 = new DevExpress.Utils.ToolTipItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.labelControl5 = new DevExpress.XtraEditors.LabelControl();
             this.textEditAPIKey = new DevExpress.XtraEditors.TextEdit();
@@ -55,7 +55,6 @@
             this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.labelControl4 = new DevExpress.XtraEditors.LabelControl();
-            this.comboBoxModel = new System.Windows.Forms.ComboBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.buttonsToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.labelsToolTip = new System.Windows.Forms.ToolTip(this.components);
@@ -217,11 +216,11 @@
             this.labelFileName.Name = "labelFileName";
             this.labelFileName.Padding = new System.Windows.Forms.Padding(5);
             this.labelFileName.Size = new System.Drawing.Size(1046, 32);
-            toolTipItem4.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem4.Appearance.Options.UseFont = true;
-            toolTipItem4.Text = "Selected File Path";
-            superToolTip4.Items.Add(toolTipItem4);
-            this.labelFileName.SuperTip = superToolTip4;
+            toolTipItem5.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem5.Appearance.Options.UseFont = true;
+            toolTipItem5.Text = "Selected File Path";
+            superToolTip5.Items.Add(toolTipItem5);
+            this.labelFileName.SuperTip = superToolTip5;
             this.labelFileName.TabIndex = 21;
             this.labelFileName.Text = "No file selected";
             // 
@@ -403,7 +402,6 @@
             this.groupBox4.BackColor = System.Drawing.SystemColors.ControlLight;
             this.groupBox4.Controls.Add(this.comboBoxEditModel);
             this.groupBox4.Controls.Add(this.labelControl4);
-            this.groupBox4.Controls.Add(this.comboBoxModel);
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox4.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox4.Location = new System.Drawing.Point(5, 5);
@@ -422,17 +420,6 @@
             this.labelControl4.Size = new System.Drawing.Size(113, 22);
             this.labelControl4.TabIndex = 23;
             this.labelControl4.Text = "Choose Model";
-            // 
-            // comboBoxModel
-            // 
-            this.comboBoxModel.FormattingEnabled = true;
-            this.comboBoxModel.Location = new System.Drawing.Point(6, 56);
-            this.comboBoxModel.MaxDropDownItems = 15;
-            this.comboBoxModel.Name = "comboBoxModel";
-            this.comboBoxModel.Size = new System.Drawing.Size(426, 30);
-            this.comboBoxModel.TabIndex = 1;
-            this.labelsToolTip.SetToolTip(this.comboBoxModel, "Select One Of ChatGPT AI Models To Be Used In Generating Process");
-            this.comboBoxModel.SelectedIndexChanged += new System.EventHandler(this.comboBoxModel_SelectedIndexChanged);
             // 
             // groupBox5
             // 
@@ -513,7 +500,7 @@
             // comboBoxEditModel
             // 
             this.comboBoxEditModel.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.comboBoxEditModel.Location = new System.Drawing.Point(7, 93);
+            this.comboBoxEditModel.Location = new System.Drawing.Point(3, 56);
             this.comboBoxEditModel.Name = "comboBoxEditModel";
             this.comboBoxEditModel.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
             this.comboBoxEditModel.Properties.Appearance.Options.UseFont = true;
@@ -534,7 +521,7 @@
             this.comboBoxEditModel.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
             this.comboBoxEditModel.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
-            this.comboBoxEditModel.Size = new System.Drawing.Size(425, 28);
+            this.comboBoxEditModel.Size = new System.Drawing.Size(429, 28);
             this.comboBoxEditModel.TabIndex = 24;
             this.comboBoxEditModel.SelectedIndexChanged += new System.EventHandler(this.comboBoxEditModel_SelectedIndexChanged);
             // 
@@ -583,7 +570,6 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TextBox textBoxStatus;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.ComboBox comboBoxModel;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.ToolTip buttonsToolTip;
         private System.Windows.Forms.ToolTip labelsToolTip;
