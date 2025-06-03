@@ -42,7 +42,8 @@ namespace ChatGPTFileProcessor
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            comboBoxModel.Items.Add("gpt-4o"); // Add gpt-4o model
+            //comboBoxModel.Items.Add("gpt-4o"); // Add gpt-4o model
+            comboBoxEditModel.Properties.Items.Add("gpt-4o"); // Add gpt-4o model to the combo box
 
             InitializeOverlay();
 
@@ -201,7 +202,8 @@ namespace ChatGPTFileProcessor
                 UpdateOverlayLog("🚀 Starting GPT-4o multimodal processing...");
 
                 // اسم النموذج والـ timestamp لإنشاء مسارات الملفات
-                string modelName = comboBoxModel.SelectedItem?.ToString() ?? "gpt-4o";
+                //string modelName = comboBoxModel.SelectedItem?.ToString() ?? "gpt-4o";
+                string modelName = comboBoxEditModel.SelectedItem?.ToString() ?? "gpt-4o"; // Use the new combo box for model selection
                 string timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
@@ -527,18 +529,22 @@ namespace ChatGPTFileProcessor
             if (File.Exists(modelPath))
             {
                 string savedModel = File.ReadAllText(modelPath).Trim();
-                if (comboBoxModel.Items.Contains(savedModel))
+                //if (comboBoxModel.Items.Contains(savedModel))
+                if (comboBoxEditModel.Properties.Items.Contains(savedModel))
                 {
-                    comboBoxModel.SelectedItem = savedModel;
+                    //comboBoxModel.SelectedItem = savedModel;
+                    comboBoxEditModel.SelectedItem = savedModel; // Use the new combo box for model selection
                 }
                 else
                 {
-                    comboBoxModel.SelectedIndex = 0;  // Default to first item if model is not in options
+                    //comboBoxModel.SelectedIndex = 0;  // Default to first item if model is not in options
+                    comboBoxEditModel.SelectedIndex = 0;  // Default to first item if model is not in options
                 }
             }
             else
             {
-                comboBoxModel.SelectedIndex = 0;  // Default if model file is missing
+                //comboBoxModel.SelectedIndex = 0;  // Default if model file is missing
+                comboBoxEditModel.SelectedIndex = 0;  // Default if model file is missing
             }
         }
 
@@ -552,7 +558,8 @@ namespace ChatGPTFileProcessor
             File.WriteAllText(apiKeyPath, apiKey);
 
             // Save selected model
-            string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "gpt-3.5-turbo";
+            //string selectedModel = comboBoxModel.SelectedItem?.ToString() ?? "gpt-3.5-turbo";
+            string selectedModel = comboBoxEditModel.SelectedItem?.ToString() ?? "gpt-4o"; // Use the new combo box for model selection
             File.WriteAllText(modelPath, selectedModel);
         }
 
@@ -566,7 +573,13 @@ namespace ChatGPTFileProcessor
             }
         }
 
+        //private void comboBoxModel_SelectedIndexChanged(object sender, EventArgs e)
         private void comboBoxModel_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateStatus("Model changed, saving selection...");
+            SaveApiKeyAndModel();
+        }
+        private void comboBoxEditModel_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateStatus("Model changed, saving selection...");
             SaveApiKeyAndModel();
