@@ -30,13 +30,16 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            DevExpress.Utils.SuperToolTip superToolTip2 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipItem toolTipItem2 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip1 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem1 = new DevExpress.Utils.ToolTipItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.labelControl5 = new DevExpress.XtraEditors.LabelControl();
+            this.textEditAPIKey = new DevExpress.XtraEditors.TextEdit();
             this.buttonClearAPIKey = new DevExpress.XtraEditors.SimpleButton();
             this.buttonEditAPIKey = new DevExpress.XtraEditors.SimpleButton();
             this.buttonSaveAPIKey = new DevExpress.XtraEditors.SimpleButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.labelControl3 = new DevExpress.XtraEditors.LabelControl();
             this.labelFileName = new DevExpress.XtraEditors.LabelControl();
             this.chkMedicalMaterial = new DevExpress.XtraEditors.CheckEdit();
             this.buttonProcessFile = new DevExpress.XtraEditors.SimpleButton();
@@ -51,6 +54,7 @@
             this.chkDefinitions = new DevExpress.XtraEditors.CheckEdit();
             this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.labelControl4 = new DevExpress.XtraEditors.LabelControl();
             this.comboBoxModel = new System.Windows.Forms.ComboBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.buttonsToolTip = new System.Windows.Forms.ToolTip(this.components);
@@ -60,11 +64,8 @@
             this.panelBottom = new System.Windows.Forms.Panel();
             this.panelTop = new System.Windows.Forms.Panel();
             this.panelFill = new System.Windows.Forms.Panel();
-            this.textEditAPIKey = new DevExpress.XtraEditors.TextEdit();
-            this.labelControl3 = new DevExpress.XtraEditors.LabelControl();
-            this.labelControl4 = new DevExpress.XtraEditors.LabelControl();
-            this.labelControl5 = new DevExpress.XtraEditors.LabelControl();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.textEditAPIKey.Properties)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chkMedicalMaterial.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cmbVocabLang.Properties)).BeginInit();
@@ -80,7 +81,6 @@
             this.panelBottom.SuspendLayout();
             this.panelTop.SuspendLayout();
             this.panelFill.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.textEditAPIKey.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -99,6 +99,33 @@
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "API KEY";
+            // 
+            // labelControl5
+            // 
+            this.labelControl5.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelControl5.Appearance.Options.UseFont = true;
+            this.labelControl5.Location = new System.Drawing.Point(7, 28);
+            this.labelControl5.Name = "labelControl5";
+            this.labelControl5.Size = new System.Drawing.Size(134, 22);
+            this.labelControl5.TabIndex = 24;
+            this.labelControl5.Text = "ChatGPT API Key";
+            // 
+            // textEditAPIKey
+            // 
+            this.textEditAPIKey.Location = new System.Drawing.Point(6, 56);
+            this.textEditAPIKey.Name = "textEditAPIKey";
+            this.textEditAPIKey.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.textEditAPIKey.Properties.Appearance.Options.UseFont = true;
+            this.textEditAPIKey.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.textEditAPIKey.Properties.AppearanceDisabled.Options.UseFont = true;
+            this.textEditAPIKey.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.textEditAPIKey.Properties.AppearanceFocused.Options.UseFont = true;
+            this.textEditAPIKey.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.textEditAPIKey.Properties.AppearanceReadOnly.Options.UseFont = true;
+            this.textEditAPIKey.Properties.NullText = "ChatGPT API Key ... Enter Here";
+            this.textEditAPIKey.Properties.PasswordChar = '*';
+            this.textEditAPIKey.Size = new System.Drawing.Size(564, 28);
+            this.textEditAPIKey.TabIndex = 23;
             // 
             // buttonClearAPIKey
             // 
@@ -164,6 +191,16 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "FILE AND PROCESS";
             // 
+            // labelControl3
+            // 
+            this.labelControl3.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelControl3.Appearance.Options.UseFont = true;
+            this.labelControl3.Location = new System.Drawing.Point(7, 154);
+            this.labelControl3.Name = "labelControl3";
+            this.labelControl3.Size = new System.Drawing.Size(86, 22);
+            this.labelControl3.TabIndex = 22;
+            this.labelControl3.Text = "Select File";
+            // 
             // labelFileName
             // 
             this.labelFileName.Appearance.BackColor = System.Drawing.Color.LightGray;
@@ -178,11 +215,11 @@
             this.labelFileName.Name = "labelFileName";
             this.labelFileName.Padding = new System.Windows.Forms.Padding(5);
             this.labelFileName.Size = new System.Drawing.Size(1046, 32);
-            toolTipItem2.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem2.Appearance.Options.UseFont = true;
-            toolTipItem2.Text = "Selected File Path";
-            superToolTip2.Items.Add(toolTipItem2);
-            this.labelFileName.SuperTip = superToolTip2;
+            toolTipItem1.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem1.Appearance.Options.UseFont = true;
+            toolTipItem1.Text = "Selected File Path";
+            superToolTip1.Items.Add(toolTipItem1);
+            this.labelFileName.SuperTip = superToolTip1;
             this.labelFileName.TabIndex = 21;
             this.labelFileName.Text = "No file selected";
             // 
@@ -229,9 +266,9 @@
             this.labelControl2.Appearance.Options.UseFont = true;
             this.labelControl2.Location = new System.Drawing.Point(7, 126);
             this.labelControl2.Name = "labelControl2";
-            this.labelControl2.Size = new System.Drawing.Size(346, 22);
+            this.labelControl2.Size = new System.Drawing.Size(269, 22);
             this.labelControl2.TabIndex = 17;
-            this.labelControl2.Text = "Translation Language (Vocabulary → Target):";
+            this.labelControl2.Text = "Translation Language (Vocabulary)";
             // 
             // labelControl1
             // 
@@ -239,9 +276,9 @@
             this.labelControl1.Appearance.Options.UseFont = true;
             this.labelControl1.Location = new System.Drawing.Point(7, 92);
             this.labelControl1.Name = "labelControl1";
-            this.labelControl1.Size = new System.Drawing.Size(394, 22);
+            this.labelControl1.Size = new System.Drawing.Size(390, 22);
             this.labelControl1.TabIndex = 16;
-            this.labelControl1.Text = "General Language (Definition - Mcqs - Flashcards):";
+            this.labelControl1.Text = "General Language (Definition - Mcqs - Flashcards)";
             // 
             // cmbVocabLang
             // 
@@ -373,6 +410,16 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "MODELS";
             // 
+            // labelControl4
+            // 
+            this.labelControl4.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelControl4.Appearance.Options.UseFont = true;
+            this.labelControl4.Location = new System.Drawing.Point(6, 28);
+            this.labelControl4.Name = "labelControl4";
+            this.labelControl4.Size = new System.Drawing.Size(113, 22);
+            this.labelControl4.TabIndex = 23;
+            this.labelControl4.Text = "Choose Model";
+            // 
             // comboBoxModel
             // 
             this.comboBoxModel.FormattingEnabled = true;
@@ -460,53 +507,6 @@
             this.panelFill.Size = new System.Drawing.Size(1062, 284);
             this.panelFill.TabIndex = 25;
             // 
-            // textEditAPIKey
-            // 
-            this.textEditAPIKey.Location = new System.Drawing.Point(6, 56);
-            this.textEditAPIKey.Name = "textEditAPIKey";
-            this.textEditAPIKey.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
-            this.textEditAPIKey.Properties.Appearance.Options.UseFont = true;
-            this.textEditAPIKey.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F);
-            this.textEditAPIKey.Properties.AppearanceDisabled.Options.UseFont = true;
-            this.textEditAPIKey.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 10.2F);
-            this.textEditAPIKey.Properties.AppearanceFocused.Options.UseFont = true;
-            this.textEditAPIKey.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 10.2F);
-            this.textEditAPIKey.Properties.AppearanceReadOnly.Options.UseFont = true;
-            this.textEditAPIKey.Properties.NullText = "ChatGPT API Key ... Enter Here";
-            this.textEditAPIKey.Properties.PasswordChar = '*';
-            this.textEditAPIKey.Size = new System.Drawing.Size(564, 28);
-            this.textEditAPIKey.TabIndex = 23;
-            // 
-            // labelControl3
-            // 
-            this.labelControl3.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelControl3.Appearance.Options.UseFont = true;
-            this.labelControl3.Location = new System.Drawing.Point(7, 154);
-            this.labelControl3.Name = "labelControl3";
-            this.labelControl3.Size = new System.Drawing.Size(86, 22);
-            this.labelControl3.TabIndex = 22;
-            this.labelControl3.Text = "Select File";
-            // 
-            // labelControl4
-            // 
-            this.labelControl4.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelControl4.Appearance.Options.UseFont = true;
-            this.labelControl4.Location = new System.Drawing.Point(6, 28);
-            this.labelControl4.Name = "labelControl4";
-            this.labelControl4.Size = new System.Drawing.Size(113, 22);
-            this.labelControl4.TabIndex = 23;
-            this.labelControl4.Text = "Choose Model";
-            // 
-            // labelControl5
-            // 
-            this.labelControl5.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelControl5.Appearance.Options.UseFont = true;
-            this.labelControl5.Location = new System.Drawing.Point(7, 28);
-            this.labelControl5.Name = "labelControl5";
-            this.labelControl5.Size = new System.Drawing.Size(134, 22);
-            this.labelControl5.TabIndex = 24;
-            this.labelControl5.Text = "ChatGPT API Key";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -523,6 +523,7 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.textEditAPIKey.Properties)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chkMedicalMaterial.Properties)).EndInit();
@@ -541,7 +542,6 @@
             this.panelBottom.ResumeLayout(false);
             this.panelTop.ResumeLayout(false);
             this.panelFill.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.textEditAPIKey.Properties)).EndInit();
             this.ResumeLayout(false);
 
         }
