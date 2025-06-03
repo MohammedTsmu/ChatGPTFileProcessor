@@ -36,12 +36,6 @@ namespace ChatGPTFileProcessor
         public Form1()
         {
             InitializeComponent();
-
-            //// (Optionally subscribe to CheckedChanged to auto-save)
-            //chkDefinitions.CheckedChanged += CheckBox_CheckedChanged;
-            //chkMCQs.CheckedChanged += CheckBox_CheckedChanged;
-            //chkFlashcards.CheckedChanged += CheckBox_CheckedChanged;
-            //chkVocabulary.CheckedChanged += CheckBox_CheckedChanged;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -55,12 +49,6 @@ namespace ChatGPTFileProcessor
 
             // Load saved user preferences for checkboxes
             loadCheckBoxesSettings();
-
-            //// (Optionally subscribe to CheckedChanged to auto-save)
-            //chkDefinitions.CheckedChanged += CheckBox_CheckedChanged;
-            //chkMCQs.CheckedChanged += CheckBox_CheckedChanged;
-            //chkFlashcards.CheckedChanged += CheckBox_CheckedChanged;
-            //chkVocabulary.CheckedChanged += CheckBox_CheckedChanged;
         }
 
 
@@ -570,6 +558,7 @@ namespace ChatGPTFileProcessor
                 // 2. بناء JSON payload لإرسال الصورة مع النص دفعةً واحدة
                 var requestBody = new
                 {
+                    //In the future you can change this model gpt-40 with user selection model name dynamiclly, right now it is static due to the app designed for one model.
                     model = "gpt-4o",
                     messages = new object[]
                     {
