@@ -99,7 +99,16 @@ namespace ChatGPTFileProcessor
             if (!string.IsNullOrEmpty(apiKey))
             {
                 File.WriteAllText(apiKeyPath, apiKey);
+                textEditAPIKey.ReadOnly = true;  // Make it read-only after saving
                 UpdateStatus("API Key saved successfully.");
+
+
+                UpdateStatus("API Key Saved...");
+                UpdateStatus("API Key Locked Succesfully...");
+
+                // Save the state of the TextEdit control to settings
+                Properties.Settings.Default.ApiKeyLock = true;
+                Properties.Settings.Default.Save();
             }
             else
             {
@@ -869,6 +878,7 @@ namespace ChatGPTFileProcessor
             chkFlashcards.Checked = Properties.Settings.Default.GenerateFlashcards;
             chkVocabulary.Checked = Properties.Settings.Default.GenerateVocabulary;
             chkMedicalMaterial.Checked = Properties.Settings.Default.MedicalMaterial;
+            textEditAPIKey.ReadOnly = Properties.Settings.Default.ApiKeyLock;
         }
 
         private void chkDefinitions_CheckedChanged(object sender, EventArgs e)

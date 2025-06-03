@@ -106,5 +106,17 @@ namespace ChatGPTFileProcessor.Properties {
                 this["MedicalMaterial"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ApiKeyLock {
+            get {
+                return ((bool)(this["ApiKeyLock"]));
+            }
+            set {
+                this["ApiKeyLock"] = value;
+            }
+        }
     }
 }
