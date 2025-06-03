@@ -30,8 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            DevExpress.Utils.SuperToolTip superToolTip4 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipItem toolTipItem4 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip7 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem7 = new DevExpress.Utils.ToolTipItem();
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxAPIKey = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -170,7 +170,6 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.groupBox2.BackColor = System.Drawing.SystemColors.ControlLight;
             this.groupBox2.Controls.Add(this.labelFileName);
             this.groupBox2.Controls.Add(this.chkMedicalMaterial);
@@ -185,10 +184,11 @@
             this.groupBox2.Controls.Add(this.chkMCQs);
             this.groupBox2.Controls.Add(this.chkDefinitions);
             this.groupBox2.Controls.Add(this.label2);
+            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox2.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox2.Location = new System.Drawing.Point(29, 8);
+            this.groupBox2.Location = new System.Drawing.Point(5, 5);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1011, 308);
+            this.groupBox2.Size = new System.Drawing.Size(1052, 314);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "FILE AND PROCESS";
@@ -361,7 +361,7 @@
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxStatus.Size = new System.Drawing.Size(1032, 125);
+            this.textBoxStatus.Size = new System.Drawing.Size(1046, 135);
             this.textBoxStatus.TabIndex = 9;
             this.labelsToolTip.SetToolTip(this.textBoxStatus, "Application Log Area Were any Action Or Changes Will Be Written Here To Inform Th" +
         "e User");
@@ -403,13 +403,13 @@
             // 
             // groupBox5
             // 
-            this.groupBox5.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.groupBox5.BackColor = System.Drawing.SystemColors.ControlLight;
             this.groupBox5.Controls.Add(this.textBoxStatus);
+            this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox5.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox5.Location = new System.Drawing.Point(12, 8);
+            this.groupBox5.Location = new System.Drawing.Point(5, 5);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(1038, 153);
+            this.groupBox5.Size = new System.Drawing.Size(1052, 163);
             this.groupBox5.TabIndex = 13;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "STATUS";
@@ -440,17 +440,16 @@
             this.labelFileName.Name = "labelFileName";
             this.labelFileName.Padding = new System.Windows.Forms.Padding(5);
             this.labelFileName.Size = new System.Drawing.Size(992, 32);
-            toolTipItem4.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem4.Appearance.Options.UseFont = true;
-            toolTipItem4.Text = "Selected File Path";
-            superToolTip4.Items.Add(toolTipItem4);
-            this.labelFileName.SuperTip = superToolTip4;
+            toolTipItem7.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem7.Appearance.Options.UseFont = true;
+            toolTipItem7.Text = "Selected File Path";
+            superToolTip7.Items.Add(toolTipItem7);
+            this.labelFileName.SuperTip = superToolTip7;
             this.labelFileName.TabIndex = 21;
             this.labelFileName.Text = "No file selected";
             // 
             // panelTopLeft
             // 
-            this.panelTopLeft.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.panelTopLeft.Controls.Add(this.groupBox1);
             this.panelTopLeft.Location = new System.Drawing.Point(29, 21);
             this.panelTopLeft.Name = "panelTopLeft";
@@ -460,7 +459,7 @@
             // 
             // panelTopRight
             // 
-            this.panelTopRight.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.panelTopRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panelTopRight.Controls.Add(this.groupBox4);
             this.panelTopRight.Location = new System.Drawing.Point(719, 21);
             this.panelTopRight.Name = "panelTopRight";
