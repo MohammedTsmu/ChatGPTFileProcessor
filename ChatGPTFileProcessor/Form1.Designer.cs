@@ -30,8 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            DevExpress.Utils.SuperToolTip superToolTip5 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipItem toolTipItem5 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip7 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem7 = new DevExpress.Utils.ToolTipItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.labelControl5 = new DevExpress.XtraEditors.LabelControl();
             this.textEditAPIKey = new DevExpress.XtraEditors.TextEdit();
@@ -216,11 +216,11 @@
             this.labelFileName.Name = "labelFileName";
             this.labelFileName.Padding = new System.Windows.Forms.Padding(5);
             this.labelFileName.Size = new System.Drawing.Size(1046, 32);
-            toolTipItem5.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem5.Appearance.Options.UseFont = true;
-            toolTipItem5.Text = "Selected File Path";
-            superToolTip5.Items.Add(toolTipItem5);
-            this.labelFileName.SuperTip = superToolTip5;
+            toolTipItem7.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem7.Appearance.Options.UseFont = true;
+            toolTipItem7.Text = "Selected File Path";
+            superToolTip7.Items.Add(toolTipItem7);
+            this.labelFileName.SuperTip = superToolTip7;
             this.labelFileName.TabIndex = 21;
             this.labelFileName.Text = "No file selected";
             // 

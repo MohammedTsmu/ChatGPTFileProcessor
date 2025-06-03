@@ -196,6 +196,10 @@ namespace ChatGPTFileProcessor
                 buttonProcessFile.Enabled = false;
                 buttonBrowseFile.Enabled = false;
                 buttonBrowseFile.Enabled = false;
+                // Disable the maximize and minimize of the processing form
+                this.MaximizeBox = false; // Disable maximize button
+                this.MinimizeBox = false; // Disable minimize button
+                this.Text = "Processing PDF..."; // Update form title to indicate processing
 
                 ShowOverlay("🔄 Processing, please wait...");
                 UpdateOverlayLog("S T A R T   G E N E R A T I N G...");
@@ -382,6 +386,14 @@ namespace ChatGPTFileProcessor
                     MessageBox.Show("Please select at least one section to process.", "No Sections Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     buttonProcessFile.Enabled = true;
                     buttonBrowseFile.Enabled = true;
+
+                    // Enable the maximize and minimize buttons again
+                    this.MaximizeBox = true; // Disable maximize button
+                    this.MinimizeBox = true; // Disable minimize button
+                    this.Text = "ChatGPT File Processor"; // Reset form title
+
+                    UpdateStatus("❌ No sections selected for processing.");
+
                     HideOverlay();
                     return;
                 }
@@ -476,6 +488,13 @@ namespace ChatGPTFileProcessor
             {
                 buttonProcessFile.Enabled = true;
                 buttonBrowseFile.Enabled = true;
+                // Disable the maximize and minimize of the processing form
+                this.MaximizeBox = true; // Disable maximize button
+                this.MinimizeBox = true; // Disable minimize button
+                this.Text = "ChatGPT File Processor"; // Reset form title
+
+                UpdateStatus("🔚 Processing finished.");
+                UpdateOverlayLog("🔚 Processing finished.");
                 HideOverlay();
             }
         }
@@ -806,7 +825,7 @@ namespace ChatGPTFileProcessor
                 Size = this.ClientSize,
                 BackColor = Color.FromArgb(150, Color.Black),
                 Visible = false,
-                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
+                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
             };
 
             int centerX = overlayPanel.Width / 2;
@@ -849,7 +868,7 @@ namespace ChatGPTFileProcessor
             overlayPanel.Controls.Add(logTextBox);
             this.Controls.Add(overlayPanel);
         }
-
+         
 
 
         private void UpdateOverlayLog(string message)
