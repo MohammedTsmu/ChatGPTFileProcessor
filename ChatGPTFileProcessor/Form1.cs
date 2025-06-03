@@ -1507,6 +1507,5 @@ namespace ChatGPTFileProcessor
                 Properties.Settings.Default.Save();
             }
         }
-
     }
 }
