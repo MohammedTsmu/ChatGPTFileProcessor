@@ -30,15 +30,17 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            DevExpress.Utils.SuperToolTip superToolTip2 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem2 = new DevExpress.Utils.ToolTipItem();
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxAPIKey = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.labelFileName = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.buttonClearAPIKey = new DevExpress.XtraEditors.SimpleButton();
             this.buttonEditAPIKey = new DevExpress.XtraEditors.SimpleButton();
             this.buttonSaveAPIKey = new DevExpress.XtraEditors.SimpleButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.chkMedicalMaterial = new DevExpress.XtraEditors.CheckEdit();
             this.buttonProcessFile = new DevExpress.XtraEditors.SimpleButton();
             this.buttonBrowseFile = new DevExpress.XtraEditors.SimpleButton();
             this.labelControl2 = new DevExpress.XtraEditors.LabelControl();
@@ -57,9 +59,10 @@
             this.buttonsToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.labelsToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.developerProfileLinkLabel = new System.Windows.Forms.LinkLabel();
-            this.chkMedicalMaterial = new DevExpress.XtraEditors.CheckEdit();
+            this.labelFileName = new DevExpress.XtraEditors.LabelControl();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chkMedicalMaterial.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cmbVocabLang.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cmbGeneralLang.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkVocabulary.Properties)).BeginInit();
@@ -68,7 +71,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.chkDefinitions.Properties)).BeginInit();
             this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chkMedicalMaterial.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -95,25 +97,11 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(6, 145);
+            this.label2.Location = new System.Drawing.Point(6, 151);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(97, 22);
             this.label2.TabIndex = 5;
             this.label2.Text = "Select File:";
-            // 
-            // labelFileName
-            // 
-            this.labelFileName.AutoSize = true;
-            this.labelFileName.BackColor = System.Drawing.Color.DarkMagenta;
-            this.labelFileName.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelFileName.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.labelFileName.Location = new System.Drawing.Point(6, 217);
-            this.labelFileName.Name = "labelFileName";
-            this.labelFileName.Size = new System.Drawing.Size(133, 22);
-            this.labelFileName.TabIndex = 7;
-            this.labelFileName.Text = "No file selected";
-            this.labelFileName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.labelsToolTip.SetToolTip(this.labelFileName, "Selected File Path");
             // 
             // groupBox1
             // 
@@ -173,6 +161,7 @@
             // groupBox2
             // 
             this.groupBox2.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.groupBox2.Controls.Add(this.labelFileName);
             this.groupBox2.Controls.Add(this.chkMedicalMaterial);
             this.groupBox2.Controls.Add(this.buttonProcessFile);
             this.groupBox2.Controls.Add(this.buttonBrowseFile);
@@ -185,14 +174,24 @@
             this.groupBox2.Controls.Add(this.chkMCQs);
             this.groupBox2.Controls.Add(this.chkDefinitions);
             this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Controls.Add(this.labelFileName);
             this.groupBox2.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox2.Location = new System.Drawing.Point(12, 161);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1004, 249);
+            this.groupBox2.Size = new System.Drawing.Size(1004, 269);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "FILE AND PROCESS";
+            // 
+            // chkMedicalMaterial
+            // 
+            this.chkMedicalMaterial.Location = new System.Drawing.Point(6, 60);
+            this.chkMedicalMaterial.Name = "chkMedicalMaterial";
+            this.chkMedicalMaterial.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkMedicalMaterial.Properties.Appearance.Options.UseFont = true;
+            this.chkMedicalMaterial.Properties.Caption = "Medical Material Only";
+            this.chkMedicalMaterial.Size = new System.Drawing.Size(233, 26);
+            this.chkMedicalMaterial.TabIndex = 20;
+            this.chkMedicalMaterial.CheckedChanged += new System.EventHandler(this.chkMedicalMaterial_CheckedChanged);
             // 
             // buttonProcessFile
             // 
@@ -200,7 +199,7 @@
             this.buttonProcessFile.Appearance.Options.UseFont = true;
             this.buttonProcessFile.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("buttonProcessFile.ImageOptions.SvgImage")));
             this.buttonProcessFile.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
-            this.buttonProcessFile.Location = new System.Drawing.Point(196, 170);
+            this.buttonProcessFile.Location = new System.Drawing.Point(196, 176);
             this.buttonProcessFile.Name = "buttonProcessFile";
             this.buttonProcessFile.Size = new System.Drawing.Size(184, 44);
             this.buttonProcessFile.TabIndex = 19;
@@ -213,7 +212,7 @@
             this.buttonBrowseFile.Appearance.Options.UseFont = true;
             this.buttonBrowseFile.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("buttonBrowseFile.ImageOptions.SvgImage")));
             this.buttonBrowseFile.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
-            this.buttonBrowseFile.Location = new System.Drawing.Point(6, 170);
+            this.buttonBrowseFile.Location = new System.Drawing.Point(6, 176);
             this.buttonBrowseFile.Name = "buttonBrowseFile";
             this.buttonBrowseFile.Size = new System.Drawing.Size(184, 44);
             this.buttonBrowseFile.TabIndex = 18;
@@ -224,7 +223,7 @@
             // 
             this.labelControl2.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelControl2.Appearance.Options.UseFont = true;
-            this.labelControl2.Location = new System.Drawing.Point(6, 94);
+            this.labelControl2.Location = new System.Drawing.Point(6, 126);
             this.labelControl2.Name = "labelControl2";
             this.labelControl2.Size = new System.Drawing.Size(346, 22);
             this.labelControl2.TabIndex = 17;
@@ -234,7 +233,7 @@
             // 
             this.labelControl1.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelControl1.Appearance.Options.UseFont = true;
-            this.labelControl1.Location = new System.Drawing.Point(6, 60);
+            this.labelControl1.Location = new System.Drawing.Point(6, 92);
             this.labelControl1.Name = "labelControl1";
             this.labelControl1.Size = new System.Drawing.Size(394, 22);
             this.labelControl1.TabIndex = 16;
@@ -243,7 +242,7 @@
             // cmbVocabLang
             // 
             this.cmbVocabLang.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cmbVocabLang.Location = new System.Drawing.Point(520, 91);
+            this.cmbVocabLang.Location = new System.Drawing.Point(520, 123);
             this.cmbVocabLang.Name = "cmbVocabLang";
             this.cmbVocabLang.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cmbVocabLang.Properties.Appearance.Options.UseFont = true;
@@ -271,7 +270,7 @@
             // cmbGeneralLang
             // 
             this.cmbGeneralLang.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cmbGeneralLang.Location = new System.Drawing.Point(520, 57);
+            this.cmbGeneralLang.Location = new System.Drawing.Point(520, 89);
             this.cmbGeneralLang.Name = "cmbGeneralLang";
             this.cmbGeneralLang.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cmbGeneralLang.Properties.Appearance.Options.UseFont = true;
@@ -342,9 +341,9 @@
             // 
             // textBoxStatus
             // 
-            this.textBoxStatus.BackColor = System.Drawing.Color.DarkMagenta;
+            this.textBoxStatus.BackColor = System.Drawing.Color.Black;
             this.textBoxStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxStatus.ForeColor = System.Drawing.Color.AliceBlue;
+            this.textBoxStatus.ForeColor = System.Drawing.Color.White;
             this.textBoxStatus.Location = new System.Drawing.Point(6, 28);
             this.textBoxStatus.Multiline = true;
             this.textBoxStatus.Name = "textBoxStatus";
@@ -394,9 +393,9 @@
             this.groupBox5.BackColor = System.Drawing.SystemColors.ControlLight;
             this.groupBox5.Controls.Add(this.textBoxStatus);
             this.groupBox5.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox5.Location = new System.Drawing.Point(12, 416);
+            this.groupBox5.Location = new System.Drawing.Point(12, 436);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(1004, 179);
+            this.groupBox5.Size = new System.Drawing.Size(1004, 159);
             this.groupBox5.TabIndex = 13;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "STATUS";
@@ -426,16 +425,26 @@
             this.developerProfileLinkLabel.Text = "Dr. Mohammed Studio [v1.0.0]";
             this.developerProfileLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.developerProfileLinkLabel_LinkClicked);
             // 
-            // chkMedicalMaterial
+            // labelFileName
             // 
-            this.chkMedicalMaterial.Location = new System.Drawing.Point(484, 152);
-            this.chkMedicalMaterial.Name = "chkMedicalMaterial";
-            this.chkMedicalMaterial.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkMedicalMaterial.Properties.Appearance.Options.UseFont = true;
-            this.chkMedicalMaterial.Properties.Caption = "Medical Material Only";
-            this.chkMedicalMaterial.Size = new System.Drawing.Size(233, 26);
-            this.chkMedicalMaterial.TabIndex = 20;
-            this.chkMedicalMaterial.CheckedChanged += new System.EventHandler(this.chkMedicalMaterial_CheckedChanged);
+            this.labelFileName.Appearance.BackColor = System.Drawing.Color.LightGray;
+            this.labelFileName.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.labelFileName.Appearance.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.labelFileName.Appearance.Options.UseBackColor = true;
+            this.labelFileName.Appearance.Options.UseFont = true;
+            this.labelFileName.Appearance.Options.UseForeColor = true;
+            this.labelFileName.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
+            this.labelFileName.Location = new System.Drawing.Point(6, 226);
+            this.labelFileName.Name = "labelFileName";
+            this.labelFileName.Padding = new System.Windows.Forms.Padding(5);
+            this.labelFileName.Size = new System.Drawing.Size(992, 32);
+            toolTipItem2.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem2.Appearance.Options.UseFont = true;
+            toolTipItem2.Text = "Selected File Path";
+            superToolTip2.Items.Add(toolTipItem2);
+            this.labelFileName.SuperTip = superToolTip2;
+            this.labelFileName.TabIndex = 21;
+            this.labelFileName.Text = "No file selected";
             // 
             // Form1
             // 
@@ -457,6 +466,7 @@
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chkMedicalMaterial.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.cmbVocabLang.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.cmbGeneralLang.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkVocabulary.Properties)).EndInit();
@@ -467,7 +477,6 @@
             this.groupBox4.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chkMedicalMaterial.Properties)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -478,7 +487,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textBoxAPIKey;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label labelFileName;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TextBox textBoxStatus;
@@ -503,6 +511,7 @@
         private DevExpress.XtraEditors.SimpleButton buttonSaveAPIKey;
         private System.Windows.Forms.LinkLabel developerProfileLinkLabel;
         private DevExpress.XtraEditors.CheckEdit chkMedicalMaterial;
+        private DevExpress.XtraEditors.LabelControl labelFileName;
     }
 }
 
