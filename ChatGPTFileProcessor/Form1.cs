@@ -487,9 +487,11 @@ namespace ChatGPTFileProcessor
                     //$"EnglishTerm – {vocabLangName}Translation\n\n" +
                     $"OriginalTerm – {vocabLangName}Translation\n\n" +
                     $"Leave exactly one blank line between each entry.  If a term doesn’t have a direct translation, write “– [Translation Needed]”.";
-                
+
+                //Best Version
                 string summaryPrompt =
-                    $"In {generalLangName}, write a concise SUMMARY (2–3 sentences) of the content on these page(s). " +
+                    //$"In {generalLangName}, write a concise SUMMARY (2–3 sentences) of the content on these page(s). " +
+                    $"In {generalLangName}, write a concise SUMMARY (2–3-4-5-6-7-8-9-10 sentences) of the content on these page(s). " +
                     $"{(isMedical ? "Highlight key medical concepts; keep technical terms accurate." : "")}" +
                     $"\n\nFormat your summary as plain prose (no bullets or numbering).";
 
