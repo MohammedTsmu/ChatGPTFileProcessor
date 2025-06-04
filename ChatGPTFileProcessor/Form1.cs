@@ -535,6 +535,8 @@ namespace ChatGPTFileProcessor
                     $"Answer: <True or False>\n\n" +
                     $"Leave exactly one blank line between each pair.  Do NOT write any additional explanation.";
 
+                // 3.9) Outline prompt
+                //Best Version
                 string outlinePrompt =
                     $"Produce a hierarchical OUTLINE in {generalLangName} for the material on these page(s).  " +
                     $"Use numbered levels (e.g., “1. Main Heading,” “1.1 Subheading,” “1.1.1 Detail”).  " +
