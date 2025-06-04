@@ -471,15 +471,18 @@ namespace ChatGPTFileProcessor
                 string flashcardsPrompt =
                     $"Create FLASHCARDS in {generalLangName} for each key " +
                     $"{(isMedical ? "medical " : "")}term on these page(s).  Use this exact format (no deviations):\n\n" +
-                    $"Front: <Term in {generalLangName}>\n" +
-                    $"Back:  <One- or two-sentence definition in {generalLangName}>\n\n" +
+                    //$"Front: <Term in {generalLangName}>\n" +
+                    $"Front: <Term>\n" +
+                    $"Back:  <One- or two- or three- sentence definition in {generalLangName}>\n\n" +
                     $"Leave exactly one blank line between each card.  Do NOT number or bullet anything.";
 
+                //Best Version
+                // 3.4) Vocabulary: translate into whichever “Vocab Language” the user chose
                 string vocabularyPrompt =
                     $"Extract IMPORTANT VOCABULARY TERMS from these page(s) and translate them into {vocabLangName}.  Use exactly this format (no bullets or numbering):\n\n" +
                     $"EnglishTerm – {vocabLangName}Translation\n\n" +
                     $"Leave exactly one blank line between each entry.  If a term doesn’t have a direct translation, write “– [Translation Needed]”.";
-
+                
                 string summaryPrompt =
                     $"In {generalLangName}, write a concise SUMMARY (2–3 sentences) of the content on these page(s). " +
                     $"{(isMedical ? "Highlight key medical concepts; keep technical terms accurate." : "")}" +
@@ -493,6 +496,7 @@ namespace ChatGPTFileProcessor
                     $"…\n\n" +
                     $"{(isMedical ? "Include any critical medical terms and their context." : "")}";
 
+                //Best Version
                 string clozePrompt =
                     //$"Generate 5 FILL‐IN‐THE‐BLANK sentences (in {generalLangName}) based on these page(s).  " +
                     $"Generate FILL‐IN‐THE‐BLANK sentences (in {generalLangName}) based on these page(s).  " +
