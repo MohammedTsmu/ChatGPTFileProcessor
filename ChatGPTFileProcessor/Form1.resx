@@ -169,6 +169,16 @@
 3• Send 3 PDF pages at a time. GPT will have three pages’ context.
 4• Send 4 PDF pages together so GPT sees more context at once.</value>
   </data>
+  <data name="toolTipItem1.Text" xml:space="preserve">
+    <value>1 = Send each page individually.
+
+2 = Send two pages in a single GPT query.
+
+3 = Send three pages at once.
+
+4 = Send four pages at time wider context to GPT but not recommanded for medical material.
+</value>
+  </data>
   <data name="buttonProcessFile.ImageOptions.SvgImage" type="DevExpress.Utils.Svg.SvgImage, DevExpress.Data.v24.1" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAEAAAD/////AQAAAAAAAAAMAgAAAFlEZXZFeHByZXNzLkRhdGEudjI0LjEsIFZlcnNpb249MjQuMS43
@@ -228,9 +238,6 @@
   </data>
   <metadata name="buttonsToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
-  </metadata>
-  <metadata name="labelsToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>177, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

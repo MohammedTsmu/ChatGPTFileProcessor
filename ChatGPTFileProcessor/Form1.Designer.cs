@@ -30,10 +30,13 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            DevExpress.Utils.SuperToolTip superToolTip5 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipItem toolTipItem5 = new DevExpress.Utils.ToolTipItem();
-            DevExpress.Utils.SuperToolTip superToolTip6 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipItem toolTipItem6 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip1 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem1 = new DevExpress.Utils.ToolTipTitleItem();
+            DevExpress.Utils.ToolTipItem toolTipItem1 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip2 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem2 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip3 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem3 = new DevExpress.Utils.ToolTipItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.labelControl5 = new DevExpress.XtraEditors.LabelControl();
             this.textEditAPIKey = new DevExpress.XtraEditors.TextEdit();
@@ -41,6 +44,20 @@
             this.buttonEditAPIKey = new DevExpress.XtraEditors.SimpleButton();
             this.buttonSaveAPIKey = new DevExpress.XtraEditors.SimpleButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.chkKeywords = new DevExpress.XtraEditors.CheckEdit();
+            this.chkCaseStudy = new DevExpress.XtraEditors.CheckEdit();
+            this.chkSimplified = new DevExpress.XtraEditors.CheckEdit();
+            this.chkTableExtract = new DevExpress.XtraEditors.CheckEdit();
+            this.chkConceptMap = new DevExpress.XtraEditors.CheckEdit();
+            this.chkOutline = new DevExpress.XtraEditors.CheckEdit();
+            this.chkTrueFalse = new DevExpress.XtraEditors.CheckEdit();
+            this.chkCloze = new DevExpress.XtraEditors.CheckEdit();
+            this.chkTakeaways = new DevExpress.XtraEditors.CheckEdit();
+            this.chkSummary = new DevExpress.XtraEditors.CheckEdit();
+            this.labelControl7 = new DevExpress.XtraEditors.LabelControl();
+            this.lblBatchHelp = new DevExpress.XtraEditors.LabelControl();
+            this.labelControl6 = new DevExpress.XtraEditors.LabelControl();
+            this.separatorControl1 = new DevExpress.XtraEditors.SeparatorControl();
             this.radioPageBatchSize = new DevExpress.XtraEditors.RadioGroup();
             this.labelControl3 = new DevExpress.XtraEditors.LabelControl();
             this.labelFileName = new DevExpress.XtraEditors.LabelControl();
@@ -68,13 +85,20 @@
             this.panelBottom = new System.Windows.Forms.Panel();
             this.panelTop = new System.Windows.Forms.Panel();
             this.panelFill = new System.Windows.Forms.Panel();
-            this.separatorControl1 = new DevExpress.XtraEditors.SeparatorControl();
-            this.labelControl6 = new DevExpress.XtraEditors.LabelControl();
-            this.lblBatchHelp = new DevExpress.XtraEditors.LabelControl();
-            this.labelControl7 = new DevExpress.XtraEditors.LabelControl();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textEditAPIKey.Properties)).BeginInit();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chkKeywords.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkCaseStudy.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkSimplified.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkTableExtract.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkConceptMap.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkOutline.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkTrueFalse.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkCloze.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkTakeaways.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkSummary.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.separatorControl1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.radioPageBatchSize.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkMedicalMaterial.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cmbVocabLang.Properties)).BeginInit();
@@ -92,7 +116,6 @@
             this.panelBottom.SuspendLayout();
             this.panelTop.SuspendLayout();
             this.panelFill.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.separatorControl1)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -107,7 +130,7 @@
             this.groupBox1.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(5, 5);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1142, 166);
+            this.groupBox1.Size = new System.Drawing.Size(1298, 166);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "API KEY";
@@ -181,6 +204,16 @@
             // groupBox2
             // 
             this.groupBox2.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.groupBox2.Controls.Add(this.chkKeywords);
+            this.groupBox2.Controls.Add(this.chkCaseStudy);
+            this.groupBox2.Controls.Add(this.chkSimplified);
+            this.groupBox2.Controls.Add(this.chkTableExtract);
+            this.groupBox2.Controls.Add(this.chkConceptMap);
+            this.groupBox2.Controls.Add(this.chkOutline);
+            this.groupBox2.Controls.Add(this.chkTrueFalse);
+            this.groupBox2.Controls.Add(this.chkCloze);
+            this.groupBox2.Controls.Add(this.chkTakeaways);
+            this.groupBox2.Controls.Add(this.chkSummary);
             this.groupBox2.Controls.Add(this.labelControl7);
             this.groupBox2.Controls.Add(this.lblBatchHelp);
             this.groupBox2.Controls.Add(this.labelControl6);
@@ -203,15 +236,217 @@
             this.groupBox2.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox2.Location = new System.Drawing.Point(5, 5);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1142, 304);
+            this.groupBox2.Size = new System.Drawing.Size(1298, 375);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "FILE AND PROCESS";
             // 
+            // chkKeywords
+            // 
+            this.chkKeywords.Location = new System.Drawing.Point(724, 92);
+            this.chkKeywords.Name = "chkKeywords";
+            this.chkKeywords.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkKeywords.Properties.Appearance.Options.UseFont = true;
+            this.chkKeywords.Properties.Caption = "High-Yield Keywords";
+            this.chkKeywords.Size = new System.Drawing.Size(233, 26);
+            this.chkKeywords.TabIndex = 38;
+            this.chkKeywords.CheckedChanged += new System.EventHandler(this.chkKeywords_CheckedChanged);
+            // 
+            // chkCaseStudy
+            // 
+            this.chkCaseStudy.Location = new System.Drawing.Point(485, 92);
+            this.chkCaseStudy.Name = "chkCaseStudy";
+            this.chkCaseStudy.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkCaseStudy.Properties.Appearance.Options.UseFont = true;
+            this.chkCaseStudy.Properties.Caption = "Case Study Scenario";
+            this.chkCaseStudy.Size = new System.Drawing.Size(233, 26);
+            this.chkCaseStudy.TabIndex = 37;
+            this.chkCaseStudy.CheckedChanged += new System.EventHandler(this.chkCaseStudy_CheckedChanged);
+            // 
+            // chkSimplified
+            // 
+            this.chkSimplified.Location = new System.Drawing.Point(246, 92);
+            this.chkSimplified.Name = "chkSimplified";
+            this.chkSimplified.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkSimplified.Properties.Appearance.Options.UseFont = true;
+            this.chkSimplified.Properties.Caption = "Simplified Explanation";
+            this.chkSimplified.Size = new System.Drawing.Size(233, 26);
+            this.chkSimplified.TabIndex = 36;
+            this.chkSimplified.CheckedChanged += new System.EventHandler(this.chkSimplified_CheckedChanged);
+            // 
+            // chkTableExtract
+            // 
+            this.chkTableExtract.Location = new System.Drawing.Point(7, 92);
+            this.chkTableExtract.Name = "chkTableExtract";
+            this.chkTableExtract.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkTableExtract.Properties.Appearance.Options.UseFont = true;
+            this.chkTableExtract.Properties.Caption = "Extract Tables";
+            this.chkTableExtract.Size = new System.Drawing.Size(233, 26);
+            this.chkTableExtract.TabIndex = 35;
+            this.chkTableExtract.CheckedChanged += new System.EventHandler(this.chkTableExtract_CheckedChanged);
+            // 
+            // chkConceptMap
+            // 
+            this.chkConceptMap.Location = new System.Drawing.Point(936, 60);
+            this.chkConceptMap.Name = "chkConceptMap";
+            this.chkConceptMap.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkConceptMap.Properties.Appearance.Options.UseFont = true;
+            this.chkConceptMap.Properties.Caption = "Concept Relationships";
+            this.chkConceptMap.Size = new System.Drawing.Size(233, 26);
+            this.chkConceptMap.TabIndex = 34;
+            this.chkConceptMap.CheckedChanged += new System.EventHandler(this.chkConceptMap_CheckedChanged);
+            // 
+            // chkOutline
+            // 
+            this.chkOutline.Location = new System.Drawing.Point(724, 60);
+            this.chkOutline.Name = "chkOutline";
+            this.chkOutline.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkOutline.Properties.Appearance.Options.UseFont = true;
+            this.chkOutline.Properties.Caption = "Generate Outline";
+            this.chkOutline.Size = new System.Drawing.Size(233, 26);
+            this.chkOutline.TabIndex = 33;
+            this.chkOutline.CheckedChanged += new System.EventHandler(this.chkOutline_CheckedChanged);
+            // 
+            // chkTrueFalse
+            // 
+            this.chkTrueFalse.Location = new System.Drawing.Point(485, 60);
+            this.chkTrueFalse.Name = "chkTrueFalse";
+            this.chkTrueFalse.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkTrueFalse.Properties.Appearance.Options.UseFont = true;
+            this.chkTrueFalse.Properties.Caption = "True/False Questions";
+            this.chkTrueFalse.Size = new System.Drawing.Size(233, 26);
+            this.chkTrueFalse.TabIndex = 32;
+            this.chkTrueFalse.CheckedChanged += new System.EventHandler(this.chkTrueFalse_CheckedChanged);
+            // 
+            // chkCloze
+            // 
+            this.chkCloze.Location = new System.Drawing.Point(246, 60);
+            this.chkCloze.Name = "chkCloze";
+            this.chkCloze.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkCloze.Properties.Appearance.Options.UseFont = true;
+            this.chkCloze.Properties.Caption = "Fill-in-the-Blank (Cloze)";
+            this.chkCloze.Size = new System.Drawing.Size(233, 26);
+            this.chkCloze.TabIndex = 31;
+            this.chkCloze.CheckedChanged += new System.EventHandler(this.chkCloze_CheckedChanged);
+            // 
+            // chkTakeaways
+            // 
+            this.chkTakeaways.Location = new System.Drawing.Point(7, 60);
+            this.chkTakeaways.Name = "chkTakeaways";
+            this.chkTakeaways.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkTakeaways.Properties.Appearance.Options.UseFont = true;
+            this.chkTakeaways.Properties.Caption = "Key Takeaways";
+            this.chkTakeaways.Size = new System.Drawing.Size(233, 26);
+            this.chkTakeaways.TabIndex = 30;
+            this.chkTakeaways.CheckedChanged += new System.EventHandler(this.chkTakeaways_CheckedChanged);
+            // 
+            // chkSummary
+            // 
+            this.chkSummary.Location = new System.Drawing.Point(936, 28);
+            this.chkSummary.Name = "chkSummary";
+            this.chkSummary.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkSummary.Properties.Appearance.Options.UseFont = true;
+            this.chkSummary.Properties.Caption = "Page Summary";
+            this.chkSummary.Size = new System.Drawing.Size(233, 26);
+            this.chkSummary.TabIndex = 29;
+            this.chkSummary.CheckedChanged += new System.EventHandler(this.chkSummary_CheckedChanged);
+            // 
+            // labelControl7
+            // 
+            this.labelControl7.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl7.Appearance.Options.UseFont = true;
+            this.labelControl7.Appearance.Options.UseTextOptions = true;
+            this.labelControl7.Appearance.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.labelControl7.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl7.AppearanceDisabled.Options.UseFont = true;
+            this.labelControl7.AppearanceDisabled.Options.UseTextOptions = true;
+            this.labelControl7.AppearanceDisabled.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.labelControl7.AppearanceHovered.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl7.AppearanceHovered.Options.UseFont = true;
+            this.labelControl7.AppearanceHovered.Options.UseTextOptions = true;
+            this.labelControl7.AppearanceHovered.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.labelControl7.AppearancePressed.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl7.AppearancePressed.Options.UseFont = true;
+            this.labelControl7.AppearancePressed.Options.UseTextOptions = true;
+            this.labelControl7.AppearancePressed.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.labelControl7.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
+            this.labelControl7.Location = new System.Drawing.Point(797, 131);
+            this.labelControl7.Name = "labelControl7";
+            this.labelControl7.Size = new System.Drawing.Size(180, 22);
+            this.labelControl7.TabIndex = 28;
+            this.labelControl7.Text = "Instructions";
+            // 
+            // lblBatchHelp
+            // 
+            this.lblBatchHelp.Appearance.BackColor = System.Drawing.Color.MistyRose;
+            this.lblBatchHelp.Appearance.Font = new System.Drawing.Font("LBC", 8.999999F);
+            this.lblBatchHelp.Appearance.ForeColor = System.Drawing.Color.Black;
+            this.lblBatchHelp.Appearance.Options.UseBackColor = true;
+            this.lblBatchHelp.Appearance.Options.UseFont = true;
+            this.lblBatchHelp.Appearance.Options.UseForeColor = true;
+            this.lblBatchHelp.Appearance.Options.UseTextOptions = true;
+            this.lblBatchHelp.Appearance.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.lblBatchHelp.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 8.999999F);
+            this.lblBatchHelp.AppearanceDisabled.Options.UseFont = true;
+            this.lblBatchHelp.AppearanceDisabled.Options.UseTextOptions = true;
+            this.lblBatchHelp.AppearanceDisabled.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.lblBatchHelp.AppearanceHovered.Font = new System.Drawing.Font("LBC", 8.999999F);
+            this.lblBatchHelp.AppearanceHovered.Options.UseFont = true;
+            this.lblBatchHelp.AppearanceHovered.Options.UseTextOptions = true;
+            this.lblBatchHelp.AppearanceHovered.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.lblBatchHelp.AppearancePressed.Font = new System.Drawing.Font("LBC", 8.999999F);
+            this.lblBatchHelp.AppearancePressed.Options.UseFont = true;
+            this.lblBatchHelp.AppearancePressed.Options.UseTextOptions = true;
+            this.lblBatchHelp.AppearancePressed.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.lblBatchHelp.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
+            this.lblBatchHelp.Location = new System.Drawing.Point(797, 159);
+            this.lblBatchHelp.Name = "lblBatchHelp";
+            this.lblBatchHelp.Padding = new System.Windows.Forms.Padding(5);
+            this.lblBatchHelp.Size = new System.Drawing.Size(494, 175);
+            this.lblBatchHelp.TabIndex = 27;
+            this.lblBatchHelp.Text = resources.GetString("lblBatchHelp.Text");
+            // 
+            // labelControl6
+            // 
+            this.labelControl6.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl6.Appearance.Options.UseFont = true;
+            this.labelControl6.Appearance.Options.UseTextOptions = true;
+            this.labelControl6.Appearance.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.labelControl6.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl6.AppearanceDisabled.Options.UseFont = true;
+            this.labelControl6.AppearanceDisabled.Options.UseTextOptions = true;
+            this.labelControl6.AppearanceDisabled.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.labelControl6.AppearanceHovered.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl6.AppearanceHovered.Options.UseFont = true;
+            this.labelControl6.AppearanceHovered.Options.UseTextOptions = true;
+            this.labelControl6.AppearanceHovered.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.labelControl6.AppearancePressed.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl6.AppearancePressed.Options.UseFont = true;
+            this.labelControl6.AppearancePressed.Options.UseTextOptions = true;
+            this.labelControl6.AppearancePressed.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.labelControl6.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
+            this.labelControl6.Location = new System.Drawing.Point(600, 131);
+            this.labelControl6.Name = "labelControl6";
+            this.labelControl6.Size = new System.Drawing.Size(180, 22);
+            this.labelControl6.TabIndex = 26;
+            this.labelControl6.Text = "Page Batch Mode";
+            // 
+            // separatorControl1
+            // 
+            this.separatorControl1.AutoSizeMode = true;
+            this.separatorControl1.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.separatorControl1.LineAlignment = DevExpress.XtraEditors.Alignment.Center;
+            this.separatorControl1.LineOrientation = System.Windows.Forms.Orientation.Vertical;
+            this.separatorControl1.LineThickness = 3;
+            this.separatorControl1.Location = new System.Drawing.Point(575, 131);
+            this.separatorControl1.Name = "separatorControl1";
+            this.separatorControl1.Size = new System.Drawing.Size(21, 203);
+            this.separatorControl1.TabIndex = 25;
+            // 
             // radioPageBatchSize
             // 
             this.radioPageBatchSize.EditValue = 2;
-            this.radioPageBatchSize.Location = new System.Drawing.Point(601, 88);
+            this.radioPageBatchSize.Location = new System.Drawing.Point(600, 159);
             this.radioPageBatchSize.Name = "radioPageBatchSize";
             this.radioPageBatchSize.Properties.Appearance.BackColor = System.Drawing.Color.RosyBrown;
             this.radioPageBatchSize.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
@@ -247,6 +482,15 @@
             new DevExpress.XtraEditors.Controls.RadioGroupItem(3, "3 pages at a time"),
             new DevExpress.XtraEditors.Controls.RadioGroupItem(4, "4 pages at a time")});
             this.radioPageBatchSize.Size = new System.Drawing.Size(191, 175);
+            toolTipTitleItem1.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipTitleItem1.Appearance.Options.UseFont = true;
+            toolTipTitleItem1.Text = "Choose how many pages to send in one batch.\n";
+            toolTipItem1.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem1.Appearance.Options.UseFont = true;
+            toolTipItem1.Text = resources.GetString("toolTipItem1.Text");
+            superToolTip1.Items.Add(toolTipTitleItem1);
+            superToolTip1.Items.Add(toolTipItem1);
+            this.radioPageBatchSize.SuperTip = superToolTip1;
             this.radioPageBatchSize.TabIndex = 24;
             this.radioPageBatchSize.ToolTipAnchor = DevExpress.Utils.ToolTipAnchor.Cursor;
             this.radioPageBatchSize.SelectedIndexChanged += new System.EventHandler(this.radioPageBatchSize_SelectedIndexChanged);
@@ -255,7 +499,7 @@
             // 
             this.labelControl3.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelControl3.Appearance.Options.UseFont = true;
-            this.labelControl3.Location = new System.Drawing.Point(7, 170);
+            this.labelControl3.Location = new System.Drawing.Point(6, 262);
             this.labelControl3.Name = "labelControl3";
             this.labelControl3.Size = new System.Drawing.Size(86, 22);
             this.labelControl3.TabIndex = 22;
@@ -271,23 +515,23 @@
             this.labelFileName.Appearance.Options.UseForeColor = true;
             this.labelFileName.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelFileName.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.labelFileName.Location = new System.Drawing.Point(3, 269);
+            this.labelFileName.Location = new System.Drawing.Point(3, 340);
             this.labelFileName.Name = "labelFileName";
             this.labelFileName.Padding = new System.Windows.Forms.Padding(5);
-            this.labelFileName.Size = new System.Drawing.Size(1136, 32);
-            toolTipItem5.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem5.Appearance.Options.UseFont = true;
-            toolTipItem5.Text = "Selected File Path";
-            superToolTip5.Items.Add(toolTipItem5);
-            this.labelFileName.SuperTip = superToolTip5;
+            this.labelFileName.Size = new System.Drawing.Size(1292, 32);
+            toolTipItem2.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem2.Appearance.Options.UseFont = true;
+            toolTipItem2.Text = "Selected File Path";
+            superToolTip2.Items.Add(toolTipItem2);
+            this.labelFileName.SuperTip = superToolTip2;
             this.labelFileName.TabIndex = 21;
             this.labelFileName.Text = "No file selected";
             // 
             // chkMedicalMaterial
             // 
-            this.chkMedicalMaterial.Location = new System.Drawing.Point(7, 60);
+            this.chkMedicalMaterial.Location = new System.Drawing.Point(6, 124);
             this.chkMedicalMaterial.Name = "chkMedicalMaterial";
-            this.chkMedicalMaterial.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkMedicalMaterial.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkMedicalMaterial.Properties.Appearance.Options.UseFont = true;
             this.chkMedicalMaterial.Properties.Caption = "Medical Material Only";
             this.chkMedicalMaterial.Size = new System.Drawing.Size(233, 26);
@@ -300,7 +544,7 @@
             this.buttonProcessFile.Appearance.Options.UseFont = true;
             this.buttonProcessFile.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("buttonProcessFile.ImageOptions.SvgImage")));
             this.buttonProcessFile.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
-            this.buttonProcessFile.Location = new System.Drawing.Point(197, 198);
+            this.buttonProcessFile.Location = new System.Drawing.Point(196, 290);
             this.buttonProcessFile.Name = "buttonProcessFile";
             this.buttonProcessFile.Size = new System.Drawing.Size(184, 44);
             this.buttonProcessFile.TabIndex = 19;
@@ -313,7 +557,7 @@
             this.buttonBrowseFile.Appearance.Options.UseFont = true;
             this.buttonBrowseFile.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("buttonBrowseFile.ImageOptions.SvgImage")));
             this.buttonBrowseFile.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
-            this.buttonBrowseFile.Location = new System.Drawing.Point(7, 198);
+            this.buttonBrowseFile.Location = new System.Drawing.Point(6, 290);
             this.buttonBrowseFile.Name = "buttonBrowseFile";
             this.buttonBrowseFile.Size = new System.Drawing.Size(184, 44);
             this.buttonBrowseFile.TabIndex = 18;
@@ -339,7 +583,7 @@
             this.labelControl2.AppearancePressed.Options.UseTextOptions = true;
             this.labelControl2.AppearancePressed.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
             this.labelControl2.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
-            this.labelControl2.Location = new System.Drawing.Point(3, 142);
+            this.labelControl2.Location = new System.Drawing.Point(2, 234);
             this.labelControl2.Name = "labelControl2";
             this.labelControl2.Size = new System.Drawing.Size(343, 22);
             this.labelControl2.TabIndex = 17;
@@ -364,7 +608,7 @@
             this.labelControl1.AppearancePressed.Options.UseTextOptions = true;
             this.labelControl1.AppearancePressed.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
             this.labelControl1.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
-            this.labelControl1.Location = new System.Drawing.Point(7, 92);
+            this.labelControl1.Location = new System.Drawing.Point(6, 184);
             this.labelControl1.Name = "labelControl1";
             this.labelControl1.Size = new System.Drawing.Size(343, 44);
             this.labelControl1.TabIndex = 16;
@@ -373,7 +617,7 @@
             // cmbVocabLang
             // 
             this.cmbVocabLang.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cmbVocabLang.Location = new System.Drawing.Point(352, 139);
+            this.cmbVocabLang.Location = new System.Drawing.Point(351, 231);
             this.cmbVocabLang.Name = "cmbVocabLang";
             this.cmbVocabLang.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbVocabLang.Properties.Appearance.Options.UseFont = true;
@@ -401,7 +645,7 @@
             // cmbGeneralLang
             // 
             this.cmbGeneralLang.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cmbGeneralLang.Location = new System.Drawing.Point(352, 93);
+            this.cmbGeneralLang.Location = new System.Drawing.Point(351, 185);
             this.cmbGeneralLang.Name = "cmbGeneralLang";
             this.cmbGeneralLang.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
             this.cmbGeneralLang.Properties.Appearance.Options.UseFont = true;
@@ -481,7 +725,7 @@
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxStatus.Size = new System.Drawing.Size(1136, 145);
+            this.textBoxStatus.Size = new System.Drawing.Size(1292, 145);
             this.textBoxStatus.TabIndex = 9;
             this.labelsToolTip.SetToolTip(this.textBoxStatus, "Application Log Area Were any Action Or Changes Will Be Written Here To Inform Th" +
         "e User");
@@ -509,11 +753,11 @@
             this.svgImageBoxAbout.Margin = new System.Windows.Forms.Padding(4);
             this.svgImageBoxAbout.Name = "svgImageBoxAbout";
             this.svgImageBoxAbout.Size = new System.Drawing.Size(48, 44);
-            toolTipItem6.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem6.Appearance.Options.UseFont = true;
-            toolTipItem6.Text = "About This Application";
-            superToolTip6.Items.Add(toolTipItem6);
-            this.svgImageBoxAbout.SuperTip = superToolTip6;
+            toolTipItem3.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem3.Appearance.Options.UseFont = true;
+            toolTipItem3.Text = "About This Application";
+            superToolTip3.Items.Add(toolTipItem3);
+            this.svgImageBoxAbout.SuperTip = superToolTip3;
             this.svgImageBoxAbout.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("svgImageBoxAbout.SvgImage")));
             this.svgImageBoxAbout.TabIndex = 23;
             this.svgImageBoxAbout.Text = "svgImageBox1";
@@ -565,7 +809,7 @@
             this.groupBox5.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox5.Location = new System.Drawing.Point(5, 5);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(1142, 173);
+            this.groupBox5.Size = new System.Drawing.Size(1298, 173);
             this.groupBox5.TabIndex = 13;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "STATUS";
@@ -590,14 +834,14 @@
             this.panelTopLeft.Location = new System.Drawing.Point(0, 0);
             this.panelTopLeft.Name = "panelTopLeft";
             this.panelTopLeft.Padding = new System.Windows.Forms.Padding(5);
-            this.panelTopLeft.Size = new System.Drawing.Size(1152, 176);
+            this.panelTopLeft.Size = new System.Drawing.Size(1308, 176);
             this.panelTopLeft.TabIndex = 22;
             // 
             // panelTopRight
             // 
             this.panelTopRight.Controls.Add(this.groupBox4);
             this.panelTopRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelTopRight.Location = new System.Drawing.Point(703, 0);
+            this.panelTopRight.Location = new System.Drawing.Point(859, 0);
             this.panelTopRight.Name = "panelTopRight";
             this.panelTopRight.Padding = new System.Windows.Forms.Padding(5);
             this.panelTopRight.Size = new System.Drawing.Size(449, 176);
@@ -607,10 +851,10 @@
             // 
             this.panelBottom.Controls.Add(this.groupBox5);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(0, 490);
+            this.panelBottom.Location = new System.Drawing.Point(0, 561);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Padding = new System.Windows.Forms.Padding(5);
-            this.panelBottom.Size = new System.Drawing.Size(1152, 183);
+            this.panelBottom.Size = new System.Drawing.Size(1308, 183);
             this.panelBottom.TabIndex = 24;
             // 
             // panelTop
@@ -620,7 +864,7 @@
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(1152, 176);
+            this.panelTop.Size = new System.Drawing.Size(1308, 176);
             this.panelTop.TabIndex = 22;
             // 
             // panelFill
@@ -630,106 +874,14 @@
             this.panelFill.Location = new System.Drawing.Point(0, 176);
             this.panelFill.Name = "panelFill";
             this.panelFill.Padding = new System.Windows.Forms.Padding(5);
-            this.panelFill.Size = new System.Drawing.Size(1152, 314);
+            this.panelFill.Size = new System.Drawing.Size(1308, 385);
             this.panelFill.TabIndex = 25;
-            // 
-            // separatorControl1
-            // 
-            this.separatorControl1.AutoSizeMode = true;
-            this.separatorControl1.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.separatorControl1.LineAlignment = DevExpress.XtraEditors.Alignment.Center;
-            this.separatorControl1.LineOrientation = System.Windows.Forms.Orientation.Vertical;
-            this.separatorControl1.LineThickness = 3;
-            this.separatorControl1.Location = new System.Drawing.Point(576, 60);
-            this.separatorControl1.Name = "separatorControl1";
-            this.separatorControl1.Size = new System.Drawing.Size(21, 203);
-            this.separatorControl1.TabIndex = 25;
-            // 
-            // labelControl6
-            // 
-            this.labelControl6.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
-            this.labelControl6.Appearance.Options.UseFont = true;
-            this.labelControl6.Appearance.Options.UseTextOptions = true;
-            this.labelControl6.Appearance.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl6.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
-            this.labelControl6.AppearanceDisabled.Options.UseFont = true;
-            this.labelControl6.AppearanceDisabled.Options.UseTextOptions = true;
-            this.labelControl6.AppearanceDisabled.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl6.AppearanceHovered.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
-            this.labelControl6.AppearanceHovered.Options.UseFont = true;
-            this.labelControl6.AppearanceHovered.Options.UseTextOptions = true;
-            this.labelControl6.AppearanceHovered.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl6.AppearancePressed.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
-            this.labelControl6.AppearancePressed.Options.UseFont = true;
-            this.labelControl6.AppearancePressed.Options.UseTextOptions = true;
-            this.labelControl6.AppearancePressed.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl6.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
-            this.labelControl6.Location = new System.Drawing.Point(601, 60);
-            this.labelControl6.Name = "labelControl6";
-            this.labelControl6.Size = new System.Drawing.Size(180, 22);
-            this.labelControl6.TabIndex = 26;
-            this.labelControl6.Text = "Page Batch Mode";
-            // 
-            // lblBatchHelp
-            // 
-            this.lblBatchHelp.Appearance.BackColor = System.Drawing.Color.MistyRose;
-            this.lblBatchHelp.Appearance.Font = new System.Drawing.Font("LBC", 8.999999F);
-            this.lblBatchHelp.Appearance.ForeColor = System.Drawing.Color.Black;
-            this.lblBatchHelp.Appearance.Options.UseBackColor = true;
-            this.lblBatchHelp.Appearance.Options.UseFont = true;
-            this.lblBatchHelp.Appearance.Options.UseForeColor = true;
-            this.lblBatchHelp.Appearance.Options.UseTextOptions = true;
-            this.lblBatchHelp.Appearance.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.lblBatchHelp.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 8.999999F);
-            this.lblBatchHelp.AppearanceDisabled.Options.UseFont = true;
-            this.lblBatchHelp.AppearanceDisabled.Options.UseTextOptions = true;
-            this.lblBatchHelp.AppearanceDisabled.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.lblBatchHelp.AppearanceHovered.Font = new System.Drawing.Font("LBC", 8.999999F);
-            this.lblBatchHelp.AppearanceHovered.Options.UseFont = true;
-            this.lblBatchHelp.AppearanceHovered.Options.UseTextOptions = true;
-            this.lblBatchHelp.AppearanceHovered.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.lblBatchHelp.AppearancePressed.Font = new System.Drawing.Font("LBC", 8.999999F);
-            this.lblBatchHelp.AppearancePressed.Options.UseFont = true;
-            this.lblBatchHelp.AppearancePressed.Options.UseTextOptions = true;
-            this.lblBatchHelp.AppearancePressed.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.lblBatchHelp.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.lblBatchHelp.Location = new System.Drawing.Point(798, 88);
-            this.lblBatchHelp.Name = "lblBatchHelp";
-            this.lblBatchHelp.Padding = new System.Windows.Forms.Padding(5);
-            this.lblBatchHelp.Size = new System.Drawing.Size(338, 175);
-            this.lblBatchHelp.TabIndex = 27;
-            this.lblBatchHelp.Text = resources.GetString("lblBatchHelp.Text");
-            // 
-            // labelControl7
-            // 
-            this.labelControl7.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
-            this.labelControl7.Appearance.Options.UseFont = true;
-            this.labelControl7.Appearance.Options.UseTextOptions = true;
-            this.labelControl7.Appearance.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl7.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
-            this.labelControl7.AppearanceDisabled.Options.UseFont = true;
-            this.labelControl7.AppearanceDisabled.Options.UseTextOptions = true;
-            this.labelControl7.AppearanceDisabled.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl7.AppearanceHovered.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
-            this.labelControl7.AppearanceHovered.Options.UseFont = true;
-            this.labelControl7.AppearanceHovered.Options.UseTextOptions = true;
-            this.labelControl7.AppearanceHovered.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl7.AppearancePressed.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
-            this.labelControl7.AppearancePressed.Options.UseFont = true;
-            this.labelControl7.AppearancePressed.Options.UseTextOptions = true;
-            this.labelControl7.AppearancePressed.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl7.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
-            this.labelControl7.Location = new System.Drawing.Point(798, 60);
-            this.labelControl7.Name = "labelControl7";
-            this.labelControl7.Size = new System.Drawing.Size(180, 22);
-            this.labelControl7.TabIndex = 28;
-            this.labelControl7.Text = "Instructions";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1152, 673);
+            this.ClientSize = new System.Drawing.Size(1308, 744);
             this.Controls.Add(this.panelFill);
             this.Controls.Add(this.panelTop);
             this.Controls.Add(this.panelBottom);
@@ -744,6 +896,17 @@
             ((System.ComponentModel.ISupportInitialize)(this.textEditAPIKey.Properties)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chkKeywords.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkCaseStudy.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkSimplified.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkTableExtract.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkConceptMap.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkOutline.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkTrueFalse.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkCloze.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkTakeaways.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkSummary.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.separatorControl1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.radioPageBatchSize.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkMedicalMaterial.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.cmbVocabLang.Properties)).EndInit();
@@ -763,7 +926,6 @@
             this.panelBottom.ResumeLayout(false);
             this.panelTop.ResumeLayout(false);
             this.panelFill.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.separatorControl1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -807,6 +969,16 @@
         private DevExpress.XtraEditors.LabelControl labelControl6;
         private DevExpress.XtraEditors.LabelControl lblBatchHelp;
         private DevExpress.XtraEditors.LabelControl labelControl7;
+        private DevExpress.XtraEditors.CheckEdit chkKeywords;
+        private DevExpress.XtraEditors.CheckEdit chkCaseStudy;
+        private DevExpress.XtraEditors.CheckEdit chkSimplified;
+        private DevExpress.XtraEditors.CheckEdit chkTableExtract;
+        private DevExpress.XtraEditors.CheckEdit chkConceptMap;
+        private DevExpress.XtraEditors.CheckEdit chkOutline;
+        private DevExpress.XtraEditors.CheckEdit chkTrueFalse;
+        private DevExpress.XtraEditors.CheckEdit chkCloze;
+        private DevExpress.XtraEditors.CheckEdit chkTakeaways;
+        private DevExpress.XtraEditors.CheckEdit chkSummary;
     }
 }
 

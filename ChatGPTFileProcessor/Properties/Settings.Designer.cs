@@ -130,5 +130,125 @@ namespace ChatGPTFileProcessor.Properties {
                 this["PageBatchMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GenerateSummary {
+            get {
+                return ((bool)(this["GenerateSummary"]));
+            }
+            set {
+                this["GenerateSummary"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GenerateTakeaways {
+            get {
+                return ((bool)(this["GenerateTakeaways"]));
+            }
+            set {
+                this["GenerateTakeaways"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GenerateCloze {
+            get {
+                return ((bool)(this["GenerateCloze"]));
+            }
+            set {
+                this["GenerateCloze"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GenerateTrueFalse {
+            get {
+                return ((bool)(this["GenerateTrueFalse"]));
+            }
+            set {
+                this["GenerateTrueFalse"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GenerateOutline {
+            get {
+                return ((bool)(this["GenerateOutline"]));
+            }
+            set {
+                this["GenerateOutline"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GenerateConceptMap {
+            get {
+                return ((bool)(this["GenerateConceptMap"]));
+            }
+            set {
+                this["GenerateConceptMap"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GenerateTableExtract {
+            get {
+                return ((bool)(this["GenerateTableExtract"]));
+            }
+            set {
+                this["GenerateTableExtract"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GenerateSimplified {
+            get {
+                return ((bool)(this["GenerateSimplified"]));
+            }
+            set {
+                this["GenerateSimplified"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GenerateCaseStudy {
+            get {
+                return ((bool)(this["GenerateCaseStudy"]));
+            }
+            set {
+                this["GenerateCaseStudy"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GenerateKeywords {
+            get {
+                return ((bool)(this["GenerateKeywords"]));
+            }
+            set {
+                this["GenerateKeywords"] = value;
+            }
+        }
     }
 }

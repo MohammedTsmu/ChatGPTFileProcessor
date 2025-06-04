@@ -232,6 +232,20 @@ namespace ChatGPTFileProcessor
                 string flashcardsFilePath = Path.Combine(basePath, $"Flashcards_{modelName}_{timeStamp}.docx");
                 string vocabularyFilePath = Path.Combine(basePath, $"Vocabulary_{modelName}_{timeStamp}.docx");
 
+                // New features: Summary, Key Takeaways, Cloze, True/False, Outline, Concept Map, Table Extract, Simplified, Case Study, Keywords
+                // New output files:
+                string summaryFilePath = Path.Combine(basePath, $"Summary_{modelName}_{timeStamp}.docx");
+                string takeawaysFilePath = Path.Combine(basePath, $"Takeaways_{modelName}_{timeStamp}.docx");
+                string clozeFilePath = Path.Combine(basePath, $"Cloze_{modelName}_{timeStamp}.docx");
+                string tfFilePath = Path.Combine(basePath, $"TrueFalse_{modelName}_{timeStamp}.docx");
+                string outlineFilePath = Path.Combine(basePath, $"Outline_{modelName}_{timeStamp}.docx");
+                string conceptMapFilePath = Path.Combine(basePath, $"ConceptMap_{modelName}_{timeStamp}.docx");
+                string tableFilePath = Path.Combine(basePath, $"Tables_{modelName}_{timeStamp}.docx");
+                string simplifiedFilePath = Path.Combine(basePath, $"Simplified_{modelName}_{timeStamp}.docx");
+                string caseStudyFilePath = Path.Combine(basePath, $"CaseStudy_{modelName}_{timeStamp}.docx");
+                string keywordsFilePath = Path.Combine(basePath, $"Keywords_{modelName}_{timeStamp}.docx");
+
+
 
                 // 3.1) prompt for Definitions in “GeneralLanguage” (e.g. user picks “French”)
                 // 1) Read which “General Language” the user picked:
@@ -239,72 +253,204 @@ namespace ChatGPTFileProcessor
 
                 // 2) Read the “Medical Material” checkbox:
                 bool isMedical = chkMedicalMaterial.Checked;
-
-                // 3) Build each prompt with a little conditional text:
-                string definitionsPrompt;
-                if (isMedical)
-                {
-                    // When “Medical Material” is checked, ask specifically for medical definitions
-                    definitionsPrompt =
-                        $"Provide concise medical definitions (in {generalLangName}) for each key medical term on this page. " +
-                        $"For each term, write:\n" +
-                        $"- The term itself as a heading\n" +
-                        $"- Then a one- or two-sentence definition in {generalLangName}\n\n" +
-                        $"Separate every entry by a blank line, without numbering.";
-                }
-                else
-                {
-                    // When unchecked, just ask for normal (non-medical) definitions
-                    definitionsPrompt =
-                        $"Provide concise definitions (in {generalLangName}) for each key term on this page. " +
-                        $"For each term, write:\n" +
-                        $"- The term itself as a heading\n" +
-                        $"- Then a one- or two-sentence definition in {generalLangName}\n\n" +
-                        $"Separate every entry by a blank line, without numbering.";
-                }
-
-
-                // 3.2) MCQs prompt (this is typically language-only; leave it as-is or you can adjust similarly)
-                string mcqsPrompt =
-                    $"Generate multiple-choice questions (only in {generalLangName}) based on the content of this page. Use EXACTLY this format (no deviations):\n\n" +
-                    $"Question: [Write the question in {generalLangName}]\n" +
-                    $"A) [Option A in {generalLangName}]\n" +
-                    $"B) [Option B in {generalLangName}]\n" +
-                    $"C) [Option C in {generalLangName}]\n" +
-                    $"D) [Option D in {generalLangName}]\n" +
-                    $"Answer: [Correct Letter]\n\n" +
-                    $"Separate each question block with a blank line.";
-
-
-                // 3.3) Flashcards prompt: toggle “medical” vocabulary vs. general vocabulary
-                string flashcardsPrompt;
-                if (isMedical)
-                {
-                    flashcardsPrompt =
-                        $"Create medical flashcards in {generalLangName} for each key medical or pharmaceutical term on this page. " +
-                        $"Use EXACTLY this format (no deviations):\n\n" +
-                        $"Front: [Term in {generalLangName}]\n" +
-                        $"Back:  [Definition in {generalLangName}]\n\n" +
-                        $"Leave exactly one blank line between each card.";
-                }
-                else
-                {
-                    flashcardsPrompt =
-                        $"Create flashcards in {generalLangName} for each key term on this page. " +
-                        $"Use EXACTLY this format (no deviations):\n\n" +
-                        $"Front: [Term in {generalLangName}]\n" +
-                        $"Back:  [Definition in {generalLangName}]\n\n" +
-                        $"Leave exactly one blank line between each card.";
-                }
-
-
-                // 3.4) Vocabulary: translate into whichever “Vocab Language” the user chose
+                // 3) Read the “Vocabulary Language” dropdown:
                 string vocabLangName = cmbVocabLang.SelectedItem as string ?? "Arabic";
+
+                //// 3) Build each prompt with a little conditional text:
+                //string definitionsPrompt;
+                //if (isMedical)
+                //{
+                //    // When “Medical Material” is checked, ask specifically for medical definitions
+                //    definitionsPrompt =
+                //        $"Provide concise medical definitions (in {generalLangName}) for each key medical term on this page. " +
+                //        $"For each term, write:\n" +
+                //        $"- The term itself as a heading\n" +
+                //        $"- Then a one- or two-sentence definition in {generalLangName}\n\n" +
+                //        $"Separate every entry by a blank line, without numbering.";
+                //}
+                //else
+                //{
+                //    // When unchecked, just ask for normal (non-medical) definitions
+                //    definitionsPrompt =
+                //        $"Provide concise definitions (in {generalLangName}) for each key term on this page. " +
+                //        $"For each term, write:\n" +
+                //        $"- The term itself as a heading\n" +
+                //        $"- Then a one- or two-sentence definition in {generalLangName}\n\n" +
+                //        $"Separate every entry by a blank line, without numbering.";
+                //}
+
+
+                //// 3.2) MCQs prompt (this is typically language-only; leave it as-is or you can adjust similarly)
+                //string mcqsPrompt =
+                //    $"Generate multiple-choice questions (only in {generalLangName}) based on the content of this page. Use EXACTLY this format (no deviations):\n\n" +
+                //    $"Question: [Write the question in {generalLangName}]\n" +
+                //    $"A) [Option A in {generalLangName}]\n" +
+                //    $"B) [Option B in {generalLangName}]\n" +
+                //    $"C) [Option C in {generalLangName}]\n" +
+                //    $"D) [Option D in {generalLangName}]\n" +
+                //    $"Answer: [Correct Letter]\n\n" +
+                //    $"Separate each question block with a blank line.";
+
+
+                //// 3.3) Flashcards prompt: toggle “medical” vocabulary vs. general vocabulary
+                //string flashcardsPrompt;
+                //if (isMedical)
+                //{
+                //    flashcardsPrompt =
+                //        $"Create medical flashcards in {generalLangName} for each key medical or pharmaceutical term on this page. " +
+                //        $"Use EXACTLY this format (no deviations):\n\n" +
+                //        $"Front: [Term in {generalLangName}]\n" +
+                //        $"Back:  [Definition in {generalLangName}]\n\n" +
+                //        $"Leave exactly one blank line between each card.";
+                //}
+                //else
+                //{
+                //    flashcardsPrompt =
+                //        $"Create flashcards in {generalLangName} for each key term on this page. " +
+                //        $"Use EXACTLY this format (no deviations):\n\n" +
+                //        $"Front: [Term in {generalLangName}]\n" +
+                //        $"Back:  [Definition in {generalLangName}]\n\n" +
+                //        $"Leave exactly one blank line between each card.";
+                //}
+
+
+                //// 3.4) Vocabulary: translate into whichever “Vocab Language” the user chose
+                ////string vocabLangName = cmbVocabLang.SelectedItem as string ?? "Arabic";
+                //string vocabularyPrompt =
+                //    $"Extract important vocabulary terms from this page and translate them to {vocabLangName}. " +
+                //    $"Use EXACTLY this format (no bullets, no numbering):\n\n" +
+                //    $"EnglishTerm – {vocabLangName}Translation\n\n" +
+                //    $"Leave exactly one blank line between each entry.";
+
+
+
+
+                //// 5.1 Page Summary (2–3 sentences high-level overview)
+                //string summaryPrompt =
+                //    $"In {generalLangName}, write a concise 2–3 sentence SUMMARY of the text on these page(s). " +
+                //    (isMedical
+                //        ? "Focus on the key medical concepts and terminology."
+                //        : "Focus on the core concepts.")
+                //    + "\n\nProvide as plain prose, no bullet points.";
+
+                //// 5.2 Key Takeaways (5 bullet points)
+                //string takeawaysPrompt =
+                //    $"List 5 “Key Takeaway” bullet points (in {generalLangName}) that capture the MOST IMPORTANT facts from these page(s). " +
+                //    (isMedical
+                //        ? "Include any critical medical terms."
+                //        : "")
+                //    + "\n\nFormat exactly as:\n- Takeaway 1\n- Takeaway 2\n…\n(no numbering, just a dash and a space).";
+
+                //// 5.3 Fill-in-the-Blank (Cloze)
+                //string clozePrompt =
+                //    $"Generate 5 fill-in-the-blank sentences (in {generalLangName}) based on these page(s). " +
+                //    $"Each line should be formatted exactly like:\n“___(blank)___ is a [brief clue or definition].”\n\n" +
+                //    $"For instance: “___(Pilocarpine)___ is a miotic drug used to ____(clue)____.”";
+
+                //// 5.4 True/False Questions
+                //string trueFalsePrompt =
+                //    $"Generate 5 True/False statements (in {generalLangName}) based on the content of these page(s). " +
+                //    $"Each statement should be exactly “Statement. True or False?”\n\n" +
+                //    $"For example:\n“Pilocarpine is an osmotic diuretic. True or False?”";
+
+                //// 5.5 Generate Outline
+                //string outlinePrompt =
+                //    $"Produce a hierarchical OUTLINE (section headings and sub-headings) in {generalLangName} for the material on these page(s). " +
+                //    $"Use numbered levels like “1. Main Topic – 1.1 Subtopic – 1.1.1 Details,” etc.";
+
+                //// 5.6 Concept Relationships (Concept Map text)
+                //string conceptMapPrompt =
+                //    $"List the key CONCEPTS from these page(s) and show their relationships in text form. " +
+                //    $"For each relationship, format as:\n“ConceptA → relates to → ConceptB” or “ConceptA —   contrasts with — ConceptC.”\n" +
+                //    $"Write in {generalLangName}.";
+
+                //// 5.7 Table Extraction
+                //string tableExtractPrompt =
+                //    $"If these page(s) contain any tabular data (drug doses, side effects, contraindications, etc.), " +
+                //    $"extract that table into a Markdown-style table (columns | column names | …) and output just the table. " +
+                //    $"If no table is present, respond “No table found.”";
+
+                //// 5.8 Simplified Explanation
+                //string simplifiedPrompt =
+                //    $"Explain the content of these page(s) in simpler language as if teaching a first-year medical student. " +
+                //    $"Use {generalLangName}, avoid jargon or define any technical terms.";
+
+                //// 5.9 Case Study Scenario
+                //string caseStudyPrompt =
+                //    $"Write a short clinical vignette (1 paragraph) based on these page(s). " +
+                //    $"Include patient age, presentation, key symptoms, and ask 1 multiple-choice question at the end. " +
+                //    $"Use {generalLangName}.";
+
+                //// 5.10 High-Yield Keywords
+                //string keywordsPrompt =
+                //    $"List the HIGH-YIELD KEYWORDS (in {generalLangName}) that appear on these page(s). " +
+                //    $"Return a comma-separated list or a vertical list—just the keywords, no definitions.";
+
+
+
+                // ─── Build prompt templates:
+                string definitionsPrompt = isMedical
+                    ? $"Provide concise medical definitions (in {generalLangName}) for each key medical term on this page. " +
+                      //$"- Term as heading, then 1–2 sentence definition in {generalLangName}. Separate each entry by a blank line."
+                      $"- Term as heading, then 1–2 sentence definition in {generalLangName}."
+                    : $"Provide concise definitions (in {generalLangName}) for each key term on this page. " +
+                      $"- Term as heading, then 1–2 sentence definition in {generalLangName}. Separate each entry by a blank line.";
+
+                string mcqsPrompt =
+                    $"Generate multiple-choice questions (only in {generalLangName}) based on this page. " +
+                    $"Format exactly:\nQuestion: [in {generalLangName}]\nA) …\nB) …\nC) …\nD) …\nAnswer: [Letter]\n\n(blank line).";
+
+                string flashcardsPrompt = isMedical
+                    ? $"Create medical flashcards in {generalLangName} for each key medical term. " +
+                      $"Format exactly:\nFront: [Term in {generalLangName}]\nBack: [Definition in {generalLangName}]\n\n(blank line)."
+                    : $"Create flashcards in {generalLangName} for each key term. " +
+                      $"Format exactly:\nFront: [Term in {generalLangName}]\nBack: [Definition in {generalLangName}]\n\n(blank line).";
+
                 string vocabularyPrompt =
-                    $"Extract important vocabulary terms from this page and translate them to {vocabLangName}. " +
-                    $"Use EXACTLY this format (no bullets, no numbering):\n\n" +
-                    $"EnglishTerm – {vocabLangName}Translation\n\n" +
-                    $"Leave exactly one blank line between each entry.";
+                    $"Extract important vocabulary terms and translate them into {vocabLangName}. " +
+                    $"Format exactly:\nEnglishTerm – {vocabLangName}Translation\n\n(blank line).";
+
+                // ─── New feature prompts:
+                string summaryPrompt =
+                    $"In {generalLangName}, write a concise 2–3 sentence SUMMARY of the text on these page(s)." +
+                    (isMedical ? " Focus on medical concepts." : "");
+
+                string takeawaysPrompt =
+                    $"List 5 “Key Takeaway” bullet points (in {generalLangName}) capturing the MOST IMPORTANT facts from these page(s). " +
+                    $"Use a dash then a space for each bullet.";
+
+                string clozePrompt =
+                    $"Generate 5 fill-in-the-blank sentences (in {generalLangName}) based on these page(s). " +
+                    //$"Each line exactly: \"___(blank)___ is [clue].\"";
+                    $"Each line exactly: \"______ is [clue].followed by new line for (blank) answer\"";
+
+                string trueFalsePrompt =
+                    $"Generate 5 True/False statements (in {generalLangName}) based on these page(s). " +
+                    //$"Each statement ends with \"True or False?\"";
+                    $"Each statement ends with \"True or False?\". then new line have \"(True Answer)\"";
+
+                string outlinePrompt =
+                    $"Produce a hierarchical OUTLINE (in {generalLangName}) for the material on these page(s). " +
+                    $"Use levels like 1., 1.1, 1.1.1, etc.";
+
+                string conceptMapPrompt =
+                    $"List the key CONCEPTS (in {generalLangName}) from these page(s) and show their relationships. " +
+                    $"Format as “ConceptA → relates to → ConceptB” or “ConceptA — contrasts with — ConceptC.”";
+
+                string tableExtractPrompt =
+                    $"If these page(s) contain any tables (drug doses, side effects, etc.), extract that table into Markdown table format. " +
+                    $"If none, respond “No table found.”";
+
+                string simplifiedPrompt =
+                    $"Explain the content of these page(s) in simpler language (like you’re teaching a first-year student). " +
+                    $"Use {generalLangName} and define any technical terms.";
+
+                string caseStudyPrompt =
+                    $"Write a short clinical vignette (1 para) based on these page(s), including patient details and a 1 MCQ at the end. " +
+                    $"Use {generalLangName}.";
+
+                string keywordsPrompt =
+                    $"List the HIGH-YIELD KEYWORDS (comma-separated) from these page(s) in {generalLangName}.";
 
 
 
@@ -317,7 +463,35 @@ namespace ChatGPTFileProcessor
                 StringBuilder allMCQs = chkMCQs.Checked ? new StringBuilder() : null;
                 StringBuilder allFlashcards = chkFlashcards.Checked ? new StringBuilder() : null;
                 StringBuilder allVocabulary = chkVocabulary.Checked ? new StringBuilder() : null;
-                if (allDefinitions == null && allMCQs == null && allFlashcards == null && allVocabulary == null)
+
+                //New feateure
+                StringBuilder allSummary = chkSummary.Checked ? new StringBuilder() : null;
+                StringBuilder allTakeaways = chkTakeaways.Checked ? new StringBuilder() : null;
+                StringBuilder allCloze = chkCloze.Checked ? new StringBuilder() : null;
+                StringBuilder allTrueFalse = chkTrueFalse.Checked ? new StringBuilder() : null;
+                StringBuilder allOutline = chkOutline.Checked ? new StringBuilder() : null;
+                StringBuilder allConceptMap = chkConceptMap.Checked ? new StringBuilder() : null;
+                StringBuilder allTableExtract = chkTableExtract.Checked ? new StringBuilder() : null;
+                StringBuilder allSimplified = chkSimplified.Checked ? new StringBuilder() : null;
+                StringBuilder allCaseStudy = chkCaseStudy.Checked ? new StringBuilder() : null;
+                StringBuilder allKeywords = chkKeywords.Checked ? new StringBuilder() : null;
+
+                // Check if at least one section is selected
+                //if (allDefinitions == null && allMCQs == null && allFlashcards == null && allVocabulary == null)
+                if (allDefinitions == null
+                     && allMCQs == null
+                     && allFlashcards == null
+                     && allVocabulary == null
+                     && allSummary == null
+                     && allTakeaways == null
+                     && allCloze == null
+                     && allTrueFalse == null
+                     && allOutline == null
+                     && allConceptMap == null
+                     && allTableExtract == null
+                     && allSimplified == null
+                     && allCaseStudy == null
+                     && allKeywords == null)
                 {
                     MessageBox.Show("Please select at least one section to process.", "No Sections Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     buttonProcessFile.Enabled = true;
@@ -384,6 +558,106 @@ namespace ChatGPTFileProcessor
                                 allVocabulary.AppendLine();
                             }
 
+                            // ── NEW: Summary
+                            if (chkSummary.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Summary…");
+                                string pageSum = await ProcessPdfPageMultimodal(image, apiKey, summaryPrompt);
+                                allSummary.AppendLine($"===== Page {pageNumber} =====");
+                                allSummary.AppendLine(pageSum);
+                                allSummary.AppendLine();
+                            }
+
+                            // ── NEW: Key Takeaways
+                            if (chkTakeaways.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Key Takeaways…");
+                                string pageTA = await ProcessPdfPageMultimodal(image, apiKey, takeawaysPrompt);
+                                allTakeaways.AppendLine($"===== Page {pageNumber} =====");
+                                allTakeaways.AppendLine(pageTA);
+                                allTakeaways.AppendLine();
+                            }
+
+                            // ── NEW: Cloze
+                            if (chkCloze.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Cloze…");
+                                string pageCL = await ProcessPdfPageMultimodal(image, apiKey, clozePrompt);
+                                allCloze.AppendLine($"===== Page {pageNumber} =====");
+                                allCloze.AppendLine(pageCL);
+                                allCloze.AppendLine();
+                            }
+
+                            // ── NEW: True/False
+                            if (chkTrueFalse.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending page {pageNumber} → True/False…");
+                                string pageTF = await ProcessPdfPageMultimodal(image, apiKey, trueFalsePrompt);
+                                allTrueFalse.AppendLine($"===== Page {pageNumber} =====");
+                                allTrueFalse.AppendLine(pageTF);
+                                allTrueFalse.AppendLine();
+                            }
+
+                            // ── NEW: Outline
+                            if (chkOutline.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Outline…");
+                                string pageOL = await ProcessPdfPageMultimodal(image, apiKey, outlinePrompt);
+                                allOutline.AppendLine($"===== Page {pageNumber} =====");
+                                allOutline.AppendLine(pageOL);
+                                allOutline.AppendLine();
+                            }
+
+                            // ── NEW: Concept Map
+                            if (chkConceptMap.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Concept Map…");
+                                string pageCM = await ProcessPdfPageMultimodal(image, apiKey, conceptMapPrompt);
+                                allConceptMap.AppendLine($"===== Page {pageNumber} =====");
+                                allConceptMap.AppendLine(pageCM);
+                                allConceptMap.AppendLine();
+                            }
+
+                            // ── NEW: Table Extraction
+                            if (chkTableExtract.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Table Extract…");
+                                string pageTE = await ProcessPdfPageMultimodal(image, apiKey, tableExtractPrompt);
+                                allTableExtract.AppendLine($"===== Page {pageNumber} =====");
+                                allTableExtract.AppendLine(pageTE);
+                                allTableExtract.AppendLine();
+                            }
+
+                            // ── NEW: Simplified Explanation
+                            if (chkSimplified.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Simplified Explanation…");
+                                string pageSI = await ProcessPdfPageMultimodal(image, apiKey, simplifiedPrompt);
+                                allSimplified.AppendLine($"===== Page {pageNumber} =====");
+                                allSimplified.AppendLine(pageSI);
+                                allSimplified.AppendLine();
+                            }
+
+                            // ── NEW: Case Study Scenario
+                            if (chkCaseStudy.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Case Study…");
+                                string pageCS = await ProcessPdfPageMultimodal(image, apiKey, caseStudyPrompt);
+                                allCaseStudy.AppendLine($"===== Page {pageNumber} =====");
+                                allCaseStudy.AppendLine(pageCS);
+                                allCaseStudy.AppendLine();
+                            }
+
+                            // ── NEW: High-Yield Keywords
+                            if (chkKeywords.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Keywords…");
+                                string pageKW = await ProcessPdfPageMultimodal(image, apiKey, keywordsPrompt);
+                                allKeywords.AppendLine($"===== Page {pageNumber} =====");
+                                allKeywords.AppendLine(pageKW);
+                                allKeywords.AppendLine();
+                            }
+
                             UpdateOverlayLog($"✅ Page {pageNumber} done.");
                         }
                         break;
@@ -438,6 +712,106 @@ namespace ChatGPTFileProcessor
                                 allVocabulary.AppendLine(header);
                                 allVocabulary.AppendLine(pagesVocab);
                                 allVocabulary.AppendLine();
+                            }
+
+                            // ── NEW: Summary
+                            if (chkSummary.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Summary…");
+                                string pagesSum = await ProcessPdfPagesMultimodal(pageGroup, apiKey, summaryPrompt);
+                                allSummary.AppendLine(header);
+                                allSummary.AppendLine(pagesSum);
+                                allSummary.AppendLine();
+                            }
+
+                            // ── NEW: Key Takeaways
+                            if (chkTakeaways.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Key Takeaways…");
+                                string pagesTA = await ProcessPdfPagesMultimodal(pageGroup, apiKey, takeawaysPrompt);
+                                allTakeaways.AppendLine(header);
+                                allTakeaways.AppendLine(pagesTA);
+                                allTakeaways.AppendLine();
+                            }
+
+                            // ── NEW: Cloze
+                            if (chkCloze.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Cloze…");
+                                string pagesCL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, clozePrompt);
+                                allCloze.AppendLine(header);
+                                allCloze.AppendLine(pagesCL);
+                                allCloze.AppendLine();
+                            }
+
+                            // ── NEW: True/False
+                            if (chkTrueFalse.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → True/False…");
+                                string pagesTF = await ProcessPdfPagesMultimodal(pageGroup, apiKey, trueFalsePrompt);
+                                allTrueFalse.AppendLine(header);
+                                allTrueFalse.AppendLine(pagesTF);
+                                allTrueFalse.AppendLine();
+                            }
+
+                            // ── NEW: Outline
+                            if (chkOutline.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Outline…");
+                                string pagesOL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, outlinePrompt);
+                                allOutline.AppendLine(header);
+                                allOutline.AppendLine(pagesOL);
+                                allOutline.AppendLine();
+                            }
+
+                            // ── NEW: Concept Map
+                            if (chkConceptMap.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Concept Map…");
+                                string pagesCM = await ProcessPdfPagesMultimodal(pageGroup, apiKey, conceptMapPrompt);
+                                allConceptMap.AppendLine(header);
+                                allConceptMap.AppendLine(pagesCM);
+                                allConceptMap.AppendLine();
+                            }
+
+                            // ── NEW: Table Extraction
+                            if (chkTableExtract.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Table Extract…");
+                                string pagesTE = await ProcessPdfPagesMultimodal(pageGroup, apiKey, tableExtractPrompt);
+                                allTableExtract.AppendLine(header);
+                                allTableExtract.AppendLine(pagesTE);
+                                allTableExtract.AppendLine();
+                            }
+
+                            // ── NEW: Simplified Explanation
+                            if (chkTableExtract.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Simplified Explanation…");
+                                string pagesSI = await ProcessPdfPagesMultimodal(pageGroup, apiKey, simplifiedPrompt);
+                                allSimplified.AppendLine(header);
+                                allSimplified.AppendLine(pagesSI);
+                                allSimplified.AppendLine();
+                            }
+
+                            // ── NEW: Case Study Scenario
+                            if (chkCaseStudy.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Case Study…");
+                                string pagesCS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, caseStudyPrompt);
+                                allCaseStudy.AppendLine(header);
+                                allCaseStudy.AppendLine(pagesCS);
+                                allCaseStudy.AppendLine();
+                            }
+
+                            // ── NEW: High-Yield Keywords
+                            if (chkKeywords.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Keywords…");
+                                string pagesKW = await ProcessPdfPagesMultimodal(pageGroup, apiKey, keywordsPrompt);
+                                allKeywords.AppendLine(header);
+                                allKeywords.AppendLine(pagesKW);
+                                allKeywords.AppendLine();
                             }
 
                             UpdateOverlayLog($"✅ Pages {startPage}–{endPage} done.");
@@ -505,6 +879,106 @@ namespace ChatGPTFileProcessor
                                 allVocabulary.AppendLine();
                             }
 
+                            // ── NEW: Summary
+                            if (chkSummary.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Summary…");
+                                string pagesSum = await ProcessPdfPagesMultimodal(pageGroup, apiKey, summaryPrompt);
+                                allSummary.AppendLine(header);
+                                allSummary.AppendLine(pagesSum);
+                                allSummary.AppendLine();
+                            }
+
+                            // ── NEW: Key Takeaways
+                            if (chkTakeaways.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Key Takeaways…");
+                                string pagesTA = await ProcessPdfPagesMultimodal(pageGroup, apiKey, takeawaysPrompt);
+                                allTakeaways.AppendLine(header);
+                                allTakeaways.AppendLine(pagesTA);
+                                allTakeaways.AppendLine();
+                            }
+
+                            // ── NEW: Cloze
+                            if (chkCloze.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Cloze…");
+                                string pagesCL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, clozePrompt);
+                                allCloze.AppendLine(header);
+                                allCloze.AppendLine(pagesCL);
+                                allCloze.AppendLine();
+                            }
+
+                            // ── NEW: True/False
+                            if (chkTrueFalse.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → True/False…");
+                                string pagesTF = await ProcessPdfPagesMultimodal(pageGroup, apiKey, trueFalsePrompt);
+                                allTrueFalse.AppendLine(header);
+                                allTrueFalse.AppendLine(pagesTF);
+                                allTrueFalse.AppendLine();
+                            }
+
+                            // ── NEW: Outline
+                            if (chkOutline.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Outline…");
+                                string pagesOL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, outlinePrompt);
+                                allOutline.AppendLine(header);
+                                allOutline.AppendLine(pagesOL);
+                                allOutline.AppendLine();
+                            }
+
+                            // ── NEW: Concept Map
+                            if (chkConceptMap.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Concept Map…");
+                                string pagesCM = await ProcessPdfPagesMultimodal(pageGroup, apiKey, conceptMapPrompt);
+                                allConceptMap.AppendLine(header);
+                                allConceptMap.AppendLine(pagesCM);
+                                allConceptMap.AppendLine();
+                            }
+
+                            // ── NEW: Table Extraction
+                            if (chkTableExtract.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Table Extract…");
+                                string pagesTE = await ProcessPdfPagesMultimodal(pageGroup, apiKey, tableExtractPrompt);
+                                allTableExtract.AppendLine(header);
+                                allTableExtract.AppendLine(pagesTE);
+                                allTableExtract.AppendLine();
+                            }
+
+                            // ── NEW: Simplified Explanation
+                            if (chkTableExtract.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Simplified Explanation…");
+                                string pagesSI = await ProcessPdfPagesMultimodal(pageGroup, apiKey, simplifiedPrompt);
+                                allSimplified.AppendLine(header);
+                                allSimplified.AppendLine(pagesSI);
+                                allSimplified.AppendLine();
+                            }
+
+                            // ── NEW: Case Study Scenario
+                            if (chkCaseStudy.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Case Study…");
+                                string pagesCS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, caseStudyPrompt);
+                                allCaseStudy.AppendLine(header);
+                                allCaseStudy.AppendLine(pagesCS);
+                                allCaseStudy.AppendLine();
+                            }
+
+                            // ── NEW: High-Yield Keywords
+                            if (chkKeywords.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Keywords…");
+                                string pagesKW = await ProcessPdfPagesMultimodal(pageGroup, apiKey, keywordsPrompt);
+                                allKeywords.AppendLine(header);
+                                allKeywords.AppendLine(pagesKW);
+                                allKeywords.AppendLine();
+                            }
+
                             UpdateOverlayLog($"✅ Pages {startPage}–{endPage} done.");
                         }
                         break;
@@ -569,6 +1043,106 @@ namespace ChatGPTFileProcessor
                                 allVocabulary.AppendLine();
                             }
 
+                            // ── NEW: Summary
+                            if (chkSummary.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Summary…");
+                                string pagesSum = await ProcessPdfPagesMultimodal(pageGroup, apiKey, summaryPrompt);
+                                allSummary.AppendLine(header);
+                                allSummary.AppendLine(pagesSum);
+                                allSummary.AppendLine();
+                            }
+
+                            // ── NEW: Key Takeaways
+                            if (chkTakeaways.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Key Takeaways…");
+                                string pagesTA = await ProcessPdfPagesMultimodal(pageGroup, apiKey, takeawaysPrompt);
+                                allTakeaways.AppendLine(header);
+                                allTakeaways.AppendLine(pagesTA);
+                                allTakeaways.AppendLine();
+                            }
+
+                            // ── NEW: Cloze
+                            if (chkCloze.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Cloze…");
+                                string pagesCL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, clozePrompt);
+                                allCloze.AppendLine(header);
+                                allCloze.AppendLine(pagesCL);
+                                allCloze.AppendLine();
+                            }
+
+                            // ── NEW: True/False
+                            if (chkTrueFalse.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → True/False…");
+                                string pagesTF = await ProcessPdfPagesMultimodal(pageGroup, apiKey, trueFalsePrompt);
+                                allTrueFalse.AppendLine(header);
+                                allTrueFalse.AppendLine(pagesTF);
+                                allTrueFalse.AppendLine();
+                            }
+
+                            // ── NEW: Outline
+                            if (chkOutline.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Outline…");
+                                string pagesOL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, outlinePrompt);
+                                allOutline.AppendLine(header);
+                                allOutline.AppendLine(pagesOL);
+                                allOutline.AppendLine();
+                            }
+
+                            // ── NEW: Concept Map
+                            if (chkConceptMap.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Concept Map…");
+                                string pagesCM = await ProcessPdfPagesMultimodal(pageGroup, apiKey, conceptMapPrompt);
+                                allConceptMap.AppendLine(header);
+                                allConceptMap.AppendLine(pagesCM);
+                                allConceptMap.AppendLine();
+                            }
+
+                            // ── NEW: Table Extraction
+                            if (chkTableExtract.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Table Extract…");
+                                string pagesTE = await ProcessPdfPagesMultimodal(pageGroup, apiKey, tableExtractPrompt);
+                                allTableExtract.AppendLine(header);
+                                allTableExtract.AppendLine(pagesTE);
+                                allTableExtract.AppendLine();
+                            }
+
+                            // ── NEW: Simplified Explanation
+                            if (chkTableExtract.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Simplified Explanation…");
+                                string pagesSI = await ProcessPdfPagesMultimodal(pageGroup, apiKey, simplifiedPrompt);
+                                allSimplified.AppendLine(header);
+                                allSimplified.AppendLine(pagesSI);
+                                allSimplified.AppendLine();
+                            }
+
+                            // ── NEW: Case Study Scenario
+                            if (chkCaseStudy.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Case Study…");
+                                string pagesCS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, caseStudyPrompt);
+                                allCaseStudy.AppendLine(header);
+                                allCaseStudy.AppendLine(pagesCS);
+                                allCaseStudy.AppendLine();
+                            }
+
+                            // ── NEW: High-Yield Keywords
+                            if (chkKeywords.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Keywords…");
+                                string pagesKW = await ProcessPdfPagesMultimodal(pageGroup, apiKey, keywordsPrompt);
+                                allKeywords.AppendLine(header);
+                                allKeywords.AppendLine(pagesKW);
+                                allKeywords.AppendLine();
+                            }
+
                             UpdateOverlayLog($"✅ Pages {startPage}–{endPage} done.");
                         }
                         break;
@@ -606,6 +1180,98 @@ namespace ChatGPTFileProcessor
                     string vocabularyText = FormatVocabulary(allVocabulary.ToString());
                     SaveContentToFile(vocabularyText, vocabularyFilePath, "Vocabulary");
                 }
+
+                // ── New features:
+                if (chkSummary.Checked)
+                    SaveContentToFile(allSummary.ToString(), summaryFilePath, "Page Summaries");
+
+                if (chkTakeaways.Checked)
+                    SaveContentToFile(allTakeaways.ToString(), takeawaysFilePath, "Key Takeaways");
+
+                if (chkCloze.Checked)
+                    SaveContentToFile(allCloze.ToString(), clozeFilePath, "Fill-in-the-Blank (Cloze)");
+
+                if (chkTrueFalse.Checked)
+                    SaveContentToFile(allTrueFalse.ToString(), tfFilePath, "True/False Questions");
+
+                if (chkOutline.Checked)
+                    SaveContentToFile(allOutline.ToString(), outlineFilePath, "Outline");
+
+                if (chkConceptMap.Checked)
+                    SaveContentToFile(allConceptMap.ToString(), conceptMapFilePath, "Concept Relationships");
+
+                if (chkTableExtract.Checked)
+                    SaveContentToFile(allTableExtract.ToString(), tableFilePath, "Table Extractions");
+
+                if (chkSimplified.Checked)
+                    SaveContentToFile(allSimplified.ToString(), simplifiedFilePath, "Simplified Explanation");
+
+                if (chkCaseStudy.Checked)
+                    SaveContentToFile(allCaseStudy.ToString(), caseStudyFilePath, "Case Study Scenario");
+
+                if (chkKeywords.Checked)
+                    SaveContentToFile(allKeywords.ToString(), keywordsFilePath, "High-Yield Keywords");
+                //// 7.5) ملف Summary
+                //if (chkSummary.Checked)
+                //{
+                //    string summaryText = allSummary.ToString();
+                //    SaveContentToFile(summaryText, Path.Combine(basePath, $"Summary_{modelName}_{timeStamp}.docx"), "Page Summaries");
+                //}
+                //// 7.6) ملف Key Takeaways
+                //if (chkTakeaways.Checked)
+                //{
+                //    string takeawaysText = allTakeaways.ToString();
+                //    SaveContentToFile(takeawaysText, Path.Combine(basePath, $"Takeaways_{modelName}_{timeStamp}.docx"), "Key Takeaways");
+                //}
+                //// 7.7) ملف Cloze
+                //if (chkCloze.Checked)
+                //{
+                //    string clozeText = allCloze.ToString();
+                //    SaveContentToFile(clozeText, Path.Combine(basePath, $"Cloze_{modelName}_{timeStamp}.docx"), "Fill-in-the-Blank (Cloze)");
+                //}
+                //// 7.8) ملف True/False
+                //if (chkTrueFalse.Checked)
+                //{
+                //    string tfText = allTrueFalse.ToString();
+                //    SaveContentToFile(tfText, Path.Combine(basePath, $"TrueFalse_{modelName}_{timeStamp}.docx"), "True/False Questions");
+                //}
+                //// 7.9) ملف Outline
+                //if (chkOutline.Checked)
+                //{
+                //    string outlineText = allOutline.ToString();
+                //    SaveContentToFile(outlineText, Path.Combine(basePath, $"Outline_{modelName}_{timeStamp}.docx"), "Outline");
+                //}
+                //// 7.10) ملف Concept Map
+                //if (chkConceptMap.Checked)
+                //{
+                //    string cmText = allConceptMap.ToString();
+                //    SaveContentToFile(cmText, Path.Combine(basePath, $"ConceptMap_{modelName}_{timeStamp}.docx"), "Concept Relationships");
+                //}
+                //// 7.11) ملف Table Extraction
+                //if (chkTableExtract.Checked)
+                //{
+                //    string tableText = allTableExtract.ToString();
+                //    SaveContentToFile(tableText, Path.Combine(basePath, $"Tables_{modelName}_{timeStamp}.docx"), "Table Extractions");
+                //}
+                //// 7.12) ملف Simplified Explanation
+                //if (chkSimplified.Checked)
+                //{
+                //    string simpText = allSimplified.ToString();
+                //    SaveContentToFile(simpText, Path.Combine(basePath, $"Simplified_{modelName}_{timeStamp}.docx"), "Simplified Explanation");
+                //}
+                //// // 7.13) ملف Case Study Scenario
+                //if (chkCaseStudy.Checked)
+                //{
+                //    string csText = allCaseStudy.ToString();
+                //    SaveContentToFile(csText, Path.Combine(basePath, $"CaseStudy_{modelName}_{timeStamp}.docx"), "Case Study Scenario");
+                //}
+                //// 7.14) ملف High-Yield Keywords
+                //if (chkKeywords.Checked)
+                //{
+                //    string kwText = allKeywords.ToString();
+                //    SaveContentToFile(kwText, Path.Combine(basePath, $"Keywords_{modelName}_{timeStamp}.docx"), "High-Yield Keywords");
+                //}
+
 
                 // 8) إظهار رسالة انتهاء المعالجة
                 UpdateStatus("✅ Processing complete. Files saved to Desktop.");
@@ -1171,6 +1837,18 @@ namespace ChatGPTFileProcessor
             chkFlashcards.Checked = Properties.Settings.Default.GenerateFlashcards;
             chkVocabulary.Checked = Properties.Settings.Default.GenerateVocabulary;
             chkMedicalMaterial.Checked = Properties.Settings.Default.MedicalMaterial;
+            // ── New feature checkboxes:
+            chkSummary.Checked = Properties.Settings.Default.GenerateSummary;
+            chkTakeaways.Checked = Properties.Settings.Default.GenerateTakeaways;
+            chkCloze.Checked = Properties.Settings.Default.GenerateCloze;
+            chkTrueFalse.Checked = Properties.Settings.Default.GenerateTrueFalse;
+            chkOutline.Checked = Properties.Settings.Default.GenerateOutline;
+            chkConceptMap.Checked = Properties.Settings.Default.GenerateConceptMap;
+            chkTableExtract.Checked = Properties.Settings.Default.GenerateTableExtract;
+            chkSimplified.Checked = Properties.Settings.Default.GenerateSimplified;
+            chkCaseStudy.Checked = Properties.Settings.Default.GenerateCaseStudy;
+            chkKeywords.Checked = Properties.Settings.Default.GenerateKeywords;
+
             textEditAPIKey.ReadOnly = Properties.Settings.Default.ApiKeyLock;
         }
 
@@ -1232,6 +1910,85 @@ namespace ChatGPTFileProcessor
             // Save the state of the checkbox
             Properties.Settings.Default.GenerateVocabulary = chkVocabulary.Checked;
             Properties.Settings.Default.Save();
+        }
+
+        //private void chkSummary_CheckedChanged(object sender, EventArgs e)
+        //{
+
+        //}
+
+        //private void chkTakeaways_CheckedChanged(object sender, EventArgs e)
+        //{
+
+        //}
+        private void chkSummary_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.GenerateSummary = chkSummary.Checked;
+            Properties.Settings.Default.Save();
+            UpdateStatus($"Page Summary…{(chkSummary.Checked ? "Activated" : "Deactivated")}");
+        }
+
+        private void chkTakeaways_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.GenerateTakeaways = chkTakeaways.Checked;
+            Properties.Settings.Default.Save();
+            UpdateStatus($"Key Takeaways…{(chkTakeaways.Checked ? "Activated" : "Deactivated")}");
+        }
+
+        private void chkCloze_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.GenerateCloze = chkCloze.Checked;
+            Properties.Settings.Default.Save();
+            UpdateStatus($"Cloze Deletions…{(chkCloze.Checked ? "Activated" : "Deactivated")}");
+        }
+
+        private void chkTrueFalse_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.GenerateTrueFalse = chkTrueFalse.Checked;
+            Properties.Settings.Default.Save();
+            UpdateStatus($"True/False Questions…{(chkTrueFalse.Checked ? "Activated" : "Deactivated")}");
+        }
+
+        private void chkOutline_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.GenerateOutline = chkOutline.Checked;
+            Properties.Settings.Default.Save();
+            UpdateStatus($"Page Outline…{(chkOutline.Checked ? "Activated" : "Deactivated")}");
+        }
+
+        private void chkConceptMap_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.GenerateConceptMap = chkConceptMap.Checked;
+            Properties.Settings.Default.Save();
+            UpdateStatus($"Concept Map…{(chkConceptMap.Checked ? "Activated" : "Deactivated")}");
+        }
+
+        private void chkTableExtract_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.GenerateTableExtract = chkTableExtract.Checked;
+            Properties.Settings.Default.Save();
+            UpdateStatus($"Table Extraction…{(chkTableExtract.Checked ? "Activated" : "Deactivated")}");
+        }
+
+        private void chkSimplified_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.GenerateSimplified = chkSimplified.Checked;
+            Properties.Settings.Default.Save();
+            UpdateStatus($"Simplified Content…{(chkSimplified.Checked ? "Activated" : "Deactivated")}");
+        }
+
+        private void chkCaseStudy_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.GenerateCaseStudy = chkCaseStudy.Checked;
+            Properties.Settings.Default.Save();
+            UpdateStatus($"Case Study…{(chkCaseStudy.Checked ? "Activated" : "Deactivated")}");
+        }
+
+        private void chkKeywords_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.GenerateKeywords = chkKeywords.Checked;
+            Properties.Settings.Default.Save();
+            UpdateStatus($"Keywords Extraction…{(chkKeywords.Checked ? "Activated" : "Deactivated")}");
         }
 
         private void chkMedicalMaterial_CheckedChanged(object sender, EventArgs e)
