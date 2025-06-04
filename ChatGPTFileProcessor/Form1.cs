@@ -461,7 +461,7 @@ namespace ChatGPTFileProcessor
                     $"- Definition: <a 1–2-3 sentence definition in {generalLangName}>\n\n" +
                     $"Separate entries with a blank line.  Do NOT number anything.";
 
-
+                // 3.2) MCQs prompt
                 //Best Version
                 string mcqsPrompt =
                     //$"Generate 5 MULTIPLE‐CHOICE QUESTIONS in {generalLangName} " +
@@ -474,7 +474,8 @@ namespace ChatGPTFileProcessor
                     $"D) <Option D in {generalLangName}>\n" +
                     $"Answer: <Exactly one letter: A, B, C, or D>\n\n" +
                     $"Separate each MCQ block with a single blank line.  Do NOT include any extra text.";
-                
+
+                // 3.3) Flashcards prompt
                 //Best Version
                 string flashcardsPrompt =
                     $"Create FLASHCARDS in {generalLangName} for each key " +
@@ -484,14 +485,16 @@ namespace ChatGPTFileProcessor
                     $"Back:  <One- or two- or three- sentence definition in {generalLangName}>\n\n" +
                     $"Leave exactly one blank line between each card.  Do NOT number or bullet anything.";
 
-                //Best Version
+
                 // 3.4) Vocabulary: translate into whichever “Vocab Language” the user chose
+                //Best Version
                 string vocabularyPrompt =
                     $"Extract IMPORTANT VOCABULARY TERMS from these page(s) and translate them into {vocabLangName}.  Use exactly this format (no bullets or numbering):\n\n" +
                     //$"EnglishTerm – {vocabLangName}Translation\n\n" +
                     $"OriginalTerm – {vocabLangName}Translation\n\n" +
                     $"Leave exactly one blank line between each entry.  If a term doesn’t have a direct translation, write “– [Translation Needed]”.";
 
+                //Summary prompt
                 //Best Version
                 string summaryPrompt =
                     //$"In {generalLangName}, write a concise SUMMARY (2–3 sentences) of the content on these page(s). " +
@@ -499,8 +502,11 @@ namespace ChatGPTFileProcessor
                     $"{(isMedical ? "Highlight key medical concepts; keep technical terms accurate." : "")}" +
                     $"\n\nFormat your summary as plain prose (no bullets or numbering).";
 
+                //Key Takeaways prompt
+                //Best Version
                 string takeawaysPrompt =
-                    $"List 5 KEY TAKEAWAYS (in {generalLangName}) from these page(s), formatted as bullets.  " +
+                    //$"List 5 KEY TAKEAWAYS (in {generalLangName}) from these page(s), formatted as bullets.  " +
+                    $"List KEY TAKEAWAYS (in {generalLangName}) from these page(s), formatted as bullets.  " +
                     $"Each line must begin with a dash and a space, like:\n" +
                     $"- Takeaway 1\n" +
                     $"- Takeaway 2\n" +
