@@ -30,10 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            DevExpress.Utils.SuperToolTip superToolTip1 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipItem toolTipItem1 = new DevExpress.Utils.ToolTipItem();
-            DevExpress.Utils.SuperToolTip superToolTip2 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipItem toolTipItem2 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip5 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem5 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip6 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem6 = new DevExpress.Utils.ToolTipItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.labelControl5 = new DevExpress.XtraEditors.LabelControl();
             this.textEditAPIKey = new DevExpress.XtraEditors.TextEdit();
@@ -70,6 +70,8 @@
             this.panelFill = new System.Windows.Forms.Panel();
             this.separatorControl1 = new DevExpress.XtraEditors.SeparatorControl();
             this.labelControl6 = new DevExpress.XtraEditors.LabelControl();
+            this.lblBatchHelp = new DevExpress.XtraEditors.LabelControl();
+            this.labelControl7 = new DevExpress.XtraEditors.LabelControl();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textEditAPIKey.Properties)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -105,7 +107,7 @@
             this.groupBox1.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(5, 5);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1052, 166);
+            this.groupBox1.Size = new System.Drawing.Size(1142, 166);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "API KEY";
@@ -179,6 +181,8 @@
             // groupBox2
             // 
             this.groupBox2.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.groupBox2.Controls.Add(this.labelControl7);
+            this.groupBox2.Controls.Add(this.lblBatchHelp);
             this.groupBox2.Controls.Add(this.labelControl6);
             this.groupBox2.Controls.Add(this.separatorControl1);
             this.groupBox2.Controls.Add(this.radioPageBatchSize);
@@ -199,7 +203,7 @@
             this.groupBox2.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox2.Location = new System.Drawing.Point(5, 5);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1052, 285);
+            this.groupBox2.Size = new System.Drawing.Size(1142, 304);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "FILE AND PROCESS";
@@ -207,7 +211,7 @@
             // radioPageBatchSize
             // 
             this.radioPageBatchSize.EditValue = 2;
-            this.radioPageBatchSize.Location = new System.Drawing.Point(763, 88);
+            this.radioPageBatchSize.Location = new System.Drawing.Point(601, 88);
             this.radioPageBatchSize.Name = "radioPageBatchSize";
             this.radioPageBatchSize.Properties.Appearance.BackColor = System.Drawing.Color.RosyBrown;
             this.radioPageBatchSize.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
@@ -242,8 +246,9 @@
             new DevExpress.XtraEditors.Controls.RadioGroupItem(2, "2 pages at a time"),
             new DevExpress.XtraEditors.Controls.RadioGroupItem(3, "3 pages at a time"),
             new DevExpress.XtraEditors.Controls.RadioGroupItem(4, "4 pages at a time")});
-            this.radioPageBatchSize.Size = new System.Drawing.Size(201, 141);
+            this.radioPageBatchSize.Size = new System.Drawing.Size(191, 175);
             this.radioPageBatchSize.TabIndex = 24;
+            this.radioPageBatchSize.ToolTipAnchor = DevExpress.Utils.ToolTipAnchor.Cursor;
             this.radioPageBatchSize.SelectedIndexChanged += new System.EventHandler(this.radioPageBatchSize_SelectedIndexChanged);
             // 
             // labelControl3
@@ -266,15 +271,15 @@
             this.labelFileName.Appearance.Options.UseForeColor = true;
             this.labelFileName.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelFileName.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.labelFileName.Location = new System.Drawing.Point(3, 250);
+            this.labelFileName.Location = new System.Drawing.Point(3, 269);
             this.labelFileName.Name = "labelFileName";
             this.labelFileName.Padding = new System.Windows.Forms.Padding(5);
-            this.labelFileName.Size = new System.Drawing.Size(1046, 32);
-            toolTipItem1.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem1.Appearance.Options.UseFont = true;
-            toolTipItem1.Text = "Selected File Path";
-            superToolTip1.Items.Add(toolTipItem1);
-            this.labelFileName.SuperTip = superToolTip1;
+            this.labelFileName.Size = new System.Drawing.Size(1136, 32);
+            toolTipItem5.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem5.Appearance.Options.UseFont = true;
+            toolTipItem5.Text = "Selected File Path";
+            superToolTip5.Items.Add(toolTipItem5);
+            this.labelFileName.SuperTip = superToolTip5;
             this.labelFileName.TabIndex = 21;
             this.labelFileName.Text = "No file selected";
             // 
@@ -389,7 +394,7 @@
             this.cmbVocabLang.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
             this.cmbVocabLang.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
-            this.cmbVocabLang.Size = new System.Drawing.Size(324, 28);
+            this.cmbVocabLang.Size = new System.Drawing.Size(218, 28);
             this.cmbVocabLang.TabIndex = 15;
             this.cmbVocabLang.SelectedIndexChanged += new System.EventHandler(this.cmbVocabLang_SelectedIndexChanged);
             // 
@@ -417,7 +422,7 @@
             this.cmbGeneralLang.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
             this.cmbGeneralLang.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
-            this.cmbGeneralLang.Size = new System.Drawing.Size(324, 28);
+            this.cmbGeneralLang.Size = new System.Drawing.Size(218, 28);
             this.cmbGeneralLang.TabIndex = 14;
             this.cmbGeneralLang.SelectedIndexChanged += new System.EventHandler(this.cmbGeneralLang_SelectedIndexChanged);
             // 
@@ -476,7 +481,7 @@
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxStatus.Size = new System.Drawing.Size(1046, 164);
+            this.textBoxStatus.Size = new System.Drawing.Size(1136, 145);
             this.textBoxStatus.TabIndex = 9;
             this.labelsToolTip.SetToolTip(this.textBoxStatus, "Application Log Area Were any Action Or Changes Will Be Written Here To Inform Th" +
         "e User");
@@ -504,11 +509,11 @@
             this.svgImageBoxAbout.Margin = new System.Windows.Forms.Padding(4);
             this.svgImageBoxAbout.Name = "svgImageBoxAbout";
             this.svgImageBoxAbout.Size = new System.Drawing.Size(48, 44);
-            toolTipItem2.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem2.Appearance.Options.UseFont = true;
-            toolTipItem2.Text = "About This Application";
-            superToolTip2.Items.Add(toolTipItem2);
-            this.svgImageBoxAbout.SuperTip = superToolTip2;
+            toolTipItem6.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem6.Appearance.Options.UseFont = true;
+            toolTipItem6.Text = "About This Application";
+            superToolTip6.Items.Add(toolTipItem6);
+            this.svgImageBoxAbout.SuperTip = superToolTip6;
             this.svgImageBoxAbout.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("svgImageBoxAbout.SvgImage")));
             this.svgImageBoxAbout.TabIndex = 23;
             this.svgImageBoxAbout.Text = "svgImageBox1";
@@ -560,7 +565,7 @@
             this.groupBox5.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox5.Location = new System.Drawing.Point(5, 5);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(1052, 192);
+            this.groupBox5.Size = new System.Drawing.Size(1142, 173);
             this.groupBox5.TabIndex = 13;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "STATUS";
@@ -585,14 +590,14 @@
             this.panelTopLeft.Location = new System.Drawing.Point(0, 0);
             this.panelTopLeft.Name = "panelTopLeft";
             this.panelTopLeft.Padding = new System.Windows.Forms.Padding(5);
-            this.panelTopLeft.Size = new System.Drawing.Size(1062, 176);
+            this.panelTopLeft.Size = new System.Drawing.Size(1152, 176);
             this.panelTopLeft.TabIndex = 22;
             // 
             // panelTopRight
             // 
             this.panelTopRight.Controls.Add(this.groupBox4);
             this.panelTopRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelTopRight.Location = new System.Drawing.Point(613, 0);
+            this.panelTopRight.Location = new System.Drawing.Point(703, 0);
             this.panelTopRight.Name = "panelTopRight";
             this.panelTopRight.Padding = new System.Windows.Forms.Padding(5);
             this.panelTopRight.Size = new System.Drawing.Size(449, 176);
@@ -602,10 +607,10 @@
             // 
             this.panelBottom.Controls.Add(this.groupBox5);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(0, 471);
+            this.panelBottom.Location = new System.Drawing.Point(0, 490);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Padding = new System.Windows.Forms.Padding(5);
-            this.panelBottom.Size = new System.Drawing.Size(1062, 202);
+            this.panelBottom.Size = new System.Drawing.Size(1152, 183);
             this.panelBottom.TabIndex = 24;
             // 
             // panelTop
@@ -615,7 +620,7 @@
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(1062, 176);
+            this.panelTop.Size = new System.Drawing.Size(1152, 176);
             this.panelTop.TabIndex = 22;
             // 
             // panelFill
@@ -625,16 +630,19 @@
             this.panelFill.Location = new System.Drawing.Point(0, 176);
             this.panelFill.Name = "panelFill";
             this.panelFill.Padding = new System.Windows.Forms.Padding(5);
-            this.panelFill.Size = new System.Drawing.Size(1062, 295);
+            this.panelFill.Size = new System.Drawing.Size(1152, 314);
             this.panelFill.TabIndex = 25;
             // 
             // separatorControl1
             // 
+            this.separatorControl1.AutoSizeMode = true;
+            this.separatorControl1.BackColor = System.Drawing.SystemColors.ControlLight;
             this.separatorControl1.LineAlignment = DevExpress.XtraEditors.Alignment.Center;
             this.separatorControl1.LineOrientation = System.Windows.Forms.Orientation.Vertical;
-            this.separatorControl1.Location = new System.Drawing.Point(682, 60);
+            this.separatorControl1.LineThickness = 3;
+            this.separatorControl1.Location = new System.Drawing.Point(576, 60);
             this.separatorControl1.Name = "separatorControl1";
-            this.separatorControl1.Size = new System.Drawing.Size(75, 184);
+            this.separatorControl1.Size = new System.Drawing.Size(21, 203);
             this.separatorControl1.TabIndex = 25;
             // 
             // labelControl6
@@ -656,17 +664,72 @@
             this.labelControl6.AppearancePressed.Options.UseTextOptions = true;
             this.labelControl6.AppearancePressed.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
             this.labelControl6.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
-            this.labelControl6.Location = new System.Drawing.Point(763, 60);
+            this.labelControl6.Location = new System.Drawing.Point(601, 60);
             this.labelControl6.Name = "labelControl6";
-            this.labelControl6.Size = new System.Drawing.Size(201, 22);
+            this.labelControl6.Size = new System.Drawing.Size(180, 22);
             this.labelControl6.TabIndex = 26;
             this.labelControl6.Text = "Page Batch Mode";
+            // 
+            // lblBatchHelp
+            // 
+            this.lblBatchHelp.Appearance.BackColor = System.Drawing.Color.MistyRose;
+            this.lblBatchHelp.Appearance.Font = new System.Drawing.Font("LBC", 8.999999F);
+            this.lblBatchHelp.Appearance.ForeColor = System.Drawing.Color.Black;
+            this.lblBatchHelp.Appearance.Options.UseBackColor = true;
+            this.lblBatchHelp.Appearance.Options.UseFont = true;
+            this.lblBatchHelp.Appearance.Options.UseForeColor = true;
+            this.lblBatchHelp.Appearance.Options.UseTextOptions = true;
+            this.lblBatchHelp.Appearance.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.lblBatchHelp.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 8.999999F);
+            this.lblBatchHelp.AppearanceDisabled.Options.UseFont = true;
+            this.lblBatchHelp.AppearanceDisabled.Options.UseTextOptions = true;
+            this.lblBatchHelp.AppearanceDisabled.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.lblBatchHelp.AppearanceHovered.Font = new System.Drawing.Font("LBC", 8.999999F);
+            this.lblBatchHelp.AppearanceHovered.Options.UseFont = true;
+            this.lblBatchHelp.AppearanceHovered.Options.UseTextOptions = true;
+            this.lblBatchHelp.AppearanceHovered.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.lblBatchHelp.AppearancePressed.Font = new System.Drawing.Font("LBC", 8.999999F);
+            this.lblBatchHelp.AppearancePressed.Options.UseFont = true;
+            this.lblBatchHelp.AppearancePressed.Options.UseTextOptions = true;
+            this.lblBatchHelp.AppearancePressed.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.lblBatchHelp.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
+            this.lblBatchHelp.Location = new System.Drawing.Point(798, 88);
+            this.lblBatchHelp.Name = "lblBatchHelp";
+            this.lblBatchHelp.Padding = new System.Windows.Forms.Padding(5);
+            this.lblBatchHelp.Size = new System.Drawing.Size(338, 175);
+            this.lblBatchHelp.TabIndex = 27;
+            this.lblBatchHelp.Text = resources.GetString("lblBatchHelp.Text");
+            // 
+            // labelControl7
+            // 
+            this.labelControl7.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl7.Appearance.Options.UseFont = true;
+            this.labelControl7.Appearance.Options.UseTextOptions = true;
+            this.labelControl7.Appearance.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.labelControl7.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl7.AppearanceDisabled.Options.UseFont = true;
+            this.labelControl7.AppearanceDisabled.Options.UseTextOptions = true;
+            this.labelControl7.AppearanceDisabled.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.labelControl7.AppearanceHovered.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl7.AppearanceHovered.Options.UseFont = true;
+            this.labelControl7.AppearanceHovered.Options.UseTextOptions = true;
+            this.labelControl7.AppearanceHovered.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.labelControl7.AppearancePressed.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl7.AppearancePressed.Options.UseFont = true;
+            this.labelControl7.AppearancePressed.Options.UseTextOptions = true;
+            this.labelControl7.AppearancePressed.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.labelControl7.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
+            this.labelControl7.Location = new System.Drawing.Point(798, 60);
+            this.labelControl7.Name = "labelControl7";
+            this.labelControl7.Size = new System.Drawing.Size(180, 22);
+            this.labelControl7.TabIndex = 28;
+            this.labelControl7.Text = "Instructions";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1062, 673);
+            this.ClientSize = new System.Drawing.Size(1152, 673);
             this.Controls.Add(this.panelFill);
             this.Controls.Add(this.panelTop);
             this.Controls.Add(this.panelBottom);
@@ -742,6 +805,8 @@
         private DevExpress.XtraEditors.RadioGroup radioPageBatchSize;
         private DevExpress.XtraEditors.SeparatorControl separatorControl1;
         private DevExpress.XtraEditors.LabelControl labelControl6;
+        private DevExpress.XtraEditors.LabelControl lblBatchHelp;
+        private DevExpress.XtraEditors.LabelControl labelControl7;
     }
 }
 
