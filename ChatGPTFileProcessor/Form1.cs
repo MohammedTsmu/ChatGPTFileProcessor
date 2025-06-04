@@ -525,8 +525,11 @@ namespace ChatGPTFileProcessor
                     $"For example:\nSentence: “_______________ is a miotic drug.”\nAnswer: Pilocarpine\n\n" +
                     $"Leave a single blank line between each pair.  Do NOT embed the answer inside the blank.";
 
+                // 3.8) True/False Questions prompt
+                //Best Version
                 string trueFalsePrompt =
-                    $"Generate 5 TRUE/FALSE statements (in {generalLangName}) based on these page(s).  " +
+                    //$"Generate 5 TRUE/FALSE statements (in {generalLangName}) based on these page(s).  " +
+                    $"Generate TRUE/FALSE statements (in {generalLangName}) based on these page(s).  " +
                     $"Each block should be two lines:\n\n" +
                     $"Statement: <write a true‐or‐false sentence here>\n" +
                     $"Answer: <True or False>\n\n" +
