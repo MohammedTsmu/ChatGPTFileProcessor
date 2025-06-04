@@ -543,6 +543,8 @@ namespace ChatGPTFileProcessor
                     $"Do NOT use bullet points—strictly use decimal numbering.  " +
                     $"{(isMedical ? "Include medical subheadings where appropriate." : "")}";
 
+                // 3.10) Concept Map prompt
+                //Best Version
                 string conceptMapPrompt =
                     $"List the key CONCEPTS from these page(s) and show how they relate, in {generalLangName}.  " +
                     $"For each pair, use one of these formats exactly:\n" +
