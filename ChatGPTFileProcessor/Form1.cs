@@ -449,6 +449,10 @@ namespace ChatGPTFileProcessor
                 //string keywordsPrompt =
                 //    $"List the HIGH-YIELD KEYWORDS (comma-separated) from these page(s) in {generalLangName}.";
 
+
+                // ─── Build each prompt with a little conditional text:
+                // 3.1) Definitions prompt
+                //Best Version
                 string definitionsPrompt =
                     $"In {generalLangName}, provide concise DEFINITIONS for each key " +
                     $"{(isMedical ? "medical " : "")}term found on these page(s). " +
@@ -1464,16 +1468,17 @@ namespace ChatGPTFileProcessor
         // Function to format definitions
         private string FormatDefinitions(string text)
         {
-            var formattedDefinitions = new List<string>();
-            var lines = text.Split('\n');
+            //var formattedDefinitions = new List<string>();
+            //var lines = text.Split('\n');
 
-            foreach (var line in lines)
-            {
-                string cleanedLine = line.TrimStart('-', ' ');
-                if (!string.IsNullOrWhiteSpace(cleanedLine))
-                    formattedDefinitions.Add(cleanedLine);
-            }
-            return string.Join("\n\n", formattedDefinitions);
+            //foreach (var line in lines)
+            //{
+            //    string cleanedLine = line.TrimStart('-', ' ');
+            //    if (!string.IsNullOrWhiteSpace(cleanedLine))
+            //        formattedDefinitions.Add(cleanedLine);
+            //}
+            //return string.Join("\n\n", formattedDefinitions);
+            return text;
         }
 
 
