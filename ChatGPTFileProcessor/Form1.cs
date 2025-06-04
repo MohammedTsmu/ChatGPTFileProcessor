@@ -37,10 +37,7 @@ namespace ChatGPTFileProcessor
         private TextBox logTextBox;
 
 
-
-
-
-
+        
 
         public Form1()
         {
