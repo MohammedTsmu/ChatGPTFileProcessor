@@ -494,7 +494,7 @@ namespace ChatGPTFileProcessor
                     $"OriginalTerm – {vocabLangName}Translation\n\n" +
                     $"Leave exactly one blank line between each entry.  If a term doesn’t have a direct translation, write “– [Translation Needed]”.";
 
-                //Summary prompt
+                // 3.5) Summary prompt
                 //Best Version
                 string summaryPrompt =
                     //$"In {generalLangName}, write a concise SUMMARY (2–3 sentences) of the content on these page(s). " +
@@ -502,7 +502,7 @@ namespace ChatGPTFileProcessor
                     $"{(isMedical ? "Highlight key medical concepts; keep technical terms accurate." : "")}" +
                     $"\n\nFormat your summary as plain prose (no bullets or numbering).";
 
-                //Key Takeaways prompt
+                // 3.6) Key Takeaways prompt
                 //Best Version
                 string takeawaysPrompt =
                     //$"List 5 KEY TAKEAWAYS (in {generalLangName}) from these page(s), formatted as bullets.  " +
@@ -513,6 +513,7 @@ namespace ChatGPTFileProcessor
                     $"…\n\n" +
                     $"{(isMedical ? "Include any critical medical terms and their context." : "")}";
 
+                // 3.7) Fill-in-the-Blank (Cloze) prompt
                 //Best Version
                 string clozePrompt =
                     //$"Generate 5 FILL‐IN‐THE‐BLANK sentences (in {generalLangName}) based on these page(s).  " +
