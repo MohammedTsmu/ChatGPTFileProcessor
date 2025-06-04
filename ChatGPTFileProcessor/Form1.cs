@@ -20,6 +20,7 @@ using Word = Microsoft.Office.Interop.Word;
 
 namespace ChatGPTFileProcessor
 {
+
     public partial class Form1 : Form
     {
         private readonly string apiKeyPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ChatGPTFileProcessor", "api_key.txt");
@@ -35,6 +36,10 @@ namespace ChatGPTFileProcessor
 
 
 
+
+
+
+
         public Form1()
         {
             InitializeComponent();
@@ -42,7 +47,6 @@ namespace ChatGPTFileProcessor
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //comboBoxModel.Items.Add("gpt-4o"); // Add gpt-4o model
             comboBoxEditModel.Properties.Items.Add("gpt-4o"); // Add gpt-4o model to the combo box
 
             InitializeOverlay();
@@ -90,6 +94,19 @@ namespace ChatGPTFileProcessor
                 int idxAr = Array.FindIndex(_supportedLanguages, x => x.Code == "ar");
                 cmbVocabLang.SelectedIndex = idxAr >= 0 ? idxAr : 0;
             }
+
+
+            // ▼ Load saved page batch mode last setting
+            var savedMode = Properties.Settings.Default.PageBatchMode; // 1, 2 or 3
+            if (savedMode >= 1 && savedMode <= 3)
+            {
+                radioPageBatchSize.EditValue = savedMode;
+            }
+            else
+            {
+                radioPageBatchSize.EditValue = 1;
+            }
+
         }
 
 
@@ -170,7 +187,6 @@ namespace ChatGPTFileProcessor
         private async void buttonProcessFile_Click(object sender, EventArgs e)
         {
             string filePath = labelFileName.Text;
-            //string apiKey = textBoxAPIKey.Text;
             string apiKey = textEditAPIKey.Text.Trim(); // Use the new text edit control
 
             // 1) التحقق من مفتاح الـAPI
@@ -315,123 +331,194 @@ namespace ChatGPTFileProcessor
                     HideOverlay();
                     return;
                 }
+                
 
-                bool useThreePageMode = chkThreePageMode.Checked;
+                //bool useThreePageMode = chkThreePageMode.Checked;
+                int batchSize = (int)radioPageBatchSize.EditValue; // reads 1, 2 or 3
 
-                if (!useThreePageMode)
+
+                //if (!useThreePageMode)
+                //{
+                switch (batchSize)
                 {
+                    case 1:
 
-                    // ─── One‐page‐at‐a‐time mode ───
 
-                    // 6) حلقة لمعالجة كل صفحة عبر Multimodal (صورة + نص)
-                    // 6) Loop through each page, only calling ProcessPdfPageMultimodal if that section is enabled:
-                    foreach (var (pageNumber, image) in allPages)
-                    {
-                        if (chkDefinitions.Checked)
+                        // ─── One‐page‐at‐a‐time mode ───
+
+                        // 6) حلقة لمعالجة كل صفحة عبر Multimodal (صورة + نص)
+                        // 6) Loop through each page, only calling ProcessPdfPageMultimodal if that section is enabled:
+                        foreach (var (pageNumber, image) in allPages)
                         {
-                            UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Definitions)...");
-                            string pageDef = await ProcessPdfPageMultimodal(image, apiKey, definitionsPrompt);
-                            allDefinitions.AppendLine($"===== Page {pageNumber} =====");
-                            allDefinitions.AppendLine(pageDef);
-                            allDefinitions.AppendLine();
-                        }
+                            if (chkDefinitions.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Definitions)...");
+                                string pageDef = await ProcessPdfPageMultimodal(image, apiKey, definitionsPrompt);
+                                allDefinitions.AppendLine($"===== Page {pageNumber} =====");
+                                allDefinitions.AppendLine(pageDef);
+                                allDefinitions.AppendLine();
+                            }
 
-                        if (chkMCQs.Checked)
+                            if (chkMCQs.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (MCQs)...");
+                                string pageMCQs = await ProcessPdfPageMultimodal(image, apiKey, mcqsPrompt);
+                                allMCQs.AppendLine($"===== Page {pageNumber} =====");
+                                allMCQs.AppendLine(pageMCQs);
+                                allMCQs.AppendLine();
+                            }
+
+                            if (chkFlashcards.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Flashcards)...");
+                                string pageFlash = await ProcessPdfPageMultimodal(image, apiKey, flashcardsPrompt);
+                                allFlashcards.AppendLine($"===== Page {pageNumber} =====");
+                                allFlashcards.AppendLine(pageFlash);
+                                allFlashcards.AppendLine();
+                            }
+
+                            if (chkVocabulary.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Vocabulary)...");
+                                string pageVocab = await ProcessPdfPageMultimodal(image, apiKey, vocabularyPrompt);
+                                allVocabulary.AppendLine($"===== Page {pageNumber} =====");
+                                allVocabulary.AppendLine(pageVocab);
+                                allVocabulary.AppendLine();
+                            }
+
+                            UpdateOverlayLog($"✅ Page {pageNumber} done.");
+                        }
+                        break;
+
+
+                    case 2:
+                        // ——— Mode: 2 pages at a time ———
+                        for (int i = 0; i < allPages.Count; i += 2)
                         {
-                            UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (MCQs)...");
-                            string pageMCQs = await ProcessPdfPageMultimodal(image, apiKey, mcqsPrompt);
-                            allMCQs.AppendLine($"===== Page {pageNumber} =====");
-                            allMCQs.AppendLine(pageMCQs);
-                            allMCQs.AppendLine();
-                        }
+                            // build a small group of up to 2 pages
+                            var pageGroup = new List<(int pageNumber, Image image)>();
+                            for (int j = i; j < i + 2 && j < allPages.Count; j++)
+                                pageGroup.Add(allPages[j]);
 
-                        if (chkFlashcards.Checked)
+                            int startPage = pageGroup.First().pageNumber;
+                            int endPage = pageGroup.Last().pageNumber;
+                            string header = (startPage == endPage)
+                                ? $"===== Page {startPage} ====="
+                                : $"===== Pages {startPage}–{endPage} =====";
+
+                            if (chkDefinitions.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Definitions) …");
+                                string pagesDef = await ProcessPdfPagesMultimodal(pageGroup, apiKey, definitionsPrompt);
+                                allDefinitions.AppendLine(header);
+                                allDefinitions.AppendLine(pagesDef);
+                                allDefinitions.AppendLine();
+                            }
+
+                            if (chkMCQs.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (MCQs) …");
+                                string pagesMCQs = await ProcessPdfPagesMultimodal(pageGroup, apiKey, mcqsPrompt);
+                                allMCQs.AppendLine(header);
+                                allMCQs.AppendLine(pagesMCQs);
+                                allMCQs.AppendLine();
+                            }
+
+                            if (chkFlashcards.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Flashcards) …");
+                                string pagesFlash = await ProcessPdfPagesMultimodal(pageGroup, apiKey, flashcardsPrompt);
+                                allFlashcards.AppendLine(header);
+                                allFlashcards.AppendLine(pagesFlash);
+                                allFlashcards.AppendLine();
+                            }
+
+                            if (chkVocabulary.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Vocabulary) …");
+                                string pagesVocab = await ProcessPdfPagesMultimodal(pageGroup, apiKey, vocabularyPrompt);
+                                allVocabulary.AppendLine(header);
+                                allVocabulary.AppendLine(pagesVocab);
+                                allVocabulary.AppendLine();
+                            }
+
+                            UpdateOverlayLog($"✅ Pages {startPage}–{endPage} done.");
+                        }
+                        break;
+
+
+                    case 3:
+                        //}
+                        //else
+                        //{
+
+                        // ─── Three‐page‐batch mode ───
+
+                        // 6) Instead of one‐by‐one, we chunk into groups of three pages at a time:
+                        for (int i = 0; i < allPages.Count; i += 3)
                         {
-                            UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Flashcards)...");
-                            string pageFlash = await ProcessPdfPageMultimodal(image, apiKey, flashcardsPrompt);
-                            allFlashcards.AppendLine($"===== Page {pageNumber} =====");
-                            allFlashcards.AppendLine(pageFlash);
-                            allFlashcards.AppendLine();
+                            // Build up to a 3‐page slice
+                            var pageGroup = new List<(int pageNumber, Image image)>();
+                            for (int j = i; j < i + 3 && j < allPages.Count; j++)
+                            {
+                                pageGroup.Add(allPages[j]);
+                            }
+
+                            // We’ll label them by “Pages X–Y” or “Page X” if only one in the group
+                            int startPage = pageGroup.First().pageNumber;
+                            int endPage = pageGroup.Last().pageNumber;
+                            string header = (startPage == endPage)
+                                ? $"===== Page {startPage} ====="
+                                : $"===== Pages {startPage}–{endPage} =====";
+
+                            // 6a) Definitions
+                            if (chkDefinitions.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Definitions)...");
+                                string pagesDef = await ProcessPdfPagesMultimodal(pageGroup, apiKey, definitionsPrompt);
+                                allDefinitions.AppendLine(header);
+                                allDefinitions.AppendLine(pagesDef);
+                                allDefinitions.AppendLine();
+                            }
+
+                            // 6b) MCQs
+                            if (chkMCQs.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (MCQs)...");
+                                string pagesMCQs = await ProcessPdfPagesMultimodal(pageGroup, apiKey, mcqsPrompt);
+                                allMCQs.AppendLine(header);
+                                allMCQs.AppendLine(pagesMCQs);
+                                allMCQs.AppendLine();
+                            }
+
+                            // 6c) Flashcards
+                            if (chkFlashcards.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Flashcards)...");
+                                string pagesFlash = await ProcessPdfPagesMultimodal(pageGroup, apiKey, flashcardsPrompt);
+                                allFlashcards.AppendLine(header);
+                                allFlashcards.AppendLine(pagesFlash);
+                                allFlashcards.AppendLine();
+                            }
+
+                            // 6d) Vocabulary
+                            if (chkVocabulary.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Vocabulary)...");
+                                string pagesVocab = await ProcessPdfPagesMultimodal(pageGroup, apiKey, vocabularyPrompt);
+                                allVocabulary.AppendLine(header);
+                                allVocabulary.AppendLine(pagesVocab);
+                                allVocabulary.AppendLine();
+                            }
+
+                            UpdateOverlayLog($"✅ Pages {startPage}–{endPage} done.");
                         }
+                        break;
+                    default:
+                        throw new InvalidOperationException($"Unexpected batchSize: {batchSize}");
+                } // end of batch size switch
 
-                        if (chkVocabulary.Checked)
-                        {
-                            UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Vocabulary)...");
-                            string pageVocab = await ProcessPdfPageMultimodal(image, apiKey, vocabularyPrompt);
-                            allVocabulary.AppendLine($"===== Page {pageNumber} =====");
-                            allVocabulary.AppendLine(pageVocab);
-                            allVocabulary.AppendLine();
-                        }
-
-                        UpdateOverlayLog($"✅ Page {pageNumber} done.");
-                    }
-
-                }
-                else
-                {
-
-                    // ─── Three‐page‐batch mode ───
-
-                    // 6) Instead of one‐by‐one, we chunk into groups of three pages at a time:
-                    for (int i = 0; i < allPages.Count; i += 3)
-                    {
-                        // Build up to a 3‐page slice
-                        var pageGroup = new List<(int pageNumber, Image image)>();
-                        for (int j = i; j < i + 3 && j < allPages.Count; j++)
-                        {
-                            pageGroup.Add(allPages[j]);
-                        }
-
-                        // We’ll label them by “Pages X–Y” or “Page X” if only one in the group
-                        int startPage = pageGroup.First().pageNumber;
-                        int endPage = pageGroup.Last().pageNumber;
-                        string header = (startPage == endPage)
-                            ? $"===== Page {startPage} ====="
-                            : $"===== Pages {startPage}–{endPage} =====";
-
-                        // 6a) Definitions
-                        if (chkDefinitions.Checked)
-                        {
-                            UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Definitions)...");
-                            string pagesDef = await ProcessPdfPagesMultimodal(pageGroup, apiKey, definitionsPrompt);
-                            allDefinitions.AppendLine(header);
-                            allDefinitions.AppendLine(pagesDef);
-                            allDefinitions.AppendLine();
-                        }
-
-                        // 6b) MCQs
-                        if (chkMCQs.Checked)
-                        {
-                            UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (MCQs)...");
-                            string pagesMCQs = await ProcessPdfPagesMultimodal(pageGroup, apiKey, mcqsPrompt);
-                            allMCQs.AppendLine(header);
-                            allMCQs.AppendLine(pagesMCQs);
-                            allMCQs.AppendLine();
-                        }
-
-                        // 6c) Flashcards
-                        if (chkFlashcards.Checked)
-                        {
-                            UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Flashcards)...");
-                            string pagesFlash = await ProcessPdfPagesMultimodal(pageGroup, apiKey, flashcardsPrompt);
-                            allFlashcards.AppendLine(header);
-                            allFlashcards.AppendLine(pagesFlash);
-                            allFlashcards.AppendLine();
-                        }
-
-                        // 6d) Vocabulary
-                        if (chkVocabulary.Checked)
-                        {
-                            UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Vocabulary)...");
-                            string pagesVocab = await ProcessPdfPagesMultimodal(pageGroup, apiKey, vocabularyPrompt);
-                            allVocabulary.AppendLine(header);
-                            allVocabulary.AppendLine(pagesVocab);
-                            allVocabulary.AppendLine();
-                        }
-
-                        UpdateOverlayLog($"✅ Pages {startPage}–{endPage} done.");
-                    }
-                }
+                  //}
 
                 // 7) تحويل StringBuilder إلى نصٍّ نهائي وحفظه في ملفات Word منسّقة
                 // 7.1) ملف التعاريف
@@ -789,8 +876,78 @@ namespace ChatGPTFileProcessor
         }
 
 
+        ///// <summary>
+        ///// Sends up to three page‐images in one shot (multimodal) to GPT-4o, along with a single text prompt.
+        ///// </summary>
+        //private async Task<string> ProcessPdfPagesMultimodal(
+        //    List<(int pageNumber, Image image)> pageGroup,
+        //    string apiKey,
+        //    string taskPrompt
+        //)
+        //{
+        //    // Build a single “messages” list that contains each image_url entry first, then the text prompt
+        //    var multimodalContent = new List<object>();
+
+        //    foreach (var (pageNumber, image) in pageGroup)
+        //    {
+        //        using (var ms = new MemoryStream())
+        //        {
+        //            image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+        //            string base64 = Convert.ToBase64String(ms.ToArray());
+        //            multimodalContent.Add(new
+        //            {
+        //                type = "image_url",
+        //                image_url = new { url = $"data:image/png;base64,{base64}" }
+        //            });
+        //        }
+        //    }
+
+        //    // Finally, add the single text prompt (task instructions) as the last content element
+        //    multimodalContent.Add(new
+        //    {
+        //        type = "text",
+        //        text = taskPrompt
+        //    });
+
+        //    var requestBody = new
+        //    {
+        //        model = "gpt-4o",
+        //        messages = new object[]
+        //        {
+        //        new
+        //        {
+        //            role = "user",
+        //            content = multimodalContent.ToArray()
+        //        }
+        //        }
+        //    };
+
+        //    string jsonContent = System.Text.Json.JsonSerializer.Serialize(
+        //        requestBody,
+        //        new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }
+        //    );
+
+        //    using (var client = new HttpClient())
+        //    {
+        //        client.DefaultRequestHeaders.Add("Authorization", "Bearer " + apiKey);
+        //        var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+        //        HttpResponseMessage response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
+
+        //        if (!response.IsSuccessStatusCode)
+        //        {
+        //            string error = await response.Content.ReadAsStringAsync();
+        //            throw new Exception($"API Error: {response.StatusCode} - {error}");
+        //        }
+
+        //        string resultJson = await response.Content.ReadAsStringAsync();
+        //        var jsonNode = JsonNode.Parse(resultJson);
+        //        return jsonNode?["choices"]?[0]?["message"]?["content"]?.ToString() ?? "";
+        //    }
+        //}
+
         /// <summary>
-        /// Sends up to three page‐images in one shot (multimodal) to GPT-4o, along with a single text prompt.
+        /// Sends up to N images (in pageGroup) plus the text prompt in one chat call.
+        /// This works for batchSize = 2 or 3.
         /// </summary>
         private async Task<string> ProcessPdfPagesMultimodal(
             List<(int pageNumber, Image image)> pageGroup,
@@ -798,16 +955,16 @@ namespace ChatGPTFileProcessor
             string taskPrompt
         )
         {
-            // Build a single “messages” list that contains each image_url entry first, then the text prompt
-            var multimodalContent = new List<object>();
-
+            // 1. Convert each image to a Base64 segment
+            var imageContents = new List<object>();
             foreach (var (pageNumber, image) in pageGroup)
             {
                 using (var ms = new MemoryStream())
                 {
+
                     image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                    string base64 = Convert.ToBase64String(ms.ToArray());
-                    multimodalContent.Add(new
+                    var base64 = Convert.ToBase64String(ms.ToArray());
+                    imageContents.Add(new
                     {
                         type = "image_url",
                         image_url = new { url = $"data:image/png;base64,{base64}" }
@@ -815,23 +972,22 @@ namespace ChatGPTFileProcessor
                 }
             }
 
-            // Finally, add the single text prompt (task instructions) as the last content element
-            multimodalContent.Add(new
-            {
-                type = "text",
-                text = taskPrompt
-            });
+            // 2. Build a single “content” array: [ image1, image2, (maybe image3), { type="text", text=taskPrompt } ]
+            var fullContent = new List<object>();
+            fullContent.AddRange(imageContents);
+            fullContent.Add(new { type = "text", text = taskPrompt });
 
+            // 3. Assemble top‐level request
             var requestBody = new
             {
                 model = "gpt-4o",
                 messages = new object[]
                 {
-                new
-                {
-                    role = "user",
-                    content = multimodalContent.ToArray()
-                }
+            new
+            {
+                role = "user",
+                content = fullContent.ToArray()
+            }
                 }
             };
 
@@ -842,21 +998,26 @@ namespace ChatGPTFileProcessor
 
             using (var client = new HttpClient())
             {
-                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + apiKey);
+
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
+
                 var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
+                var response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
 
                 if (!response.IsSuccessStatusCode)
                 {
                     string error = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"API Error: {response.StatusCode} - {error}");
+                    throw new Exception($"API Error: {response.StatusCode} – {error}");
                 }
 
                 string resultJson = await response.Content.ReadAsStringAsync();
                 var jsonNode = JsonNode.Parse(resultJson);
-                return jsonNode?["choices"]?[0]?["message"]?["content"]?.ToString() ?? "";
+                return jsonNode?["choices"]?[0]?["message"]?["content"]?.ToString()
+                       ?? "No content returned.";
             }
         }
+
 
 
 
@@ -1132,5 +1293,16 @@ namespace ChatGPTFileProcessor
             var aboutForm = new About();
             aboutForm.ShowDialog(this);
         }
+
+        /// Event handler for the Page Batch Size radio group
+        /// saves the selected value to settings and updates the status label.
+        private void radioPageBatchSize_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int chosen = (int)radioPageBatchSize.EditValue;
+            Properties.Settings.Default.PageBatchMode = chosen;
+            Properties.Settings.Default.Save();
+            UpdateStatus($"Page batch mode set to: {chosen} page(s) at a time");
+        }
+
     }
 }

@@ -118,5 +118,17 @@ namespace ChatGPTFileProcessor.Properties {
                 this["ApiKeyLock"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int PageBatchMode {
+            get {
+                return ((int)(this["PageBatchMode"]));
+            }
+            set {
+                this["PageBatchMode"] = value;
+            }
+        }
     }
 }

@@ -30,12 +30,12 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            DevExpress.Utils.SuperToolTip superToolTip1 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem1 = new DevExpress.Utils.ToolTipItem();
             DevExpress.Utils.SuperToolTip superToolTip2 = new DevExpress.Utils.SuperToolTip();
             DevExpress.Utils.ToolTipItem toolTipItem2 = new DevExpress.Utils.ToolTipItem();
             DevExpress.Utils.SuperToolTip superToolTip3 = new DevExpress.Utils.SuperToolTip();
             DevExpress.Utils.ToolTipItem toolTipItem3 = new DevExpress.Utils.ToolTipItem();
-            DevExpress.Utils.SuperToolTip superToolTip1 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipItem toolTipItem1 = new DevExpress.Utils.ToolTipItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.labelControl5 = new DevExpress.XtraEditors.LabelControl();
             this.textEditAPIKey = new DevExpress.XtraEditors.TextEdit();
@@ -43,6 +43,8 @@
             this.buttonEditAPIKey = new DevExpress.XtraEditors.SimpleButton();
             this.buttonSaveAPIKey = new DevExpress.XtraEditors.SimpleButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.radioPageBatchSize = new DevExpress.XtraEditors.RadioGroup();
+            this.chkThreePageMode = new DevExpress.XtraEditors.CheckEdit();
             this.labelControl3 = new DevExpress.XtraEditors.LabelControl();
             this.labelFileName = new DevExpress.XtraEditors.LabelControl();
             this.chkMedicalMaterial = new DevExpress.XtraEditors.CheckEdit();
@@ -69,10 +71,11 @@
             this.panelBottom = new System.Windows.Forms.Panel();
             this.panelTop = new System.Windows.Forms.Panel();
             this.panelFill = new System.Windows.Forms.Panel();
-            this.chkThreePageMode = new DevExpress.XtraEditors.CheckEdit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textEditAPIKey.Properties)).BeginInit();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.radioPageBatchSize.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkThreePageMode.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkMedicalMaterial.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cmbVocabLang.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cmbGeneralLang.Properties)).BeginInit();
@@ -89,7 +92,6 @@
             this.panelBottom.SuspendLayout();
             this.panelTop.SuspendLayout();
             this.panelFill.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chkThreePageMode.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -178,6 +180,7 @@
             // groupBox2
             // 
             this.groupBox2.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.groupBox2.Controls.Add(this.radioPageBatchSize);
             this.groupBox2.Controls.Add(this.chkThreePageMode);
             this.groupBox2.Controls.Add(this.labelControl3);
             this.groupBox2.Controls.Add(this.labelFileName);
@@ -200,6 +203,44 @@
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "FILE AND PROCESS";
+            // 
+            // radioPageBatchSize
+            // 
+            this.radioPageBatchSize.EditValue = 2;
+            this.radioPageBatchSize.Location = new System.Drawing.Point(767, 92);
+            this.radioPageBatchSize.Name = "radioPageBatchSize";
+            this.radioPageBatchSize.Properties.Appearance.Font = new System.Drawing.Font("LBC", 8.999999F);
+            this.radioPageBatchSize.Properties.Appearance.Options.UseFont = true;
+            this.radioPageBatchSize.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 8.999999F);
+            this.radioPageBatchSize.Properties.AppearanceDisabled.Options.UseFont = true;
+            this.radioPageBatchSize.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 8.999999F);
+            this.radioPageBatchSize.Properties.AppearanceFocused.Options.UseFont = true;
+            this.radioPageBatchSize.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 8.999999F);
+            this.radioPageBatchSize.Properties.AppearanceReadOnly.Options.UseFont = true;
+            this.radioPageBatchSize.Properties.GlyphAlignment = DevExpress.Utils.HorzAlignment.Default;
+            this.radioPageBatchSize.Properties.Items.AddRange(new DevExpress.XtraEditors.Controls.RadioGroupItem[] {
+            new DevExpress.XtraEditors.Controls.RadioGroupItem(1, "1 page at a time"),
+            new DevExpress.XtraEditors.Controls.RadioGroupItem(2, "2 pages at a time"),
+            new DevExpress.XtraEditors.Controls.RadioGroupItem(3, "3 pages at a time")});
+            this.radioPageBatchSize.Size = new System.Drawing.Size(166, 141);
+            this.radioPageBatchSize.TabIndex = 24;
+            this.radioPageBatchSize.SelectedIndexChanged += new System.EventHandler(this.radioPageBatchSize_SelectedIndexChanged);
+            // 
+            // chkThreePageMode
+            // 
+            this.chkThreePageMode.Location = new System.Drawing.Point(246, 60);
+            this.chkThreePageMode.Name = "chkThreePageMode";
+            this.chkThreePageMode.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkThreePageMode.Properties.Appearance.Options.UseFont = true;
+            this.chkThreePageMode.Properties.Caption = "Use 3‐page batches";
+            this.chkThreePageMode.Size = new System.Drawing.Size(233, 26);
+            toolTipItem1.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem1.Appearance.Options.UseFont = true;
+            toolTipItem1.Text = "Activates 3‐pages processing mode / if off then activates 1-page processing mode\r" +
+    "\n*what are 1-page and 3-pages modes";
+            superToolTip1.Items.Add(toolTipItem1);
+            this.chkThreePageMode.SuperTip = superToolTip1;
+            this.chkThreePageMode.TabIndex = 23;
             // 
             // labelControl3
             // 
@@ -553,22 +594,6 @@
             this.panelFill.Size = new System.Drawing.Size(1062, 284);
             this.panelFill.TabIndex = 25;
             // 
-            // chkThreePageMode
-            // 
-            this.chkThreePageMode.Location = new System.Drawing.Point(246, 60);
-            this.chkThreePageMode.Name = "chkThreePageMode";
-            this.chkThreePageMode.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkThreePageMode.Properties.Appearance.Options.UseFont = true;
-            this.chkThreePageMode.Properties.Caption = "Use 3‐page batches";
-            this.chkThreePageMode.Size = new System.Drawing.Size(233, 26);
-            toolTipItem1.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem1.Appearance.Options.UseFont = true;
-            toolTipItem1.Text = "Activates 3‐pages processing mode / if off then activates 1-page processing mode\r" +
-    "\n*what are 1-page and 3-pages modes";
-            superToolTip1.Items.Add(toolTipItem1);
-            this.chkThreePageMode.SuperTip = superToolTip1;
-            this.chkThreePageMode.TabIndex = 23;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -588,6 +613,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.textEditAPIKey.Properties)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.radioPageBatchSize.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkThreePageMode.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkMedicalMaterial.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.cmbVocabLang.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.cmbGeneralLang.Properties)).EndInit();
@@ -606,7 +633,6 @@
             this.panelBottom.ResumeLayout(false);
             this.panelTop.ResumeLayout(false);
             this.panelFill.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.chkThreePageMode.Properties)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -646,6 +672,7 @@
         private DevExpress.XtraEditors.ComboBoxEdit comboBoxEditModel;
         private DevExpress.XtraEditors.SvgImageBox svgImageBoxAbout;
         private DevExpress.XtraEditors.CheckEdit chkThreePageMode;
+        private DevExpress.XtraEditors.RadioGroup radioPageBatchSize;
     }
 }
 
