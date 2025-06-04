@@ -106,10 +106,6 @@ namespace ChatGPTFileProcessor
                 radioPageBatchSize.EditValue = 1;
             }
 
-
-
-
-
         }
 
 
@@ -498,11 +494,13 @@ namespace ChatGPTFileProcessor
                     $"{(isMedical ? "Include any critical medical terms and their context." : "")}";
 
                 string clozePrompt =
-                    $"Generate 5 FILL‐IN‐THE‐BLANK sentences (in {generalLangName}) based on these page(s).  " +
+                    //$"Generate 5 FILL‐IN‐THE‐BLANK sentences (in {generalLangName}) based on these page(s).  " +
+                    $"Generate FILL‐IN‐THE‐BLANK sentences (in {generalLangName}) based on these page(s).  " +
                     $"Each entry should consist of two lines:\n\n" +
-                    $"Sentence: “_____[blank]_____ is <brief clue>.”\n" +
+                    $"Sentence:“_______________ is <brief clue>.”\n" +
                     $"Answer: <the correct word or phrase> (in {generalLangName}).\n\n" +
-                    $"For example:\nSentence: “_____[Pilocarpine]_____ is a miotic drug.”\nAnswer: Pilocarpine\n\n" +
+                    //$"For example:\nSentence: “_____[Pilocarpine]_____ is a miotic drug.”\nAnswer: Pilocarpine\n\n" +
+                    $"For example:\nSentence: “_______________ is a miotic drug.”\nAnswer: Pilocarpine\n\n" +
                     $"Leave a single blank line between each pair.  Do NOT embed the answer inside the blank.";
 
                 string trueFalsePrompt =
@@ -1323,67 +1321,7 @@ namespace ChatGPTFileProcessor
 
                 if (chkKeywords.Checked)
                     SaveContentToFile(allKeywords.ToString(), keywordsFilePath, "High-Yield Keywords");
-                //// 7.5) ملف Summary
-                //if (chkSummary.Checked)
-                //{
-                //    string summaryText = allSummary.ToString();
-                //    SaveContentToFile(summaryText, Path.Combine(basePath, $"Summary_{modelName}_{timeStamp}.docx"), "Page Summaries");
-                //}
-                //// 7.6) ملف Key Takeaways
-                //if (chkTakeaways.Checked)
-                //{
-                //    string takeawaysText = allTakeaways.ToString();
-                //    SaveContentToFile(takeawaysText, Path.Combine(basePath, $"Takeaways_{modelName}_{timeStamp}.docx"), "Key Takeaways");
-                //}
-                //// 7.7) ملف Cloze
-                //if (chkCloze.Checked)
-                //{
-                //    string clozeText = allCloze.ToString();
-                //    SaveContentToFile(clozeText, Path.Combine(basePath, $"Cloze_{modelName}_{timeStamp}.docx"), "Fill-in-the-Blank (Cloze)");
-                //}
-                //// 7.8) ملف True/False
-                //if (chkTrueFalse.Checked)
-                //{
-                //    string tfText = allTrueFalse.ToString();
-                //    SaveContentToFile(tfText, Path.Combine(basePath, $"TrueFalse_{modelName}_{timeStamp}.docx"), "True/False Questions");
-                //}
-                //// 7.9) ملف Outline
-                //if (chkOutline.Checked)
-                //{
-                //    string outlineText = allOutline.ToString();
-                //    SaveContentToFile(outlineText, Path.Combine(basePath, $"Outline_{modelName}_{timeStamp}.docx"), "Outline");
-                //}
-                //// 7.10) ملف Concept Map
-                //if (chkConceptMap.Checked)
-                //{
-                //    string cmText = allConceptMap.ToString();
-                //    SaveContentToFile(cmText, Path.Combine(basePath, $"ConceptMap_{modelName}_{timeStamp}.docx"), "Concept Relationships");
-                //}
-                //// 7.11) ملف Table Extraction
-                //if (chkTableExtract.Checked)
-                //{
-                //    string tableText = allTableExtract.ToString();
-                //    SaveContentToFile(tableText, Path.Combine(basePath, $"Tables_{modelName}_{timeStamp}.docx"), "Table Extractions");
-                //}
-                //// 7.12) ملف Simplified Explanation
-                //if (chkSimplified.Checked)
-                //{
-                //    string simpText = allSimplified.ToString();
-                //    SaveContentToFile(simpText, Path.Combine(basePath, $"Simplified_{modelName}_{timeStamp}.docx"), "Simplified Explanation");
-                //}
-                //// // 7.13) ملف Case Study Scenario
-                //if (chkCaseStudy.Checked)
-                //{
-                //    string csText = allCaseStudy.ToString();
-                //    SaveContentToFile(csText, Path.Combine(basePath, $"CaseStudy_{modelName}_{timeStamp}.docx"), "Case Study Scenario");
-                //}
-                //// 7.14) ملف High-Yield Keywords
-                //if (chkKeywords.Checked)
-                //{
-                //    string kwText = allKeywords.ToString();
-                //    SaveContentToFile(kwText, Path.Combine(basePath, $"Keywords_{modelName}_{timeStamp}.docx"), "High-Yield Keywords");
-                //}
-
+                
 
                 // 8) إظهار رسالة انتهاء المعالجة
                 UpdateStatus("✅ Processing complete. Files saved to Desktop.");
