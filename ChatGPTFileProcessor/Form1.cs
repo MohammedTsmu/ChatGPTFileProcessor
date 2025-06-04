@@ -107,6 +107,8 @@ namespace ChatGPTFileProcessor
                 radioPageBatchSize.EditValue = 1;
             }
 
+
+
         }
 
 
@@ -331,18 +333,14 @@ namespace ChatGPTFileProcessor
                     HideOverlay();
                     return;
                 }
-                
 
-                //bool useThreePageMode = chkThreePageMode.Checked;
+                // 6) تحديد حجم الدفعة (batch size) من الواجهة
                 int batchSize = (int)radioPageBatchSize.EditValue; // reads 1, 2 or 3
 
 
-                //if (!useThreePageMode)
-                //{
                 switch (batchSize)
                 {
                     case 1:
-
 
                         // ─── One‐page‐at‐a‐time mode ───
 
@@ -448,10 +446,6 @@ namespace ChatGPTFileProcessor
 
 
                     case 3:
-                        //}
-                        //else
-                        //{
-
                         // ─── Three‐page‐batch mode ───
 
                         // 6) Instead of one‐by‐one, we chunk into groups of three pages at a time:
@@ -514,11 +508,74 @@ namespace ChatGPTFileProcessor
                             UpdateOverlayLog($"✅ Pages {startPage}–{endPage} done.");
                         }
                         break;
+
+                    case 4:
+                        // ─── Four‐page‐batch mode ───
+
+                        // 6) Instead of one‐by‐one, we chunk into groups of three pages at a time:
+                        for (int i = 0; i < allPages.Count; i += 4)
+                        {
+                            // Build up to a 4‐page slice
+                            var pageGroup = new List<(int pageNumber, Image image)>();
+                            for (int j = i; j < i + 4 && j < allPages.Count; j++)
+                            {
+                                pageGroup.Add(allPages[j]);
+                            }
+
+                            // We’ll label them by “Pages X–Y” or “Page X” if only one in the group
+                            int startPage = pageGroup.First().pageNumber;
+                            int endPage = pageGroup.Last().pageNumber;
+                            string header = (startPage == endPage)
+                                ? $"===== Page {startPage} ====="
+                                : $"===== Pages {startPage}–{endPage} =====";
+
+                            // 6a) Definitions
+                            if (chkDefinitions.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Definitions)...");
+                                string pagesDef = await ProcessPdfPagesMultimodal(pageGroup, apiKey, definitionsPrompt);
+                                allDefinitions.AppendLine(header);
+                                allDefinitions.AppendLine(pagesDef);
+                                allDefinitions.AppendLine();
+                            }
+
+                            // 6b) MCQs
+                            if (chkMCQs.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (MCQs)...");
+                                string pagesMCQs = await ProcessPdfPagesMultimodal(pageGroup, apiKey, mcqsPrompt);
+                                allMCQs.AppendLine(header);
+                                allMCQs.AppendLine(pagesMCQs);
+                                allMCQs.AppendLine();
+                            }
+
+                            // 6c) Flashcards
+                            if (chkFlashcards.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Flashcards)...");
+                                string pagesFlash = await ProcessPdfPagesMultimodal(pageGroup, apiKey, flashcardsPrompt);
+                                allFlashcards.AppendLine(header);
+                                allFlashcards.AppendLine(pagesFlash);
+                                allFlashcards.AppendLine();
+                            }
+
+                            // 6d) Vocabulary
+                            if (chkVocabulary.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Vocabulary)...");
+                                string pagesVocab = await ProcessPdfPagesMultimodal(pageGroup, apiKey, vocabularyPrompt);
+                                allVocabulary.AppendLine(header);
+                                allVocabulary.AppendLine(pagesVocab);
+                                allVocabulary.AppendLine();
+                            }
+
+                            UpdateOverlayLog($"✅ Pages {startPage}–{endPage} done.");
+                        }
+                        break;
                     default:
                         throw new InvalidOperationException($"Unexpected batchSize: {batchSize}");
                 } // end of batch size switch
 
-                  //}
 
                 // 7) تحويل StringBuilder إلى نصٍّ نهائي وحفظه في ملفات Word منسّقة
                 // 7.1) ملف التعاريف
