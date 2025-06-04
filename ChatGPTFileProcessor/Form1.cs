@@ -457,8 +457,10 @@ namespace ChatGPTFileProcessor
                     $"- Definition: <a 1–2 sentence definition in {generalLangName}>\n\n" +
                     $"Separate entries with a blank line.  Do NOT number anything.";
 
+                //Best Version
                 string mcqsPrompt =
-                    $"Generate 5 MULTIPLE‐CHOICE QUESTIONS in {generalLangName} " +
+                    //$"Generate 5 MULTIPLE‐CHOICE QUESTIONS in {generalLangName} " +
+                    $"Generate MULTIPLE‐CHOICE QUESTIONS in {generalLangName} " +
                     $"based strictly on the content of these page(s).  Follow this pattern exactly (no deviations):\n\n" +
                     $"Question: <Write the question here in {generalLangName}>\n" +
                     $"A) <Option A in {generalLangName}>\n" +
