@@ -467,7 +467,8 @@ namespace ChatGPTFileProcessor
                     $"D) <Option D in {generalLangName}>\n" +
                     $"Answer: <Exactly one letter: A, B, C, or D>\n\n" +
                     $"Separate each MCQ block with a single blank line.  Do NOT include any extra text.";
-
+                
+                //Best Version
                 string flashcardsPrompt =
                     $"Create FLASHCARDS in {generalLangName} for each key " +
                     $"{(isMedical ? "medical " : "")}term on these page(s).  Use this exact format (no deviations):\n\n" +
