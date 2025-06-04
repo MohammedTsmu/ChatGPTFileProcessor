@@ -96,8 +96,8 @@ namespace ChatGPTFileProcessor
 
 
             // ▼ Load saved page batch mode last setting
-            var savedMode = Properties.Settings.Default.PageBatchMode; // 1, 2 or 3
-            if (savedMode >= 1 && savedMode <= 3)
+            var savedMode = Properties.Settings.Default.PageBatchMode; // 1, 2, 3 or 4
+            if (savedMode >= 1 && savedMode <= 4)
             {
                 radioPageBatchSize.EditValue = savedMode;
             }
@@ -107,7 +107,8 @@ namespace ChatGPTFileProcessor
             }
 
 
-            
+
+
 
         }
 
