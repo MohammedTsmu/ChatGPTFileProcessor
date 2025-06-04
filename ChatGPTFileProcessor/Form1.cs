@@ -454,8 +454,9 @@ namespace ChatGPTFileProcessor
                     $"{(isMedical ? "medical " : "")}term found on these page(s). " +
                     $"For each term, output exactly:\n\n" +
                     $"- Term: <the term as a heading>\n" +
-                    $"- Definition: <a 1–2 sentence definition in {generalLangName}>\n\n" +
+                    $"- Definition: <a 1–2-3 sentence definition in {generalLangName}>\n\n" +
                     $"Separate entries with a blank line.  Do NOT number anything.";
+
 
                 //Best Version
                 string mcqsPrompt =
@@ -483,7 +484,8 @@ namespace ChatGPTFileProcessor
                 // 3.4) Vocabulary: translate into whichever “Vocab Language” the user chose
                 string vocabularyPrompt =
                     $"Extract IMPORTANT VOCABULARY TERMS from these page(s) and translate them into {vocabLangName}.  Use exactly this format (no bullets or numbering):\n\n" +
-                    $"EnglishTerm – {vocabLangName}Translation\n\n" +
+                    //$"EnglishTerm – {vocabLangName}Translation\n\n" +
+                    $"OriginalTerm – {vocabLangName}Translation\n\n" +
                     $"Leave exactly one blank line between each entry.  If a term doesn’t have a direct translation, write “– [Translation Needed]”.";
                 
                 string summaryPrompt =
