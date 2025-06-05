@@ -573,6 +573,7 @@ namespace ChatGPTFileProcessor
                 //    $"Use {generalLangName} and define any technical terms.";
 
                 // 3.13) Case Study prompt
+                //Best Version
                 string caseStudyPrompt =
                     $"Write a short CLINICAL VIGNETTE (1 paragraph) based on these page(s), in {generalLangName}.  " +
                     $"Include:\n" +
@@ -587,7 +588,8 @@ namespace ChatGPTFileProcessor
                     $"C) <Option C>\n" +
                     $"D) <Option D>\n" +
                     $"Answer: <A, B, C, or D>\n\n" +
-                    $"No extra commentary—only the vignette paragraph, blank line, then the MCQ block.";
+                    //$"No extra commentary—only the vignette paragraph, blank line, then the MCQ block.";
+                    $"No extra commentary—only the vignette paragraph, blank line, then the MCQ block, at least two cases.";
 
                 // 3.14) Keywords prompt
                 //Best Version
