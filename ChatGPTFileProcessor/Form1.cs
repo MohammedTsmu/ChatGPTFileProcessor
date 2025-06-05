@@ -568,9 +568,6 @@ namespace ChatGPTFileProcessor
                     $"Explain the content of these page(s) in simpler language, as if teaching a first-year medical student.  " +
                     $"Use {generalLangName}.  Define any technical or medical jargon in parentheses the first time it appears.  " +
                     $"Write one cohesive paragraph—no bullets or lists.";
-                //string simplifiedPrompt =
-                //    $"Explain the content of these page(s) in simpler language (like you’re teaching a first-year student). " +
-                //    $"Use {generalLangName} and define any technical terms.";
 
                 // 3.13) Case Study prompt
                 //Best Version
