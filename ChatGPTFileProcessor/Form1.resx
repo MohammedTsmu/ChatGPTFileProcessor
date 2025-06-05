@@ -169,7 +169,7 @@
 3• Send 3 PDF pages at a time. GPT will have three pages’ context.
 4• Send 4 PDF pages together so GPT sees more context at once.</value>
   </data>
-  <data name="toolTipItem1.Text" xml:space="preserve">
+  <data name="toolTipItem3.Text" xml:space="preserve">
     <value>1 = Send each page individually.
 
 2 = Send two pages in a single GPT query.
