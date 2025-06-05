@@ -565,6 +565,7 @@ namespace ChatGPTFileProcessor
                     $"If no table is present, respond with exactly: “No table found.”";
 
                 // 3.12) Simplified Explanation prompt
+                //Best Version
                 string simplifiedPrompt =
                     $"Explain the content of these page(s) in simpler language, as if teaching a first-year medical student.  " +
                     $"Use {generalLangName}.  Define any technical or medical jargon in parentheses the first time it appears.  " +
