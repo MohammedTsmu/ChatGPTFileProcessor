@@ -304,7 +304,8 @@
             toolTipTitleItem2.Text = "Instructions";
             toolTipItem3.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
             toolTipItem3.Appearance.Options.UseFont = true;
-            toolTipItem3.Text = "Works only with 1 page at time,\r\n⚠    Not recommened with others.";
+            toolTipItem3.Text = "Works only with 1 page at time,\r\n⚠    Not recommened with others.\r\n⚠    healthcar" +
+    "e students Only";
             superToolTip2.Items.Add(toolTipTitleItem2);
             superToolTip2.Items.Add(toolTipSeparatorItem2);
             superToolTip2.Items.Add(toolTipItem3);
