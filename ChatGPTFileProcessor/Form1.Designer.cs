@@ -36,9 +36,11 @@
             DevExpress.Utils.ToolTipSeparatorItem toolTipSeparatorItem1 = new DevExpress.Utils.ToolTipSeparatorItem();
             DevExpress.Utils.ToolTipItem toolTipItem2 = new DevExpress.Utils.ToolTipItem();
             DevExpress.Utils.SuperToolTip superToolTip2 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem2 = new DevExpress.Utils.ToolTipTitleItem();
+            DevExpress.Utils.ToolTipSeparatorItem toolTipSeparatorItem2 = new DevExpress.Utils.ToolTipSeparatorItem();
             DevExpress.Utils.ToolTipItem toolTipItem3 = new DevExpress.Utils.ToolTipItem();
             DevExpress.Utils.SuperToolTip superToolTip3 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem2 = new DevExpress.Utils.ToolTipTitleItem();
+            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem3 = new DevExpress.Utils.ToolTipTitleItem();
             DevExpress.Utils.ToolTipItem toolTipItem4 = new DevExpress.Utils.ToolTipItem();
             DevExpress.Utils.SuperToolTip superToolTip4 = new DevExpress.Utils.SuperToolTip();
             DevExpress.Utils.ToolTipItem toolTipItem5 = new DevExpress.Utils.ToolTipItem();
@@ -305,9 +307,14 @@
             this.chkTableExtract.Properties.Caption = "Extract Tables";
             this.chkTableExtract.Properties.ReadOnly = true;
             this.chkTableExtract.Size = new System.Drawing.Size(233, 26);
-            toolTipItem3.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipTitleItem2.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipTitleItem2.Appearance.Options.UseFont = true;
+            toolTipTitleItem2.Text = "Not completed / Not ready";
+            toolTipItem3.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
             toolTipItem3.Appearance.Options.UseFont = true;
             toolTipItem3.Text = "Experimental feature ⚠";
+            superToolTip2.Items.Add(toolTipTitleItem2);
+            superToolTip2.Items.Add(toolTipSeparatorItem2);
             superToolTip2.Items.Add(toolTipItem3);
             this.chkTableExtract.SuperTip = superToolTip2;
             this.chkTableExtract.TabIndex = 35;
@@ -510,13 +517,13 @@
             new DevExpress.XtraEditors.Controls.RadioGroupItem(3, "3 pages at a time"),
             new DevExpress.XtraEditors.Controls.RadioGroupItem(4, "4 pages at a time")});
             this.radioPageBatchSize.Size = new System.Drawing.Size(191, 175);
-            toolTipTitleItem2.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipTitleItem2.Appearance.Options.UseFont = true;
-            toolTipTitleItem2.Text = "Choose how many pages to send in one batch.\n";
+            toolTipTitleItem3.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipTitleItem3.Appearance.Options.UseFont = true;
+            toolTipTitleItem3.Text = "Choose how many pages to send in one batch.\n";
             toolTipItem4.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             toolTipItem4.Appearance.Options.UseFont = true;
             toolTipItem4.Text = resources.GetString("toolTipItem4.Text");
-            superToolTip3.Items.Add(toolTipTitleItem2);
+            superToolTip3.Items.Add(toolTipTitleItem3);
             superToolTip3.Items.Add(toolTipItem4);
             this.radioPageBatchSize.SuperTip = superToolTip3;
             this.radioPageBatchSize.TabIndex = 24;
