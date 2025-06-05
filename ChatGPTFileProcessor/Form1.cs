@@ -553,6 +553,7 @@ namespace ChatGPTFileProcessor
                     $"“ConceptA — contrasts with — ConceptC”\n\n" +
                     $"Separate each relationship on its own line.  Provide at least 5 relationships.";
 
+                // 3.11) Table Extraction prompt
                 string tableExtractPrompt =
                     $"If these page(s) contain any tables (e.g., drug doses, side effects, lab values), " +
                     $"extract each table into a Markdown‐style table in {generalLangName}.  Use this exact format:\n\n" +
@@ -562,11 +563,16 @@ namespace ChatGPTFileProcessor
                     $"| data21  | data22  | data23  |\n\n" +
                     $"If no table is present, respond with exactly: “No table found.”";
 
+                // 3.12) Simplified Explanation prompt
                 string simplifiedPrompt =
                     $"Explain the content of these page(s) in simpler language, as if teaching a first-year medical student.  " +
                     $"Use {generalLangName}.  Define any technical or medical jargon in parentheses the first time it appears.  " +
                     $"Write one cohesive paragraph—no bullets or lists.";
+                //string simplifiedPrompt =
+                //    $"Explain the content of these page(s) in simpler language (like you’re teaching a first-year student). " +
+                //    $"Use {generalLangName} and define any technical terms.";
 
+                // 3.13) Case Study prompt
                 string caseStudyPrompt =
                     $"Write a short CLINICAL VIGNETTE (1 paragraph) based on these page(s), in {generalLangName}.  " +
                     $"Include:\n" +
@@ -583,6 +589,8 @@ namespace ChatGPTFileProcessor
                     $"Answer: <A, B, C, or D>\n\n" +
                     $"No extra commentary—only the vignette paragraph, blank line, then the MCQ block.";
 
+                // 3.14) Keywords prompt
+                //Best Version
                 string keywordsPrompt =
                     $"List the HIGH-YIELD KEYWORDS from these page(s) in {generalLangName}.  " +
                     $"Output as a comma-separated list (e.g., “keyword1, keyword2, keyword3”).  " +
