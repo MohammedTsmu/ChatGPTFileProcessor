@@ -450,153 +450,604 @@ namespace ChatGPTFileProcessor
                 //    $"List the HIGH-YIELD KEYWORDS (comma-separated) from these page(s) in {generalLangName}.";
 
 
-                // ─── Build each prompt with a little conditional text:
+
+
+
+
+
+
+                //// ─── Build each prompt with a little conditional text:
+                //// 3.1) Definitions prompt
+                ////Best Version
+                //string definitionsPrompt =
+                //    $"In {generalLangName}, provide concise DEFINITIONS for each key " +
+                //    $"{(isMedical ? "medical " : "")}term found on these page(s). " +
+                //    $"For each term, output exactly:\n\n" +
+                //    $"- Term: <the term as a heading>\n" +
+                //    $"- Definition: <a 1–2-3 sentence definition in {generalLangName}>\n\n" +
+                //    $"Separate entries with a blank line.  Do NOT number anything.";
+
+                //// 3.2) MCQs prompt
+                ////Best Version
+                //string mcqsPrompt =
+                //    //$"Generate 5 MULTIPLE‐CHOICE QUESTIONS in {generalLangName} " +
+                //    $"Generate MULTIPLE‐CHOICE QUESTIONS in {generalLangName} " +
+                //    $"based strictly on the content of these page(s).  Follow this pattern exactly (no deviations):\n\n" +
+                //    $"Question: <Write the question here in {generalLangName}>\n" +
+                //    $"A) <Option A in {generalLangName}>\n" +
+                //    $"B) <Option B in {generalLangName}>\n" +
+                //    $"C) <Option C in {generalLangName}>\n" +
+                //    $"D) <Option D in {generalLangName}>\n" +
+                //    $"Answer: <Exactly one letter: A, B, C, or D>\n\n" +
+                //    $"Separate each MCQ block with a single blank line.  Do NOT include any extra text.";
+
+                //// 3.3) Flashcards prompt
+                ////Best Version
+                //string flashcardsPrompt =
+                //    $"Create FLASHCARDS in {generalLangName} for each key " +
+                //    $"{(isMedical ? "medical " : "")}term on these page(s).  Use this exact format (no deviations):\n\n" +
+                //    //$"Front: <Term in {generalLangName}>\n" +
+                //    $"Front: <Term>\n" +
+                //    $"Back:  <One- or two- or three- sentence definition in {generalLangName}>\n\n" +
+                //    $"Leave exactly one blank line between each card.  Do NOT number or bullet anything.";
+
+
+                //// 3.4) Vocabulary: translate into whichever “Vocab Language” the user chose
+                ////Best Version
+                //string vocabularyPrompt =
+                //    $"Extract IMPORTANT VOCABULARY TERMS from these page(s) and translate them into {vocabLangName}.  Use exactly this format (no bullets or numbering):\n\n" +
+                //    //$"EnglishTerm – {vocabLangName}Translation\n\n" +
+                //    $"OriginalTerm – {vocabLangName}Translation\n\n" +
+                //    $"Leave exactly one blank line between each entry.  If a term doesn’t have a direct translation, write “– [Translation Needed]”.";
+
+                //// 3.5) Summary prompt
+                ////Best Version
+                //string summaryPrompt =
+                //    //$"In {generalLangName}, write a concise SUMMARY (2–3 sentences) of the content on these page(s). " +
+                //    $"In {generalLangName}, write a concise SUMMARY (2–3-4-5-6-7-8-9-10 sentences) of the content on these page(s). " +
+                //    $"{(isMedical ? "Highlight key medical concepts; keep technical terms accurate." : "")}" +
+                //    $"\n\nFormat your summary as plain prose (no bullets or numbering).";
+
+                //// 3.6) Key Takeaways prompt
+                ////Best Version
+                //string takeawaysPrompt =
+                //    //$"List 5 KEY TAKEAWAYS (in {generalLangName}) from these page(s), formatted as bullets.  " +
+                //    $"List KEY TAKEAWAYS (in {generalLangName}) from these page(s), formatted as bullets.  " +
+                //    $"Each line must begin with a dash and a space, like:\n" +
+                //    $"- Takeaway 1\n" +
+                //    $"- Takeaway 2\n" +
+                //    $"…\n\n" +
+                //    $"{(isMedical ? "Include any critical medical terms and their context." : "")}";
+
+                //// 3.7) Fill-in-the-Blank (Cloze) prompt
+                ////Best Version
+                //string clozePrompt =
+                //    //$"Generate 5 FILL‐IN‐THE‐BLANK sentences (in {generalLangName}) based on these page(s).  " +
+                //    $"Generate FILL‐IN‐THE‐BLANK sentences (in {generalLangName}) based on these page(s).  " +
+                //    $"Each entry should consist of two lines:\n\n" +
+                //    $"Sentence:“_______________ is <brief clue>.”\n" +
+                //    $"Answer: <the correct word or phrase> (in {generalLangName}).\n\n" +
+                //    //$"For example:\nSentence: “_____[Pilocarpine]_____ is a miotic drug.”\nAnswer: Pilocarpine\n\n" +
+                //    $"For example:\nSentence: “_______________ is a miotic drug.”\nAnswer: Pilocarpine\n\n" +
+                //    $"Leave a single blank line between each pair.  Do NOT embed the answer inside the blank.";
+
+                //// 3.8) True/False Questions prompt
+                ////Best Version
+                //string trueFalsePrompt =
+                //    //$"Generate 5 TRUE/FALSE statements (in {generalLangName}) based on these page(s).  " +
+                //    $"Generate TRUE/FALSE statements (in {generalLangName}) based on these page(s).  " +
+                //    $"Each block should be two lines:\n\n" +
+                //    $"Statement: <write a true‐or‐false sentence here>\n" +
+                //    $"Answer: <True or False>\n\n" +
+                //    $"Leave exactly one blank line between each pair.  Do NOT write any additional explanation.";
+
+                //// 3.9) Outline prompt
+                ////Best Version
+                //string outlinePrompt =
+                //    $"Produce a hierarchical OUTLINE in {generalLangName} for the material on these page(s).  " +
+                //    $"Use numbered levels (e.g., “1. Main Heading,” “1.1 Subheading,” “1.1.1 Detail”).  " +
+                //    $"Do NOT use bullet points—strictly use decimal numbering.  " +
+                //    $"{(isMedical ? "Include medical subheadings where appropriate." : "")}";
+
+                //// 3.10) Concept Map prompt
+                ////Best Version
+                //string conceptMapPrompt =
+                //    $"List the key CONCEPTS from these page(s) and show how they relate, in {generalLangName}.  " +
+                //    $"For each pair, use one of these formats exactly:\n" +
+                //    $"“ConceptA → relates to → ConceptB”\n" +
+                //    $"or\n" +
+                //    $"“ConceptA — contrasts with — ConceptC”\n\n" +
+                //    $"Separate each relationship on its own line.  Provide at least 5 relationships.";
+
+                //// 3.11) Table Extraction prompt
+                ////Not Ready / Not Best Version
+                //string tableExtractPrompt =
+                //    $"If these page(s) contain any tables (e.g., drug doses, side effects, lab values), " +
+                //    $"extract each table into a Markdown‐style table in {generalLangName}.  Use this exact format:\n\n" +
+                //    $"| Column1 | Column2 | Column3 |\n" +
+                //    $"|---------|---------|---------|\n" +
+                //    $"| data11  | data12  | data13  |\n" +
+                //    $"| data21  | data22  | data23  |\n\n" +
+                //    $"If no table is present, respond with exactly: “No table found.”";
+
+                //// 3.12) Simplified Explanation prompt
+                ////Best Version
+                //string simplifiedPrompt =
+                //    $"Explain the content of these page(s) in simpler language, as if teaching a first-year medical student.  " +
+                //    $"Use {generalLangName}.  Define any technical or medical jargon in parentheses the first time it appears.  " +
+                //    $"Write one cohesive paragraph—no bullets or lists.";
+
+                //// 3.13) Case Study prompt
+                ////Best Version
+                //string caseStudyPrompt =
+                //    $"Write a short CLINICAL VIGNETTE (1 paragraph) based on these page(s), in {generalLangName}.  " +
+                //    $"Include:\n" +
+                //    $"- Patient age and gender\n" +
+                //    $"- Presenting complaint or symptom\n" +
+                //    $"- Key pertinent findings (e.g., vital signs, lab results)\n\n" +
+                //    $"Then immediately follow with a single multiple-choice question (in {generalLangName}) about the most likely diagnosis or next step.  " +
+                //    $"Format exactly:\n" +
+                //    $"\nMCQ: <The question text>\n" +
+                //    $"A) <Option A>\n" +
+                //    $"B) <Option B>\n" +
+                //    $"C) <Option C>\n" +
+                //    $"D) <Option D>\n" +
+                //    $"Answer: <A, B, C, or D>\n\n" +
+                //    //$"No extra commentary—only the vignette paragraph, blank line, then the MCQ block.";
+                //    $"No extra commentary—only the vignette paragraph, blank line, then the MCQ block, at least two cases.";
+
+                //// 3.14) Keywords prompt
+                ////Best Version
+                //string keywordsPrompt =
+                //    $"List the HIGH-YIELD KEYWORDS from these page(s) in {generalLangName}.  " +
+                //    $"Output as a comma-separated list (e.g., “keyword1, keyword2, keyword3”).  " +
+                //    $"Do NOT include definitions—only the keywords themselves.  " +
+                //    $"Provide at least 8–10 keywords.";
+
                 // 3.1) Definitions prompt
-                //Best Version
-                string definitionsPrompt =
-                    $"In {generalLangName}, provide concise DEFINITIONS for each key " +
-                    $"{(isMedical ? "medical " : "")}term found on these page(s). " +
-                    $"For each term, output exactly:\n\n" +
-                    $"- Term: <the term as a heading>\n" +
-                    $"- Definition: <a 1–2-3 sentence definition in {generalLangName}>\n\n" +
-                    $"Separate entries with a blank line.  Do NOT number anything.";
+                // Best Version (preserved for reference)
+                //string definitionsPrompt =
+                //    $"In {generalLangName}, provide concise DEFINITIONS for each key " +
+                //    $"{(isMedical ? "medical " : "")}term found on these page(s). " +
+                //    $"For each term, output exactly:\n\n" +
+                //    $"- Term: <the term as a heading>\n" +
+                //    $"- Definition: <a 1–2-3 sentence definition in {generalLangName}>\n\n" +
+                //    $"Separate entries with a blank line.  Do NOT number anything.";
+
+                string definitionsPrompt;
+                if (isMedical)
+                {
+                    // When medical mode is on, enforce clinically accurate language,
+                    // include brief usage/context if relevant, and keep medical terms correct.
+                    definitionsPrompt =
+                        $"In {generalLangName}, provide concise MEDICAL DEFINITIONS for each key medical term found on these page(s). " +
+                        $"For each term, output exactly (no numbering):\n\n" +
+                        $"- Term: <the term as a heading>\n" +
+                        $"- Definition: <a 1–2 sentence clinical definition in {generalLangName}, including brief context or indication if applicable>\n\n" +
+                        $"Use precise medical terminology and separate each entry with a blank line.";
+                }
+                else
+                {
+                    definitionsPrompt =
+                        $"In {generalLangName}, provide concise DEFINITIONS for each key term found on these page(s). " +
+                        $"For each term, output exactly (no numbering):\n\n" +
+                        $"- Term: <the term as a heading>\n" +
+                        $"- Definition: <a 1–2 sentence definition in {generalLangName}>\n\n" +
+                        $"Separate entries with a blank line.";
+                }
+
 
                 // 3.2) MCQs prompt
-                //Best Version
-                string mcqsPrompt =
-                    //$"Generate 5 MULTIPLE‐CHOICE QUESTIONS in {generalLangName} " +
-                    $"Generate MULTIPLE‐CHOICE QUESTIONS in {generalLangName} " +
-                    $"based strictly on the content of these page(s).  Follow this pattern exactly (no deviations):\n\n" +
-                    $"Question: <Write the question here in {generalLangName}>\n" +
-                    $"A) <Option A in {generalLangName}>\n" +
-                    $"B) <Option B in {generalLangName}>\n" +
-                    $"C) <Option C in {generalLangName}>\n" +
-                    $"D) <Option D in {generalLangName}>\n" +
-                    $"Answer: <Exactly one letter: A, B, C, or D>\n\n" +
-                    $"Separate each MCQ block with a single blank line.  Do NOT include any extra text.";
+                // Best Version (preserved for reference)
+                //string mcqsPrompt =
+                //    //$"Generate 5 MULTIPLE‐CHOICE QUESTIONS in {generalLangName} " +
+                //    $"Generate MULTIPLE‐CHOICE QUESTIONS in {generalLangName} " +
+                //    $"based strictly on the content of these page(s).  Follow this pattern exactly (no deviations):\n\n" +
+                //    $"Question: <Write the question here in {generalLangName}>\n" +
+                //    $"A) <Option A in {generalLangName}>\n" +
+                //    $"B) <Option B in {generalLangName}>\n" +
+                //    $"C) <Option C in {generalLangName}>\n" +
+                //    $"D) <Option D in {generalLangName}>\n" +
+                //    $"Answer: <Exactly one letter: A, B, C, or D>\n\n" +
+                //    $"Separate each MCQ block with a single blank line.  Do NOT include any extra text.";
+
+                string mcqsPrompt;
+                if (isMedical)
+                {
+                    mcqsPrompt =
+                        $"Generate MULTIPLE-CHOICE QUESTIONS (in {generalLangName}) focused on the MEDICAL content of these page(s).  " +
+                        $"Write exactly (no deviations):\n\n" +
+                        $"Question: <Compose a clinically relevant question in {generalLangName}, using proper medical terminology>\n" +
+                        $"A) <Option A in {generalLangName}>\n" +
+                        $"B) <Option B in {generalLangName}>\n" +
+                        $"C) <Option C in {generalLangName}>\n" +
+                        $"D) <Option D in {generalLangName}>\n" +
+                        $"Answer: <Exactly one letter: A, B, C, or D>\n\n" +
+                        $"Separate each MCQ block with a blank line.  Do NOT include any explanations after the answer.";
+                }
+                else
+                {
+                    mcqsPrompt =
+                        $"Generate MULTIPLE-CHOICE QUESTIONS (in {generalLangName}) based strictly on the content of these page(s).  " +
+                        $"Write exactly (no deviations):\n\n" +
+                        $"Question: <Write the question here in {generalLangName}>\n" +
+                        $"A) <Option A in {generalLangName}>\n" +
+                        $"B) <Option B in {generalLangName}>\n" +
+                        $"C) <Option C in {generalLangName}>\n" +
+                        $"D) <Option D in {generalLangName}>\n" +
+                        $"Answer: <Exactly one letter: A, B, C, or D>\n\n" +
+                        $"Separate each MCQ block with a blank line.  Do NOT include any extra text.";
+                }
+
 
                 // 3.3) Flashcards prompt
-                //Best Version
-                string flashcardsPrompt =
-                    $"Create FLASHCARDS in {generalLangName} for each key " +
-                    $"{(isMedical ? "medical " : "")}term on these page(s).  Use this exact format (no deviations):\n\n" +
-                    //$"Front: <Term in {generalLangName}>\n" +
-                    $"Front: <Term>\n" +
-                    $"Back:  <One- or two- or three- sentence definition in {generalLangName}>\n\n" +
-                    $"Leave exactly one blank line between each card.  Do NOT number or bullet anything.";
+                // Best Version (preserved for reference)
+                //string flashcardsPrompt =
+                //    $"Create FLASHCARDS in {generalLangName} for each key " +
+                //    $"{(isMedical ? "medical " : "")}term on these page(s).  Use this exact format (no deviations):\n\n" +
+                //    //$"Front: <Term in {generalLangName}>\n" +
+                //    $"Front: <Term>\n" +
+                //    $"Back:  <One- or two- or three- sentence definition in {generalLangName}>\n\n" +
+                //    $"Leave exactly one blank line between each card.  Do NOT number or bullet anything.";
+
+                string flashcardsPrompt;
+                if (isMedical)
+                {
+                    flashcardsPrompt =
+                        $"Create MEDICAL FLASHCARDS in {generalLangName} for each key medical or pharmaceutical term on these page(s).  " +
+                        $"Use this exact format (no deviations):\n\n" +
+                        $"Front: <Term>\n" +
+                        $"Back:  <A 1–2 sentence clinical definition/use in {generalLangName}, including indication if relevant>\n\n" +
+                        $"Separate each card with a blank line; do NOT number or bullet anything.";
+                }
+                else
+                {
+                    flashcardsPrompt =
+                        $"Create FLASHCARDS in {generalLangName} for each key term on these page(s).  " +
+                        $"Use this exact format (no deviations):\n\n" +
+                        $"Front: <Term>\n" +
+                        $"Back:  <One- or two-sentence definition in {generalLangName}>\n\n" +
+                        $"Separate each card with a blank line; do NOT number or bullet anything.";
+                }
 
 
-                // 3.4) Vocabulary: translate into whichever “Vocab Language” the user chose
-                //Best Version
+                // 3.4) Vocabulary prompt
+                // Best Version (preserved for reference)
+                //string vocabularyPrompt =
+                //    $"Extract IMPORTANT VOCABULARY TERMS from these page(s) and translate them into {vocabLangName}.  Use exactly this format (no bullets or numbering):\n\n" +
+                //    //$"EnglishTerm – {vocabLangName}Translation\n\n" +
+                //    $"OriginalTerm – {vocabLangName}Translation\n\n" +
+                //    $"Leave exactly one blank line between each entry.  If a term doesn’t have a direct translation, write “– [Translation Needed]”.";
+
                 string vocabularyPrompt =
-                    $"Extract IMPORTANT VOCABULARY TERMS from these page(s) and translate them into {vocabLangName}.  Use exactly this format (no bullets or numbering):\n\n" +
-                    //$"EnglishTerm – {vocabLangName}Translation\n\n" +
+                    $"Extract IMPORTANT VOCABULARY TERMS from these page(s) and translate them into {vocabLangName}.  " +
+                    $"Use exactly this format (no bullets or numbering):\n\n" +
                     $"OriginalTerm – {vocabLangName}Translation\n\n" +
                     $"Leave exactly one blank line between each entry.  If a term doesn’t have a direct translation, write “– [Translation Needed]”.";
 
+
                 // 3.5) Summary prompt
-                //Best Version
-                string summaryPrompt =
-                    //$"In {generalLangName}, write a concise SUMMARY (2–3 sentences) of the content on these page(s). " +
-                    $"In {generalLangName}, write a concise SUMMARY (2–3-4-5-6-7-8-9-10 sentences) of the content on these page(s). " +
-                    $"{(isMedical ? "Highlight key medical concepts; keep technical terms accurate." : "")}" +
-                    $"\n\nFormat your summary as plain prose (no bullets or numbering).";
+                // Best Version (preserved for reference)
+                //string summaryPrompt =
+                //    //$"In {generalLangName}, write a concise SUMMARY (2–3 sentences) of the content on these page(s). " +
+                //    $"In {generalLangName}, write a concise SUMMARY (2–3-4-5-6-7-8-9-10 sentences) of the content on these page(s). " +
+                //    $"{(isMedical ? "Highlight key medical concepts; keep technical terms accurate." : "")}" +
+                //    $"\n\nFormat your summary as plain prose (no bullets or numbering).";
+
+                string summaryPrompt;
+                if (isMedical)
+                {
+                    summaryPrompt =
+                        $"In {generalLangName}, write a concise MEDICAL SUMMARY (3–5 sentences) of the content on these page(s).  " +
+                        $"Highlight key medical concepts and maintain technical accuracy (e.g., pathophysiology, indications, contraindications).  " +
+                        $"Format as plain prose (no bullets or numbering).";
+                }
+                else
+                {
+                    summaryPrompt =
+                        $"In {generalLangName}, write a concise SUMMARY (3–5 sentences) of the content on these page(s).  " +
+                        $"Format as plain prose (no bullets or numbering).";
+                }
+
 
                 // 3.6) Key Takeaways prompt
-                //Best Version
-                string takeawaysPrompt =
-                    //$"List 5 KEY TAKEAWAYS (in {generalLangName}) from these page(s), formatted as bullets.  " +
-                    $"List KEY TAKEAWAYS (in {generalLangName}) from these page(s), formatted as bullets.  " +
-                    $"Each line must begin with a dash and a space, like:\n" +
-                    $"- Takeaway 1\n" +
-                    $"- Takeaway 2\n" +
-                    $"…\n\n" +
-                    $"{(isMedical ? "Include any critical medical terms and their context." : "")}";
+                // Best Version (preserved for reference)
+                //string takeawaysPrompt =
+                //    //$"List 5 KEY TAKEAWAYS (in {generalLangName}) from these page(s), formatted as bullets.  " +
+                //    $"List KEY TAKEAWAYS (in {generalLangName}) from these page(s), formatted as bullets.  " +
+                //    $"Each line must begin with a dash and a space, like:\n" +
+                //    $"- Takeaway 1\n" +
+                //    $"- Takeaway 2\n" +
+                //    $"…\n\n" +
+                //    $"{(isMedical ? "Include any critical medical terms and their context." : "")}";
+
+                string takeawaysPrompt;
+                if (isMedical)
+                {
+                    takeawaysPrompt =
+                        $"List KEY TAKEAWAYS (in {generalLangName}) from these page(s), formatted as bullets.  " +
+                        $"Each line must begin with a dash and a space, for example:\n" +
+                        $"- Takeaway 1\n" +
+                        $"- Takeaway 2\n\n" +
+                        $"Include critical medical terms, their context, and implications for patient care.";
+                }
+                else
+                {
+                    takeawaysPrompt =
+                        $"List KEY TAKEAWAYS (in {generalLangName}) from these page(s), formatted as bullets.  " +
+                        $"Each line must begin with a dash and a space, for example:\n" +
+                        $"- Takeaway 1\n" +
+                        $"- Takeaway 2\n\n";
+                }
+
 
                 // 3.7) Fill-in-the-Blank (Cloze) prompt
-                //Best Version
-                string clozePrompt =
-                    //$"Generate 5 FILL‐IN‐THE‐BLANK sentences (in {generalLangName}) based on these page(s).  " +
-                    $"Generate FILL‐IN‐THE‐BLANK sentences (in {generalLangName}) based on these page(s).  " +
-                    $"Each entry should consist of two lines:\n\n" +
-                    $"Sentence:“_______________ is <brief clue>.”\n" +
-                    $"Answer: <the correct word or phrase> (in {generalLangName}).\n\n" +
-                    //$"For example:\nSentence: “_____[Pilocarpine]_____ is a miotic drug.”\nAnswer: Pilocarpine\n\n" +
-                    $"For example:\nSentence: “_______________ is a miotic drug.”\nAnswer: Pilocarpine\n\n" +
-                    $"Leave a single blank line between each pair.  Do NOT embed the answer inside the blank.";
+                // Best Version (preserved for reference)
+                //string clozePrompt =
+                //    //$"Generate 5 FILL‐IN‐THE‐BLANK sentences (in {generalLangName}) based on these page(s).  " +
+                //    $"Generate FILL‐IN‐THE‐BLANK sentences (in {generalLangName}) based on these page(s).  " +
+                //    $"Each entry should consist of two lines:\n\n" +
+                //    $"Sentence:“_______________ is <brief clue>.”\n" +
+                //    $"Answer: <the correct word or phrase> (in {generalLangName}).\n\n" +
+                //    //$"For example:\nSentence: “_____[Pilocarpine]_____ is a miotic drug.”\nAnswer: Pilocarpine\n\n" +
+                //    $"For example:\nSentence: “_______________ is a miotic drug.”\nAnswer: Pilocarpine\n\n" +
+                //    $"Leave a single blank line between each pair.  Do NOT embed the answer inside the blank.";
+
+                string clozePrompt;
+                if (isMedical)
+                {
+                    clozePrompt =
+                        $"Generate FILL-IN-THE-BLANK sentences (in {generalLangName}) based on these page(s), focusing on medical terminology.  " +
+                        $"Each entry should consist of two lines:\n\n" +
+                        $"Sentence: \"_______________ is <brief medical clue>.\"\n" +
+                        $"Answer: <the correct medical term or phrase> (in {generalLangName}).\n\n" +
+                        $"For example:\n" +
+                        $"Sentence: \"_______________ is a cholinergic agonist used to treat glaucoma.\"\n" +
+                        $"Answer: Pilocarpine\n\n" +
+                        $"Leave exactly one blank line between each pair; do NOT show the answer inside the blank.";
+                }
+                else
+                {
+                    clozePrompt =
+                        $"Generate FILL-IN-THE-BLANK sentences (in {generalLangName}) based on these page(s).  " +
+                        $"Each entry should consist of two lines:\n\n" +
+                        $"Sentence: \"_______________ is <brief clue>.\"\n" +
+                        $"Answer: <the correct word or phrase> (in {generalLangName}).\n\n" +
+                        $"For example:\n" +
+                        $"Sentence: \"_______________ is the capital of France.\"\n" +
+                        $"Answer: Paris\n\n" +
+                        $"Leave exactly one blank line between each pair; do NOT show the answer inside the blank.";
+                }
+
 
                 // 3.8) True/False Questions prompt
-                //Best Version
-                string trueFalsePrompt =
-                    //$"Generate 5 TRUE/FALSE statements (in {generalLangName}) based on these page(s).  " +
-                    $"Generate TRUE/FALSE statements (in {generalLangName}) based on these page(s).  " +
-                    $"Each block should be two lines:\n\n" +
-                    $"Statement: <write a true‐or‐false sentence here>\n" +
-                    $"Answer: <True or False>\n\n" +
-                    $"Leave exactly one blank line between each pair.  Do NOT write any additional explanation.";
+                // Best Version (preserved for reference)
+                //string trueFalsePrompt =
+                //    //$"Generate 5 TRUE/FALSE statements (in {generalLangName}) based on these page(s).  " +
+                //    $"Generate TRUE/FALSE statements (in {generalLangName}) based on these page(s).  " +
+                //    $"Each block should be two lines:\n\n" +
+                //    $"Statement: <write a true‐or‐false sentence here>\n" +
+                //    $"Answer: <True or False>\n\n" +
+                //    $"Leave exactly one blank line between each pair.  Do NOT write any additional explanation.";
+
+                string trueFalsePrompt;
+                if (isMedical)
+                {
+                    trueFalsePrompt =
+                        $"Generate TRUE/FALSE statements (in {generalLangName}) focused on the medical content of these page(s).  " +
+                        $"Each block should be two lines:\n\n" +
+                        $"Statement: <a clinically accurate true-or-false sentence>\n" +
+                        $"Answer: <True or False>\n\n" +
+                        $"Leave exactly one blank line between each pair; do NOT provide explanations.";
+                }
+                else
+                {
+                    trueFalsePrompt =
+                        $"Generate TRUE/FALSE statements (in {generalLangName}) based on these page(s).  " +
+                        $"Each block should be two lines:\n\n" +
+                        $"Statement: <write a true-or-false sentence>\n" +
+                        $"Answer: <True or False>\n\n" +
+                        $"Leave exactly one blank line between each pair; do NOT provide explanations.";
+                }
+
 
                 // 3.9) Outline prompt
-                //Best Version
-                string outlinePrompt =
-                    $"Produce a hierarchical OUTLINE in {generalLangName} for the material on these page(s).  " +
-                    $"Use numbered levels (e.g., “1. Main Heading,” “1.1 Subheading,” “1.1.1 Detail”).  " +
-                    $"Do NOT use bullet points—strictly use decimal numbering.  " +
-                    $"{(isMedical ? "Include medical subheadings where appropriate." : "")}";
+                // Best Version (preserved for reference)
+                //string outlinePrompt =
+                //    $"Produce a hierarchical OUTLINE in {generalLangName} for the material on these page(s).  " +
+                //    $"Use numbered levels (e.g., “1. Main Heading,” “1.1 Subheading,” “1.1.1 Detail”).  " +
+                //    $"Do NOT use bullet points—strictly use decimal numbering.  " +
+                //    $"{(isMedical ? "Include medical subheadings where appropriate." : "")}";
+
+                string outlinePrompt;
+                if (isMedical)
+                {
+                    outlinePrompt =
+                        $"Produce a hierarchical MEDICAL OUTLINE in {generalLangName} for the material on these page(s).  " +
+                        $"Use decimal numbering (e.g., “1. Topic,” “1.1 Subtopic,” “1.1.1 Detail”).  " +
+                        $"Include specific medical subheadings (e.g., pathophysiology, clinical presentation, management) where appropriate.";
+                }
+                else
+                {
+                    outlinePrompt =
+                        $"Produce a hierarchical OUTLINE in {generalLangName} for the material on these page(s).  " +
+                        $"Use decimal numbering (e.g., “1. Topic,” “1.1 Subtopic,” “1.1.1 Detail”).  " +
+                        $"Do NOT use bullet points—strictly use decimal numbering.";
+                }
+
 
                 // 3.10) Concept Map prompt
-                //Best Version
-                string conceptMapPrompt =
-                    $"List the key CONCEPTS from these page(s) and show how they relate, in {generalLangName}.  " +
-                    $"For each pair, use one of these formats exactly:\n" +
-                    $"“ConceptA → relates to → ConceptB”\n" +
-                    $"or\n" +
-                    $"“ConceptA — contrasts with — ConceptC”\n\n" +
-                    $"Separate each relationship on its own line.  Provide at least 5 relationships.";
+                // Best Version (preserved for reference)
+                //string conceptMapPrompt =
+                //    $"List the key CONCEPTS from these page(s) and show how they relate, in {generalLangName}.  " +
+                //    $"For each pair, use one of these formats exactly:\n" +
+                //    $"“ConceptA → relates to → ConceptB”\n" +
+                //    $"or\n" +
+                //    $"“ConceptA — contrasts with — ConceptC”\n\n" +
+                //    $"Separate each relationship on its own line.  Provide at least 5 relationships.";
+
+                string conceptMapPrompt;
+                if (isMedical)
+                {
+                    conceptMapPrompt =
+                        $"List the key MEDICAL CONCEPTS from these page(s) and show how they relate, in {generalLangName}.  " +
+                        $"For each pair, use exactly one of these formats:\n" +
+                        $"“ConceptA → relates to → ConceptB”\n" +
+                        $"or\n" +
+                        $"“ConceptA — contrasts with — ConceptC”\n\n" +
+                        $"Focus on clinical or pathophysiological relationships.  Provide at least 5 relationships.";
+                }
+                else
+                {
+                    conceptMapPrompt =
+                        $"List the key CONCEPTS from these page(s) and show how they relate, in {generalLangName}.  " +
+                        $"For each pair, use exactly one of these formats:\n" +
+                        $"“ConceptA → relates to → ConceptB”\n" +
+                        $"or\n" +
+                        $"“ConceptA — contrasts with — ConceptC”\n\n" +
+                        $"Separate each relationship on its own line.  Provide at least 5 relationships.";
+                }
+
 
                 // 3.11) Table Extraction prompt
-                //Not Ready / Not Best Version
-                string tableExtractPrompt =
-                    $"If these page(s) contain any tables (e.g., drug doses, side effects, lab values), " +
-                    $"extract each table into a Markdown‐style table in {generalLangName}.  Use this exact format:\n\n" +
-                    $"| Column1 | Column2 | Column3 |\n" +
-                    $"|---------|---------|---------|\n" +
-                    $"| data11  | data12  | data13  |\n" +
-                    $"| data21  | data22  | data23  |\n\n" +
-                    $"If no table is present, respond with exactly: “No table found.”";
+                // Not Ready / Not Best Version (preserved for reference)
+                //string tableExtractPrompt =
+                //    $"If these page(s) contain any tables (e.g., drug doses, side effects, lab values), " +
+                //    $"extract each table into a Markdown‐style table in {generalLangName}.  Use this exact format:\n\n" +
+                //    $"| Column1 | Column2 | Column3 |\n" +
+                //    $"|---------|---------|---------|\n" +
+                //    $"| data11  | data12  | data13  |\n" +
+                //    $"| data21  | data22  | data23  |\n\n" +
+                //    $"If no table is present, respond with exactly: “No table found.”";
+
+                string tableExtractPrompt;
+                if (isMedical)
+                {
+                    tableExtractPrompt =
+                        $"If these page(s) contain any MEDICAL TABLES (e.g., drug doses, indications, side effects, lab values), " +
+                        $"extract each table into markdown format in {generalLangName}.  Follow this exact format:\n\n" +
+                        $"| Column1         | Column2                   | Column3            |\n" +
+                        $"|-----------------|---------------------------|--------------------|\n" +
+                        $"| data11 (e.g., drug) | data12 (e.g., dose)   | data13 (e.g., side effect) |\n" +
+                        $"| data21         | data22                     | data23             |\n\n" +
+                        $"If no table is present, respond exactly: “No table found.”";
+                }
+                else
+                {
+                    tableExtractPrompt =
+                        $"If these page(s) contain any tables (e.g., schedules, comparisons, statistics), " +
+                        $"extract each table into markdown format in {generalLangName}.  Follow this exact format:\n\n" +
+                        $"| Column1 | Column2 | Column3 |\n" +
+                        $"|---------|---------|---------|\n" +
+                        $"| data11  | data12  | data13  |\n" +
+                        $"| data21  | data22  | data23  |\n\n" +
+                        $"If no table is present, respond exactly: “No table found.”";
+                }
+
 
                 // 3.12) Simplified Explanation prompt
-                //Best Version
-                string simplifiedPrompt =
-                    $"Explain the content of these page(s) in simpler language, as if teaching a first-year medical student.  " +
-                    $"Use {generalLangName}.  Define any technical or medical jargon in parentheses the first time it appears.  " +
-                    $"Write one cohesive paragraph—no bullets or lists.";
+                // Best Version (preserved for reference)
+                //string simplifiedPrompt =
+                //    $"Explain the content of these page(s) in simpler language, as if teaching a first-year medical student.  " +
+                //    $"Use {generalLangName}.  Define any technical or medical jargon in parentheses the first time it appears.  " +
+                //    $"Write one cohesive paragraph—no bullets or lists.";
+
+                string simplifiedPrompt;
+                if (isMedical)
+                {
+                    simplifiedPrompt =
+                        $"Explain the content of these page(s) in simpler language (in {generalLangName}), as if teaching a first-year medical student.  " +
+                        $"Define any technical/medical jargon in parentheses upon first use.  " +
+                        $"Write one cohesive paragraph—no bullets or lists.";
+                }
+                else
+                {
+                    simplifiedPrompt =
+                        $"Explain the content of these page(s) in simpler language (in {generalLangName}).  " +
+                        $"Write one cohesive paragraph—no bullets or lists.";
+                }
+
 
                 // 3.13) Case Study prompt
-                //Best Version
-                string caseStudyPrompt =
-                    $"Write a short CLINICAL VIGNETTE (1 paragraph) based on these page(s), in {generalLangName}.  " +
-                    $"Include:\n" +
-                    $"- Patient age and gender\n" +
-                    $"- Presenting complaint or symptom\n" +
-                    $"- Key pertinent findings (e.g., vital signs, lab results)\n\n" +
-                    $"Then immediately follow with a single multiple-choice question (in {generalLangName}) about the most likely diagnosis or next step.  " +
-                    $"Format exactly:\n" +
-                    $"\nMCQ: <The question text>\n" +
-                    $"A) <Option A>\n" +
-                    $"B) <Option B>\n" +
-                    $"C) <Option C>\n" +
-                    $"D) <Option D>\n" +
-                    $"Answer: <A, B, C, or D>\n\n" +
-                    //$"No extra commentary—only the vignette paragraph, blank line, then the MCQ block.";
-                    $"No extra commentary—only the vignette paragraph, blank line, then the MCQ block, at least two cases.";
+                // Best Version (preserved for reference)
+                //string caseStudyPrompt =
+                //    $"Write a short CLINICAL VIGNETTE (1 paragraph) based on these page(s), in {generalLangName}.  " +
+                //    $"Include:\n" +
+                //    $"- Patient age and gender\n" +
+                //    $"- Presenting complaint or symptom\n" +
+                //    $"- Key pertinent findings (e.g., vital signs, lab results)\n\n" +
+                //    $"Then immediately follow with a single multiple-choice question (in {generalLangName}) about the most likely diagnosis or next step.  " +
+                //    $"Format exactly:\n" +
+                //    $"\nMCQ: <The question text>\n" +
+                //    $"A) <Option A>\n" +
+                //    $"B) <Option B>\n" +
+                //    $"C) <Option C>\n" +
+                //    $"D) <Option D>\n" +
+                //    $"Answer: <A, B, C, or D>\n\n" +
+                //    //$"No extra commentary—only the vignette paragraph, blank line, then the MCQ block.";
+                //    $"No extra commentary—only the vignette paragraph, blank line, then the MCQ block, at least two cases.";
+
+                string caseStudyPrompt;
+                if (isMedical)
+                {
+                    caseStudyPrompt =
+                        $"Write a short CLINICAL VIGNETTE (1 paragraph) based on these page(s), in {generalLangName}.  " +
+                        $"Include:\n" +
+                        $"- Patient age and gender\n" +
+                        $"- Presenting complaint or symptom\n" +
+                        $"- Key pertinent findings (e.g., vital signs, lab results)\n\n" +
+                        $"Then immediately follow with a MULTIPLE-CHOICE QUESTION (in {generalLangName}) about the most likely diagnosis or next step.  " +
+                        $"Format exactly:\n\n" +
+                        $"MCQ: <The question text>\n" +
+                        $"A) <Option A>\n" +
+                        $"B) <Option B>\n" +
+                        $"C) <Option C>\n" +
+                        $"D) <Option D>\n" +
+                        $"Answer: <A, B, C, or D>\n\n" +
+                        $"No extra commentary—only the vignette paragraph, blank line, then the MCQ block.";
+                }
+                else
+                {
+                    caseStudyPrompt =
+                        $"Write a short CASE SCENARIO (1 paragraph) based on these page(s), in {generalLangName}.  " +
+                        $"Then follow with a MULTIPLE-CHOICE QUESTION (in {generalLangName}) about a key concept.  " +
+                        $"Format exactly:\n\n" +
+                        $"MCQ: <The question text>\n" +
+                        $"A) <Option A>\n" +
+                        $"B) <Option B>\n" +
+                        $"C) <Option C>\n" +
+                        $"D) <Option D>\n" +
+                        $"Answer: <A, B, C, or D>\n\n" +
+                        $"No extra commentary—only the scenario paragraph, blank line, then the MCQ block.";
+                }
+
 
                 // 3.14) Keywords prompt
-                //Best Version
-                string keywordsPrompt =
-                    $"List the HIGH-YIELD KEYWORDS from these page(s) in {generalLangName}.  " +
-                    $"Output as a comma-separated list (e.g., “keyword1, keyword2, keyword3”).  " +
-                    $"Do NOT include definitions—only the keywords themselves.  " +
-                    $"Provide at least 8–10 keywords.";
+                // Best Version (preserved for reference)
+                //string keywordsPrompt =
+                //    $"List the HIGH-YIELD KEYWORDS from these page(s) in {generalLangName}.  " +
+                //    $"Output as a comma-separated list (e.g., “keyword1, keyword2, keyword3”).  " +
+                //    $"Do NOT include definitions—only the keywords themselves.  " +
+                //    $"Provide at least 8–10 keywords.";
+
+                string keywordsPrompt;
+                if (isMedical)
+                {
+                    keywordsPrompt =
+                        $"List the HIGH-YIELD MEDICAL KEYWORDS from these page(s) in {generalLangName}.  " +
+                        $"Output as a comma-separated list (e.g., “keyword1, keyword2, keyword3”).  " +
+                        $"Do NOT include definitions—only the keywords themselves.  " +
+                        $"Provide at least 8–10 medical terms.";
+                }
+                else
+                {
+                    keywordsPrompt =
+                        $"List the HIGH-YIELD KEYWORDS from these page(s) in {generalLangName}.  " +
+                        $"Output as a comma-separated list (e.g., “keyword1, keyword2, keyword3”).  " +
+                        $"Do NOT include definitions—only the keywords themselves.  " +
+                        $"Provide at least 8–10 keywords.";
+                }
+
 
 
 
