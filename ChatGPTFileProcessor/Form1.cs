@@ -554,6 +554,7 @@ namespace ChatGPTFileProcessor
                     $"Separate each relationship on its own line.  Provide at least 5 relationships.";
 
                 // 3.11) Table Extraction prompt
+                //Not Ready / Not Best Version
                 string tableExtractPrompt =
                     $"If these page(s) contain any tables (e.g., drug doses, side effects, lab values), " +
                     $"extract each table into a Markdown‐style table in {generalLangName}.  Use this exact format:\n\n" +
