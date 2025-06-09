@@ -61,6 +61,7 @@
             this.chkCaseStudy = new DevExpress.XtraEditors.CheckEdit();
             this.chkSimplified = new DevExpress.XtraEditors.CheckEdit();
             this.chkTableExtract = new DevExpress.XtraEditors.CheckEdit();
+            this.chkUseCommaDelimiter = new DevExpress.XtraEditors.CheckEdit();
             this.chkConceptMap = new DevExpress.XtraEditors.CheckEdit();
             this.chkOutline = new DevExpress.XtraEditors.CheckEdit();
             this.chkTrueFalse = new DevExpress.XtraEditors.CheckEdit();
@@ -99,7 +100,6 @@
             this.panelBottom = new System.Windows.Forms.Panel();
             this.panelTop = new System.Windows.Forms.Panel();
             this.panelFill = new System.Windows.Forms.Panel();
-            this.chkUseCommaDelimiter = new DevExpress.XtraEditors.CheckEdit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textEditAPIKey.Properties)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -107,6 +107,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.chkCaseStudy.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkSimplified.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkTableExtract.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkUseCommaDelimiter.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkConceptMap.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkOutline.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkTrueFalse.Properties)).BeginInit();
@@ -132,7 +133,6 @@
             this.panelBottom.SuspendLayout();
             this.panelTop.SuspendLayout();
             this.panelFill.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chkUseCommaDelimiter.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -339,6 +339,17 @@
             this.chkTableExtract.SuperTip = superToolTip3;
             this.chkTableExtract.TabIndex = 35;
             this.chkTableExtract.CheckedChanged += new System.EventHandler(this.chkTableExtract_CheckedChanged);
+            // 
+            // chkUseCommaDelimiter
+            // 
+            this.chkUseCommaDelimiter.Location = new System.Drawing.Point(854, 1);
+            this.chkUseCommaDelimiter.Name = "chkUseCommaDelimiter";
+            this.chkUseCommaDelimiter.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkUseCommaDelimiter.Properties.Appearance.Options.UseFont = true;
+            this.chkUseCommaDelimiter.Properties.Caption = "Use comma-delimited (CSV) instead of tab (TSV)";
+            this.chkUseCommaDelimiter.Size = new System.Drawing.Size(428, 26);
+            this.chkUseCommaDelimiter.TabIndex = 29;
+            this.chkUseCommaDelimiter.CheckedChanged += new System.EventHandler(this.chkUseCommaDelimiter_CheckedChanged);
             // 
             // chkConceptMap
             // 
@@ -960,17 +971,6 @@
             this.panelFill.Size = new System.Drawing.Size(1308, 385);
             this.panelFill.TabIndex = 25;
             // 
-            // chkUseCommaDelimiter
-            // 
-            this.chkUseCommaDelimiter.Location = new System.Drawing.Point(854, 1);
-            this.chkUseCommaDelimiter.Name = "chkUseCommaDelimiter";
-            this.chkUseCommaDelimiter.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkUseCommaDelimiter.Properties.Appearance.Options.UseFont = true;
-            this.chkUseCommaDelimiter.Properties.Caption = "Use comma-delimited (CSV) instead of tab (TSV)";
-            this.chkUseCommaDelimiter.Size = new System.Drawing.Size(428, 26);
-            this.chkUseCommaDelimiter.TabIndex = 29;
-            this.chkUseCommaDelimiter.CheckedChanged += new System.EventHandler(this.chkSummary_CheckedChanged);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -994,6 +994,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.chkCaseStudy.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkSimplified.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkTableExtract.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkUseCommaDelimiter.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkConceptMap.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkOutline.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkTrueFalse.Properties)).EndInit();
@@ -1021,7 +1022,6 @@
             this.panelBottom.ResumeLayout(false);
             this.panelTop.ResumeLayout(false);
             this.panelFill.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.chkUseCommaDelimiter.Properties)).EndInit();
             this.ResumeLayout(false);
 
         }

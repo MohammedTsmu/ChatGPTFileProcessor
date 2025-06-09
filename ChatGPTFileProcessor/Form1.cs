@@ -1812,12 +1812,29 @@ namespace ChatGPTFileProcessor
 
 
 
-                // 7.3) ملف Flashcards
+                //// 7.3) ملف Flashcards
+                //if (chkFlashcards.Checked)
+                //{
+                //    string flashcardsText = allFlashcards.ToString();
+                //    SaveContentToFile(flashcardsText, flashcardsFilePath, "Flashcards");
+                //}
                 if (chkFlashcards.Checked)
                 {
-                    string flashcardsText = allFlashcards.ToString();
-                    SaveContentToFile(flashcardsText, flashcardsFilePath, "Flashcards");
+                    // 1) Word export stays as-is
+                    string flashcardsRaw = allFlashcards.ToString();
+                    SaveContentToFile(flashcardsRaw, flashcardsFilePath, "Flashcards");
+
+                    // 2) Parse into (Front,Back) pairs
+                    var parsed = ParseFlashcards(flashcardsRaw);
+
+                    // 3) Build the CSV/TSV path
+                    var flashCsvPath = Path.ChangeExtension(flashcardsFilePath,
+                        chkUseCommaDelimiter.Checked ? ".csv" : ".tsv");
+
+                    // 4) Write it out
+                    SaveFlashcardsToDelimitedFile(parsed, flashCsvPath, chkUseCommaDelimiter.Checked);
                 }
+
 
                 // 7.4) ملف Vocabulary (بعد تطبيق FormatVocabulary على الناتج)
                 if (chkVocabulary.Checked)
@@ -2465,6 +2482,7 @@ namespace ChatGPTFileProcessor
             chkSimplified.Checked = Properties.Settings.Default.GenerateSimplified;
             chkCaseStudy.Checked = Properties.Settings.Default.GenerateCaseStudy;
             chkKeywords.Checked = Properties.Settings.Default.GenerateKeywords;
+            chkUseCommaDelimiter.Checked = Properties.Settings.Default.useCommaDelimiter;
 
             textEditAPIKey.ReadOnly = Properties.Settings.Default.ApiKeyLock;
         }
@@ -2608,6 +2626,21 @@ namespace ChatGPTFileProcessor
             UpdateStatus($"Keywords Extraction…{(chkKeywords.Checked ? "Activated" : "Deactivated")}");
         }
 
+        private void chkUseCommaDelimiter_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkUseCommaDelimiter.Checked)
+            {
+                UpdateStatus("Using Comma Delimiter for CSV files");
+            }
+            else
+            {
+                UpdateStatus("Using Tab Delimiter for TSV files");
+            }
+            // store the UseCommaDelimiter setting
+            Properties.Settings.Default.useCommaDelimiter = chkUseCommaDelimiter.Checked;
+            Properties.Settings.Default.Save();
+        }
+
         private void chkMedicalMaterial_CheckedChanged(object sender, EventArgs e)
         {
             if (chkMedicalMaterial.Checked)
@@ -2733,6 +2766,67 @@ namespace ChatGPTFileProcessor
             Properties.Settings.Default.PageBatchMode = chosen;
             Properties.Settings.Default.Save();
             UpdateStatus($"Page batch mode set to: {chosen} page(s) at a time");
+        }
+
+
+
+        /// <summary>
+        /// Turns the raw flashcard text into a list of (Front,Back) tuples.
+        /// Expects blocks like:
+        ///    Front: X
+        ///    Back:  Y
+        /// separated by blank lines.
+        /// </summary>
+        private List<(string Front, string Back)> ParseFlashcards(string raw)
+        {
+            var cards = new List<(string, string)>();
+            // split on *exactly* two newlines (blank‐line separator)
+            var entries = raw.Split(new[] { "\r\n\r\n", "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var entry in entries)
+            {
+                string front = null, back = null;
+                foreach (var line in entry.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    var t = line.Trim();
+                    if (t.StartsWith("Front:", StringComparison.OrdinalIgnoreCase))
+                        front = t.Substring("Front:".Length).Trim();
+                    else if (t.StartsWith("Back:", StringComparison.OrdinalIgnoreCase))
+                        back = t.Substring("Back:".Length).Trim();
+                }
+                if (!string.IsNullOrEmpty(front) && !string.IsNullOrEmpty(back))
+                    cards.Add((front, back));
+            }
+            return cards;
+        }
+
+        /// <summary>
+        /// Writes out a Front/Back list to a comma‐ or tab‐delimited file.
+        /// </summary>
+        private void SaveFlashcardsToDelimitedFile(List<(string Front, string Back)> cards,
+                                                   string path,
+                                                   bool commaDelimiter)
+        {
+            using (var w = new StreamWriter(path, false, Encoding.UTF8))
+            {
+                char sep = commaDelimiter ? ',' : '\t';
+                // header (optional)
+                w.WriteLine($"Front{sep}Back");
+                foreach (var (front, back) in cards)
+                {
+                    // escape quotes if using CSV
+                    if (commaDelimiter)
+                    {
+                        var f = front.Replace("\"", "\"\"");
+                        var b = back.Replace("\"", "\"\"");
+                        w.WriteLine($"\"{f}\"{sep}\"{b}\"");
+                    }
+                    else
+                    {
+                        // TSV: less chance of needing escapes
+                        w.WriteLine($"{front}{sep}{back}");
+                    }
+                }
+            }
         }
 
 
@@ -2911,6 +3005,8 @@ namespace ChatGPTFileProcessor
                 }
             }
         }
+
+        
 
         //private void SaveMcqsToDelimitedFile(List<MCQ> mcqs, string filePath, bool useComma = false)
         //{
