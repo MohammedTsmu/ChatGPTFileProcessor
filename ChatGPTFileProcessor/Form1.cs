@@ -1953,39 +1953,69 @@ namespace ChatGPTFileProcessor
                 //    UpdateStatus($"Cloze exports saved: {Path.GetFileName(clozeFilePath)} and {Path.GetFileName(outPath)}");
                 //}
 
+                //if (chkCloze.Checked)
+                //{
+                //    // 1) Word export, unchanged
+                //    string clozeRaw = allCloze.ToString();
+                //    SaveContentToFile(clozeRaw, clozeFilePath, "Fill-in-the-Blank (Cloze)");
+
+                //    // 2) Parse into (sentence, answer) pairs
+                //    var parsed = ParseCloze(clozeRaw);
+                //    bool useComma = chkUseCommaDelimiter.Checked;
+                //    string ext = useComma ? ".csv" : ".tsv";
+
+                //    //// 3) Emit a single-column CSV with the markup in place of the blank
+                //    //string csvPath = Path.ChangeExtension(clozeFilePath, ".csv");
+                //    string csvPath = Path.ChangeExtension(clozeFilePath, ext);
+                //    using (var sw = new StreamWriter(csvPath, false, Encoding.UTF8))
+                //    {
+                //        // no header needed
+                //        foreach (var (sentence, answer) in parsed)
+                //        {
+                //            // inject the cloze back into the sentence
+                //            var markup = $"{{{{c1::{answer}}}}}";
+                //            var line = sentence.Replace("_______________", markup);
+                //            // wrap in quotes if it contains commas/newlines
+                //            if (line.Contains(",") || line.Contains("\n"))
+                //                line = $"\"{line.Replace("\"", "\"\"")}\"";
+                //            sw.WriteLine(line);
+                //        }
+                //    }
+
+                //    UpdateStatus($"✅ Cloze export saved: {Path.GetFileName(csvPath)}");
+                //}
+
                 if (chkCloze.Checked)
                 {
-                    // 1) Word export, unchanged
+                    // 1) Word export (unchanged)
                     string clozeRaw = allCloze.ToString();
                     SaveContentToFile(clozeRaw, clozeFilePath, "Fill-in-the-Blank (Cloze)");
 
-                    // 2) Parse into (sentence, answer) pairs
-                    var parsed = ParseCloze(clozeRaw);
-                    bool useComma = chkUseCommaDelimiter.Checked;
+                    // 2) Delimited export for Anki
+                    var parsed = ParseCloze(clozeRaw);                     // your (sentence,answer) pairs
+                    bool useComma = chkUseCommaDelimiter.Checked;             // true ⇒ CSV, false ⇒ TSV
                     string ext = useComma ? ".csv" : ".tsv";
+                    string outPath = Path.ChangeExtension(clozeFilePath, ext);
 
-                    //// 3) Emit a single-column CSV with the markup in place of the blank
-                    //string csvPath = Path.ChangeExtension(clozeFilePath, ".csv");
-                    string csvPath = Path.ChangeExtension(clozeFilePath, ext);
-                    using (var sw = new StreamWriter(csvPath, false, Encoding.UTF8))
+                    using (var sw = new StreamWriter(outPath, false, Encoding.UTF8))
                     {
-                        // no header needed
+                        // _no header_ → Anki will import every line into the Text field
                         foreach (var (sentence, answer) in parsed)
                         {
-                            // inject the cloze back into the sentence
+                            // inject the {{c1::answer}} into the blank
                             var markup = $"{{{{c1::{answer}}}}}";
                             var line = sentence.Replace("_______________", markup);
-                            // wrap in quotes if it contains commas/newlines
-                            if (line.Contains(",") || line.Contains("\n"))
+
+                            // if CSV and the line itself has commas or newlines, wrap in quotes
+                            if (useComma && (line.Contains(',') || line.Contains('\n')))
                                 line = $"\"{line.Replace("\"", "\"\"")}\"";
+
                             sw.WriteLine(line);
                         }
                     }
 
-                    UpdateStatus($"✅ Cloze export saved: {Path.GetFileName(csvPath)}");
+                    UpdateStatus($"✅ Cloze exports saved: {Path.GetFileName(clozeFilePath)} and {Path.GetFileName(outPath)}");
                 }
-
-
 
 
 
