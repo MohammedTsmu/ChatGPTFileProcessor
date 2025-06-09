@@ -106,6 +106,11 @@ namespace ChatGPTFileProcessor
                 radioPageBatchSize.EditValue = 1;
             }
 
+
+
+            // ▼ Populate the “Delimiter” dropdown of the csv export feature
+            cmbDelimiter.Properties.Items.AddRange(new[] { "Tab (TSV)", "Comma (CSV)" });
+            cmbDelimiter.SelectedIndex = 0; // default to TSV
         }
 
 
@@ -1759,12 +1764,53 @@ namespace ChatGPTFileProcessor
                     SaveContentToFile(FormatDefinitions(definitionsText), definitionsFilePath, "Definitions");
                 }
 
-                // 7.2) ملف MCQs (يمكن تكييف تنسيق MCQs إذا أردتم تنسيقًا أضبط)
+                //// 7.2) ملف MCQs (يمكن تكييف تنسيق MCQs إذا أردتم تنسيقًا أضبط)
+                //if (chkMCQs.Checked)
+                //{
+                //    string mcqsText = allMCQs.ToString();
+                //    SaveContentToFile(mcqsText, mcqsFilePath, "MCQs");
+                //}
+
+                //if (chkMCQs.Checked)
+                //{
+                //    // 1) export to Word as before
+                //    string mcqsRaw = allMCQs.ToString();
+                //    SaveContentToFile(mcqsRaw, mcqsFilePath, "MCQs");
+
+                //    // 2) parse into MCQ objects
+                //    var parsed = ParseMcqs(mcqsRaw);
+
+                //    // 3) decide CSV vs TSV
+                //    // Option A: hard-coded
+                //    // bool useCommaDelimiter = false;
+
+                //    // Option B: from a new UI checkbox
+                //    bool useCommaDelimiter = chkUseCommaDelimiter.Checked;
+
+                //    // 4) build same base name but .csv or .tsv
+                //    string delimitedPath = Path.ChangeExtension(mcqsFilePath,
+                //        useCommaDelimiter ? ".csv" : ".tsv");
+
+                //    // 5) write out
+                //    SaveMcqsToDelimitedFile(parsed, delimitedPath, useCommaDelimiter);
+                //}
                 if (chkMCQs.Checked)
                 {
-                    string mcqsText = allMCQs.ToString();
-                    SaveContentToFile(mcqsText, mcqsFilePath, "MCQs");
+                    string mcqsRaw = allMCQs.ToString();
+                    // 1) still save the Word version:
+                    SaveContentToFile(mcqsRaw, mcqsFilePath, "MCQs");
+
+                    // 2) now parse & save out a .csv/.tsv
+                    var parsed = ParseMcqs(mcqsRaw);
+                    bool useComma = chkUseCommaDelimiter.Checked;    // or read from your combo
+                    var delPath = Path.ChangeExtension(mcqsFilePath,
+                                        useComma ? ".csv" : ".tsv");
+                    SaveMcqsToDelimitedFile(parsed, delPath, useComma);
                 }
+
+
+
+
 
                 // 7.3) ملف Flashcards
                 if (chkFlashcards.Checked)
@@ -1778,6 +1824,37 @@ namespace ChatGPTFileProcessor
                 {
                     string vocabularyText = FormatVocabulary(allVocabulary.ToString());
                     SaveContentToFile(vocabularyText, vocabularyFilePath, "Vocabulary");
+
+                    // ** New: export CSV for Anki **
+                    var vocabCsvPath = Path.ChangeExtension(vocabularyFilePath, ".txt");
+                    //var records = vocabularyText
+                    //    .Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                    //    .Select(line => {
+                    //        var parts = line.Split(new[] { " - " }, 2, StringSplitOptions.None);
+                    //        return new { Term = parts[0].Trim(), Translation = parts.Length > 1 ? parts[1].Trim() : "[Translation Needed]" };
+                    //    })
+                    //    .ToList();
+                    // split each non-empty line "Term – Translation"
+                    var records = vocabularyText
+                        .Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(line => {
+                            var parts = line.Split(new[] { " - " }, 2, StringSplitOptions.None);
+                            var term = parts[0].Trim();
+                            var translation = parts.Length > 1
+                                ? parts[1].Trim()
+                                : "[Translation Needed]";
+                            return Tuple.Create(term, translation);
+                        })
+                        .ToList();  // this is List<Tuple<string,string>>
+
+
+                    SaveVocabularyForAnki(records, vocabCsvPath, cmbDelimiter.SelectedIndex);
+                    UpdateStatus($"Vocabulary CSV/TSV saved: {vocabCsvPath}");
+
+
+                    //// write out a .txt next to your .docx
+                    //SaveVocabularyForAnki(records, vocabCsvPath, cmbDelimiter.SelectedIndex);
+                    //UpdateStatus($"Vocabulary export for Anki saved: {vocabCsvPath}");
                 }
 
                 // ── New features:
@@ -2657,6 +2734,220 @@ namespace ChatGPTFileProcessor
             Properties.Settings.Default.Save();
             UpdateStatus($"Page batch mode set to: {chosen} page(s) at a time");
         }
+
+
+        void SaveVocabularyForAnki(
+    List<Tuple<string, string>> records,
+    string path,
+    int delimiterChoiceIndex  // 0 = TSV, 1 = CSV
+)
+        {
+            string sep = (delimiterChoiceIndex == 0) ? "\t" : ",";
+
+            // old-school using block, not declaration
+            using (var sw = new System.IO.StreamWriter(path, false, System.Text.Encoding.UTF8))
+            {
+                foreach (var rec in records)
+                {
+                    string t = EscapeField(rec.Item1, sep);
+                    string tr = EscapeField(rec.Item2, sep);
+                    sw.WriteLine(t + sep + tr);
+                }
+            }
+        }
+
+        string EscapeField(string text, string sep)
+        {
+            bool mustQuote = text.Contains(sep) || text.Contains("\"") || text.Contains("\n");
+            if (mustQuote)
+            {
+                // double up any quotes, wrap in quotes
+                return "\"" + text.Replace("\"", "\"\"") + "\"";
+            }
+            return text;
+        }
+
+
+        /// <summary>
+        /// Represents one MCQ with 4 choices and a correct answer letter.
+        /// </summary>
+        public class McqItem
+        {
+            public string Question { get; set; }
+            public string OptionA { get; set; }
+            public string OptionB { get; set; }
+            public string OptionC { get; set; }
+            public string OptionD { get; set; }
+            public string Answer { get; set; }
+
+            /// combine the four options into a single “Options” cell,
+            /// with line-breaks between them
+            public string OptionsCell =>
+                $"A) {OptionA}\nB) {OptionB}\nC) {OptionC}\nD) {OptionD}";
+        }
+
+        //public class MCQ
+        //{
+        //    public string Question { get; set; }
+        //    public string A { get; set; }
+        //    public string B { get; set; }
+        //    public string C { get; set; }
+        //    public string D { get; set; }
+        //    public string Answer { get; set; }
+        //}
+
+
+        /// <summary>
+        /// Parse your raw MCQs (blocks separated by blank lines) into a List&lt;MCQ&gt;.
+        /// </summary>
+        private List<McqItem> ParseMcqs(string raw)
+        {
+            var items = new List<McqItem>();
+            // split on blank‐line blocks
+            var blocks = Regex.Split(raw.Trim(), @"\r?\n\s*\r?\n");
+
+            foreach (var block in blocks)
+            {
+                var mcq = new McqItem();
+                foreach (var line in block.Split('\n'))
+                {
+                    var t = line.Trim();
+                    if (t.StartsWith("Question:", StringComparison.OrdinalIgnoreCase))
+                        mcq.Question = t.Substring(9).Trim();
+                    else if (t.StartsWith("A)", StringComparison.OrdinalIgnoreCase))
+                        mcq.OptionA = t.Substring(2).Trim();
+                    else if (t.StartsWith("B)", StringComparison.OrdinalIgnoreCase))
+                        mcq.OptionB = t.Substring(2).Trim();
+                    else if (t.StartsWith("C)", StringComparison.OrdinalIgnoreCase))
+                        mcq.OptionC = t.Substring(2).Trim();
+                    else if (t.StartsWith("D)", StringComparison.OrdinalIgnoreCase))
+                        mcq.OptionD = t.Substring(2).Trim();
+                    else if (t.StartsWith("Answer:", StringComparison.OrdinalIgnoreCase))
+                        mcq.Answer = t.Substring(7).Trim();
+                }
+                // only add if we got at least a question and answer
+                if (!string.IsNullOrEmpty(mcq.Question) && !string.IsNullOrEmpty(mcq.Answer))
+                    items.Add(mcq);
+            }
+
+            return items;
+        }
+
+        //private List<MCQ> ParseMcqs(string raw)
+        //{
+        //    var list = new List<MCQ>();
+        //    var blocks = raw
+        //        .Split(new[] { "\r\n\r\n", "\n\n" }, StringSplitOptions.RemoveEmptyEntries)
+        //        .Select(b => b.Trim());
+
+        //    foreach (var block in blocks)
+        //    {
+        //        var lines = block
+        //            .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+        //            .Select(l => l.Trim())
+        //            .ToArray();
+
+        //        var mcq = new MCQ();
+        //        foreach (var line in lines)
+        //        {
+        //            if (line.StartsWith("Question:", StringComparison.OrdinalIgnoreCase))
+        //                mcq.Question = line.Substring("Question:".Length).Trim();
+        //            else if (line.StartsWith("A)", StringComparison.OrdinalIgnoreCase))
+        //                mcq.A = line.Substring(2).Trim();
+        //            else if (line.StartsWith("B)", StringComparison.OrdinalIgnoreCase))
+        //                mcq.B = line.Substring(2).Trim();
+        //            else if (line.StartsWith("C)", StringComparison.OrdinalIgnoreCase))
+        //                mcq.C = line.Substring(2).Trim();
+        //            else if (line.StartsWith("D)", StringComparison.OrdinalIgnoreCase))
+        //                mcq.D = line.Substring(2).Trim();
+        //            else if (line.StartsWith("Answer:", StringComparison.OrdinalIgnoreCase))
+        //                mcq.Answer = line.Substring("Answer:".Length).Trim();
+        //        }
+        //        // only add if we got at least a question and an answer
+        //        if (!string.IsNullOrWhiteSpace(mcq.Question) && !string.IsNullOrWhiteSpace(mcq.Answer))
+        //            list.Add(mcq);
+        //    }
+
+        //    return list;
+        //}
+
+        /// <summary>
+        /// Write a list of MCQs out to CSV or TSV.
+        /// </summary>
+        /// <param name="mcqs">Parsed questions</param>
+        /// <param name="filePath">Full path ending in “.csv” or “.tsv”</param>
+        /// <param name="useComma">True =&gt; comma-delimited (CSV), false =&gt; tab-delimited (TSV)</param>
+        private void SaveMcqsToDelimitedFile(
+    List<McqItem> items,
+    string path,
+    bool useCommaDelimiter
+)
+        {
+            var delim = useCommaDelimiter ? "," : "\t";
+
+            using (var sw = new StreamWriter(path, false, Encoding.UTF8))
+            {
+                // header row must match your Anki field names
+                sw.WriteLine($"Question{delim}Options{delim}Correct Answer");
+
+                string Escape(string field)
+                {
+                    // wrap in quotes if it contains delim or newline
+                    if (field.Contains(delim) || field.Contains("\n"))
+                    {
+                        // double up any existing quotes
+                        var escaped = field.Replace("\"", "\"\"");
+                        return $"\"{escaped}\"";
+                    }
+                    return field;
+                }
+
+                foreach (var mcq in items)
+                {
+                    var q = Escape(mcq.Question);
+                    var opt = Escape(mcq.OptionsCell);
+                    var a = Escape(mcq.Answer);
+                    sw.WriteLine($"{q}{delim}{opt}{delim}{a}");
+                }
+            }
+        }
+
+        //private void SaveMcqsToDelimitedFile(List<MCQ> mcqs, string filePath, bool useComma = false)
+        //{
+        //    char delim = useComma ? ',' : '\t';
+        //    using (var sw = new StreamWriter(filePath, false, Encoding.UTF8))
+        //    {
+        //        // header
+        //        sw.WriteLine($"Question{delim}A{delim}B{delim}C{delim}D{delim}Answer");
+
+        //        foreach (var q in mcqs)
+        //        {
+        //            // for CSV only: wrap fields in quotes if they contain commas or quotes
+        //            Func<string, string> esc = field =>
+        //            {
+        //                if (!useComma) // TSV never needs escaping
+        //                    return field.Replace("\t", " ");
+        //                // CSV escape:
+        //                var f = field.Replace("\"", "\"\"");
+        //                if (f.Contains(",") || f.Contains("\"") || f.Contains("\n"))
+        //                    return $"\"{f}\"";
+        //                return f;
+        //            };
+
+        //            sw.WriteLine(
+        //                esc(q.Question) + delim +
+        //                esc(q.A) + delim +
+        //                esc(q.B) + delim +
+        //                esc(q.C) + delim +
+        //                esc(q.D) + delim +
+        //                esc(q.Answer)
+        //            );
+        //        }
+        //    }
+
+        //    UpdateStatus($"MCQs exported to {Path.GetFileName(filePath)}");
+        //}
+
 
     }
 }

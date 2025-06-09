@@ -87,6 +87,7 @@
             this.chkDefinitions = new DevExpress.XtraEditors.CheckEdit();
             this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.cmbDelimiter = new DevExpress.XtraEditors.ComboBoxEdit();
             this.svgImageBoxAbout = new DevExpress.XtraEditors.SvgImageBox();
             this.comboBoxEditModel = new DevExpress.XtraEditors.ComboBoxEdit();
             this.labelControl4 = new DevExpress.XtraEditors.LabelControl();
@@ -98,6 +99,7 @@
             this.panelBottom = new System.Windows.Forms.Panel();
             this.panelTop = new System.Windows.Forms.Panel();
             this.panelFill = new System.Windows.Forms.Panel();
+            this.chkUseCommaDelimiter = new DevExpress.XtraEditors.CheckEdit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textEditAPIKey.Properties)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -121,6 +123,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.chkMCQs.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkDefinitions.Properties)).BeginInit();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.cmbDelimiter.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.svgImageBoxAbout)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.comboBoxEditModel.Properties)).BeginInit();
             this.groupBox5.SuspendLayout();
@@ -129,6 +132,7 @@
             this.panelBottom.SuspendLayout();
             this.panelTop.SuspendLayout();
             this.panelFill.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chkUseCommaDelimiter.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -221,6 +225,7 @@
             this.groupBox2.Controls.Add(this.chkCaseStudy);
             this.groupBox2.Controls.Add(this.chkSimplified);
             this.groupBox2.Controls.Add(this.chkTableExtract);
+            this.groupBox2.Controls.Add(this.chkUseCommaDelimiter);
             this.groupBox2.Controls.Add(this.chkConceptMap);
             this.groupBox2.Controls.Add(this.chkOutline);
             this.groupBox2.Controls.Add(this.chkTrueFalse);
@@ -783,6 +788,7 @@
             // groupBox4
             // 
             this.groupBox4.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.groupBox4.Controls.Add(this.cmbDelimiter);
             this.groupBox4.Controls.Add(this.svgImageBoxAbout);
             this.groupBox4.Controls.Add(this.comboBoxEditModel);
             this.groupBox4.Controls.Add(this.labelControl4);
@@ -794,6 +800,33 @@
             this.groupBox4.TabIndex = 11;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "MODELS";
+            // 
+            // cmbDelimiter
+            // 
+            this.cmbDelimiter.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cmbDelimiter.Location = new System.Drawing.Point(4, 87);
+            this.cmbDelimiter.Name = "cmbDelimiter";
+            this.cmbDelimiter.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.cmbDelimiter.Properties.Appearance.Options.UseFont = true;
+            this.cmbDelimiter.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.cmbDelimiter.Properties.AppearanceDisabled.Options.UseFont = true;
+            this.cmbDelimiter.Properties.AppearanceDropDown.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.cmbDelimiter.Properties.AppearanceDropDown.Options.UseFont = true;
+            this.cmbDelimiter.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.cmbDelimiter.Properties.AppearanceFocused.Options.UseFont = true;
+            this.cmbDelimiter.Properties.AppearanceItemDisabled.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.cmbDelimiter.Properties.AppearanceItemDisabled.Options.UseFont = true;
+            this.cmbDelimiter.Properties.AppearanceItemHighlight.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.cmbDelimiter.Properties.AppearanceItemHighlight.Options.UseFont = true;
+            this.cmbDelimiter.Properties.AppearanceItemSelected.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.cmbDelimiter.Properties.AppearanceItemSelected.Options.UseFont = true;
+            this.cmbDelimiter.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.cmbDelimiter.Properties.AppearanceReadOnly.Options.UseFont = true;
+            this.cmbDelimiter.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+            this.cmbDelimiter.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
+            this.cmbDelimiter.Size = new System.Drawing.Size(429, 28);
+            this.cmbDelimiter.TabIndex = 25;
             // 
             // svgImageBoxAbout
             // 
@@ -927,6 +960,17 @@
             this.panelFill.Size = new System.Drawing.Size(1308, 385);
             this.panelFill.TabIndex = 25;
             // 
+            // chkUseCommaDelimiter
+            // 
+            this.chkUseCommaDelimiter.Location = new System.Drawing.Point(854, 1);
+            this.chkUseCommaDelimiter.Name = "chkUseCommaDelimiter";
+            this.chkUseCommaDelimiter.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkUseCommaDelimiter.Properties.Appearance.Options.UseFont = true;
+            this.chkUseCommaDelimiter.Properties.Caption = "Use comma-delimited (CSV) instead of tab (TSV)";
+            this.chkUseCommaDelimiter.Size = new System.Drawing.Size(428, 26);
+            this.chkUseCommaDelimiter.TabIndex = 29;
+            this.chkUseCommaDelimiter.CheckedChanged += new System.EventHandler(this.chkSummary_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -967,6 +1011,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.chkDefinitions.Properties)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.cmbDelimiter.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.svgImageBoxAbout)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.comboBoxEditModel.Properties)).EndInit();
             this.groupBox5.ResumeLayout(false);
@@ -976,6 +1021,7 @@
             this.panelBottom.ResumeLayout(false);
             this.panelTop.ResumeLayout(false);
             this.panelFill.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.chkUseCommaDelimiter.Properties)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1029,6 +1075,8 @@
         private DevExpress.XtraEditors.CheckEdit chkCloze;
         private DevExpress.XtraEditors.CheckEdit chkTakeaways;
         private DevExpress.XtraEditors.CheckEdit chkSummary;
+        private DevExpress.XtraEditors.ComboBoxEdit cmbDelimiter;
+        private DevExpress.XtraEditors.CheckEdit chkUseCommaDelimiter;
     }
 }
 

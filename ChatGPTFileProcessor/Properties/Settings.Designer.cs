@@ -250,5 +250,29 @@ namespace ChatGPTFileProcessor.Properties {
                 this["GenerateKeywords"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DelimiterType {
+            get {
+                return ((string)(this["DelimiterType"]));
+            }
+            set {
+                this["DelimiterType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool useCommaDelimiter {
+            get {
+                return ((bool)(this["useCommaDelimiter"]));
+            }
+            set {
+                this["useCommaDelimiter"] = value;
+            }
+        }
     }
 }
