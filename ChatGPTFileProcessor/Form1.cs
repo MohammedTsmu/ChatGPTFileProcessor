@@ -1921,8 +1921,77 @@ namespace ChatGPTFileProcessor
                 if (chkTakeaways.Checked)
                     SaveContentToFile(allTakeaways.ToString(), takeawaysFilePath, "Key Takeaways");
 
+                //if (chkCloze.Checked)
+                //    SaveContentToFile(allCloze.ToString(), clozeFilePath, "Fill-in-the-Blank (Cloze)");
+                // 7.5) Fill-in-the-Blank (Cloze) export
+
+
+                //if (chkCloze.Checked)
+                //{
+                //    // 1) Word export (exactly as you had before)
+                //    string clozeRaw = allCloze.ToString();
+                //    SaveContentToFile(clozeRaw, clozeFilePath, "Fill-in-the-Blank (Cloze)");
+
+                //    // 2) Anki export
+                //    var parsed = ParseCloze(clozeRaw);
+                //    bool useComma = chkUseCommaDelimiter.Checked;
+                //    string ext = useComma ? ".csv" : ".tsv";
+                //    string outPath = Path.ChangeExtension(clozeFilePath, ext);
+
+                //    using (var sw = new StreamWriter(outPath, false, Encoding.UTF8))
+                //    {
+                //        sw.WriteLine("Text");
+                //        foreach (var (sentence, answer) in parsed)
+                //        {
+                //            var markup = $"{{{{c1::{answer}}}}}";
+                //            var line = sentence.Replace("_______________", markup);
+                //            if (useComma && line.Contains(","))
+                //                line = $"\"{line.Replace("\"", "\"\"")}\"";
+                //            sw.WriteLine(line);
+                //        }
+                //    }
+                //    UpdateStatus($"Cloze exports saved: {Path.GetFileName(clozeFilePath)} and {Path.GetFileName(outPath)}");
+                //}
+
                 if (chkCloze.Checked)
-                    SaveContentToFile(allCloze.ToString(), clozeFilePath, "Fill-in-the-Blank (Cloze)");
+                {
+                    // 1) Word export, unchanged
+                    string clozeRaw = allCloze.ToString();
+                    SaveContentToFile(clozeRaw, clozeFilePath, "Fill-in-the-Blank (Cloze)");
+
+                    // 2) Parse into (sentence, answer) pairs
+                    var parsed = ParseCloze(clozeRaw);
+                    bool useComma = chkUseCommaDelimiter.Checked;
+                    string ext = useComma ? ".csv" : ".tsv";
+
+                    //// 3) Emit a single-column CSV with the markup in place of the blank
+                    //string csvPath = Path.ChangeExtension(clozeFilePath, ".csv");
+                    string csvPath = Path.ChangeExtension(clozeFilePath, ext);
+                    using (var sw = new StreamWriter(csvPath, false, Encoding.UTF8))
+                    {
+                        // no header needed
+                        foreach (var (sentence, answer) in parsed)
+                        {
+                            // inject the cloze back into the sentence
+                            var markup = $"{{{{c1::{answer}}}}}";
+                            var line = sentence.Replace("_______________", markup);
+                            // wrap in quotes if it contains commas/newlines
+                            if (line.Contains(",") || line.Contains("\n"))
+                                line = $"\"{line.Replace("\"", "\"\"")}\"";
+                            sw.WriteLine(line);
+                        }
+                    }
+
+                    UpdateStatus($"✅ Cloze export saved: {Path.GetFileName(csvPath)}");
+                }
+
+
+
+
+
+
+
+
 
                 if (chkTrueFalse.Checked)
                     SaveContentToFile(allTrueFalse.ToString(), tfFilePath, "True/False Questions");
@@ -3046,7 +3115,7 @@ namespace ChatGPTFileProcessor
             }
         }
 
-        
+
 
         //private void SaveMcqsToDelimitedFile(List<MCQ> mcqs, string filePath, bool useComma = false)
         //{
@@ -3083,6 +3152,167 @@ namespace ChatGPTFileProcessor
 
         //    UpdateStatus($"MCQs exported to {Path.GetFileName(filePath)}");
         //}
+
+
+
+
+        ///// <summary>
+        ///// Split your raw cloze text into individual blocks
+        ///// </summary>
+        //private List<string> ParseCloze(string raw)
+        //{
+        //    return raw
+        //      .Split(new[] { "\r\n\r\n", "\n\n" }, StringSplitOptions.RemoveEmptyEntries)
+        //      .Select(b => b.Trim().Replace("\r\n", " ")) // collapse any internal new-lines
+        //      .ToList();
+        //}
+
+        ///// <summary>
+        ///// Write a two-column (Text,Extra) CSV/TSV for Anki’s Cloze note type
+        ///// </summary>
+        //private void SaveClozeToDelimitedFile(List<string> entries, string path, bool useComma)
+        //{
+        //    char sep = useComma ? ',' : '\t';
+        //    // UTF8 without BOM helps avoid field-name mismatches
+        //    using (var sw = new StreamWriter(path, false, new UTF8Encoding(false)))
+        //    {
+
+        //        // header—map Column1→Text, Column2→Extra in Anki
+        //        if (useComma)
+        //            sw.WriteLine("\"Text\",\"Extra\"");
+        //        else
+        //            sw.WriteLine("Text\tExtra");
+
+        //        foreach (var entry in entries)
+        //        {
+        //            // escape for CSV
+        //            if (useComma)
+        //            {
+        //                var e = entry.Replace("\"", "\"\"");
+        //                sw.WriteLine($"\"{e}\",\"\"");  // blank Extra
+        //            }
+        //            else
+        //            {
+        //                sw.WriteLine(entry + "\t");     // trailing tab = empty Extra
+        //            }
+        //        }
+        //    }
+        //}
+
+        /// <summary>
+        /// Parse raw cloze blocks into (Sentence,Answer) pairs.
+        /// Expects blocks like:
+        ///   Sentence: "_______________ is a miotic drug."
+        ///   Answer: Pilocarpine
+        /// separated by blank lines.
+        /// </summary>
+        private List<(string Sentence, string Answer)> ParseCloze(string raw)
+        {
+            var list = new List<(string, string)>();
+            var blocks = Regex.Split(raw.Trim(), @"\r?\n\s*\r?\n");
+            foreach (var block in blocks)
+            {
+                string sent = null, ans = null;
+                foreach (var line in block.Split('\n'))
+                {
+                    var t = line.Trim();
+                    if (t.StartsWith("Sentence:", StringComparison.OrdinalIgnoreCase))
+                        sent = t.Substring("Sentence:".Length).Trim().Trim('"');
+                    else if (t.StartsWith("Answer:", StringComparison.OrdinalIgnoreCase))
+                        ans = t.Substring("Answer:".Length).Trim();
+                }
+                if (!string.IsNullOrEmpty(sent) && !string.IsNullOrEmpty(ans))
+                    list.Add((sent, ans));
+            }
+            return list;
+        }
+
+        //private List<(string Sentence, string Answer)> ParseCloze(string raw)
+        //{
+        //    var list = new List<(string, string)>();
+        //    // split on blank-line (2+ newlines)
+        //    var blocks = Regex.Split(raw.Trim(), @"\r?\n\s*\r?\n");
+        //    foreach (var block in blocks)
+        //    {
+        //        string sent = null, ans = null;
+        //        foreach (var line in block.Split('\n'))
+        //        {
+        //            var t = line.Trim();
+        //            if (t.StartsWith("Sentence:", StringComparison.OrdinalIgnoreCase))
+        //                sent = t.Substring("Sentence:".Length).Trim().Trim('"');
+        //            else if (t.StartsWith("Answer:", StringComparison.OrdinalIgnoreCase))
+        //                ans = t.Substring("Answer:".Length).Trim();
+        //        }
+        //        if (!string.IsNullOrEmpty(sent) && !string.IsNullOrEmpty(ans))
+        //            list.Add((sent, ans));
+        //    }
+        //    return list;
+        //}
+
+
+
+
+        /// <summary>
+        /// Write out cloze pairs to CSV or TSV:
+        /// columns: Sentence [with blank], Answer
+        /// </summary>
+        private void SaveClozeToDelimitedFile(List<(string Sentence, string Answer)> items,
+                                               string path,
+                                               bool useCommaDelimiter)
+        {
+            char sep = useCommaDelimiter ? ',' : '\t';
+            using (var w = new StreamWriter(path, false, Encoding.UTF8))
+            {
+                // optional header
+                w.WriteLine(useCommaDelimiter
+                    ? "\"Sentence\",\"Answer\""
+                    : "Sentence\tAnswer");
+                foreach (var (sent, ans) in items)
+                {
+                    string Escape(string f)
+                    {
+                        if (f.Contains(sep) || f.Contains("\"") || f.Contains("\n"))
+                        {
+                            var esc = f.Replace("\"", "\"\"");
+                            return $"\"{esc}\"";
+                        }
+                        return f;
+                    }
+                    w.WriteLine($"{Escape(sent)}{sep}{Escape(ans)}");
+                }
+            }
+        }
+
+        //        private void SaveClozeToDelimitedFile(
+        //    List<(string Sentence, string Answer)> items,
+        //    string path,
+        //    bool useCommaDelimiter
+        //)
+        //        {
+        //            char sep = useCommaDelimiter ? ',' : '\t';
+        //            using (var w = new StreamWriter(path, false, Encoding.UTF8))
+        //            {
+        //                // **no header** is actually fine for a single-column import,
+        //                // but if you want one you could do:
+        //                // w.WriteLine("Text");
+
+        //                foreach (var (sent, ans) in items)
+        //                {
+        //                    // inject your cloze markup back into the sentence
+        //                    var markup = $"{{{{c1::{ans}}}}}";
+        //                    var line = sent.Replace("_______________", markup);
+
+        //                    // if CSV, wrap any commas/newlines in quotes
+        //                    if (useCommaDelimiter && (line.Contains(',') || line.Contains('\n')))
+        //                    {
+        //                        line = "\"" + line.Replace("\"", "\"\"") + "\"";
+        //                    }
+
+        //                    w.WriteLine(line);
+        //                }
+        //            }
+        //        }
+
 
 
     }
