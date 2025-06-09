@@ -108,9 +108,9 @@ namespace ChatGPTFileProcessor
 
 
 
-            // ▼ Populate the “Delimiter” dropdown of the csv export feature
-            cmbDelimiter.Properties.Items.AddRange(new[] { "Tab (TSV)", "Comma (CSV)" });
-            cmbDelimiter.SelectedIndex = 0; // default to TSV
+            //// ▼ Populate the “Delimiter” dropdown of the csv export feature
+            //cmbDelimiter.Properties.Items.AddRange(new[] { "Tab (TSV)", "Comma (CSV)" });
+            //cmbDelimiter.SelectedIndex = 0; // default to TSV
         }
 
 
@@ -1836,25 +1836,24 @@ namespace ChatGPTFileProcessor
                 }
 
 
+
                 // 7.4) ملف Vocabulary (بعد تطبيق FormatVocabulary على الناتج)
                 if (chkVocabulary.Checked)
                 {
+                    // 1) Word export stays the same
                     string vocabularyText = FormatVocabulary(allVocabulary.ToString());
                     SaveContentToFile(vocabularyText, vocabularyFilePath, "Vocabulary");
 
-                    // ** New: export CSV for Anki **
-                    var vocabCsvPath = Path.ChangeExtension(vocabularyFilePath, ".txt");
-                    //var records = vocabularyText
-                    //    .Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                    //    .Select(line => {
-                    //        var parts = line.Split(new[] { " - " }, 2, StringSplitOptions.None);
-                    //        return new { Term = parts[0].Trim(), Translation = parts.Length > 1 ? parts[1].Trim() : "[Translation Needed]" };
-                    //    })
-                    //    .ToList();
-                    // split each non-empty line "Term – Translation"
+                    // 2) Build .csv or .tsv path from the .docx
+                    bool useComma = chkUseCommaDelimiter.Checked;
+                    string ext = useComma ? ".csv" : ".tsv";
+                    string vocabDelimitedPath = Path.ChangeExtension(vocabularyFilePath, ext);
+
+                    // 3) Parse each line "Term - Translation" into a record
                     var records = vocabularyText
                         .Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                        .Select(line => {
+                        .Select(line =>
+                        {
                             var parts = line.Split(new[] { " - " }, 2, StringSplitOptions.None);
                             var term = parts[0].Trim();
                             var translation = parts.Length > 1
@@ -1862,17 +1861,58 @@ namespace ChatGPTFileProcessor
                                 : "[Translation Needed]";
                             return Tuple.Create(term, translation);
                         })
-                        .ToList();  // this is List<Tuple<string,string>>
+                        .ToList();  // List<Tuple<string,string>>
 
+                    // 4) Write out the delimited file for Anki
+                    using (var sw = new StreamWriter(vocabDelimitedPath, false, Encoding.UTF8))
+                    {
+                        // Optional header (Anki doesn't strictly need it, but can help)
+                        sw.WriteLine(useComma
+                            ? "\"Term\",\"Translation\""
+                            : "Term\tTranslation");
 
-                    SaveVocabularyForAnki(records, vocabCsvPath, cmbDelimiter.SelectedIndex);
-                    UpdateStatus($"Vocabulary CSV/TSV saved: {vocabCsvPath}");
+                        char sep = useComma ? ',' : '\t';
+                        foreach (var rec in records)
+                        {
+                            string t = rec.Item1.Replace("\"", "\"\"");   // escape quotes
+                            string tr = rec.Item2.Replace("\"", "\"\""); // escape quotes
 
+                            if (useComma)
+                                sw.WriteLine($"\"{t}\"{sep}\"{tr}\"");
+                            else
+                                sw.WriteLine($"{t}{sep}{tr}");
+                        }
+                    }
 
-                    //// write out a .txt next to your .docx
-                    //SaveVocabularyForAnki(records, vocabCsvPath, cmbDelimiter.SelectedIndex);
-                    //UpdateStatus($"Vocabulary export for Anki saved: {vocabCsvPath}");
+                    UpdateStatus($"Vocabulary export saved: {Path.GetFileName(vocabDelimitedPath)}");
                 }
+
+                //if (chkVocabulary.Checked)
+                //{
+                //    string vocabularyText = FormatVocabulary(allVocabulary.ToString());
+                //    SaveContentToFile(vocabularyText, vocabularyFilePath, "Vocabulary");
+
+                //    // ** New: export CSV for Anki **
+                //    var vocabCsvPath = Path.ChangeExtension(vocabularyFilePath, ".txt");
+
+                //    var records = vocabularyText
+                //        .Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                //        .Select(line =>
+                //        {
+                //            var parts = line.Split(new[] { " - " }, 2, StringSplitOptions.None);
+                //            var term = parts[0].Trim();
+                //            var translation = parts.Length > 1
+                //                ? parts[1].Trim()
+                //                : "[Translation Needed]";
+                //            return Tuple.Create(term, translation);
+                //        })
+                //        .ToList();  // this is List<Tuple<string,string>>
+
+
+                //    //// write out a .txt next to your .docx
+                //    SaveVocabularyForAnki(records, vocabCsvPath, cmbDelimiter.SelectedIndex);
+                //    UpdateStatus($"Vocabulary CSV/TSV saved: {vocabCsvPath}");
+                //}
 
                 // ── New features:
                 if (chkSummary.Checked)
@@ -2830,36 +2870,36 @@ namespace ChatGPTFileProcessor
         }
 
 
-        void SaveVocabularyForAnki(
-    List<Tuple<string, string>> records,
-    string path,
-    int delimiterChoiceIndex  // 0 = TSV, 1 = CSV
-)
-        {
-            string sep = (delimiterChoiceIndex == 0) ? "\t" : ",";
+        //        void SaveVocabularyForAnki(
+        //    List<Tuple<string, string>> records,
+        //    string path,
+        //    int delimiterChoiceIndex  // 0 = TSV, 1 = CSV
+        //)
+        //        {
+        //            string sep = (delimiterChoiceIndex == 0) ? "\t" : ",";
 
-            // old-school using block, not declaration
-            using (var sw = new System.IO.StreamWriter(path, false, System.Text.Encoding.UTF8))
-            {
-                foreach (var rec in records)
-                {
-                    string t = EscapeField(rec.Item1, sep);
-                    string tr = EscapeField(rec.Item2, sep);
-                    sw.WriteLine(t + sep + tr);
-                }
-            }
-        }
+        //            // old-school using block, not declaration
+        //            using (var sw = new System.IO.StreamWriter(path, false, System.Text.Encoding.UTF8))
+        //            {
+        //                foreach (var rec in records)
+        //                {
+        //                    string t = EscapeField(rec.Item1, sep);
+        //                    string tr = EscapeField(rec.Item2, sep);
+        //                    sw.WriteLine(t + sep + tr);
+        //                }
+        //            }
+        //        }
 
-        string EscapeField(string text, string sep)
-        {
-            bool mustQuote = text.Contains(sep) || text.Contains("\"") || text.Contains("\n");
-            if (mustQuote)
-            {
-                // double up any quotes, wrap in quotes
-                return "\"" + text.Replace("\"", "\"\"") + "\"";
-            }
-            return text;
-        }
+        //        string EscapeField(string text, string sep)
+        //        {
+        //            bool mustQuote = text.Contains(sep) || text.Contains("\"") || text.Contains("\n");
+        //            if (mustQuote)
+        //            {
+        //                // double up any quotes, wrap in quotes
+        //                return "\"" + text.Replace("\"", "\"\"") + "\"";
+        //            }
+        //            return text;
+        //        }
 
 
         /// <summary>
