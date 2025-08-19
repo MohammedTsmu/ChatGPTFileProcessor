@@ -2621,6 +2621,7 @@ namespace ChatGPTFileProcessor
             chkCaseStudy.Checked = Properties.Settings.Default.GenerateCaseStudy;
             chkKeywords.Checked = Properties.Settings.Default.GenerateKeywords;
             chkUseCommaDelimiter.Checked = Properties.Settings.Default.useCommaDelimiter;
+            chkTranslatedSections.Checked = Properties.Settings.Default.GenerateTranslatedSections;
 
             textEditAPIKey.ReadOnly = Properties.Settings.Default.ApiKeyLock;
         }
@@ -2764,6 +2765,12 @@ namespace ChatGPTFileProcessor
             UpdateStatus($"Keywords Extraction…{(chkKeywords.Checked ? "Activated" : "Deactivated")}");
         }
 
+        private void chkTranslatedSections_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.GenerateTranslatedSections = chkTranslatedSections.Checked;
+            Properties.Settings.Default.Save();
+            UpdateStatus($"Translated Sections…{(chkTranslatedSections.Checked ? "Activated" : "Deactivated")}");
+        }
 
         private void chkUseCommaDelimiter_CheckedChanged(object sender, EventArgs e)
         {
@@ -3336,6 +3343,8 @@ namespace ChatGPTFileProcessor
                 textEditAPIKey.Properties.ReadOnly = false;
             }
         }
+
+        
 
         //        private void SaveClozeToDelimitedFile(
         //    List<(string Sentence, string Answer)> items,

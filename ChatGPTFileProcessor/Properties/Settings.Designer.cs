@@ -262,5 +262,17 @@ namespace ChatGPTFileProcessor.Properties {
                 this["useCommaDelimiter"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GenerateTranslatedSections {
+            get {
+                return ((bool)(this["GenerateTranslatedSections"]));
+            }
+            set {
+                this["GenerateTranslatedSections"] = value;
+            }
+        }
     }
 }
