@@ -5,8 +5,6 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatGPTFileProcessor", "ChatGPTFileProcessor\ChatGPTFileProcessor.csproj", "{C77A909F-35F8-4D7A-8F41-01531EF243C5}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "ChatGPTFileProcessorInstaller", "ChatGPTFileProcessorInstaller\ChatGPTFileProcessorInstaller.vdproj", "{74EF7106-3619-4C23-B50A-674561463748}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,11 +21,6 @@ Global
 		{C77A909F-35F8-4D7A-8F41-01531EF243C5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C77A909F-35F8-4D7A-8F41-01531EF243C5}.Release|x64.ActiveCfg = Release|x64
 		{C77A909F-35F8-4D7A-8F41-01531EF243C5}.Release|x64.Build.0 = Release|x64
-		{74EF7106-3619-4C23-B50A-674561463748}.Debug|Any CPU.ActiveCfg = Release
-		{74EF7106-3619-4C23-B50A-674561463748}.Debug|Any CPU.Build.0 = Release
-		{74EF7106-3619-4C23-B50A-674561463748}.Debug|x64.ActiveCfg = Release
-		{74EF7106-3619-4C23-B50A-674561463748}.Release|Any CPU.ActiveCfg = Release
-		{74EF7106-3619-4C23-B50A-674561463748}.Release|x64.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

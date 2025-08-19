@@ -107,7 +107,6 @@ namespace ChatGPTFileProcessor
             }
 
 
-
             //// ▼ Populate the “Delimiter” dropdown of the csv export feature
             //cmbDelimiter.Properties.Items.AddRange(new[] { "Tab (TSV)", "Comma (CSV)" });
             //cmbDelimiter.SelectedIndex = 0; // default to TSV
@@ -2765,6 +2764,7 @@ namespace ChatGPTFileProcessor
             UpdateStatus($"Keywords Extraction…{(chkKeywords.Checked ? "Activated" : "Deactivated")}");
         }
 
+
         private void chkUseCommaDelimiter_CheckedChanged(object sender, EventArgs e)
         {
             if (chkUseCommaDelimiter.Checked)
@@ -3310,6 +3310,30 @@ namespace ChatGPTFileProcessor
                     }
                     w.WriteLine($"{Escape(sent)}{sep}{Escape(ans)}");
                 }
+            }
+        }
+
+        private void buttonShowApi_Click(object sender, EventArgs e)
+        {
+            if (textEditAPIKey.Properties.PasswordChar == '*')
+            {
+                textEditAPIKey.Properties.PasswordChar = '\0';
+            }
+            else
+            {
+                textEditAPIKey.Properties.PasswordChar = '*';
+            }
+        }
+
+        private void buttonLockApiKey_Click(object sender, EventArgs e)
+        {
+            if (textEditAPIKey.Properties.ReadOnly == false)
+            {
+                textEditAPIKey.Properties.ReadOnly = true;
+            }
+            else
+            {
+                textEditAPIKey.Properties.ReadOnly = false;
             }
         }
 

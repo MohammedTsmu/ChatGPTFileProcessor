@@ -29,28 +29,33 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            DevExpress.Utils.SuperToolTip superToolTip1 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem1 = new DevExpress.Utils.ToolTipTitleItem();
-            DevExpress.Utils.ToolTipItem toolTipItem1 = new DevExpress.Utils.ToolTipItem();
-            DevExpress.Utils.ToolTipSeparatorItem toolTipSeparatorItem1 = new DevExpress.Utils.ToolTipSeparatorItem();
-            DevExpress.Utils.ToolTipItem toolTipItem2 = new DevExpress.Utils.ToolTipItem();
             DevExpress.Utils.SuperToolTip superToolTip2 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem2 = new DevExpress.Utils.ToolTipTitleItem();
-            DevExpress.Utils.ToolTipSeparatorItem toolTipSeparatorItem2 = new DevExpress.Utils.ToolTipSeparatorItem();
-            DevExpress.Utils.ToolTipItem toolTipItem3 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.ToolTipItem toolTipItem2 = new DevExpress.Utils.ToolTipItem();
             DevExpress.Utils.SuperToolTip superToolTip3 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem3 = new DevExpress.Utils.ToolTipTitleItem();
-            DevExpress.Utils.ToolTipSeparatorItem toolTipSeparatorItem3 = new DevExpress.Utils.ToolTipSeparatorItem();
+            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem1 = new DevExpress.Utils.ToolTipTitleItem();
+            DevExpress.Utils.ToolTipItem toolTipItem3 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.ToolTipSeparatorItem toolTipSeparatorItem1 = new DevExpress.Utils.ToolTipSeparatorItem();
             DevExpress.Utils.ToolTipItem toolTipItem4 = new DevExpress.Utils.ToolTipItem();
             DevExpress.Utils.SuperToolTip superToolTip4 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem4 = new DevExpress.Utils.ToolTipTitleItem();
+            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem2 = new DevExpress.Utils.ToolTipTitleItem();
+            DevExpress.Utils.ToolTipSeparatorItem toolTipSeparatorItem2 = new DevExpress.Utils.ToolTipSeparatorItem();
             DevExpress.Utils.ToolTipItem toolTipItem5 = new DevExpress.Utils.ToolTipItem();
             DevExpress.Utils.SuperToolTip superToolTip5 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem3 = new DevExpress.Utils.ToolTipTitleItem();
+            DevExpress.Utils.ToolTipSeparatorItem toolTipSeparatorItem3 = new DevExpress.Utils.ToolTipSeparatorItem();
             DevExpress.Utils.ToolTipItem toolTipItem6 = new DevExpress.Utils.ToolTipItem();
             DevExpress.Utils.SuperToolTip superToolTip6 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem4 = new DevExpress.Utils.ToolTipTitleItem();
             DevExpress.Utils.ToolTipItem toolTipItem7 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip7 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem8 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip8 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem9 = new DevExpress.Utils.ToolTipItem();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            DevExpress.Utils.SuperToolTip superToolTip1 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem1 = new DevExpress.Utils.ToolTipItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.buttonShowApi = new DevExpress.XtraEditors.SimpleButton();
             this.labelControl5 = new DevExpress.XtraEditors.LabelControl();
             this.textEditAPIKey = new DevExpress.XtraEditors.TextEdit();
             this.buttonClearAPIKey = new DevExpress.XtraEditors.SimpleButton();
@@ -100,6 +105,7 @@
             this.panelBottom = new System.Windows.Forms.Panel();
             this.panelTop = new System.Windows.Forms.Panel();
             this.panelFill = new System.Windows.Forms.Panel();
+            this.buttonLockApiKey = new DevExpress.XtraEditors.SimpleButton();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textEditAPIKey.Properties)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -138,13 +144,15 @@
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.groupBox1.Controls.Add(this.buttonLockApiKey);
+            this.groupBox1.Controls.Add(this.buttonShowApi);
             this.groupBox1.Controls.Add(this.labelControl5);
             this.groupBox1.Controls.Add(this.textEditAPIKey);
             this.groupBox1.Controls.Add(this.buttonClearAPIKey);
             this.groupBox1.Controls.Add(this.buttonEditAPIKey);
             this.groupBox1.Controls.Add(this.buttonSaveAPIKey);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox1.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(5, 5);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(1298, 166);
@@ -152,13 +160,26 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "API KEY";
             // 
+            // buttonShowApi
+            // 
+            this.buttonShowApi.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("buttonShowApi.ImageOptions.SvgImage")));
+            this.buttonShowApi.ImageOptions.SvgImageSize = new System.Drawing.Size(20, 20);
+            this.buttonShowApi.Location = new System.Drawing.Point(576, 59);
+            this.buttonShowApi.Name = "buttonShowApi";
+            this.buttonShowApi.Size = new System.Drawing.Size(37, 23);
+            toolTipItem2.Text = "Show/Hide API Key";
+            superToolTip2.Items.Add(toolTipItem2);
+            this.buttonShowApi.SuperTip = superToolTip2;
+            this.buttonShowApi.TabIndex = 25;
+            this.buttonShowApi.Click += new System.EventHandler(this.buttonShowApi_Click);
+            // 
             // labelControl5
             // 
-            this.labelControl5.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelControl5.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelControl5.Appearance.Options.UseFont = true;
             this.labelControl5.Location = new System.Drawing.Point(7, 28);
             this.labelControl5.Name = "labelControl5";
-            this.labelControl5.Size = new System.Drawing.Size(134, 22);
+            this.labelControl5.Size = new System.Drawing.Size(133, 20);
             this.labelControl5.TabIndex = 24;
             this.labelControl5.Text = "ChatGPT API Key";
             // 
@@ -166,22 +187,22 @@
             // 
             this.textEditAPIKey.Location = new System.Drawing.Point(6, 56);
             this.textEditAPIKey.Name = "textEditAPIKey";
-            this.textEditAPIKey.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.textEditAPIKey.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.textEditAPIKey.Properties.Appearance.Options.UseFont = true;
-            this.textEditAPIKey.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.textEditAPIKey.Properties.AppearanceDisabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.textEditAPIKey.Properties.AppearanceDisabled.Options.UseFont = true;
-            this.textEditAPIKey.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.textEditAPIKey.Properties.AppearanceFocused.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.textEditAPIKey.Properties.AppearanceFocused.Options.UseFont = true;
-            this.textEditAPIKey.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.textEditAPIKey.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.textEditAPIKey.Properties.AppearanceReadOnly.Options.UseFont = true;
             this.textEditAPIKey.Properties.NullText = "ChatGPT API Key ... Enter Here";
             this.textEditAPIKey.Properties.PasswordChar = '*';
-            this.textEditAPIKey.Size = new System.Drawing.Size(564, 28);
+            this.textEditAPIKey.Size = new System.Drawing.Size(564, 26);
             this.textEditAPIKey.TabIndex = 23;
             // 
             // buttonClearAPIKey
             // 
-            this.buttonClearAPIKey.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonClearAPIKey.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonClearAPIKey.Appearance.Options.UseFont = true;
             this.buttonClearAPIKey.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("buttonClearAPIKey.ImageOptions.SvgImage")));
             this.buttonClearAPIKey.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
@@ -194,7 +215,7 @@
             // 
             // buttonEditAPIKey
             // 
-            this.buttonEditAPIKey.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonEditAPIKey.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonEditAPIKey.Appearance.Options.UseFont = true;
             this.buttonEditAPIKey.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("buttonEditAPIKey.ImageOptions.SvgImage")));
             this.buttonEditAPIKey.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
@@ -207,7 +228,7 @@
             // 
             // buttonSaveAPIKey
             // 
-            this.buttonSaveAPIKey.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonSaveAPIKey.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonSaveAPIKey.Appearance.Options.UseFont = true;
             this.buttonSaveAPIKey.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("buttonSaveAPIKey.ImageOptions.SvgImage")));
             this.buttonSaveAPIKey.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
@@ -251,7 +272,7 @@
             this.groupBox2.Controls.Add(this.chkMCQs);
             this.groupBox2.Controls.Add(this.chkDefinitions);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox2.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox2.Location = new System.Drawing.Point(5, 5);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(1298, 375);
@@ -263,10 +284,10 @@
             // 
             this.chkKeywords.Location = new System.Drawing.Point(724, 92);
             this.chkKeywords.Name = "chkKeywords";
-            this.chkKeywords.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkKeywords.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkKeywords.Properties.Appearance.Options.UseFont = true;
             this.chkKeywords.Properties.Caption = "High-Yield Keywords";
-            this.chkKeywords.Size = new System.Drawing.Size(233, 26);
+            this.chkKeywords.Size = new System.Drawing.Size(233, 24);
             this.chkKeywords.TabIndex = 38;
             this.chkKeywords.CheckedChanged += new System.EventHandler(this.chkKeywords_CheckedChanged);
             // 
@@ -274,25 +295,25 @@
             // 
             this.chkCaseStudy.Location = new System.Drawing.Point(485, 92);
             this.chkCaseStudy.Name = "chkCaseStudy";
-            this.chkCaseStudy.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkCaseStudy.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkCaseStudy.Properties.Appearance.Options.UseFont = true;
             this.chkCaseStudy.Properties.Caption = "Case Study Scenario";
-            this.chkCaseStudy.Size = new System.Drawing.Size(233, 26);
+            this.chkCaseStudy.Size = new System.Drawing.Size(233, 24);
             toolTipTitleItem1.AllowHtmlText = DevExpress.Utils.DefaultBoolean.True;
-            toolTipTitleItem1.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipTitleItem1.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             toolTipTitleItem1.Appearance.Options.UseFont = true;
             toolTipTitleItem1.Text = "Alert ⚠";
-            toolTipItem1.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem1.Appearance.Options.UseFont = true;
-            toolTipItem1.Text = "Best results will be using 2, 3, 4 pages at time";
-            toolTipItem2.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
-            toolTipItem2.Appearance.Options.UseFont = true;
-            toolTipItem2.Text = "Not Recommended with 1 page at time";
-            superToolTip1.Items.Add(toolTipTitleItem1);
-            superToolTip1.Items.Add(toolTipItem1);
-            superToolTip1.Items.Add(toolTipSeparatorItem1);
-            superToolTip1.Items.Add(toolTipItem2);
-            this.chkCaseStudy.SuperTip = superToolTip1;
+            toolTipItem3.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem3.Appearance.Options.UseFont = true;
+            toolTipItem3.Text = "Best results will be using 2, 3, 4 pages at time";
+            toolTipItem4.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
+            toolTipItem4.Appearance.Options.UseFont = true;
+            toolTipItem4.Text = "Not Recommended with 1 page at time";
+            superToolTip3.Items.Add(toolTipTitleItem1);
+            superToolTip3.Items.Add(toolTipItem3);
+            superToolTip3.Items.Add(toolTipSeparatorItem1);
+            superToolTip3.Items.Add(toolTipItem4);
+            this.chkCaseStudy.SuperTip = superToolTip3;
             this.chkCaseStudy.TabIndex = 37;
             this.chkCaseStudy.CheckedChanged += new System.EventHandler(this.chkCaseStudy_CheckedChanged);
             // 
@@ -300,21 +321,21 @@
             // 
             this.chkSimplified.Location = new System.Drawing.Point(246, 92);
             this.chkSimplified.Name = "chkSimplified";
-            this.chkSimplified.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkSimplified.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkSimplified.Properties.Appearance.Options.UseFont = true;
             this.chkSimplified.Properties.Caption = "Simplified Explanation";
-            this.chkSimplified.Size = new System.Drawing.Size(233, 26);
-            toolTipTitleItem2.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkSimplified.Size = new System.Drawing.Size(233, 24);
+            toolTipTitleItem2.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             toolTipTitleItem2.Appearance.Options.UseFont = true;
             toolTipTitleItem2.Text = "Instructions";
-            toolTipItem3.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
-            toolTipItem3.Appearance.Options.UseFont = true;
-            toolTipItem3.Text = "Works only with 1 page at time,\r\n⚠    Not recommened with others.\r\n⚠    healthcar" +
+            toolTipItem5.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
+            toolTipItem5.Appearance.Options.UseFont = true;
+            toolTipItem5.Text = "Works only with 1 page at time,\r\n⚠    Not recommened with others.\r\n⚠    healthcar" +
     "e students Only";
-            superToolTip2.Items.Add(toolTipTitleItem2);
-            superToolTip2.Items.Add(toolTipSeparatorItem2);
-            superToolTip2.Items.Add(toolTipItem3);
-            this.chkSimplified.SuperTip = superToolTip2;
+            superToolTip4.Items.Add(toolTipTitleItem2);
+            superToolTip4.Items.Add(toolTipSeparatorItem2);
+            superToolTip4.Items.Add(toolTipItem5);
+            this.chkSimplified.SuperTip = superToolTip4;
             this.chkSimplified.TabIndex = 36;
             this.chkSimplified.CheckedChanged += new System.EventHandler(this.chkSimplified_CheckedChanged);
             // 
@@ -322,21 +343,21 @@
             // 
             this.chkTableExtract.Location = new System.Drawing.Point(7, 92);
             this.chkTableExtract.Name = "chkTableExtract";
-            this.chkTableExtract.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkTableExtract.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkTableExtract.Properties.Appearance.Options.UseFont = true;
             this.chkTableExtract.Properties.Caption = "Extract Tables";
             this.chkTableExtract.Properties.ReadOnly = true;
-            this.chkTableExtract.Size = new System.Drawing.Size(233, 26);
-            toolTipTitleItem3.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkTableExtract.Size = new System.Drawing.Size(233, 24);
+            toolTipTitleItem3.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             toolTipTitleItem3.Appearance.Options.UseFont = true;
             toolTipTitleItem3.Text = "Not completed / Not ready";
-            toolTipItem4.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
-            toolTipItem4.Appearance.Options.UseFont = true;
-            toolTipItem4.Text = "Experimental feature ⚠";
-            superToolTip3.Items.Add(toolTipTitleItem3);
-            superToolTip3.Items.Add(toolTipSeparatorItem3);
-            superToolTip3.Items.Add(toolTipItem4);
-            this.chkTableExtract.SuperTip = superToolTip3;
+            toolTipItem6.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
+            toolTipItem6.Appearance.Options.UseFont = true;
+            toolTipItem6.Text = "Experimental feature ⚠";
+            superToolTip5.Items.Add(toolTipTitleItem3);
+            superToolTip5.Items.Add(toolTipSeparatorItem3);
+            superToolTip5.Items.Add(toolTipItem6);
+            this.chkTableExtract.SuperTip = superToolTip5;
             this.chkTableExtract.TabIndex = 35;
             this.chkTableExtract.CheckedChanged += new System.EventHandler(this.chkTableExtract_CheckedChanged);
             // 
@@ -344,10 +365,10 @@
             // 
             this.chkUseCommaDelimiter.Location = new System.Drawing.Point(854, 1);
             this.chkUseCommaDelimiter.Name = "chkUseCommaDelimiter";
-            this.chkUseCommaDelimiter.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkUseCommaDelimiter.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkUseCommaDelimiter.Properties.Appearance.Options.UseFont = true;
             this.chkUseCommaDelimiter.Properties.Caption = "Use comma-delimited (CSV) instead of tab (TSV)";
-            this.chkUseCommaDelimiter.Size = new System.Drawing.Size(428, 26);
+            this.chkUseCommaDelimiter.Size = new System.Drawing.Size(428, 24);
             this.chkUseCommaDelimiter.TabIndex = 29;
             this.chkUseCommaDelimiter.CheckedChanged += new System.EventHandler(this.chkUseCommaDelimiter_CheckedChanged);
             // 
@@ -355,10 +376,10 @@
             // 
             this.chkConceptMap.Location = new System.Drawing.Point(936, 60);
             this.chkConceptMap.Name = "chkConceptMap";
-            this.chkConceptMap.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkConceptMap.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkConceptMap.Properties.Appearance.Options.UseFont = true;
             this.chkConceptMap.Properties.Caption = "Concept Relationships";
-            this.chkConceptMap.Size = new System.Drawing.Size(233, 26);
+            this.chkConceptMap.Size = new System.Drawing.Size(233, 24);
             this.chkConceptMap.TabIndex = 34;
             this.chkConceptMap.CheckedChanged += new System.EventHandler(this.chkConceptMap_CheckedChanged);
             // 
@@ -366,10 +387,10 @@
             // 
             this.chkOutline.Location = new System.Drawing.Point(724, 60);
             this.chkOutline.Name = "chkOutline";
-            this.chkOutline.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkOutline.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkOutline.Properties.Appearance.Options.UseFont = true;
             this.chkOutline.Properties.Caption = "Generate Outline";
-            this.chkOutline.Size = new System.Drawing.Size(233, 26);
+            this.chkOutline.Size = new System.Drawing.Size(233, 24);
             this.chkOutline.TabIndex = 33;
             this.chkOutline.CheckedChanged += new System.EventHandler(this.chkOutline_CheckedChanged);
             // 
@@ -377,10 +398,10 @@
             // 
             this.chkTrueFalse.Location = new System.Drawing.Point(485, 60);
             this.chkTrueFalse.Name = "chkTrueFalse";
-            this.chkTrueFalse.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkTrueFalse.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkTrueFalse.Properties.Appearance.Options.UseFont = true;
             this.chkTrueFalse.Properties.Caption = "True/False Questions";
-            this.chkTrueFalse.Size = new System.Drawing.Size(233, 26);
+            this.chkTrueFalse.Size = new System.Drawing.Size(233, 24);
             this.chkTrueFalse.TabIndex = 32;
             this.chkTrueFalse.CheckedChanged += new System.EventHandler(this.chkTrueFalse_CheckedChanged);
             // 
@@ -388,10 +409,10 @@
             // 
             this.chkCloze.Location = new System.Drawing.Point(246, 60);
             this.chkCloze.Name = "chkCloze";
-            this.chkCloze.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkCloze.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkCloze.Properties.Appearance.Options.UseFont = true;
             this.chkCloze.Properties.Caption = "Fill-in-the-Blank (Cloze)";
-            this.chkCloze.Size = new System.Drawing.Size(233, 26);
+            this.chkCloze.Size = new System.Drawing.Size(233, 24);
             this.chkCloze.TabIndex = 31;
             this.chkCloze.CheckedChanged += new System.EventHandler(this.chkCloze_CheckedChanged);
             // 
@@ -399,10 +420,10 @@
             // 
             this.chkTakeaways.Location = new System.Drawing.Point(7, 60);
             this.chkTakeaways.Name = "chkTakeaways";
-            this.chkTakeaways.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkTakeaways.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkTakeaways.Properties.Appearance.Options.UseFont = true;
             this.chkTakeaways.Properties.Caption = "Key Takeaways";
-            this.chkTakeaways.Size = new System.Drawing.Size(233, 26);
+            this.chkTakeaways.Size = new System.Drawing.Size(233, 24);
             this.chkTakeaways.TabIndex = 30;
             this.chkTakeaways.CheckedChanged += new System.EventHandler(this.chkTakeaways_CheckedChanged);
             // 
@@ -410,57 +431,57 @@
             // 
             this.chkSummary.Location = new System.Drawing.Point(936, 28);
             this.chkSummary.Name = "chkSummary";
-            this.chkSummary.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkSummary.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkSummary.Properties.Appearance.Options.UseFont = true;
             this.chkSummary.Properties.Caption = "Page Summary";
-            this.chkSummary.Size = new System.Drawing.Size(233, 26);
+            this.chkSummary.Size = new System.Drawing.Size(233, 24);
             this.chkSummary.TabIndex = 29;
             this.chkSummary.CheckedChanged += new System.EventHandler(this.chkSummary_CheckedChanged);
             // 
             // labelControl7
             // 
-            this.labelControl7.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl7.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.labelControl7.Appearance.Options.UseFont = true;
             this.labelControl7.Appearance.Options.UseTextOptions = true;
             this.labelControl7.Appearance.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl7.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl7.AppearanceDisabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.labelControl7.AppearanceDisabled.Options.UseFont = true;
             this.labelControl7.AppearanceDisabled.Options.UseTextOptions = true;
             this.labelControl7.AppearanceDisabled.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl7.AppearanceHovered.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl7.AppearanceHovered.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.labelControl7.AppearanceHovered.Options.UseFont = true;
             this.labelControl7.AppearanceHovered.Options.UseTextOptions = true;
             this.labelControl7.AppearanceHovered.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl7.AppearancePressed.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl7.AppearancePressed.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.labelControl7.AppearancePressed.Options.UseFont = true;
             this.labelControl7.AppearancePressed.Options.UseTextOptions = true;
             this.labelControl7.AppearancePressed.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
             this.labelControl7.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl7.Location = new System.Drawing.Point(797, 131);
             this.labelControl7.Name = "labelControl7";
-            this.labelControl7.Size = new System.Drawing.Size(180, 22);
+            this.labelControl7.Size = new System.Drawing.Size(180, 20);
             this.labelControl7.TabIndex = 28;
             this.labelControl7.Text = "Instructions";
             // 
             // lblBatchHelp
             // 
             this.lblBatchHelp.Appearance.BackColor = System.Drawing.Color.MistyRose;
-            this.lblBatchHelp.Appearance.Font = new System.Drawing.Font("LBC", 8.999999F);
+            this.lblBatchHelp.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.999999F);
             this.lblBatchHelp.Appearance.ForeColor = System.Drawing.Color.Black;
             this.lblBatchHelp.Appearance.Options.UseBackColor = true;
             this.lblBatchHelp.Appearance.Options.UseFont = true;
             this.lblBatchHelp.Appearance.Options.UseForeColor = true;
             this.lblBatchHelp.Appearance.Options.UseTextOptions = true;
             this.lblBatchHelp.Appearance.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.lblBatchHelp.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 8.999999F);
+            this.lblBatchHelp.AppearanceDisabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.999999F);
             this.lblBatchHelp.AppearanceDisabled.Options.UseFont = true;
             this.lblBatchHelp.AppearanceDisabled.Options.UseTextOptions = true;
             this.lblBatchHelp.AppearanceDisabled.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.lblBatchHelp.AppearanceHovered.Font = new System.Drawing.Font("LBC", 8.999999F);
+            this.lblBatchHelp.AppearanceHovered.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.999999F);
             this.lblBatchHelp.AppearanceHovered.Options.UseFont = true;
             this.lblBatchHelp.AppearanceHovered.Options.UseTextOptions = true;
             this.lblBatchHelp.AppearanceHovered.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.lblBatchHelp.AppearancePressed.Font = new System.Drawing.Font("LBC", 8.999999F);
+            this.lblBatchHelp.AppearancePressed.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.999999F);
             this.lblBatchHelp.AppearancePressed.Options.UseFont = true;
             this.lblBatchHelp.AppearancePressed.Options.UseTextOptions = true;
             this.lblBatchHelp.AppearancePressed.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
@@ -474,26 +495,26 @@
             // 
             // labelControl6
             // 
-            this.labelControl6.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl6.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.labelControl6.Appearance.Options.UseFont = true;
             this.labelControl6.Appearance.Options.UseTextOptions = true;
             this.labelControl6.Appearance.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl6.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl6.AppearanceDisabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.labelControl6.AppearanceDisabled.Options.UseFont = true;
             this.labelControl6.AppearanceDisabled.Options.UseTextOptions = true;
             this.labelControl6.AppearanceDisabled.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl6.AppearanceHovered.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl6.AppearanceHovered.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.labelControl6.AppearanceHovered.Options.UseFont = true;
             this.labelControl6.AppearanceHovered.Options.UseTextOptions = true;
             this.labelControl6.AppearanceHovered.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl6.AppearancePressed.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.labelControl6.AppearancePressed.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.labelControl6.AppearancePressed.Options.UseFont = true;
             this.labelControl6.AppearancePressed.Options.UseTextOptions = true;
             this.labelControl6.AppearancePressed.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
             this.labelControl6.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl6.Location = new System.Drawing.Point(600, 131);
             this.labelControl6.Name = "labelControl6";
-            this.labelControl6.Size = new System.Drawing.Size(180, 22);
+            this.labelControl6.Size = new System.Drawing.Size(180, 20);
             this.labelControl6.TabIndex = 26;
             this.labelControl6.Text = "Page Batch Mode";
             // 
@@ -515,7 +536,7 @@
             this.radioPageBatchSize.Location = new System.Drawing.Point(600, 159);
             this.radioPageBatchSize.Name = "radioPageBatchSize";
             this.radioPageBatchSize.Properties.Appearance.BackColor = System.Drawing.Color.RosyBrown;
-            this.radioPageBatchSize.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.radioPageBatchSize.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.radioPageBatchSize.Properties.Appearance.ForeColor = System.Drawing.Color.Black;
             this.radioPageBatchSize.Properties.Appearance.Options.UseBackColor = true;
             this.radioPageBatchSize.Properties.Appearance.Options.UseFont = true;
@@ -524,19 +545,19 @@
             this.radioPageBatchSize.Properties.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
             this.radioPageBatchSize.Properties.Appearance.TextOptions.VAlignment = DevExpress.Utils.VertAlignment.Center;
             this.radioPageBatchSize.Properties.Appearance.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.radioPageBatchSize.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.radioPageBatchSize.Properties.AppearanceDisabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.radioPageBatchSize.Properties.AppearanceDisabled.Options.UseFont = true;
             this.radioPageBatchSize.Properties.AppearanceDisabled.Options.UseTextOptions = true;
             this.radioPageBatchSize.Properties.AppearanceDisabled.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
             this.radioPageBatchSize.Properties.AppearanceDisabled.TextOptions.VAlignment = DevExpress.Utils.VertAlignment.Center;
             this.radioPageBatchSize.Properties.AppearanceDisabled.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.radioPageBatchSize.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.radioPageBatchSize.Properties.AppearanceFocused.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.radioPageBatchSize.Properties.AppearanceFocused.Options.UseFont = true;
             this.radioPageBatchSize.Properties.AppearanceFocused.Options.UseTextOptions = true;
             this.radioPageBatchSize.Properties.AppearanceFocused.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
             this.radioPageBatchSize.Properties.AppearanceFocused.TextOptions.VAlignment = DevExpress.Utils.VertAlignment.Center;
             this.radioPageBatchSize.Properties.AppearanceFocused.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.radioPageBatchSize.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.radioPageBatchSize.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.radioPageBatchSize.Properties.AppearanceReadOnly.Options.UseFont = true;
             this.radioPageBatchSize.Properties.AppearanceReadOnly.Options.UseTextOptions = true;
             this.radioPageBatchSize.Properties.AppearanceReadOnly.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
@@ -548,48 +569,48 @@
             new DevExpress.XtraEditors.Controls.RadioGroupItem(3, "3 pages at a time"),
             new DevExpress.XtraEditors.Controls.RadioGroupItem(4, "4 pages at a time")});
             this.radioPageBatchSize.Size = new System.Drawing.Size(191, 175);
-            toolTipTitleItem4.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipTitleItem4.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             toolTipTitleItem4.Appearance.Options.UseFont = true;
             toolTipTitleItem4.Text = "Choose how many pages to send in one batch.\n";
-            toolTipItem5.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem5.Appearance.Options.UseFont = true;
-            toolTipItem5.Text = resources.GetString("toolTipItem5.Text");
-            superToolTip4.Items.Add(toolTipTitleItem4);
-            superToolTip4.Items.Add(toolTipItem5);
-            this.radioPageBatchSize.SuperTip = superToolTip4;
+            toolTipItem7.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem7.Appearance.Options.UseFont = true;
+            toolTipItem7.Text = resources.GetString("toolTipItem7.Text");
+            superToolTip6.Items.Add(toolTipTitleItem4);
+            superToolTip6.Items.Add(toolTipItem7);
+            this.radioPageBatchSize.SuperTip = superToolTip6;
             this.radioPageBatchSize.TabIndex = 24;
             this.radioPageBatchSize.ToolTipAnchor = DevExpress.Utils.ToolTipAnchor.Cursor;
             this.radioPageBatchSize.SelectedIndexChanged += new System.EventHandler(this.radioPageBatchSize_SelectedIndexChanged);
             // 
             // labelControl3
             // 
-            this.labelControl3.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelControl3.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelControl3.Appearance.Options.UseFont = true;
             this.labelControl3.Location = new System.Drawing.Point(6, 262);
             this.labelControl3.Name = "labelControl3";
-            this.labelControl3.Size = new System.Drawing.Size(86, 22);
+            this.labelControl3.Size = new System.Drawing.Size(90, 20);
             this.labelControl3.TabIndex = 22;
             this.labelControl3.Text = "Select File";
             // 
             // labelFileName
             // 
             this.labelFileName.Appearance.BackColor = System.Drawing.Color.LightGray;
-            this.labelFileName.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.labelFileName.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.labelFileName.Appearance.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.labelFileName.Appearance.Options.UseBackColor = true;
             this.labelFileName.Appearance.Options.UseFont = true;
             this.labelFileName.Appearance.Options.UseForeColor = true;
             this.labelFileName.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelFileName.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.labelFileName.Location = new System.Drawing.Point(3, 340);
+            this.labelFileName.Location = new System.Drawing.Point(3, 342);
             this.labelFileName.Name = "labelFileName";
             this.labelFileName.Padding = new System.Windows.Forms.Padding(5);
-            this.labelFileName.Size = new System.Drawing.Size(1292, 32);
-            toolTipItem6.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem6.Appearance.Options.UseFont = true;
-            toolTipItem6.Text = "Selected File Path";
-            superToolTip5.Items.Add(toolTipItem6);
-            this.labelFileName.SuperTip = superToolTip5;
+            this.labelFileName.Size = new System.Drawing.Size(1292, 30);
+            toolTipItem8.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem8.Appearance.Options.UseFont = true;
+            toolTipItem8.Text = "Selected File Path";
+            superToolTip7.Items.Add(toolTipItem8);
+            this.labelFileName.SuperTip = superToolTip7;
             this.labelFileName.TabIndex = 21;
             this.labelFileName.Text = "No file selected";
             // 
@@ -597,16 +618,16 @@
             // 
             this.chkMedicalMaterial.Location = new System.Drawing.Point(6, 124);
             this.chkMedicalMaterial.Name = "chkMedicalMaterial";
-            this.chkMedicalMaterial.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkMedicalMaterial.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkMedicalMaterial.Properties.Appearance.Options.UseFont = true;
             this.chkMedicalMaterial.Properties.Caption = "Medical Material Only";
-            this.chkMedicalMaterial.Size = new System.Drawing.Size(233, 26);
+            this.chkMedicalMaterial.Size = new System.Drawing.Size(233, 24);
             this.chkMedicalMaterial.TabIndex = 20;
             this.chkMedicalMaterial.CheckedChanged += new System.EventHandler(this.chkMedicalMaterial_CheckedChanged);
             // 
             // buttonProcessFile
             // 
-            this.buttonProcessFile.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonProcessFile.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonProcessFile.Appearance.Options.UseFont = true;
             this.buttonProcessFile.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("buttonProcessFile.ImageOptions.SvgImage")));
             this.buttonProcessFile.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
@@ -619,7 +640,7 @@
             // 
             // buttonBrowseFile
             // 
-            this.buttonBrowseFile.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonBrowseFile.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonBrowseFile.Appearance.Options.UseFont = true;
             this.buttonBrowseFile.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("buttonBrowseFile.ImageOptions.SvgImage")));
             this.buttonBrowseFile.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
@@ -632,51 +653,51 @@
             // 
             // labelControl2
             // 
-            this.labelControl2.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.labelControl2.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.labelControl2.Appearance.Options.UseFont = true;
             this.labelControl2.Appearance.Options.UseTextOptions = true;
             this.labelControl2.Appearance.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl2.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.labelControl2.AppearanceDisabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.labelControl2.AppearanceDisabled.Options.UseFont = true;
             this.labelControl2.AppearanceDisabled.Options.UseTextOptions = true;
             this.labelControl2.AppearanceDisabled.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl2.AppearanceHovered.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.labelControl2.AppearanceHovered.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.labelControl2.AppearanceHovered.Options.UseFont = true;
             this.labelControl2.AppearanceHovered.Options.UseTextOptions = true;
             this.labelControl2.AppearanceHovered.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl2.AppearancePressed.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.labelControl2.AppearancePressed.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.labelControl2.AppearancePressed.Options.UseFont = true;
             this.labelControl2.AppearancePressed.Options.UseTextOptions = true;
             this.labelControl2.AppearancePressed.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
             this.labelControl2.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl2.Location = new System.Drawing.Point(2, 234);
             this.labelControl2.Name = "labelControl2";
-            this.labelControl2.Size = new System.Drawing.Size(343, 22);
+            this.labelControl2.Size = new System.Drawing.Size(343, 20);
             this.labelControl2.TabIndex = 17;
             this.labelControl2.Text = "Translation Language (Vocabulary)";
             // 
             // labelControl1
             // 
-            this.labelControl1.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.labelControl1.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.labelControl1.Appearance.Options.UseFont = true;
             this.labelControl1.Appearance.Options.UseTextOptions = true;
             this.labelControl1.Appearance.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl1.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.labelControl1.AppearanceDisabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.labelControl1.AppearanceDisabled.Options.UseFont = true;
             this.labelControl1.AppearanceDisabled.Options.UseTextOptions = true;
             this.labelControl1.AppearanceDisabled.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl1.AppearanceHovered.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.labelControl1.AppearanceHovered.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.labelControl1.AppearanceHovered.Options.UseFont = true;
             this.labelControl1.AppearanceHovered.Options.UseTextOptions = true;
             this.labelControl1.AppearanceHovered.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            this.labelControl1.AppearancePressed.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.labelControl1.AppearancePressed.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.labelControl1.AppearancePressed.Options.UseFont = true;
             this.labelControl1.AppearancePressed.Options.UseTextOptions = true;
             this.labelControl1.AppearancePressed.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
             this.labelControl1.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl1.Location = new System.Drawing.Point(6, 184);
             this.labelControl1.Name = "labelControl1";
-            this.labelControl1.Size = new System.Drawing.Size(343, 44);
+            this.labelControl1.Size = new System.Drawing.Size(343, 40);
             this.labelControl1.TabIndex = 16;
             this.labelControl1.Text = "General Language (Definition - Mcqs - Flashcards)";
             // 
@@ -685,26 +706,26 @@
             this.cmbVocabLang.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cmbVocabLang.Location = new System.Drawing.Point(351, 231);
             this.cmbVocabLang.Name = "cmbVocabLang";
-            this.cmbVocabLang.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.cmbVocabLang.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.cmbVocabLang.Properties.Appearance.Options.UseFont = true;
-            this.cmbVocabLang.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.cmbVocabLang.Properties.AppearanceDisabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.cmbVocabLang.Properties.AppearanceDisabled.Options.UseFont = true;
-            this.cmbVocabLang.Properties.AppearanceDropDown.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.cmbVocabLang.Properties.AppearanceDropDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.cmbVocabLang.Properties.AppearanceDropDown.Options.UseFont = true;
-            this.cmbVocabLang.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.cmbVocabLang.Properties.AppearanceFocused.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.cmbVocabLang.Properties.AppearanceFocused.Options.UseFont = true;
-            this.cmbVocabLang.Properties.AppearanceItemDisabled.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.cmbVocabLang.Properties.AppearanceItemDisabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.cmbVocabLang.Properties.AppearanceItemDisabled.Options.UseFont = true;
-            this.cmbVocabLang.Properties.AppearanceItemHighlight.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.cmbVocabLang.Properties.AppearanceItemHighlight.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.cmbVocabLang.Properties.AppearanceItemHighlight.Options.UseFont = true;
-            this.cmbVocabLang.Properties.AppearanceItemSelected.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.cmbVocabLang.Properties.AppearanceItemSelected.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.cmbVocabLang.Properties.AppearanceItemSelected.Options.UseFont = true;
-            this.cmbVocabLang.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.cmbVocabLang.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.cmbVocabLang.Properties.AppearanceReadOnly.Options.UseFont = true;
             this.cmbVocabLang.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
             this.cmbVocabLang.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
-            this.cmbVocabLang.Size = new System.Drawing.Size(218, 28);
+            this.cmbVocabLang.Size = new System.Drawing.Size(218, 26);
             this.cmbVocabLang.TabIndex = 15;
             this.cmbVocabLang.SelectedIndexChanged += new System.EventHandler(this.cmbVocabLang_SelectedIndexChanged);
             // 
@@ -713,26 +734,26 @@
             this.cmbGeneralLang.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cmbGeneralLang.Location = new System.Drawing.Point(351, 185);
             this.cmbGeneralLang.Name = "cmbGeneralLang";
-            this.cmbGeneralLang.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.cmbGeneralLang.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.cmbGeneralLang.Properties.Appearance.Options.UseFont = true;
-            this.cmbGeneralLang.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.cmbGeneralLang.Properties.AppearanceDisabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.cmbGeneralLang.Properties.AppearanceDisabled.Options.UseFont = true;
-            this.cmbGeneralLang.Properties.AppearanceDropDown.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.cmbGeneralLang.Properties.AppearanceDropDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.cmbGeneralLang.Properties.AppearanceDropDown.Options.UseFont = true;
-            this.cmbGeneralLang.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.cmbGeneralLang.Properties.AppearanceFocused.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.cmbGeneralLang.Properties.AppearanceFocused.Options.UseFont = true;
-            this.cmbGeneralLang.Properties.AppearanceItemDisabled.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.cmbGeneralLang.Properties.AppearanceItemDisabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.cmbGeneralLang.Properties.AppearanceItemDisabled.Options.UseFont = true;
-            this.cmbGeneralLang.Properties.AppearanceItemHighlight.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.cmbGeneralLang.Properties.AppearanceItemHighlight.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.cmbGeneralLang.Properties.AppearanceItemHighlight.Options.UseFont = true;
-            this.cmbGeneralLang.Properties.AppearanceItemSelected.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.cmbGeneralLang.Properties.AppearanceItemSelected.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.cmbGeneralLang.Properties.AppearanceItemSelected.Options.UseFont = true;
-            this.cmbGeneralLang.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 10.2F);
+            this.cmbGeneralLang.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.cmbGeneralLang.Properties.AppearanceReadOnly.Options.UseFont = true;
             this.cmbGeneralLang.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
             this.cmbGeneralLang.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
-            this.cmbGeneralLang.Size = new System.Drawing.Size(218, 28);
+            this.cmbGeneralLang.Size = new System.Drawing.Size(218, 26);
             this.cmbGeneralLang.TabIndex = 14;
             this.cmbGeneralLang.SelectedIndexChanged += new System.EventHandler(this.cmbGeneralLang_SelectedIndexChanged);
             // 
@@ -740,10 +761,10 @@
             // 
             this.chkVocabulary.Location = new System.Drawing.Point(724, 28);
             this.chkVocabulary.Name = "chkVocabulary";
-            this.chkVocabulary.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkVocabulary.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkVocabulary.Properties.Appearance.Options.UseFont = true;
             this.chkVocabulary.Properties.Caption = "Generate Vocabulary";
-            this.chkVocabulary.Size = new System.Drawing.Size(233, 26);
+            this.chkVocabulary.Size = new System.Drawing.Size(233, 24);
             this.chkVocabulary.TabIndex = 13;
             this.chkVocabulary.CheckedChanged += new System.EventHandler(this.chkVocabulary_CheckedChanged);
             // 
@@ -751,10 +772,10 @@
             // 
             this.chkFlashcards.Location = new System.Drawing.Point(485, 28);
             this.chkFlashcards.Name = "chkFlashcards";
-            this.chkFlashcards.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkFlashcards.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkFlashcards.Properties.Appearance.Options.UseFont = true;
             this.chkFlashcards.Properties.Caption = "Generate Flashcards";
-            this.chkFlashcards.Size = new System.Drawing.Size(233, 26);
+            this.chkFlashcards.Size = new System.Drawing.Size(233, 24);
             this.chkFlashcards.TabIndex = 12;
             this.chkFlashcards.CheckedChanged += new System.EventHandler(this.chkFlashcards_CheckedChanged);
             // 
@@ -762,10 +783,10 @@
             // 
             this.chkMCQs.Location = new System.Drawing.Point(246, 28);
             this.chkMCQs.Name = "chkMCQs";
-            this.chkMCQs.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkMCQs.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkMCQs.Properties.Appearance.Options.UseFont = true;
             this.chkMCQs.Properties.Caption = "Generate MCQs";
-            this.chkMCQs.Size = new System.Drawing.Size(233, 26);
+            this.chkMCQs.Size = new System.Drawing.Size(233, 24);
             this.chkMCQs.TabIndex = 11;
             this.chkMCQs.CheckedChanged += new System.EventHandler(this.chkMCQs_CheckedChanged);
             // 
@@ -773,10 +794,10 @@
             // 
             this.chkDefinitions.Location = new System.Drawing.Point(7, 28);
             this.chkDefinitions.Name = "chkDefinitions";
-            this.chkDefinitions.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkDefinitions.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkDefinitions.Properties.Appearance.Options.UseFont = true;
             this.chkDefinitions.Properties.Caption = "Generate Definitions";
-            this.chkDefinitions.Size = new System.Drawing.Size(233, 26);
+            this.chkDefinitions.Size = new System.Drawing.Size(233, 24);
             this.chkDefinitions.TabIndex = 10;
             this.chkDefinitions.CheckedChanged += new System.EventHandler(this.chkDefinitions_CheckedChanged);
             // 
@@ -786,12 +807,12 @@
             this.textBoxStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxStatus.ForeColor = System.Drawing.Color.White;
-            this.textBoxStatus.Location = new System.Drawing.Point(3, 25);
+            this.textBoxStatus.Location = new System.Drawing.Point(3, 23);
             this.textBoxStatus.Multiline = true;
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxStatus.Size = new System.Drawing.Size(1292, 145);
+            this.textBoxStatus.Size = new System.Drawing.Size(1292, 147);
             this.textBoxStatus.TabIndex = 9;
             this.labelsToolTip.SetToolTip(this.textBoxStatus, "Application Log Area Were any Action Or Changes Will Be Written Here To Inform Th" +
         "e User");
@@ -804,7 +825,7 @@
             this.groupBox4.Controls.Add(this.comboBoxEditModel);
             this.groupBox4.Controls.Add(this.labelControl4);
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox4.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox4.Location = new System.Drawing.Point(5, 5);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(439, 166);
@@ -817,26 +838,26 @@
             this.cmbDelimiter.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cmbDelimiter.Location = new System.Drawing.Point(4, 87);
             this.cmbDelimiter.Name = "cmbDelimiter";
-            this.cmbDelimiter.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.cmbDelimiter.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.cmbDelimiter.Properties.Appearance.Options.UseFont = true;
-            this.cmbDelimiter.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.cmbDelimiter.Properties.AppearanceDisabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.cmbDelimiter.Properties.AppearanceDisabled.Options.UseFont = true;
-            this.cmbDelimiter.Properties.AppearanceDropDown.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.cmbDelimiter.Properties.AppearanceDropDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.cmbDelimiter.Properties.AppearanceDropDown.Options.UseFont = true;
-            this.cmbDelimiter.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.cmbDelimiter.Properties.AppearanceFocused.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.cmbDelimiter.Properties.AppearanceFocused.Options.UseFont = true;
-            this.cmbDelimiter.Properties.AppearanceItemDisabled.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.cmbDelimiter.Properties.AppearanceItemDisabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.cmbDelimiter.Properties.AppearanceItemDisabled.Options.UseFont = true;
-            this.cmbDelimiter.Properties.AppearanceItemHighlight.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.cmbDelimiter.Properties.AppearanceItemHighlight.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.cmbDelimiter.Properties.AppearanceItemHighlight.Options.UseFont = true;
-            this.cmbDelimiter.Properties.AppearanceItemSelected.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.cmbDelimiter.Properties.AppearanceItemSelected.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.cmbDelimiter.Properties.AppearanceItemSelected.Options.UseFont = true;
-            this.cmbDelimiter.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.cmbDelimiter.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.cmbDelimiter.Properties.AppearanceReadOnly.Options.UseFont = true;
             this.cmbDelimiter.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
             this.cmbDelimiter.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
-            this.cmbDelimiter.Size = new System.Drawing.Size(429, 28);
+            this.cmbDelimiter.Size = new System.Drawing.Size(429, 26);
             this.cmbDelimiter.TabIndex = 25;
             // 
             // svgImageBoxAbout
@@ -847,11 +868,11 @@
             this.svgImageBoxAbout.Margin = new System.Windows.Forms.Padding(4);
             this.svgImageBoxAbout.Name = "svgImageBoxAbout";
             this.svgImageBoxAbout.Size = new System.Drawing.Size(48, 44);
-            toolTipItem7.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem7.Appearance.Options.UseFont = true;
-            toolTipItem7.Text = "About This Application";
-            superToolTip6.Items.Add(toolTipItem7);
-            this.svgImageBoxAbout.SuperTip = superToolTip6;
+            toolTipItem9.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem9.Appearance.Options.UseFont = true;
+            toolTipItem9.Text = "About This Application";
+            superToolTip8.Items.Add(toolTipItem9);
+            this.svgImageBoxAbout.SuperTip = superToolTip8;
             this.svgImageBoxAbout.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("svgImageBoxAbout.SvgImage")));
             this.svgImageBoxAbout.TabIndex = 23;
             this.svgImageBoxAbout.Text = "svgImageBox1";
@@ -862,36 +883,36 @@
             this.comboBoxEditModel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.comboBoxEditModel.Location = new System.Drawing.Point(3, 56);
             this.comboBoxEditModel.Name = "comboBoxEditModel";
-            this.comboBoxEditModel.Properties.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.comboBoxEditModel.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.comboBoxEditModel.Properties.Appearance.Options.UseFont = true;
-            this.comboBoxEditModel.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.comboBoxEditModel.Properties.AppearanceDisabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.comboBoxEditModel.Properties.AppearanceDisabled.Options.UseFont = true;
-            this.comboBoxEditModel.Properties.AppearanceDropDown.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.comboBoxEditModel.Properties.AppearanceDropDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.comboBoxEditModel.Properties.AppearanceDropDown.Options.UseFont = true;
-            this.comboBoxEditModel.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.comboBoxEditModel.Properties.AppearanceFocused.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.comboBoxEditModel.Properties.AppearanceFocused.Options.UseFont = true;
-            this.comboBoxEditModel.Properties.AppearanceItemDisabled.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.comboBoxEditModel.Properties.AppearanceItemDisabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.comboBoxEditModel.Properties.AppearanceItemDisabled.Options.UseFont = true;
-            this.comboBoxEditModel.Properties.AppearanceItemHighlight.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.comboBoxEditModel.Properties.AppearanceItemHighlight.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.comboBoxEditModel.Properties.AppearanceItemHighlight.Options.UseFont = true;
-            this.comboBoxEditModel.Properties.AppearanceItemSelected.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.comboBoxEditModel.Properties.AppearanceItemSelected.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.comboBoxEditModel.Properties.AppearanceItemSelected.Options.UseFont = true;
-            this.comboBoxEditModel.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold);
+            this.comboBoxEditModel.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
             this.comboBoxEditModel.Properties.AppearanceReadOnly.Options.UseFont = true;
             this.comboBoxEditModel.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
             this.comboBoxEditModel.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
-            this.comboBoxEditModel.Size = new System.Drawing.Size(429, 28);
+            this.comboBoxEditModel.Size = new System.Drawing.Size(429, 26);
             this.comboBoxEditModel.TabIndex = 24;
             this.comboBoxEditModel.SelectedIndexChanged += new System.EventHandler(this.comboBoxEditModel_SelectedIndexChanged);
             // 
             // labelControl4
             // 
-            this.labelControl4.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelControl4.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelControl4.Appearance.Options.UseFont = true;
             this.labelControl4.Location = new System.Drawing.Point(6, 28);
             this.labelControl4.Name = "labelControl4";
-            this.labelControl4.Size = new System.Drawing.Size(113, 22);
+            this.labelControl4.Size = new System.Drawing.Size(107, 20);
             this.labelControl4.TabIndex = 23;
             this.labelControl4.Text = "Choose Model";
             // 
@@ -900,7 +921,7 @@
             this.groupBox5.BackColor = System.Drawing.SystemColors.ControlLight;
             this.groupBox5.Controls.Add(this.textBoxStatus);
             this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox5.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox5.Location = new System.Drawing.Point(5, 5);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(1298, 173);
@@ -970,6 +991,19 @@
             this.panelFill.Padding = new System.Windows.Forms.Padding(5);
             this.panelFill.Size = new System.Drawing.Size(1308, 385);
             this.panelFill.TabIndex = 25;
+            // 
+            // buttonLockApiKey
+            // 
+            this.buttonLockApiKey.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("simpleButton1.ImageOptions.SvgImage")));
+            this.buttonLockApiKey.ImageOptions.SvgImageSize = new System.Drawing.Size(20, 20);
+            this.buttonLockApiKey.Location = new System.Drawing.Point(619, 58);
+            this.buttonLockApiKey.Name = "buttonLockApiKey";
+            this.buttonLockApiKey.Size = new System.Drawing.Size(37, 23);
+            toolTipItem1.Text = "Lock / Unlock API Key";
+            superToolTip1.Items.Add(toolTipItem1);
+            this.buttonLockApiKey.SuperTip = superToolTip1;
+            this.buttonLockApiKey.TabIndex = 26;
+            this.buttonLockApiKey.Click += new System.EventHandler(this.buttonLockApiKey_Click);
             // 
             // Form1
             // 
@@ -1077,6 +1111,8 @@
         private DevExpress.XtraEditors.CheckEdit chkSummary;
         private DevExpress.XtraEditors.ComboBoxEdit cmbDelimiter;
         private DevExpress.XtraEditors.CheckEdit chkUseCommaDelimiter;
+        private DevExpress.XtraEditors.SimpleButton buttonShowApi;
+        private DevExpress.XtraEditors.SimpleButton buttonLockApiKey;
     }
 }
 
