@@ -2162,7 +2162,7 @@ namespace ChatGPTFileProcessor
             {
                 Word.Paragraph titlePara = doc.Content.Paragraphs.Add();
                 titlePara.Range.Text = sectionTitle;
-                titlePara.Range.Font.Bold = 1;
+                //titlePara.Range.Font.Bold = 1;
                 titlePara.Range.Font.Size = 14;
                 titlePara.Format.SpaceAfter = 10;
                 titlePara.Range.InsertParagraphAfter();
@@ -3415,6 +3415,7 @@ namespace ChatGPTFileProcessor
         {
             if (textEditAPIKey.Properties.ReadOnly == false)
             {
+                /*Demo*/
                 textEditAPIKey.Properties.ReadOnly = true;
             }
             else
