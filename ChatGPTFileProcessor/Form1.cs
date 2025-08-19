@@ -245,6 +245,7 @@ namespace ChatGPTFileProcessor
                 string simplifiedFilePath = Path.Combine(basePath, $"Simplified_{modelName}_{timeStamp}.docx");
                 string caseStudyFilePath = Path.Combine(basePath, $"CaseStudy_{modelName}_{timeStamp}.docx");
                 string keywordsFilePath = Path.Combine(basePath, $"Keywords_{modelName}_{timeStamp}.docx");
+                string translatedSectionsFilePath = Path.Combine(basePath, $"TranslatedSections_{modelName}_{timeStamp}.docx");
 
 
 
@@ -1052,6 +1053,38 @@ namespace ChatGPTFileProcessor
                         $"Provide at least 8–10 keywords.";
                 }
 
+                //string translatedSectionsPrompt =
+                //    $"Translate the following text into {vocabLangName}. " +
+                //    $"Keep every sentence or paragraph exactly as it is in the original language. " +
+                //    $"After each sentence or paragraph, provide the translation immediately below it. " +
+                //    $"Do not remove or shorten any part of the original text. " +
+                //    $"Use clear labels in the output: start the original with 'Original:' and the translation with 'Translation:'. " +
+                //    $"Maintain the original meaning and style (e.g., scientific or medical if applicable). " +
+                //    $"Continue this format until the end of the text.";
+
+                string translatedSectionsPrompt =
+                    $"Translate the following text from {generalLangName} into {vocabLangName}. " +
+                    $"Keep every sentence or paragraph exactly as it is in the original language. " +
+                    $"After each sentence or paragraph, provide the translation immediately below it. " +
+                    $"Do not remove or shorten any part of the original text. " +
+                    //$"Use clear labels in the output: start the original with 'Original:' and the translation with 'Translation:'. " +
+                    $"Do not add any introductions, explanations, notes, or extra formatting. " +
+                    $"Only output the text in the requested format.";
+
+                //bool useSeparators = true; // لو ما تريده، غيّرها إلى false
+
+                //string translatedSectionsPrompt =
+                //    $"Translate the following text from {generalLangName} into {vocabLangName}. " +
+                //    $"Keep every sentence or paragraph exactly as it is in the original language. " +
+                //    $"After each sentence or paragraph, provide the translation immediately below it. " +
+                //    $"Do not remove or shorten any part of the original text. " +
+                //    //$"Use clear labels in the output: start the original with 'Original:' and the translation with 'Translation:'. " +
+                //    (useSeparators
+                //        ? $"After each translation, add a line with exactly this text on a separate line: '---------------------------------------'."
+                //        : $"Do not add any extra lines, explanations, notes, or separators.") +
+                //    $" Only output the text in the requested format.";
+
+
 
 
 
@@ -1078,6 +1111,7 @@ namespace ChatGPTFileProcessor
                 StringBuilder allSimplified = chkSimplified.Checked ? new StringBuilder() : null;
                 StringBuilder allCaseStudy = chkCaseStudy.Checked ? new StringBuilder() : null;
                 StringBuilder allKeywords = chkKeywords.Checked ? new StringBuilder() : null;
+                StringBuilder allTranslatedSections = chkTranslatedSections.Checked ? new StringBuilder() : null;
 
                 // Check if at least one section is selected
                 //if (allDefinitions == null && allMCQs == null && allFlashcards == null && allVocabulary == null)
@@ -1094,7 +1128,8 @@ namespace ChatGPTFileProcessor
                      && allTableExtract == null
                      && allSimplified == null
                      && allCaseStudy == null
-                     && allKeywords == null)
+                     && allKeywords == null
+                     && allTranslatedSections == null)
                 {
                     MessageBox.Show("Please select at least one section to process.", "No Sections Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     buttonProcessFile.Enabled = true;
@@ -1261,6 +1296,16 @@ namespace ChatGPTFileProcessor
                                 allKeywords.AppendLine();
                             }
 
+                            // ── NEW: Translated Sections
+                            if (chkTranslatedSections.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Translated Sections…");
+                                string pageTS = await ProcessPdfPageMultimodal(image, apiKey, translatedSectionsPrompt);
+                                allTranslatedSections.AppendLine($"===== Page {pageNumber} =====");
+                                allTranslatedSections.AppendLine(pageTS);
+                                allTranslatedSections.AppendLine();
+                            }
+
                             UpdateOverlayLog($"✅ Page {pageNumber} done.");
                         }
                         break;
@@ -1416,6 +1461,17 @@ namespace ChatGPTFileProcessor
                                 allKeywords.AppendLine(pagesKW);
                                 allKeywords.AppendLine();
                             }
+
+                            // ── NEW: Translated Sections
+                            if (chkTranslatedSections.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Translated Sections…");
+                                string pagesTS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, translatedSectionsPrompt);
+                                allTranslatedSections.AppendLine(header);
+                                allTranslatedSections.AppendLine(pagesTS);
+                                allTranslatedSections.AppendLine();
+                            }
+
 
                             UpdateOverlayLog($"✅ Pages {startPage}–{endPage} done.");
                         }
@@ -1582,6 +1638,16 @@ namespace ChatGPTFileProcessor
                                 allKeywords.AppendLine();
                             }
 
+                            // ── NEW: Translated Sections
+                            if (chkTranslatedSections.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Translated Sections…");
+                                string pagesTS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, translatedSectionsPrompt);
+                                allTranslatedSections.AppendLine(header);
+                                allTranslatedSections.AppendLine(pagesTS);
+                                allTranslatedSections.AppendLine();
+                            }
+
                             UpdateOverlayLog($"✅ Pages {startPage}–{endPage} done.");
                         }
                         break;
@@ -1744,6 +1810,16 @@ namespace ChatGPTFileProcessor
                                 allKeywords.AppendLine(header);
                                 allKeywords.AppendLine(pagesKW);
                                 allKeywords.AppendLine();
+                            }
+
+                            // ── NEW: Translated Sections
+                            if (chkTranslatedSections.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Translated Sections…");
+                                string pagesTS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, translatedSectionsPrompt);
+                                allTranslatedSections.AppendLine(header);
+                                allTranslatedSections.AppendLine(pagesTS);
+                                allTranslatedSections.AppendLine();
                             }
 
                             UpdateOverlayLog($"✅ Pages {startPage}–{endPage} done.");
@@ -2042,7 +2118,10 @@ namespace ChatGPTFileProcessor
 
                 if (chkKeywords.Checked)
                     SaveContentToFile(allKeywords.ToString(), keywordsFilePath, "High-Yield Keywords");
-                
+
+                if (chkTranslatedSections.Checked)
+                    SaveContentToFile(allTranslatedSections.ToString(), translatedSectionsFilePath, "Translated Sections");
+
 
                 // 8) إظهار رسالة انتهاء المعالجة
                 UpdateStatus("✅ Processing complete. Files saved to Desktop.");
