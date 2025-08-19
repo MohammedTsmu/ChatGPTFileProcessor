@@ -283,6 +283,8 @@ Contributions are welcome! Please follow these steps to contribute:
 2. **Create a New Branch** for your feature or bugfix.
 3. **Commit Your Changes** with clear and descriptive messages.
 4. **Submit a Pull Request** detailing the changes and the purpose behind them.
+5. when run visual studio community first time, it will not open the project you should do > one build first.
+6. the app will not work specially when upload file, because it is designed to lunch on 64bit so do it via [build > configuration manager > set the platform to x64]
 
 ## License
 
