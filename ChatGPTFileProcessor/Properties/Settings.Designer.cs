@@ -310,5 +310,41 @@ namespace ChatGPTFileProcessor.Properties {
                 this["OutputFolder"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseSessionFolder {
+            get {
+                return ((bool)(this["UseSessionFolder"]));
+            }
+            set {
+                this["UseSessionFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SaveBesidePdf {
+            get {
+                return ((bool)(this["SaveBesidePdf"]));
+            }
+            set {
+                this["SaveBesidePdf"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OrganizeByType {
+            get {
+                return ((bool)(this["OrganizeByType"]));
+            }
+            set {
+                this["OrganizeByType"] = value;
+            }
+        }
     }
 }

@@ -183,6 +183,44 @@ namespace ChatGPTFileProcessor
             }
         }
 
+        private static void EnsureDir(string path)
+        {
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+        }
+
+        // تُعيد المجلد النهائي للجلسة بحسب الخيارات
+        private string ResolveBaseOutputFolder(string pdfPath, string timeStamp, string modelName)
+        {
+            // 1) أساس الاختيار: بجانب PDF أو المجلد المخصص
+            string baseFolder = Properties.Settings.Default.SaveBesidePdf && File.Exists(pdfPath)
+                ? Path.GetDirectoryName(pdfPath)
+                : GetOutputFolder();
+
+            EnsureDir(baseFolder);
+
+            // 2) مجلد جلسة لكل تشغيل (اختياري)
+            if (Properties.Settings.Default.UseSessionFolder)
+            {
+                string sessionFolder = Path.Combine(baseFolder, $"{timeStamp}_{modelName}");
+                EnsureDir(sessionFolder);
+                return sessionFolder;
+            }
+
+            return baseFolder;
+        }
+
+        // إن كان خيار "OrganizeByType" مفعلًا، يحفظ داخل مجلد فرعي حسب النوع
+        private string PathInTypeFolder(string baseFolder, string typeFolderName, string fileName)
+        {
+            if (Properties.Settings.Default.OrganizeByType)
+            {
+                string typeDir = Path.Combine(baseFolder, typeFolderName);
+                EnsureDir(typeDir);
+                return Path.Combine(typeDir, fileName);
+            }
+            return Path.Combine(baseFolder, fileName);
+        }
+
 
         private void buttonBrowseFile_Click(object sender, EventArgs e)
         {
@@ -273,30 +311,80 @@ namespace ChatGPTFileProcessor
                 //// NEW: Explain Terms output
                 //string explainTermsFilePath = Path.Combine(basePath, $"ExplainTerms_{modelName}_{timeStamp}.docx");
 
-                // Prepare file‐paths
-                // مسارات ملفات التعاريف و MCQs و Flashcards و Vocabulary
-                // Use outputFolder instead of basePath
-                // Add timeStamp to ensure unique filenames
-                // Add modelName to filenames to indicate which model was used
-                // This helps in organizing files better
-                // New output files:
-                string definitionsFilePath = Path.Combine(outputFolder, $"Definitions_{modelName}_{timeStamp}.docx");
-                string mcqsFilePath = Path.Combine(outputFolder, $"MCQs_{modelName}_{timeStamp}.docx");
-                string flashcardsFilePath = Path.Combine(outputFolder, $"Flashcards_{modelName}_{timeStamp}.docx");
-                string vocabularyFilePath = Path.Combine(outputFolder, $"Vocabulary_{modelName}_{timeStamp}.docx");
-                string summaryFilePath = Path.Combine(outputFolder, $"Summary_{modelName}_{timeStamp}.docx");
-                string takeawaysFilePath = Path.Combine(outputFolder, $"Takeaways_{modelName}_{timeStamp}.docx");
-                string clozeFilePath = Path.Combine(outputFolder, $"Cloze_{modelName}_{timeStamp}.docx");
-                string tfFilePath = Path.Combine(outputFolder, $"TrueFalse_{modelName}_{timeStamp}.docx");
-                string outlineFilePath = Path.Combine(outputFolder, $"Outline_{modelName}_{timeStamp}.docx");
-                string conceptMapFilePath = Path.Combine(outputFolder, $"ConceptMap_{modelName}_{timeStamp}.docx");
-                string tableFilePath = Path.Combine(outputFolder, $"Tables_{modelName}_{timeStamp}.docx");
-                string simplifiedFilePath = Path.Combine(outputFolder, $"Simplified_{modelName}_{timeStamp}.docx");
-                string caseStudyFilePath = Path.Combine(outputFolder, $"CaseStudy_{modelName}_{timeStamp}.docx");
-                string keywordsFilePath = Path.Combine(outputFolder, $"Keywords_{modelName}_{timeStamp}.docx");
-                string translatedSectionsFilePath = Path.Combine(outputFolder, $"TranslatedSections_{modelName}_{timeStamp}.docx");
-                // وإذا عندك Explain Terms:
-                string explainTermsFilePath = Path.Combine(outputFolder, $"ExplainTerms_{modelName}_{timeStamp}.docx");
+
+
+                //// Prepare file‐paths
+                //// مسارات ملفات التعاريف و MCQs و Flashcards و Vocabulary
+                //// Use outputFolder instead of basePath
+                //// Add timeStamp to ensure unique filenames
+                //// Add modelName to filenames to indicate which model was used
+                //// This helps in organizing files better
+                //// New output files:
+                ///
+                //string definitionsFilePath = Path.Combine(outputFolder, $"Definitions_{modelName}_{timeStamp}.docx");
+                //string mcqsFilePath = Path.Combine(outputFolder, $"MCQs_{modelName}_{timeStamp}.docx");
+                //string flashcardsFilePath = Path.Combine(outputFolder, $"Flashcards_{modelName}_{timeStamp}.docx");
+                //string vocabularyFilePath = Path.Combine(outputFolder, $"Vocabulary_{modelName}_{timeStamp}.docx");
+                //string summaryFilePath = Path.Combine(outputFolder, $"Summary_{modelName}_{timeStamp}.docx");
+                //string takeawaysFilePath = Path.Combine(outputFolder, $"Takeaways_{modelName}_{timeStamp}.docx");
+                //string clozeFilePath = Path.Combine(outputFolder, $"Cloze_{modelName}_{timeStamp}.docx");
+                //string tfFilePath = Path.Combine(outputFolder, $"TrueFalse_{modelName}_{timeStamp}.docx");
+                //string outlineFilePath = Path.Combine(outputFolder, $"Outline_{modelName}_{timeStamp}.docx");
+                //string conceptMapFilePath = Path.Combine(outputFolder, $"ConceptMap_{modelName}_{timeStamp}.docx");
+                //string tableFilePath = Path.Combine(outputFolder, $"Tables_{modelName}_{timeStamp}.docx");
+                //string simplifiedFilePath = Path.Combine(outputFolder, $"Simplified_{modelName}_{timeStamp}.docx");
+                //string caseStudyFilePath = Path.Combine(outputFolder, $"CaseStudy_{modelName}_{timeStamp}.docx");
+                //string keywordsFilePath = Path.Combine(outputFolder, $"Keywords_{modelName}_{timeStamp}.docx");
+                //string translatedSectionsFilePath = Path.Combine(outputFolder, $"TranslatedSections_{modelName}_{timeStamp}.docx");
+                //// وإذا عندك Explain Terms:
+                //string explainTermsFilePath = Path.Combine(outputFolder, $"ExplainTerms_{modelName}_{timeStamp}.docx");
+
+
+                // بدلاً من: string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                // احصل على المجلد النهائي حسب الخيارات
+                string outputRoot = ResolveBaseOutputFolder(filePath, timeStamp, modelName);
+
+                // 💾 أعلن أين سنحفظ
+                UpdateOverlayLog($"💾 Saving outputs to: {outputRoot}");
+                UpdateOverlayLog($"Options → SaveBesidePdf={Properties.Settings.Default.SaveBesidePdf}, " +
+                                 $"SessionFolder={Properties.Settings.Default.UseSessionFolder}, " +
+                                 $"OrganizeByType={Properties.Settings.Default.OrganizeByType}");
+
+                // بناء أسماء الملفات
+                string defName = $"Definitions_{modelName}_{timeStamp}.docx";
+                string mcqName = $"MCQs_{modelName}_{timeStamp}.docx";
+                string flashName = $"Flashcards_{modelName}_{timeStamp}.docx";
+                string vocabName = $"Vocabulary_{modelName}_{timeStamp}.docx";
+                string sumName = $"Summary_{modelName}_{timeStamp}.docx";
+                string takeName = $"Takeaways_{modelName}_{timeStamp}.docx";
+                string clozeName = $"Cloze_{modelName}_{timeStamp}.docx";
+                string tfName = $"TrueFalse_{modelName}_{timeStamp}.docx";
+                string outlName = $"Outline_{modelName}_{timeStamp}.docx";
+                string cmapName = $"ConceptMap_{modelName}_{timeStamp}.docx";
+                string tblName = $"Tables_{modelName}_{timeStamp}.docx";
+                string simpName = $"Simplified_{modelName}_{timeStamp}.docx";
+                string caseName = $"CaseStudy_{modelName}_{timeStamp}.docx";
+                string keywName = $"Keywords_{modelName}_{timeStamp}.docx";
+                string transName = $"TranslatedSections_{modelName}_{timeStamp}.docx";
+                string explName = $"ExplainTerms_{modelName}_{timeStamp}.docx"; // للميزة الجديدة
+
+                // الآن اختر مجلد النوع عندما تطلبه
+                string definitionsFilePath = PathInTypeFolder(outputRoot, "Definitions", defName);
+                string mcqsFilePath = PathInTypeFolder(outputRoot, "MCQs", mcqName);
+                string flashcardsFilePath = PathInTypeFolder(outputRoot, "Flashcards", flashName);
+                string vocabularyFilePath = PathInTypeFolder(outputRoot, "Vocabulary", vocabName);
+                string summaryFilePath = PathInTypeFolder(outputRoot, "Summary", sumName);
+                string takeawaysFilePath = PathInTypeFolder(outputRoot, "Takeaways", takeName);
+                string clozeFilePath = PathInTypeFolder(outputRoot, "Cloze", clozeName);
+                string tfFilePath = PathInTypeFolder(outputRoot, "TrueFalse", tfName);
+                string outlineFilePath = PathInTypeFolder(outputRoot, "Outline", outlName);
+                string conceptMapFilePath = PathInTypeFolder(outputRoot, "ConceptMap", cmapName);
+                string tableFilePath = PathInTypeFolder(outputRoot, "Tables", tblName);
+                string simplifiedFilePath = PathInTypeFolder(outputRoot, "Simplified", simpName);
+                string caseStudyFilePath = PathInTypeFolder(outputRoot, "CaseStudy", caseName);
+                string keywordsFilePath = PathInTypeFolder(outputRoot, "Keywords", keywName);
+                string translatedSectionsFilePath = PathInTypeFolder(outputRoot, "TranslatedSections", transName);
+                string explainTermsFilePath = PathInTypeFolder(outputRoot, "ExplainTerms", explName);
 
 
 
@@ -1682,6 +1770,29 @@ namespace ChatGPTFileProcessor
                 } // end of batch size switch
 
 
+
+
+                UpdateOverlayLog("🗂️ Selected exports (paths):");
+                LogIfSelected("Definitions", chkDefinitions.Checked, definitionsFilePath);
+                LogIfSelected("MCQs (.docx)", chkMCQs.Checked, mcqsFilePath);
+                LogIfSelected("Flashcards (.docx)", chkFlashcards.Checked, flashcardsFilePath);
+                LogIfSelected("Vocabulary (.docx)", chkVocabulary.Checked, vocabularyFilePath);
+                LogIfSelected("Summary", chkSummary.Checked, summaryFilePath);
+                LogIfSelected("Takeaways", chkTakeaways.Checked, takeawaysFilePath);
+                LogIfSelected("Cloze (.docx)", chkCloze.Checked, clozeFilePath);
+                LogIfSelected("True/False", chkTrueFalse.Checked, tfFilePath);
+                LogIfSelected("Outline", chkOutline.Checked, outlineFilePath);
+                LogIfSelected("Concept Map", chkConceptMap.Checked, conceptMapFilePath);
+                LogIfSelected("Tables", chkTableExtract.Checked, tableFilePath);
+                LogIfSelected("Simplified", chkSimplified.Checked, simplifiedFilePath);
+                LogIfSelected("Case Study", chkCaseStudy.Checked, caseStudyFilePath);
+                LogIfSelected("Keywords", chkKeywords.Checked, keywordsFilePath);
+                LogIfSelected("Translated Sections", chkTranslatedSections.Checked, translatedSectionsFilePath);
+                LogIfSelected("Explain Terms", chkExplainTerms.Checked, explainTermsFilePath);
+
+
+
+
                 // 7) تحويل StringBuilder إلى نصٍّ نهائي وحفظه في ملفات Word منسّقة
                 // 7.1) ملف التعاريف
                 // 7) Save out only those StringBuilders that were created (i.e. their CheckEdit was checked)
@@ -1701,8 +1812,8 @@ namespace ChatGPTFileProcessor
                     // 2) now parse & save out a .csv/.tsv
                     var parsed = ParseMcqs(mcqsRaw);
                     bool useComma = chkUseCommaDelimiter.Checked;    // or read from your combo
-                    var delPath = Path.ChangeExtension(mcqsFilePath,
-                                        useComma ? ".csv" : ".tsv");
+                    var delPath = Path.ChangeExtension(mcqsFilePath,useComma ? ".csv" : ".tsv");
+
                     SaveMcqsToDelimitedFile(parsed, delPath, useComma);
                 }
 
@@ -1856,9 +1967,11 @@ namespace ChatGPTFileProcessor
                 if (chkExplainTerms.Checked)
                     SaveContentToFile(allExplainTerms.ToString(), explainTermsFilePath, "Explain Terms");
 
+                UpdateOverlayLog("✅ All selected exports finished successfully.");
 
-                // 8) إظهار رسالة انتهاء المعالجة
-                UpdateStatus("✅ Processing complete. Files saved to Desktop.");
+
+                //// 8) إظهار رسالة انتهاء المعالجة
+                //UpdateStatus("✅ Processing complete. Files saved to Desktop.");
                 UpdateOverlayLog("✅ Processing complete. Files saved to Desktop as selected outputs.");
                 UpdateOverlayLog("E N D   G E N E R A T I N G...");
                 UpdateOverlayLog("-----------------------------------------------------");
@@ -2296,14 +2409,16 @@ namespace ChatGPTFileProcessor
 
             logTextBox = new TextBox
             {
-                Size = new Size(500, 100),
+                //Size = new Size(600, 100),
+                Size = new Size(600, 200),
                 Multiline = true,
                 ReadOnly = true,
                 ScrollBars = ScrollBars.Vertical,
                 BackColor = Color.Black,
                 ForeColor = Color.White,
                 Font = new System.Drawing.Font("Consolas", 10),
-                Location = new System.Drawing.Point(centerX - 250, statusLabel.Bottom + 10)
+                //Location = new System.Drawing.Point(centerX - 250, statusLabel.Bottom + 10)
+                Location = new System.Drawing.Point(centerX - 300, statusLabel.Bottom + 10)
             };
 
 
@@ -2312,8 +2427,6 @@ namespace ChatGPTFileProcessor
             overlayPanel.Controls.Add(logTextBox);
             this.Controls.Add(overlayPanel);
         }
-         
-
 
         private void UpdateOverlayLog(string message)
         {
@@ -2343,6 +2456,14 @@ namespace ChatGPTFileProcessor
             overlayPanel.Visible = false;
         }
 
+        private void LogIfSelected(string label, bool enabled, string path)
+        {
+            if (enabled && !string.IsNullOrWhiteSpace(path))
+                //UpdateOverlayLog($"{label} → {path}");
+            UpdateOverlayLog($"{label} → {Path.GetFileName(path)}");
+        }
+
+
 
         private void loadCheckBoxesSettings()
         {
@@ -2369,6 +2490,11 @@ namespace ChatGPTFileProcessor
             chkTranslatedSections.Checked = Properties.Settings.Default.GenerateTranslatedSections;
             chkExplainTerms.Checked = Properties.Settings.Default.GenerateExplainTerms;
             chkArabicExplainTerms.Checked = Properties.Settings.Default.ArabicExplainTerms;
+            
+            chkUseSessionFolder.Checked = Properties.Settings.Default.UseSessionFolder;
+            chkSaveBesidePdf.Checked = Properties.Settings.Default.SaveBesidePdf;
+            chkOrganizeByType.Checked = Properties.Settings.Default.OrganizeByType;
+            textEditOutputFolder.Text = GetOutputFolder();
 
             textEditAPIKey.ReadOnly = Properties.Settings.Default.ApiKeyLock;
         }
@@ -2522,6 +2648,28 @@ namespace ChatGPTFileProcessor
             Properties.Settings.Default.ArabicExplainTerms = chkArabicExplainTerms.Checked;
             Properties.Settings.Default.Save();
             UpdateStatus($"Explain Terms in Arabic…{(chkArabicExplainTerms.Checked ? "Activated" : "Deactivated")}");
+        }
+
+        private void chkUseSessionFolder_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.UseSessionFolder = chkUseSessionFolder.Checked;
+            Properties.Settings.Default.Save();
+            UpdateStatus($"Use Session Folder…{(chkUseSessionFolder.Checked ? "Activated" : "Deactivated")}");
+        }
+
+        private void chkSaveBesidePdf_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.SaveBesidePdf = chkSaveBesidePdf.Checked;
+            Properties.Settings.Default.Save();
+            UpdateStatus($"Save Beside PDF…{(chkSaveBesidePdf.Checked ? "Activated" : "Deactivated")}");
+
+        }
+
+        private void chkOrganizeByType_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.OrganizeByType = chkOrganizeByType.Checked;
+            Properties.Settings.Default.Save();
+            UpdateStatus($"Organize By Type…{(chkOrganizeByType.Checked ? "Activated" : "Deactivated")}");
         }
 
         private void chkUseCommaDelimiter_CheckedChanged(object sender, EventArgs e)
