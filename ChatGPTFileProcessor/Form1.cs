@@ -56,6 +56,9 @@ namespace ChatGPTFileProcessor
             // Load saved user preferences for checkboxes
             loadCheckBoxesSettings();
 
+            // Load output folder path
+            textEditOutputFolder.Text = GetOutputFolder();
+
 
             // ▼ Populate the “General Language” dropdown
             cmbGeneralLang.Properties.Items.Clear();
@@ -161,6 +164,25 @@ namespace ChatGPTFileProcessor
             textBoxStatus.AppendText(message + Environment.NewLine);
         }
 
+        private string GetOutputFolder()
+        {
+            var saved = Properties.Settings.Default.OutputFolder;
+            // fallback إلى Desktop إن لم يكن محفوظًا أو غير موجود
+            if (string.IsNullOrWhiteSpace(saved) || !Directory.Exists(saved))
+                return Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            return saved;
+        }
+
+        private void SetOutputFolder(string folder)
+        {
+            if (!string.IsNullOrWhiteSpace(folder))
+            {
+                Properties.Settings.Default.OutputFolder = folder;
+                Properties.Settings.Default.Save();
+                textEditOutputFolder.Text = folder;
+            }
+        }
+
 
         private void buttonBrowseFile_Click(object sender, EventArgs e)
         {
@@ -224,30 +246,57 @@ namespace ChatGPTFileProcessor
                 // اسم النموذج والـ timestamp لإنشاء مسارات الملفات
                 string modelName = comboBoxEditModel.SelectedItem?.ToString() ?? "gpt-4o"; // Use the new combo box for model selection
                 string timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-                string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                //string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                string outputFolder = GetOutputFolder();
+                Directory.CreateDirectory(outputFolder);
+
+                //// Prepare file‐paths
+                //// مسارات ملفات التعاريف و MCQs و Flashcards و Vocabulary
+                //string definitionsFilePath = Path.Combine(basePath, $"Definitions_{modelName}_{timeStamp}.docx");
+                //string mcqsFilePath = Path.Combine(basePath, $"MCQs_{modelName}_{timeStamp}.docx");
+                //string flashcardsFilePath = Path.Combine(basePath, $"Flashcards_{modelName}_{timeStamp}.docx");
+                //string vocabularyFilePath = Path.Combine(basePath, $"Vocabulary_{modelName}_{timeStamp}.docx");
+
+                //// New features: Summary, Key Takeaways, Cloze, True/False, Outline, Concept Map, Table Extract, Simplified, Case Study, Keywords
+                //// New output files:
+                //string summaryFilePath = Path.Combine(basePath, $"Summary_{modelName}_{timeStamp}.docx");
+                //string takeawaysFilePath = Path.Combine(basePath, $"Takeaways_{modelName}_{timeStamp}.docx");
+                //string clozeFilePath = Path.Combine(basePath, $"Cloze_{modelName}_{timeStamp}.docx");
+                //string tfFilePath = Path.Combine(basePath, $"TrueFalse_{modelName}_{timeStamp}.docx");
+                //string outlineFilePath = Path.Combine(basePath, $"Outline_{modelName}_{timeStamp}.docx");
+                //string conceptMapFilePath = Path.Combine(basePath, $"ConceptMap_{modelName}_{timeStamp}.docx");
+                //string tableFilePath = Path.Combine(basePath, $"Tables_{modelName}_{timeStamp}.docx");
+                //string simplifiedFilePath = Path.Combine(basePath, $"Simplified_{modelName}_{timeStamp}.docx");
+                //string caseStudyFilePath = Path.Combine(basePath, $"CaseStudy_{modelName}_{timeStamp}.docx");
+                //string keywordsFilePath = Path.Combine(basePath, $"Keywords_{modelName}_{timeStamp}.docx");
+                //string translatedSectionsFilePath = Path.Combine(basePath, $"TranslatedSections_{modelName}_{timeStamp}.docx");
+                //// NEW: Explain Terms output
+                //string explainTermsFilePath = Path.Combine(basePath, $"ExplainTerms_{modelName}_{timeStamp}.docx");
 
                 // Prepare file‐paths
                 // مسارات ملفات التعاريف و MCQs و Flashcards و Vocabulary
-                string definitionsFilePath = Path.Combine(basePath, $"Definitions_{modelName}_{timeStamp}.docx");
-                string mcqsFilePath = Path.Combine(basePath, $"MCQs_{modelName}_{timeStamp}.docx");
-                string flashcardsFilePath = Path.Combine(basePath, $"Flashcards_{modelName}_{timeStamp}.docx");
-                string vocabularyFilePath = Path.Combine(basePath, $"Vocabulary_{modelName}_{timeStamp}.docx");
-
-                // New features: Summary, Key Takeaways, Cloze, True/False, Outline, Concept Map, Table Extract, Simplified, Case Study, Keywords
+                // Use outputFolder instead of basePath
+                // Add timeStamp to ensure unique filenames
+                // Add modelName to filenames to indicate which model was used
+                // This helps in organizing files better
                 // New output files:
-                string summaryFilePath = Path.Combine(basePath, $"Summary_{modelName}_{timeStamp}.docx");
-                string takeawaysFilePath = Path.Combine(basePath, $"Takeaways_{modelName}_{timeStamp}.docx");
-                string clozeFilePath = Path.Combine(basePath, $"Cloze_{modelName}_{timeStamp}.docx");
-                string tfFilePath = Path.Combine(basePath, $"TrueFalse_{modelName}_{timeStamp}.docx");
-                string outlineFilePath = Path.Combine(basePath, $"Outline_{modelName}_{timeStamp}.docx");
-                string conceptMapFilePath = Path.Combine(basePath, $"ConceptMap_{modelName}_{timeStamp}.docx");
-                string tableFilePath = Path.Combine(basePath, $"Tables_{modelName}_{timeStamp}.docx");
-                string simplifiedFilePath = Path.Combine(basePath, $"Simplified_{modelName}_{timeStamp}.docx");
-                string caseStudyFilePath = Path.Combine(basePath, $"CaseStudy_{modelName}_{timeStamp}.docx");
-                string keywordsFilePath = Path.Combine(basePath, $"Keywords_{modelName}_{timeStamp}.docx");
-                string translatedSectionsFilePath = Path.Combine(basePath, $"TranslatedSections_{modelName}_{timeStamp}.docx");
-                // NEW: Explain Terms output
-                string explainTermsFilePath = Path.Combine(basePath, $"ExplainTerms_{modelName}_{timeStamp}.docx");
+                string definitionsFilePath = Path.Combine(outputFolder, $"Definitions_{modelName}_{timeStamp}.docx");
+                string mcqsFilePath = Path.Combine(outputFolder, $"MCQs_{modelName}_{timeStamp}.docx");
+                string flashcardsFilePath = Path.Combine(outputFolder, $"Flashcards_{modelName}_{timeStamp}.docx");
+                string vocabularyFilePath = Path.Combine(outputFolder, $"Vocabulary_{modelName}_{timeStamp}.docx");
+                string summaryFilePath = Path.Combine(outputFolder, $"Summary_{modelName}_{timeStamp}.docx");
+                string takeawaysFilePath = Path.Combine(outputFolder, $"Takeaways_{modelName}_{timeStamp}.docx");
+                string clozeFilePath = Path.Combine(outputFolder, $"Cloze_{modelName}_{timeStamp}.docx");
+                string tfFilePath = Path.Combine(outputFolder, $"TrueFalse_{modelName}_{timeStamp}.docx");
+                string outlineFilePath = Path.Combine(outputFolder, $"Outline_{modelName}_{timeStamp}.docx");
+                string conceptMapFilePath = Path.Combine(outputFolder, $"ConceptMap_{modelName}_{timeStamp}.docx");
+                string tableFilePath = Path.Combine(outputFolder, $"Tables_{modelName}_{timeStamp}.docx");
+                string simplifiedFilePath = Path.Combine(outputFolder, $"Simplified_{modelName}_{timeStamp}.docx");
+                string caseStudyFilePath = Path.Combine(outputFolder, $"CaseStudy_{modelName}_{timeStamp}.docx");
+                string keywordsFilePath = Path.Combine(outputFolder, $"Keywords_{modelName}_{timeStamp}.docx");
+                string translatedSectionsFilePath = Path.Combine(outputFolder, $"TranslatedSections_{modelName}_{timeStamp}.docx");
+                // وإذا عندك Explain Terms:
+                string explainTermsFilePath = Path.Combine(outputFolder, $"ExplainTerms_{modelName}_{timeStamp}.docx");
 
 
 
@@ -2884,5 +2933,44 @@ namespace ChatGPTFileProcessor
                 textEditAPIKey.Properties.ReadOnly = false;
             }
         }
+
+
+        private void btnBrowseOutputFolder_Click(object sender, EventArgs e)
+        {
+            using (var fbd = new FolderBrowserDialog())
+            {
+                fbd.Description = "اختر مجلد حفظ الملفات المولّدة";
+                fbd.SelectedPath = GetOutputFolder();
+                if (fbd.ShowDialog() == DialogResult.OK && Directory.Exists(fbd.SelectedPath))
+                {
+                    SetOutputFolder(fbd.SelectedPath);
+                    UpdateStatus($"✅ Output folder set to: {fbd.SelectedPath}");
+                }
+            }
+        }
+
+        //private void btnBrowseOutputFolder_Click(object sender, EventArgs e)
+        //{
+
+        //}
+
+        private void btnOpenOutputFolder_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var path = GetOutputFolder();
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                System.Diagnostics.Process.Start("explorer.exe", path);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Cannot open folder: " + ex.Message);
+            }
+        }
+
+        //private void btnOpenOutputFolder_Click(object sender, EventArgs e)
+        //{
+
+        //}
     }
 }
