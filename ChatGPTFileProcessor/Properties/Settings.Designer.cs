@@ -286,5 +286,17 @@ namespace ChatGPTFileProcessor.Properties {
                 this["GenerateExplainTerms"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ArabicExplainTerms {
+            get {
+                return ((bool)(this["ArabicExplainTerms"]));
+            }
+            set {
+                this["ArabicExplainTerms"] = value;
+            }
+        }
     }
 }

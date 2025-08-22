@@ -251,6 +251,8 @@ namespace ChatGPTFileProcessor
 
 
 
+                bool includeArabicExplain = chkArabicExplainTerms.Checked;
+
                 // 3.1) prompt for Definitions in “GeneralLanguage” (e.g. user picks “French”)
                 // 1) Read which “General Language” the user picked:
                 string generalLangName = cmbGeneralLang.SelectedItem as string ?? "English";
@@ -696,34 +698,147 @@ namespace ChatGPTFileProcessor
                     $"Do not add any introductions, explanations, notes, or extra formatting. " +
                     $"Only output the text in the requested format.";
 
-                // 3.16) Explain Terms prompt
+                //// 3.16) Explain Terms prompt
+                //string explainTermsPrompt;
+                //if (isMedical)
+                //{
+                //    // وضع طبي: ركّز على المصطلحات الطبية غير الشائعة
+                //    explainTermsPrompt =
+                //        $"Identify KEY MEDICAL TERMS on these page(s) that a non-specialist may not understand. " +
+                //        $"For EACH term, output EXACTLY:\n\n" +
+                //        $"Term: <the term as written>\n" +
+                //        $"Pronunciation: </IPA or syllable breakdown/>\n" +
+                //        $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
+                //        $"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
+                //        $"If the term is an abbreviation, first expand it.\n\n" +
+                //        $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
+                //}
+                //else
+                //{
+                //    // عام: مصطلحات تقنية/علمية عامة
+                //    explainTermsPrompt =
+                //        $"Identify KEY TECHNICAL TERMS on these page(s) that a non-specialist may not understand. " +
+                //        $"For EACH term, output EXACTLY:\n\n" +
+                //        $"Term: <the term as written>\n" +
+                //        $"Pronunciation: </IPA or syllable breakdown/>\n" +
+                //        $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
+                //        $"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
+                //        $"If the term is an abbreviation, first expand it.\n\n" +
+                //        $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
+                //}
+
+
+                //// 3.16) Explain Terms prompt (with optional Arabic beside general language)
+                //string explainTermsPrompt;
+
+                //string arabicBlock =
+                //    includeArabicExplain
+                //        ? "ArabicExplanation (Arabic): <2–3 sentences in clear Arabic>\n" +
+                //          "ArabicAnalogy (Arabic): <a simple analogy/example in Arabic>\n"
+                //        : ""; // empty if not selected
+
+                //if (isMedical)
+                //{
+                //    explainTermsPrompt =
+                //        $"Identify KEY MEDICAL TERMS on these page(s) that a non-specialist may not understand. " +
+                //        $"For EACH term, output EXACTLY:\n\n" +
+                //        $"Term: <the term as written>\n" +
+                //        $"Pronunciation: </IPA or syllable breakdown/>\n" +
+                //        $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
+                //        $"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
+                //        arabicBlock +
+                //        $"If the term is an abbreviation, first expand it.\n\n" +
+                //        $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
+                //}
+                //else
+                //{
+                //    explainTermsPrompt =
+                //        $"Identify KEY TECHNICAL TERMS on these page(s) that a non-specialist may not understand. " +
+                //        $"For EACH term, output EXACTLY:\n\n" +
+                //        $"Term: <the term as written>\n" +
+                //        $"Pronunciation: </IPA or syllable breakdown/>\n" +
+                //        $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
+                //        $"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
+                //        arabicBlock +
+                //        $"If the term is an abbreviation, first expand it.\n\n" +
+                //        $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
+                //}
+
+
+                //// 3.16) Explain Terms prompt (IPA + syllables in one line + optional Arabic)
+                //string explainTermsPrompt;
+
+                //string arabicBlock =
+                //    includeArabicExplain
+                //        ? "ArabicExplanation (Arabic): <2–3 sentences in clear Arabic>\n" +
+                //          "ArabicAnalogy (Arabic): <a simple analogy/example in Arabic>\n"
+                //        : ""; // empty if not selected
+
+                //if (isMedical)
+                //{
+                //    explainTermsPrompt =
+                //        $"Identify KEY MEDICAL TERMS on these page(s) that a non-specialist may not understand. " +
+                //        $"For EACH term, output EXACTLY:\n\n" +
+                //        $"Term: <the term as written>\n" +
+                //        $"Pronunciation: IPA = </International Phonetic Alphabet/>, Syllables = <break into simple syllables>\n" +
+                //        $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
+                //        $"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
+                //        arabicBlock +
+                //        $"If the term is an abbreviation, first expand it.\n\n" +
+                //        $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
+                //}
+                //else
+                //{
+                //    explainTermsPrompt =
+                //        $"Identify KEY TECHNICAL TERMS on these page(s) that a non-specialist may not understand. " +
+                //        $"For EACH term, output EXACTLY:\n\n" +
+                //        $"Term: <the term as written>\n" +
+                //        $"Pronunciation: IPA = </International Phonetic Alphabet/>, Syllables = <break into simple syllables>\n" +
+                //        $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
+                //        $"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
+                //        arabicBlock +
+                //        $"If the term is an abbreviation, first expand it.\n\n" +
+                //        $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
+                //}
+
+                // 3.16) Explain Terms prompt (numbered terms + IPA + syllables + optional Arabic)
                 string explainTermsPrompt;
+
+                string arabicBlock =
+                    includeArabicExplain
+                        ? "ArabicExplanation (Arabic): <2–3 sentences in clear Arabic>\n" +
+                          "ArabicAnalogy (Arabic): <a simple analogy/example in Arabic>\n"
+                        : ""; // empty if not selected
+
                 if (isMedical)
                 {
-                    // وضع طبي: ركّز على المصطلحات الطبية غير الشائعة
                     explainTermsPrompt =
                         $"Identify KEY MEDICAL TERMS on these page(s) that a non-specialist may not understand. " +
+                        $"Number each term block sequentially (1, 2, 3, ...). " +
                         $"For EACH term, output EXACTLY:\n\n" +
-                        $"Term: <the term as written>\n" +
-                        $"Pronunciation: </IPA or syllable breakdown/>\n" +
+                        $"<Number>. Term: <the term as written>\n" +
+                        $"Pronunciation: IPA = </International Phonetic Alphabet/>, Syllables = <break into simple syllables>\n" +
                         $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
                         $"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
+                        arabicBlock +
                         $"If the term is an abbreviation, first expand it.\n\n" +
                         $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
                 }
                 else
                 {
-                    // عام: مصطلحات تقنية/علمية عامة
                     explainTermsPrompt =
                         $"Identify KEY TECHNICAL TERMS on these page(s) that a non-specialist may not understand. " +
+                        $"Number each term block sequentially (1, 2, 3, ...). " +
                         $"For EACH term, output EXACTLY:\n\n" +
-                        $"Term: <the term as written>\n" +
-                        $"Pronunciation: </IPA or syllable breakdown/>\n" +
+                        $"<Number>. Term: <the term as written>\n" +
+                        $"Pronunciation: IPA = </International Phonetic Alphabet/>, Syllables = <break into simple syllables>\n" +
                         $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
                         $"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
+                        arabicBlock +
                         $"If the term is an abbreviation, first expand it.\n\n" +
                         $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
                 }
+
 
 
 
@@ -2204,6 +2319,7 @@ namespace ChatGPTFileProcessor
             chkUseCommaDelimiter.Checked = Properties.Settings.Default.useCommaDelimiter;
             chkTranslatedSections.Checked = Properties.Settings.Default.GenerateTranslatedSections;
             chkExplainTerms.Checked = Properties.Settings.Default.GenerateExplainTerms;
+            chkArabicExplainTerms.Checked = Properties.Settings.Default.ArabicExplainTerms;
 
             textEditAPIKey.ReadOnly = Properties.Settings.Default.ApiKeyLock;
         }
@@ -2350,6 +2466,13 @@ namespace ChatGPTFileProcessor
             Properties.Settings.Default.GenerateExplainTerms = chkExplainTerms.Checked;
             Properties.Settings.Default.Save();
             UpdateStatus($"Explain Terms…{(chkExplainTerms.Checked ? "Activated" : "Deactivated")}");
+        }
+
+        private void chkArabicExplainTerms_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.ArabicExplainTerms = chkArabicExplainTerms.Checked;
+            Properties.Settings.Default.Save();
+            UpdateStatus($"Explain Terms in Arabic…{(chkArabicExplainTerms.Checked ? "Activated" : "Deactivated")}");
         }
 
         private void chkUseCommaDelimiter_CheckedChanged(object sender, EventArgs e)
