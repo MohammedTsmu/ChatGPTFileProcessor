@@ -965,8 +965,8 @@ namespace ChatGPTFileProcessor
                         $"<Number>. Term: <the term as written>\n" +
                         $"Pronunciation: IPA = </International Phonetic Alphabet/>, Syllables = <break into simple syllables>\n" +
                         $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
-                        $"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
-                        arabicBlock +
+                        //$"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
+                        //arabicBlock +
                         $"If the term is an abbreviation, first expand it.\n\n" +
                         $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
                 }
@@ -979,8 +979,8 @@ namespace ChatGPTFileProcessor
                         $"<Number>. Term: <the term as written>\n" +
                         $"Pronunciation: IPA = </International Phonetic Alphabet/>, Syllables = <break into simple syllables>\n" +
                         $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
-                        $"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
-                        arabicBlock +
+                        //$"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
+                        //arabicBlock +
                         $"If the term is an abbreviation, first expand it.\n\n" +
                         $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
                 }
