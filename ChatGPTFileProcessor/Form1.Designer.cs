@@ -34,26 +34,30 @@
             DevExpress.Utils.ToolTipItem toolTipItem1 = new DevExpress.Utils.ToolTipItem();
             DevExpress.Utils.SuperToolTip superToolTip2 = new DevExpress.Utils.SuperToolTip();
             DevExpress.Utils.ToolTipItem toolTipItem2 = new DevExpress.Utils.ToolTipItem();
-            DevExpress.Utils.SuperToolTip superToolTip3 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.SuperToolTip superToolTip4 = new DevExpress.Utils.SuperToolTip();
             DevExpress.Utils.ToolTipTitleItem toolTipTitleItem1 = new DevExpress.Utils.ToolTipTitleItem();
+            DevExpress.Utils.ToolTipItem toolTipItem5 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.ToolTipSeparatorItem toolTipSeparatorItem2 = new DevExpress.Utils.ToolTipSeparatorItem();
+            DevExpress.Utils.ToolTipItem toolTipItem6 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip5 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem2 = new DevExpress.Utils.ToolTipTitleItem();
+            DevExpress.Utils.ToolTipSeparatorItem toolTipSeparatorItem3 = new DevExpress.Utils.ToolTipSeparatorItem();
+            DevExpress.Utils.ToolTipItem toolTipItem7 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip6 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem3 = new DevExpress.Utils.ToolTipTitleItem();
+            DevExpress.Utils.ToolTipSeparatorItem toolTipSeparatorItem4 = new DevExpress.Utils.ToolTipSeparatorItem();
+            DevExpress.Utils.ToolTipItem toolTipItem8 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip7 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem4 = new DevExpress.Utils.ToolTipTitleItem();
+            DevExpress.Utils.ToolTipItem toolTipItem9 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip8 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem10 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip9 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipItem toolTipItem11 = new DevExpress.Utils.ToolTipItem();
+            DevExpress.Utils.SuperToolTip superToolTip3 = new DevExpress.Utils.SuperToolTip();
             DevExpress.Utils.ToolTipItem toolTipItem3 = new DevExpress.Utils.ToolTipItem();
             DevExpress.Utils.ToolTipSeparatorItem toolTipSeparatorItem1 = new DevExpress.Utils.ToolTipSeparatorItem();
             DevExpress.Utils.ToolTipItem toolTipItem4 = new DevExpress.Utils.ToolTipItem();
-            DevExpress.Utils.SuperToolTip superToolTip4 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem2 = new DevExpress.Utils.ToolTipTitleItem();
-            DevExpress.Utils.ToolTipSeparatorItem toolTipSeparatorItem2 = new DevExpress.Utils.ToolTipSeparatorItem();
-            DevExpress.Utils.ToolTipItem toolTipItem5 = new DevExpress.Utils.ToolTipItem();
-            DevExpress.Utils.SuperToolTip superToolTip5 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem3 = new DevExpress.Utils.ToolTipTitleItem();
-            DevExpress.Utils.ToolTipSeparatorItem toolTipSeparatorItem3 = new DevExpress.Utils.ToolTipSeparatorItem();
-            DevExpress.Utils.ToolTipItem toolTipItem6 = new DevExpress.Utils.ToolTipItem();
-            DevExpress.Utils.SuperToolTip superToolTip6 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem4 = new DevExpress.Utils.ToolTipTitleItem();
-            DevExpress.Utils.ToolTipItem toolTipItem7 = new DevExpress.Utils.ToolTipItem();
-            DevExpress.Utils.SuperToolTip superToolTip7 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipItem toolTipItem8 = new DevExpress.Utils.ToolTipItem();
-            DevExpress.Utils.SuperToolTip superToolTip8 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipItem toolTipItem9 = new DevExpress.Utils.ToolTipItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.buttonLockApiKey = new DevExpress.XtraEditors.SimpleButton();
             this.buttonShowApi = new DevExpress.XtraEditors.SimpleButton();
@@ -107,6 +111,7 @@
             this.panelBottom = new System.Windows.Forms.Panel();
             this.panelTop = new System.Windows.Forms.Panel();
             this.panelFill = new System.Windows.Forms.Panel();
+            this.chkExplainTerms = new DevExpress.XtraEditors.CheckEdit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textEditAPIKey.Properties)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -141,6 +146,7 @@
             this.panelBottom.SuspendLayout();
             this.panelTop.SuspendLayout();
             this.panelFill.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chkExplainTerms.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -259,6 +265,7 @@
             // groupBox2
             // 
             this.groupBox2.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.groupBox2.Controls.Add(this.chkExplainTerms);
             this.groupBox2.Controls.Add(this.chkTranslatedSections);
             this.groupBox2.Controls.Add(this.chkKeywords);
             this.groupBox2.Controls.Add(this.chkCaseStudy);
@@ -332,17 +339,17 @@
             toolTipTitleItem1.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             toolTipTitleItem1.Appearance.Options.UseFont = true;
             toolTipTitleItem1.Text = "Alert ⚠";
-            toolTipItem3.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem3.Appearance.Options.UseFont = true;
-            toolTipItem3.Text = "Best results will be using 2, 3, 4 pages at time";
-            toolTipItem4.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
-            toolTipItem4.Appearance.Options.UseFont = true;
-            toolTipItem4.Text = "Not Recommended with 1 page at time";
-            superToolTip3.Items.Add(toolTipTitleItem1);
-            superToolTip3.Items.Add(toolTipItem3);
-            superToolTip3.Items.Add(toolTipSeparatorItem1);
-            superToolTip3.Items.Add(toolTipItem4);
-            this.chkCaseStudy.SuperTip = superToolTip3;
+            toolTipItem5.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem5.Appearance.Options.UseFont = true;
+            toolTipItem5.Text = "Best results will be using 2, 3, 4 pages at time";
+            toolTipItem6.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
+            toolTipItem6.Appearance.Options.UseFont = true;
+            toolTipItem6.Text = "Not Recommended with 1 page at time";
+            superToolTip4.Items.Add(toolTipTitleItem1);
+            superToolTip4.Items.Add(toolTipItem5);
+            superToolTip4.Items.Add(toolTipSeparatorItem2);
+            superToolTip4.Items.Add(toolTipItem6);
+            this.chkCaseStudy.SuperTip = superToolTip4;
             this.chkCaseStudy.TabIndex = 37;
             this.chkCaseStudy.CheckedChanged += new System.EventHandler(this.chkCaseStudy_CheckedChanged);
             // 
@@ -357,14 +364,14 @@
             toolTipTitleItem2.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             toolTipTitleItem2.Appearance.Options.UseFont = true;
             toolTipTitleItem2.Text = "Instructions";
-            toolTipItem5.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
-            toolTipItem5.Appearance.Options.UseFont = true;
-            toolTipItem5.Text = "Works only with 1 page at time,\r\n⚠    Not recommened with others.\r\n⚠    healthcar" +
+            toolTipItem7.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
+            toolTipItem7.Appearance.Options.UseFont = true;
+            toolTipItem7.Text = "Works only with 1 page at time,\r\n⚠    Not recommened with others.\r\n⚠    healthcar" +
     "e students Only";
-            superToolTip4.Items.Add(toolTipTitleItem2);
-            superToolTip4.Items.Add(toolTipSeparatorItem2);
-            superToolTip4.Items.Add(toolTipItem5);
-            this.chkSimplified.SuperTip = superToolTip4;
+            superToolTip5.Items.Add(toolTipTitleItem2);
+            superToolTip5.Items.Add(toolTipSeparatorItem3);
+            superToolTip5.Items.Add(toolTipItem7);
+            this.chkSimplified.SuperTip = superToolTip5;
             this.chkSimplified.TabIndex = 36;
             this.chkSimplified.CheckedChanged += new System.EventHandler(this.chkSimplified_CheckedChanged);
             // 
@@ -380,13 +387,13 @@
             toolTipTitleItem3.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             toolTipTitleItem3.Appearance.Options.UseFont = true;
             toolTipTitleItem3.Text = "Not completed / Not ready";
-            toolTipItem6.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
-            toolTipItem6.Appearance.Options.UseFont = true;
-            toolTipItem6.Text = "Experimental feature ⚠";
-            superToolTip5.Items.Add(toolTipTitleItem3);
-            superToolTip5.Items.Add(toolTipSeparatorItem3);
-            superToolTip5.Items.Add(toolTipItem6);
-            this.chkTableExtract.SuperTip = superToolTip5;
+            toolTipItem8.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
+            toolTipItem8.Appearance.Options.UseFont = true;
+            toolTipItem8.Text = "Experimental feature ⚠";
+            superToolTip6.Items.Add(toolTipTitleItem3);
+            superToolTip6.Items.Add(toolTipSeparatorItem4);
+            superToolTip6.Items.Add(toolTipItem8);
+            this.chkTableExtract.SuperTip = superToolTip6;
             this.chkTableExtract.TabIndex = 35;
             this.chkTableExtract.CheckedChanged += new System.EventHandler(this.chkTableExtract_CheckedChanged);
             // 
@@ -601,12 +608,12 @@
             toolTipTitleItem4.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             toolTipTitleItem4.Appearance.Options.UseFont = true;
             toolTipTitleItem4.Text = "Choose how many pages to send in one batch.\n";
-            toolTipItem7.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem7.Appearance.Options.UseFont = true;
-            toolTipItem7.Text = resources.GetString("toolTipItem7.Text");
-            superToolTip6.Items.Add(toolTipTitleItem4);
-            superToolTip6.Items.Add(toolTipItem7);
-            this.radioPageBatchSize.SuperTip = superToolTip6;
+            toolTipItem9.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem9.Appearance.Options.UseFont = true;
+            toolTipItem9.Text = resources.GetString("toolTipItem9.Text");
+            superToolTip7.Items.Add(toolTipTitleItem4);
+            superToolTip7.Items.Add(toolTipItem9);
+            this.radioPageBatchSize.SuperTip = superToolTip7;
             this.radioPageBatchSize.TabIndex = 24;
             this.radioPageBatchSize.ToolTipAnchor = DevExpress.Utils.ToolTipAnchor.Cursor;
             this.radioPageBatchSize.SelectedIndexChanged += new System.EventHandler(this.radioPageBatchSize_SelectedIndexChanged);
@@ -635,11 +642,11 @@
             this.labelFileName.Name = "labelFileName";
             this.labelFileName.Padding = new System.Windows.Forms.Padding(5);
             this.labelFileName.Size = new System.Drawing.Size(1292, 30);
-            toolTipItem8.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem8.Appearance.Options.UseFont = true;
-            toolTipItem8.Text = "Selected File Path";
-            superToolTip7.Items.Add(toolTipItem8);
-            this.labelFileName.SuperTip = superToolTip7;
+            toolTipItem10.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem10.Appearance.Options.UseFont = true;
+            toolTipItem10.Text = "Selected File Path";
+            superToolTip8.Items.Add(toolTipItem10);
+            this.labelFileName.SuperTip = superToolTip8;
             this.labelFileName.TabIndex = 21;
             this.labelFileName.Text = "No file selected";
             // 
@@ -897,11 +904,11 @@
             this.svgImageBoxAbout.Margin = new System.Windows.Forms.Padding(4);
             this.svgImageBoxAbout.Name = "svgImageBoxAbout";
             this.svgImageBoxAbout.Size = new System.Drawing.Size(48, 44);
-            toolTipItem9.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem9.Appearance.Options.UseFont = true;
-            toolTipItem9.Text = "About This Application";
-            superToolTip8.Items.Add(toolTipItem9);
-            this.svgImageBoxAbout.SuperTip = superToolTip8;
+            toolTipItem11.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            toolTipItem11.Appearance.Options.UseFont = true;
+            toolTipItem11.Text = "About This Application";
+            superToolTip9.Items.Add(toolTipItem11);
+            this.svgImageBoxAbout.SuperTip = superToolTip9;
             this.svgImageBoxAbout.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("svgImageBoxAbout.SvgImage")));
             this.svgImageBoxAbout.TabIndex = 23;
             this.svgImageBoxAbout.Text = "svgImageBox1";
@@ -1021,6 +1028,23 @@
             this.panelFill.Size = new System.Drawing.Size(1308, 385);
             this.panelFill.TabIndex = 25;
             // 
+            // chkExplainTerms
+            // 
+            this.chkExplainTerms.Location = new System.Drawing.Point(936, 120);
+            this.chkExplainTerms.Name = "chkExplainTerms";
+            this.chkExplainTerms.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkExplainTerms.Properties.Appearance.Options.UseFont = true;
+            this.chkExplainTerms.Properties.Caption = "Explain Terms";
+            this.chkExplainTerms.Size = new System.Drawing.Size(263, 24);
+            toolTipItem3.Text = "يستخرج المصطلحات ويكتب شرحًا مبسطًا مع النطق وأمثلة.";
+            toolTipItem4.Text = "Extracts unfamiliar medical/technical terms and explains them simply.";
+            superToolTip3.Items.Add(toolTipItem3);
+            superToolTip3.Items.Add(toolTipSeparatorItem1);
+            superToolTip3.Items.Add(toolTipItem4);
+            this.chkExplainTerms.SuperTip = superToolTip3;
+            this.chkExplainTerms.TabIndex = 40;
+            this.chkExplainTerms.CheckedChanged += new System.EventHandler(this.chkExplainTerms_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -1073,6 +1097,7 @@
             this.panelBottom.ResumeLayout(false);
             this.panelTop.ResumeLayout(false);
             this.panelFill.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.chkExplainTerms.Properties)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1131,6 +1156,7 @@
         private DevExpress.XtraEditors.SimpleButton buttonShowApi;
         private DevExpress.XtraEditors.SimpleButton buttonLockApiKey;
         private DevExpress.XtraEditors.CheckEdit chkTranslatedSections;
+        private DevExpress.XtraEditors.CheckEdit chkExplainTerms;
     }
 }
 

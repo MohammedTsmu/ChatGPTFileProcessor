@@ -274,5 +274,17 @@ namespace ChatGPTFileProcessor.Properties {
                 this["GenerateTranslatedSections"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GenerateExplainTerms {
+            get {
+                return ((bool)(this["GenerateExplainTerms"]));
+            }
+            set {
+                this["GenerateExplainTerms"] = value;
+            }
+        }
     }
 }

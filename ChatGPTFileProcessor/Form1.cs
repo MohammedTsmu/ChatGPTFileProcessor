@@ -246,6 +246,8 @@ namespace ChatGPTFileProcessor
                 string caseStudyFilePath = Path.Combine(basePath, $"CaseStudy_{modelName}_{timeStamp}.docx");
                 string keywordsFilePath = Path.Combine(basePath, $"Keywords_{modelName}_{timeStamp}.docx");
                 string translatedSectionsFilePath = Path.Combine(basePath, $"TranslatedSections_{modelName}_{timeStamp}.docx");
+                // NEW: Explain Terms output
+                string explainTermsFilePath = Path.Combine(basePath, $"ExplainTerms_{modelName}_{timeStamp}.docx");
 
 
 
@@ -694,6 +696,35 @@ namespace ChatGPTFileProcessor
                     $"Do not add any introductions, explanations, notes, or extra formatting. " +
                     $"Only output the text in the requested format.";
 
+                // 3.16) Explain Terms prompt
+                string explainTermsPrompt;
+                if (isMedical)
+                {
+                    // وضع طبي: ركّز على المصطلحات الطبية غير الشائعة
+                    explainTermsPrompt =
+                        $"Identify KEY MEDICAL TERMS on these page(s) that a non-specialist may not understand. " +
+                        $"For EACH term, output EXACTLY:\n\n" +
+                        $"Term: <the term as written>\n" +
+                        $"Pronunciation: </IPA or syllable breakdown/>\n" +
+                        $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
+                        $"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
+                        $"If the term is an abbreviation, first expand it.\n\n" +
+                        $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
+                }
+                else
+                {
+                    // عام: مصطلحات تقنية/علمية عامة
+                    explainTermsPrompt =
+                        $"Identify KEY TECHNICAL TERMS on these page(s) that a non-specialist may not understand. " +
+                        $"For EACH term, output EXACTLY:\n\n" +
+                        $"Term: <the term as written>\n" +
+                        $"Pronunciation: </IPA or syllable breakdown/>\n" +
+                        $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
+                        $"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
+                        $"If the term is an abbreviation, first expand it.\n\n" +
+                        $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
+                }
+
 
 
 
@@ -722,6 +753,8 @@ namespace ChatGPTFileProcessor
                 StringBuilder allCaseStudy = chkCaseStudy.Checked ? new StringBuilder() : null;
                 StringBuilder allKeywords = chkKeywords.Checked ? new StringBuilder() : null;
                 StringBuilder allTranslatedSections = chkTranslatedSections.Checked ? new StringBuilder() : null;
+                // NEW: Explain Terms
+                StringBuilder allExplainTerms = chkExplainTerms.Checked ? new StringBuilder() : null;
 
                 // Check if at least one section is selected
                 //if (allDefinitions == null && allMCQs == null && allFlashcards == null && allVocabulary == null)
@@ -739,7 +772,8 @@ namespace ChatGPTFileProcessor
                      && allSimplified == null
                      && allCaseStudy == null
                      && allKeywords == null
-                     && allTranslatedSections == null)
+                     && allTranslatedSections == null
+                     && allExplainTerms == null)
                 {
                     MessageBox.Show("Please select at least one section to process.", "No Sections Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     buttonProcessFile.Enabled = true;
@@ -916,6 +950,17 @@ namespace ChatGPTFileProcessor
                                 allTranslatedSections.AppendLine();
                             }
 
+                            //-- NEW: ExplainTerms
+                            if (chkExplainTerms.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Explain Terms…");
+                                string pageET = await ProcessPdfPageMultimodal(image, apiKey, explainTermsPrompt);
+                                allExplainTerms.AppendLine($"===== Page {pageNumber} =====");
+                                allExplainTerms.AppendLine(pageET);
+                                allExplainTerms.AppendLine();
+                            }
+
+
                             UpdateOverlayLog($"✅ Page {pageNumber} done.");
                         }
                         break;
@@ -1081,6 +1126,17 @@ namespace ChatGPTFileProcessor
                                 allTranslatedSections.AppendLine(pagesTS);
                                 allTranslatedSections.AppendLine();
                             }
+
+                            //-- NEW: ExplainTerms
+                            if (chkExplainTerms.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Explain Terms…");
+                                string pagesET = await ProcessPdfPagesMultimodal(pageGroup, apiKey, explainTermsPrompt);
+                                allExplainTerms.AppendLine(header);
+                                allExplainTerms.AppendLine(pagesET);
+                                allExplainTerms.AppendLine();
+                            }
+
 
 
                             UpdateOverlayLog($"✅ Pages {startPage}–{endPage} done.");
@@ -1258,6 +1314,17 @@ namespace ChatGPTFileProcessor
                                 allTranslatedSections.AppendLine();
                             }
 
+                            //-- NEW: ExplainTerms
+                            if (chkExplainTerms.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Explain Terms…");
+                                string pagesET = await ProcessPdfPagesMultimodal(pageGroup, apiKey, explainTermsPrompt);
+                                allExplainTerms.AppendLine(header);
+                                allExplainTerms.AppendLine(pagesET);
+                                allExplainTerms.AppendLine();
+                            }
+
+
                             UpdateOverlayLog($"✅ Pages {startPage}–{endPage} done.");
                         }
                         break;
@@ -1431,6 +1498,17 @@ namespace ChatGPTFileProcessor
                                 allTranslatedSections.AppendLine(pagesTS);
                                 allTranslatedSections.AppendLine();
                             }
+
+                            //-- NEW: ExplainTerms
+                            if (chkExplainTerms.Checked)
+                            {
+                                UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Explain Terms…");
+                                string pagesET = await ProcessPdfPagesMultimodal(pageGroup, apiKey, explainTermsPrompt);
+                                allExplainTerms.AppendLine(header);
+                                allExplainTerms.AppendLine(pagesET);
+                                allExplainTerms.AppendLine();
+                            }
+
 
                             UpdateOverlayLog($"✅ Pages {startPage}–{endPage} done.");
                         }
@@ -1610,6 +1688,9 @@ namespace ChatGPTFileProcessor
 
                 if (chkTranslatedSections.Checked)
                     SaveContentToFile(allTranslatedSections.ToString(), translatedSectionsFilePath, "Translated Sections");
+
+                if (chkExplainTerms.Checked)
+                    SaveContentToFile(allExplainTerms.ToString(), explainTermsFilePath, "Explain Terms");
 
 
                 // 8) إظهار رسالة انتهاء المعالجة
@@ -2122,6 +2203,7 @@ namespace ChatGPTFileProcessor
             chkKeywords.Checked = Properties.Settings.Default.GenerateKeywords;
             chkUseCommaDelimiter.Checked = Properties.Settings.Default.useCommaDelimiter;
             chkTranslatedSections.Checked = Properties.Settings.Default.GenerateTranslatedSections;
+            chkExplainTerms.Checked = Properties.Settings.Default.GenerateExplainTerms;
 
             textEditAPIKey.ReadOnly = Properties.Settings.Default.ApiKeyLock;
         }
@@ -2261,6 +2343,13 @@ namespace ChatGPTFileProcessor
             Properties.Settings.Default.GenerateTranslatedSections = chkTranslatedSections.Checked;
             Properties.Settings.Default.Save();
             UpdateStatus($"Translated Sections…{(chkTranslatedSections.Checked ? "Activated" : "Deactivated")}");
+        }
+
+        private void chkExplainTerms_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.GenerateExplainTerms = chkExplainTerms.Checked;
+            Properties.Settings.Default.Save();
+            UpdateStatus($"Explain Terms…{(chkExplainTerms.Checked ? "Activated" : "Deactivated")}");
         }
 
         private void chkUseCommaDelimiter_CheckedChanged(object sender, EventArgs e)
@@ -2672,6 +2761,5 @@ namespace ChatGPTFileProcessor
                 textEditAPIKey.Properties.ReadOnly = false;
             }
         }
-
     }
 }
