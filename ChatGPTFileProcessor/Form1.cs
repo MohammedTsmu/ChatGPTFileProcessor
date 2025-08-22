@@ -259,366 +259,7 @@ namespace ChatGPTFileProcessor
                 string vocabLangName = cmbVocabLang.SelectedItem as string ?? "Arabic";
 
                 //// 3) Build each prompt with a little conditional text:
-                //string definitionsPrompt;
-                //if (isMedical)
-                //{
-                //    // When “Medical Material” is checked, ask specifically for medical definitions
-                //    definitionsPrompt =
-                //        $"Provide concise medical definitions (in {generalLangName}) for each key medical term on this page. " +
-                //        $"For each term, write:\n" +
-                //        $"- The term itself as a heading\n" +
-                //        $"- Then a one- or two-sentence definition in {generalLangName}\n\n" +
-                //        $"Separate every entry by a blank line, without numbering.";
-                //}
-                //else
-                //{
-                //    // When unchecked, just ask for normal (non-medical) definitions
-                //    definitionsPrompt =
-                //        $"Provide concise definitions (in {generalLangName}) for each key term on this page. " +
-                //        $"For each term, write:\n" +
-                //        $"- The term itself as a heading\n" +
-                //        $"- Then a one- or two-sentence definition in {generalLangName}\n\n" +
-                //        $"Separate every entry by a blank line, without numbering.";
-                //}
-
-
-                //// 3.2) MCQs prompt (this is typically language-only; leave it as-is or you can adjust similarly)
-                //string mcqsPrompt =
-                //    $"Generate multiple-choice questions (only in {generalLangName}) based on the content of this page. Use EXACTLY this format (no deviations):\n\n" +
-                //    $"Question: [Write the question in {generalLangName}]\n" +
-                //    $"A) [Option A in {generalLangName}]\n" +
-                //    $"B) [Option B in {generalLangName}]\n" +
-                //    $"C) [Option C in {generalLangName}]\n" +
-                //    $"D) [Option D in {generalLangName}]\n" +
-                //    $"Answer: [Correct Letter]\n\n" +
-                //    $"Separate each question block with a blank line.";
-
-
-                //// 3.3) Flashcards prompt: toggle “medical” vocabulary vs. general vocabulary
-                //string flashcardsPrompt;
-                //if (isMedical)
-                //{
-                //    flashcardsPrompt =
-                //        $"Create medical flashcards in {generalLangName} for each key medical or pharmaceutical term on this page. " +
-                //        $"Use EXACTLY this format (no deviations):\n\n" +
-                //        $"Front: [Term in {generalLangName}]\n" +
-                //        $"Back:  [Definition in {generalLangName}]\n\n" +
-                //        $"Leave exactly one blank line between each card.";
-                //}
-                //else
-                //{
-                //    flashcardsPrompt =
-                //        $"Create flashcards in {generalLangName} for each key term on this page. " +
-                //        $"Use EXACTLY this format (no deviations):\n\n" +
-                //        $"Front: [Term in {generalLangName}]\n" +
-                //        $"Back:  [Definition in {generalLangName}]\n\n" +
-                //        $"Leave exactly one blank line between each card.";
-                //}
-
-
-                //// 3.4) Vocabulary: translate into whichever “Vocab Language” the user chose
-                ////string vocabLangName = cmbVocabLang.SelectedItem as string ?? "Arabic";
-                //string vocabularyPrompt =
-                //    $"Extract important vocabulary terms from this page and translate them to {vocabLangName}. " +
-                //    $"Use EXACTLY this format (no bullets, no numbering):\n\n" +
-                //    $"EnglishTerm – {vocabLangName}Translation\n\n" +
-                //    $"Leave exactly one blank line between each entry.";
-
-
-
-
-                //// 5.1 Page Summary (2–3 sentences high-level overview)
-                //string summaryPrompt =
-                //    $"In {generalLangName}, write a concise 2–3 sentence SUMMARY of the text on these page(s). " +
-                //    (isMedical
-                //        ? "Focus on the key medical concepts and terminology."
-                //        : "Focus on the core concepts.")
-                //    + "\n\nProvide as plain prose, no bullet points.";
-
-                //// 5.2 Key Takeaways (5 bullet points)
-                //string takeawaysPrompt =
-                //    $"List 5 “Key Takeaway” bullet points (in {generalLangName}) that capture the MOST IMPORTANT facts from these page(s). " +
-                //    (isMedical
-                //        ? "Include any critical medical terms."
-                //        : "")
-                //    + "\n\nFormat exactly as:\n- Takeaway 1\n- Takeaway 2\n…\n(no numbering, just a dash and a space).";
-
-                //// 5.3 Fill-in-the-Blank (Cloze)
-                //string clozePrompt =
-                //    $"Generate 5 fill-in-the-blank sentences (in {generalLangName}) based on these page(s). " +
-                //    $"Each line should be formatted exactly like:\n“___(blank)___ is a [brief clue or definition].”\n\n" +
-                //    $"For instance: “___(Pilocarpine)___ is a miotic drug used to ____(clue)____.”";
-
-                //// 5.4 True/False Questions
-                //string trueFalsePrompt =
-                //    $"Generate 5 True/False statements (in {generalLangName}) based on the content of these page(s). " +
-                //    $"Each statement should be exactly “Statement. True or False?”\n\n" +
-                //    $"For example:\n“Pilocarpine is an osmotic diuretic. True or False?”";
-
-                //// 5.5 Generate Outline
-                //string outlinePrompt =
-                //    $"Produce a hierarchical OUTLINE (section headings and sub-headings) in {generalLangName} for the material on these page(s). " +
-                //    $"Use numbered levels like “1. Main Topic – 1.1 Subtopic – 1.1.1 Details,” etc.";
-
-                //// 5.6 Concept Relationships (Concept Map text)
-                //string conceptMapPrompt =
-                //    $"List the key CONCEPTS from these page(s) and show their relationships in text form. " +
-                //    $"For each relationship, format as:\n“ConceptA → relates to → ConceptB” or “ConceptA —   contrasts with — ConceptC.”\n" +
-                //    $"Write in {generalLangName}.";
-
-                //// 5.7 Table Extraction
-                //string tableExtractPrompt =
-                //    $"If these page(s) contain any tabular data (drug doses, side effects, contraindications, etc.), " +
-                //    $"extract that table into a Markdown-style table (columns | column names | …) and output just the table. " +
-                //    $"If no table is present, respond “No table found.”";
-
-                //// 5.8 Simplified Explanation
-                //string simplifiedPrompt =
-                //    $"Explain the content of these page(s) in simpler language as if teaching a first-year medical student. " +
-                //    $"Use {generalLangName}, avoid jargon or define any technical terms.";
-
-                //// 5.9 Case Study Scenario
-                //string caseStudyPrompt =
-                //    $"Write a short clinical vignette (1 paragraph) based on these page(s). " +
-                //    $"Include patient age, presentation, key symptoms, and ask 1 multiple-choice question at the end. " +
-                //    $"Use {generalLangName}.";
-
-                //// 5.10 High-Yield Keywords
-                //string keywordsPrompt =
-                //    $"List the HIGH-YIELD KEYWORDS (in {generalLangName}) that appear on these page(s). " +
-                //    $"Return a comma-separated list or a vertical list—just the keywords, no definitions.";
-
-
-
-                //// ─── Build prompt templates:
-                //string definitionsPrompt = isMedical
-                //    ? $"Provide concise medical definitions (in {generalLangName}) for each key medical term on this page. " +
-                //      //$"- Term as heading, then 1–2 sentence definition in {generalLangName}. Separate each entry by a blank line."
-                //      $"- Term as heading, then 1–2 sentence definition in {generalLangName}."
-                //    : $"Provide concise definitions (in {generalLangName}) for each key term on this page. " +
-                //      $"- Term as heading, then 1–2 sentence definition in {generalLangName}. Separate each entry by a blank line.";
-
-                //string mcqsPrompt =
-                //    $"Generate multiple-choice questions (only in {generalLangName}) based on this page. " +
-                //    $"Format exactly:\nQuestion: [in {generalLangName}]\nA) …\nB) …\nC) …\nD) …\nAnswer: [Letter]\n\n(blank line).";
-
-                //string flashcardsPrompt = isMedical
-                //    ? $"Create medical flashcards in {generalLangName} for each key medical term. " +
-                //      $"Format exactly:\nFront: [Term in {generalLangName}]\nBack: [Definition in {generalLangName}]\n\n(blank line)."
-                //    : $"Create flashcards in {generalLangName} for each key term. " +
-                //      $"Format exactly:\nFront: [Term in {generalLangName}]\nBack: [Definition in {generalLangName}]\n\n(blank line).";
-
-                //string vocabularyPrompt =
-                //    $"Extract important vocabulary terms and translate them into {vocabLangName}. " +
-                //    $"Format exactly:\nEnglishTerm – {vocabLangName}Translation\n\n(blank line).";
-
-                //// ─── New feature prompts:
-                //string summaryPrompt =
-                //    $"In {generalLangName}, write a concise 2–3 sentence SUMMARY of the text on these page(s)." +
-                //    (isMedical ? " Focus on medical concepts." : "");
-
-                //string takeawaysPrompt =
-                //    $"List 5 “Key Takeaway” bullet points (in {generalLangName}) capturing the MOST IMPORTANT facts from these page(s). " +
-                //    $"Use a dash then a space for each bullet.";
-
-                //string clozePrompt =
-                //    $"Generate 5 fill-in-the-blank sentences (in {generalLangName}) based on these page(s). " +
-                //    //$"Each line exactly: \"___(blank)___ is [clue].\"";
-                //    $"Each line exactly: \"______ is [clue].followed by new line for (blank) answer\"";
-
-                //string trueFalsePrompt =
-                //    $"Generate 5 True/False statements (in {generalLangName}) based on these page(s). " +
-                //    //$"Each statement ends with \"True or False?\"";
-                //    $"Each statement ends with \"True or False?\". then new line have \"(True Answer)\"";
-
-                //string outlinePrompt =
-                //    $"Produce a hierarchical OUTLINE (in {generalLangName}) for the material on these page(s). " +
-                //    $"Use levels like 1., 1.1, 1.1.1, etc.";
-
-                //string conceptMapPrompt =
-                //    $"List the key CONCEPTS (in {generalLangName}) from these page(s) and show their relationships. " +
-                //    $"Format as “ConceptA → relates to → ConceptB” or “ConceptA — contrasts with — ConceptC.”";
-
-                //string tableExtractPrompt =
-                //    $"If these page(s) contain any tables (drug doses, side effects, etc.), extract that table into Markdown table format. " +
-                //    $"If none, respond “No table found.”";
-
-                //string simplifiedPrompt =
-                //    $"Explain the content of these page(s) in simpler language (like you’re teaching a first-year student). " +
-                //    $"Use {generalLangName} and define any technical terms.";
-
-                //string caseStudyPrompt =
-                //    $"Write a short clinical vignette (1 para) based on these page(s), including patient details and a 1 MCQ at the end. " +
-                //    $"Use {generalLangName}.";
-
-                //string keywordsPrompt =
-                //    $"List the HIGH-YIELD KEYWORDS (comma-separated) from these page(s) in {generalLangName}.";
-
-
-
-
-
-
-
-
-                //// ─── Build each prompt with a little conditional text:
-                //// 3.1) Definitions prompt
-                ////Best Version
-                //string definitionsPrompt =
-                //    $"In {generalLangName}, provide concise DEFINITIONS for each key " +
-                //    $"{(isMedical ? "medical " : "")}term found on these page(s). " +
-                //    $"For each term, output exactly:\n\n" +
-                //    $"- Term: <the term as a heading>\n" +
-                //    $"- Definition: <a 1–2-3 sentence definition in {generalLangName}>\n\n" +
-                //    $"Separate entries with a blank line.  Do NOT number anything.";
-
-                //// 3.2) MCQs prompt
-                ////Best Version
-                //string mcqsPrompt =
-                //    //$"Generate 5 MULTIPLE‐CHOICE QUESTIONS in {generalLangName} " +
-                //    $"Generate MULTIPLE‐CHOICE QUESTIONS in {generalLangName} " +
-                //    $"based strictly on the content of these page(s).  Follow this pattern exactly (no deviations):\n\n" +
-                //    $"Question: <Write the question here in {generalLangName}>\n" +
-                //    $"A) <Option A in {generalLangName}>\n" +
-                //    $"B) <Option B in {generalLangName}>\n" +
-                //    $"C) <Option C in {generalLangName}>\n" +
-                //    $"D) <Option D in {generalLangName}>\n" +
-                //    $"Answer: <Exactly one letter: A, B, C, or D>\n\n" +
-                //    $"Separate each MCQ block with a single blank line.  Do NOT include any extra text.";
-
-                //// 3.3) Flashcards prompt
-                ////Best Version
-                //string flashcardsPrompt =
-                //    $"Create FLASHCARDS in {generalLangName} for each key " +
-                //    $"{(isMedical ? "medical " : "")}term on these page(s).  Use this exact format (no deviations):\n\n" +
-                //    //$"Front: <Term in {generalLangName}>\n" +
-                //    $"Front: <Term>\n" +
-                //    $"Back:  <One- or two- or three- sentence definition in {generalLangName}>\n\n" +
-                //    $"Leave exactly one blank line between each card.  Do NOT number or bullet anything.";
-
-
-                //// 3.4) Vocabulary: translate into whichever “Vocab Language” the user chose
-                ////Best Version
-                //string vocabularyPrompt =
-                //    $"Extract IMPORTANT VOCABULARY TERMS from these page(s) and translate them into {vocabLangName}.  Use exactly this format (no bullets or numbering):\n\n" +
-                //    //$"EnglishTerm – {vocabLangName}Translation\n\n" +
-                //    $"OriginalTerm – {vocabLangName}Translation\n\n" +
-                //    $"Leave exactly one blank line between each entry.  If a term doesn’t have a direct translation, write “– [Translation Needed]”.";
-
-                //// 3.5) Summary prompt
-                ////Best Version
-                //string summaryPrompt =
-                //    //$"In {generalLangName}, write a concise SUMMARY (2–3 sentences) of the content on these page(s). " +
-                //    $"In {generalLangName}, write a concise SUMMARY (2–3-4-5-6-7-8-9-10 sentences) of the content on these page(s). " +
-                //    $"{(isMedical ? "Highlight key medical concepts; keep technical terms accurate." : "")}" +
-                //    $"\n\nFormat your summary as plain prose (no bullets or numbering).";
-
-                //// 3.6) Key Takeaways prompt
-                ////Best Version
-                //string takeawaysPrompt =
-                //    //$"List 5 KEY TAKEAWAYS (in {generalLangName}) from these page(s), formatted as bullets.  " +
-                //    $"List KEY TAKEAWAYS (in {generalLangName}) from these page(s), formatted as bullets.  " +
-                //    $"Each line must begin with a dash and a space, like:\n" +
-                //    $"- Takeaway 1\n" +
-                //    $"- Takeaway 2\n" +
-                //    $"…\n\n" +
-                //    $"{(isMedical ? "Include any critical medical terms and their context." : "")}";
-
-                //// 3.7) Fill-in-the-Blank (Cloze) prompt
-                ////Best Version
-                //string clozePrompt =
-                //    //$"Generate 5 FILL‐IN‐THE‐BLANK sentences (in {generalLangName}) based on these page(s).  " +
-                //    $"Generate FILL‐IN‐THE‐BLANK sentences (in {generalLangName}) based on these page(s).  " +
-                //    $"Each entry should consist of two lines:\n\n" +
-                //    $"Sentence:“_______________ is <brief clue>.”\n" +
-                //    $"Answer: <the correct word or phrase> (in {generalLangName}).\n\n" +
-                //    //$"For example:\nSentence: “_____[Pilocarpine]_____ is a miotic drug.”\nAnswer: Pilocarpine\n\n" +
-                //    $"For example:\nSentence: “_______________ is a miotic drug.”\nAnswer: Pilocarpine\n\n" +
-                //    $"Leave a single blank line between each pair.  Do NOT embed the answer inside the blank.";
-
-                //// 3.8) True/False Questions prompt
-                ////Best Version
-                //string trueFalsePrompt =
-                //    //$"Generate 5 TRUE/FALSE statements (in {generalLangName}) based on these page(s).  " +
-                //    $"Generate TRUE/FALSE statements (in {generalLangName}) based on these page(s).  " +
-                //    $"Each block should be two lines:\n\n" +
-                //    $"Statement: <write a true‐or‐false sentence here>\n" +
-                //    $"Answer: <True or False>\n\n" +
-                //    $"Leave exactly one blank line between each pair.  Do NOT write any additional explanation.";
-
-                //// 3.9) Outline prompt
-                ////Best Version
-                //string outlinePrompt =
-                //    $"Produce a hierarchical OUTLINE in {generalLangName} for the material on these page(s).  " +
-                //    $"Use numbered levels (e.g., “1. Main Heading,” “1.1 Subheading,” “1.1.1 Detail”).  " +
-                //    $"Do NOT use bullet points—strictly use decimal numbering.  " +
-                //    $"{(isMedical ? "Include medical subheadings where appropriate." : "")}";
-
-                //// 3.10) Concept Map prompt
-                ////Best Version
-                //string conceptMapPrompt =
-                //    $"List the key CONCEPTS from these page(s) and show how they relate, in {generalLangName}.  " +
-                //    $"For each pair, use one of these formats exactly:\n" +
-                //    $"“ConceptA → relates to → ConceptB”\n" +
-                //    $"or\n" +
-                //    $"“ConceptA — contrasts with — ConceptC”\n\n" +
-                //    $"Separate each relationship on its own line.  Provide at least 5 relationships.";
-
-                //// 3.11) Table Extraction prompt
-                ////Not Ready / Not Best Version
-                //string tableExtractPrompt =
-                //    $"If these page(s) contain any tables (e.g., drug doses, side effects, lab values), " +
-                //    $"extract each table into a Markdown‐style table in {generalLangName}.  Use this exact format:\n\n" +
-                //    $"| Column1 | Column2 | Column3 |\n" +
-                //    $"|---------|---------|---------|\n" +
-                //    $"| data11  | data12  | data13  |\n" +
-                //    $"| data21  | data22  | data23  |\n\n" +
-                //    $"If no table is present, respond with exactly: “No table found.”";
-
-                //// 3.12) Simplified Explanation prompt
-                ////Best Version
-                //string simplifiedPrompt =
-                //    $"Explain the content of these page(s) in simpler language, as if teaching a first-year medical student.  " +
-                //    $"Use {generalLangName}.  Define any technical or medical jargon in parentheses the first time it appears.  " +
-                //    $"Write one cohesive paragraph—no bullets or lists.";
-
-                //// 3.13) Case Study prompt
-                ////Best Version
-                //string caseStudyPrompt =
-                //    $"Write a short CLINICAL VIGNETTE (1 paragraph) based on these page(s), in {generalLangName}.  " +
-                //    $"Include:\n" +
-                //    $"- Patient age and gender\n" +
-                //    $"- Presenting complaint or symptom\n" +
-                //    $"- Key pertinent findings (e.g., vital signs, lab results)\n\n" +
-                //    $"Then immediately follow with a single multiple-choice question (in {generalLangName}) about the most likely diagnosis or next step.  " +
-                //    $"Format exactly:\n" +
-                //    $"\nMCQ: <The question text>\n" +
-                //    $"A) <Option A>\n" +
-                //    $"B) <Option B>\n" +
-                //    $"C) <Option C>\n" +
-                //    $"D) <Option D>\n" +
-                //    $"Answer: <A, B, C, or D>\n\n" +
-                //    //$"No extra commentary—only the vignette paragraph, blank line, then the MCQ block.";
-                //    $"No extra commentary—only the vignette paragraph, blank line, then the MCQ block, at least two cases.";
-
-                //// 3.14) Keywords prompt
-                ////Best Version
-                //string keywordsPrompt =
-                //    $"List the HIGH-YIELD KEYWORDS from these page(s) in {generalLangName}.  " +
-                //    $"Output as a comma-separated list (e.g., “keyword1, keyword2, keyword3”).  " +
-                //    $"Do NOT include definitions—only the keywords themselves.  " +
-                //    $"Provide at least 8–10 keywords.";
-
-                // 3.1) Definitions prompt
-                // Best Version (preserved for reference)
-                //string definitionsPrompt =
-                //    $"In {generalLangName}, provide concise DEFINITIONS for each key " +
-                //    $"{(isMedical ? "medical " : "")}term found on these page(s). " +
-                //    $"For each term, output exactly:\n\n" +
-                //    $"- Term: <the term as a heading>\n" +
-                //    $"- Definition: <a 1–2-3 sentence definition in {generalLangName}>\n\n" +
-                //    $"Separate entries with a blank line.  Do NOT number anything.";
-
+                // 3.1) Definitions prompt\
                 string definitionsPrompt;
                 if (isMedical)
                 {
@@ -915,16 +556,6 @@ namespace ChatGPTFileProcessor
 
 
                 // 3.11) Table Extraction prompt
-                // Not Ready / Not Best Version (preserved for reference)
-                //string tableExtractPrompt =
-                //    $"If these page(s) contain any tables (e.g., drug doses, side effects, lab values), " +
-                //    $"extract each table into a Markdown‐style table in {generalLangName}.  Use this exact format:\n\n" +
-                //    $"| Column1 | Column2 | Column3 |\n" +
-                //    $"|---------|---------|---------|\n" +
-                //    $"| data11  | data12  | data13  |\n" +
-                //    $"| data21  | data22  | data23  |\n\n" +
-                //    $"If no table is present, respond with exactly: “No table found.”";
-
                 string tableExtractPrompt;
                 if (isMedical)
                 {
@@ -1053,15 +684,7 @@ namespace ChatGPTFileProcessor
                         $"Provide at least 8–10 keywords.";
                 }
 
-                //string translatedSectionsPrompt =
-                //    $"Translate the following text into {vocabLangName}. " +
-                //    $"Keep every sentence or paragraph exactly as it is in the original language. " +
-                //    $"After each sentence or paragraph, provide the translation immediately below it. " +
-                //    $"Do not remove or shorten any part of the original text. " +
-                //    $"Use clear labels in the output: start the original with 'Original:' and the translation with 'Translation:'. " +
-                //    $"Maintain the original meaning and style (e.g., scientific or medical if applicable). " +
-                //    $"Continue this format until the end of the text.";
-
+                //Translated Section Prompt
                 string translatedSectionsPrompt =
                     $"Translate the following text from {generalLangName} into {vocabLangName}. " +
                     $"Keep every sentence or paragraph exactly as it is in the original language. " +
@@ -1070,19 +693,6 @@ namespace ChatGPTFileProcessor
                     //$"Use clear labels in the output: start the original with 'Original:' and the translation with 'Translation:'. " +
                     $"Do not add any introductions, explanations, notes, or extra formatting. " +
                     $"Only output the text in the requested format.";
-
-                //bool useSeparators = true; // لو ما تريده، غيّرها إلى false
-
-                //string translatedSectionsPrompt =
-                //    $"Translate the following text from {generalLangName} into {vocabLangName}. " +
-                //    $"Keep every sentence or paragraph exactly as it is in the original language. " +
-                //    $"After each sentence or paragraph, provide the translation immediately below it. " +
-                //    $"Do not remove or shorten any part of the original text. " +
-                //    //$"Use clear labels in the output: start the original with 'Original:' and the translation with 'Translation:'. " +
-                //    (useSeparators
-                //        ? $"After each translation, add a line with exactly this text on a separate line: '---------------------------------------'."
-                //        : $"Do not add any extra lines, explanations, notes, or separators.") +
-                //    $" Only output the text in the requested format.";
 
 
 
@@ -1840,35 +1450,6 @@ namespace ChatGPTFileProcessor
                 }
 
                 //// 7.2) ملف MCQs (يمكن تكييف تنسيق MCQs إذا أردتم تنسيقًا أضبط)
-                //if (chkMCQs.Checked)
-                //{
-                //    string mcqsText = allMCQs.ToString();
-                //    SaveContentToFile(mcqsText, mcqsFilePath, "MCQs");
-                //}
-
-                //if (chkMCQs.Checked)
-                //{
-                //    // 1) export to Word as before
-                //    string mcqsRaw = allMCQs.ToString();
-                //    SaveContentToFile(mcqsRaw, mcqsFilePath, "MCQs");
-
-                //    // 2) parse into MCQ objects
-                //    var parsed = ParseMcqs(mcqsRaw);
-
-                //    // 3) decide CSV vs TSV
-                //    // Option A: hard-coded
-                //    // bool useCommaDelimiter = false;
-
-                //    // Option B: from a new UI checkbox
-                //    bool useCommaDelimiter = chkUseCommaDelimiter.Checked;
-
-                //    // 4) build same base name but .csv or .tsv
-                //    string delimitedPath = Path.ChangeExtension(mcqsFilePath,
-                //        useCommaDelimiter ? ".csv" : ".tsv");
-
-                //    // 5) write out
-                //    SaveMcqsToDelimitedFile(parsed, delimitedPath, useCommaDelimiter);
-                //}
                 if (chkMCQs.Checked)
                 {
                     string mcqsRaw = allMCQs.ToString();
@@ -1888,11 +1469,6 @@ namespace ChatGPTFileProcessor
 
 
                 //// 7.3) ملف Flashcards
-                //if (chkFlashcards.Checked)
-                //{
-                //    string flashcardsText = allFlashcards.ToString();
-                //    SaveContentToFile(flashcardsText, flashcardsFilePath, "Flashcards");
-                //}
                 if (chkFlashcards.Checked)
                 {
                     // 1) Word export stays as-is
@@ -1962,32 +1538,7 @@ namespace ChatGPTFileProcessor
                     UpdateStatus($"Vocabulary export saved: {Path.GetFileName(vocabDelimitedPath)}");
                 }
 
-                //if (chkVocabulary.Checked)
-                //{
-                //    string vocabularyText = FormatVocabulary(allVocabulary.ToString());
-                //    SaveContentToFile(vocabularyText, vocabularyFilePath, "Vocabulary");
-
-                //    // ** New: export CSV for Anki **
-                //    var vocabCsvPath = Path.ChangeExtension(vocabularyFilePath, ".txt");
-
-                //    var records = vocabularyText
-                //        .Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                //        .Select(line =>
-                //        {
-                //            var parts = line.Split(new[] { " - " }, 2, StringSplitOptions.None);
-                //            var term = parts[0].Trim();
-                //            var translation = parts.Length > 1
-                //                ? parts[1].Trim()
-                //                : "[Translation Needed]";
-                //            return Tuple.Create(term, translation);
-                //        })
-                //        .ToList();  // this is List<Tuple<string,string>>
-
-
-                //    //// write out a .txt next to your .docx
-                //    SaveVocabularyForAnki(records, vocabCsvPath, cmbDelimiter.SelectedIndex);
-                //    UpdateStatus($"Vocabulary CSV/TSV saved: {vocabCsvPath}");
-                //}
+                
 
                 // ── New features:
                 if (chkSummary.Checked)
@@ -1996,69 +1547,7 @@ namespace ChatGPTFileProcessor
                 if (chkTakeaways.Checked)
                     SaveContentToFile(allTakeaways.ToString(), takeawaysFilePath, "Key Takeaways");
 
-                //if (chkCloze.Checked)
-                //    SaveContentToFile(allCloze.ToString(), clozeFilePath, "Fill-in-the-Blank (Cloze)");
-                // 7.5) Fill-in-the-Blank (Cloze) export
-
-
-                //if (chkCloze.Checked)
-                //{
-                //    // 1) Word export (exactly as you had before)
-                //    string clozeRaw = allCloze.ToString();
-                //    SaveContentToFile(clozeRaw, clozeFilePath, "Fill-in-the-Blank (Cloze)");
-
-                //    // 2) Anki export
-                //    var parsed = ParseCloze(clozeRaw);
-                //    bool useComma = chkUseCommaDelimiter.Checked;
-                //    string ext = useComma ? ".csv" : ".tsv";
-                //    string outPath = Path.ChangeExtension(clozeFilePath, ext);
-
-                //    using (var sw = new StreamWriter(outPath, false, Encoding.UTF8))
-                //    {
-                //        sw.WriteLine("Text");
-                //        foreach (var (sentence, answer) in parsed)
-                //        {
-                //            var markup = $"{{{{c1::{answer}}}}}";
-                //            var line = sentence.Replace("_______________", markup);
-                //            if (useComma && line.Contains(","))
-                //                line = $"\"{line.Replace("\"", "\"\"")}\"";
-                //            sw.WriteLine(line);
-                //        }
-                //    }
-                //    UpdateStatus($"Cloze exports saved: {Path.GetFileName(clozeFilePath)} and {Path.GetFileName(outPath)}");
-                //}
-
-                //if (chkCloze.Checked)
-                //{
-                //    // 1) Word export, unchanged
-                //    string clozeRaw = allCloze.ToString();
-                //    SaveContentToFile(clozeRaw, clozeFilePath, "Fill-in-the-Blank (Cloze)");
-
-                //    // 2) Parse into (sentence, answer) pairs
-                //    var parsed = ParseCloze(clozeRaw);
-                //    bool useComma = chkUseCommaDelimiter.Checked;
-                //    string ext = useComma ? ".csv" : ".tsv";
-
-                //    //// 3) Emit a single-column CSV with the markup in place of the blank
-                //    //string csvPath = Path.ChangeExtension(clozeFilePath, ".csv");
-                //    string csvPath = Path.ChangeExtension(clozeFilePath, ext);
-                //    using (var sw = new StreamWriter(csvPath, false, Encoding.UTF8))
-                //    {
-                //        // no header needed
-                //        foreach (var (sentence, answer) in parsed)
-                //        {
-                //            // inject the cloze back into the sentence
-                //            var markup = $"{{{{c1::{answer}}}}}";
-                //            var line = sentence.Replace("_______________", markup);
-                //            // wrap in quotes if it contains commas/newlines
-                //            if (line.Contains(",") || line.Contains("\n"))
-                //                line = $"\"{line.Replace("\"", "\"\"")}\"";
-                //            sw.WriteLine(line);
-                //        }
-                //    }
-
-                //    UpdateStatus($"✅ Cloze export saved: {Path.GetFileName(csvPath)}");
-                //}
+                
 
                 if (chkCloze.Checked)
                 {
@@ -2450,79 +1939,11 @@ namespace ChatGPTFileProcessor
         }
 
 
-        ///// <summary>
-        ///// Sends up to three page‐images in one shot (multimodal) to GPT-4o, along with a single text prompt.
-        ///// </summary>
-        //private async Task<string> ProcessPdfPagesMultimodal(
-        //    List<(int pageNumber, Image image)> pageGroup,
-        //    string apiKey,
-        //    string taskPrompt
-        //)
-        //{
-        //    // Build a single “messages” list that contains each image_url entry first, then the text prompt
-        //    var multimodalContent = new List<object>();
 
-        //    foreach (var (pageNumber, image) in pageGroup)
-        //    {
-        //        using (var ms = new MemoryStream())
-        //        {
-        //            image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-        //            string base64 = Convert.ToBase64String(ms.ToArray());
-        //            multimodalContent.Add(new
-        //            {
-        //                type = "image_url",
-        //                image_url = new { url = $"data:image/png;base64,{base64}" }
-        //            });
-        //        }
-        //    }
+        
 
-        //    // Finally, add the single text prompt (task instructions) as the last content element
-        //    multimodalContent.Add(new
-        //    {
-        //        type = "text",
-        //        text = taskPrompt
-        //    });
-
-        //    var requestBody = new
-        //    {
-        //        model = "gpt-4o",
-        //        messages = new object[]
-        //        {
-        //        new
-        //        {
-        //            role = "user",
-        //            content = multimodalContent.ToArray()
-        //        }
-        //        }
-        //    };
-
-        //    string jsonContent = System.Text.Json.JsonSerializer.Serialize(
-        //        requestBody,
-        //        new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }
-        //    );
-
-        //    using (var client = new HttpClient())
-        //    {
-        //        client.DefaultRequestHeaders.Add("Authorization", "Bearer " + apiKey);
-        //        var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-        //        HttpResponseMessage response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
-
-        //        if (!response.IsSuccessStatusCode)
-        //        {
-        //            string error = await response.Content.ReadAsStringAsync();
-        //            throw new Exception($"API Error: {response.StatusCode} - {error}");
-        //        }
-
-        //        string resultJson = await response.Content.ReadAsStringAsync();
-        //        var jsonNode = JsonNode.Parse(resultJson);
-        //        return jsonNode?["choices"]?[0]?["message"]?["content"]?.ToString() ?? "";
-        //    }
-        //}
-
-        /// <summary>
         /// Sends up to N images (in pageGroup) plus the text prompt in one chat call.
         /// This works for batchSize = 2 or 3.
-        /// </summary>
         private async Task<string> ProcessPdfPagesMultimodal(
             List<(int pageNumber, Image image)> pageGroup,
             string apiKey,
@@ -2765,15 +2186,6 @@ namespace ChatGPTFileProcessor
             Properties.Settings.Default.Save();
         }
 
-        //private void chkSummary_CheckedChanged(object sender, EventArgs e)
-        //{
-
-        //}
-
-        //private void chkTakeaways_CheckedChanged(object sender, EventArgs e)
-        //{
-
-        //}
         private void chkSummary_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.GenerateSummary = chkSummary.Checked;
@@ -2995,13 +2407,11 @@ namespace ChatGPTFileProcessor
 
 
 
-        /// <summary>
         /// Turns the raw flashcard text into a list of (Front,Back) tuples.
         /// Expects blocks like:
         ///    Front: X
         ///    Back:  Y
         /// separated by blank lines.
-        /// </summary>
         private List<(string Front, string Back)> ParseFlashcards(string raw)
         {
             var cards = new List<(string, string)>();
@@ -3024,9 +2434,8 @@ namespace ChatGPTFileProcessor
             return cards;
         }
 
-        /// <summary>
+
         /// Writes out a Front/Back list to a comma‐ or tab‐delimited file.
-        /// </summary>
         private void SaveFlashcardsToDelimitedFile(List<(string Front, string Back)> cards,
                                                    string path,
                                                    bool commaDelimiter)
@@ -3087,9 +2496,7 @@ namespace ChatGPTFileProcessor
         //        }
 
 
-        /// <summary>
         /// Represents one MCQ with 4 choices and a correct answer letter.
-        /// </summary>
         public class McqItem
         {
             public string Question { get; set; }
@@ -3105,20 +2512,9 @@ namespace ChatGPTFileProcessor
                 $"A) {OptionA}\nB) {OptionB}\nC) {OptionC}\nD) {OptionD}";
         }
 
-        //public class MCQ
-        //{
-        //    public string Question { get; set; }
-        //    public string A { get; set; }
-        //    public string B { get; set; }
-        //    public string C { get; set; }
-        //    public string D { get; set; }
-        //    public string Answer { get; set; }
-        //}
 
 
-        /// <summary>
         /// Parse your raw MCQs (blocks separated by blank lines) into a List&lt;MCQ&gt;.
-        /// </summary>
         private List<McqItem> ParseMcqs(string raw)
         {
             var items = new List<McqItem>();
@@ -3152,55 +2548,15 @@ namespace ChatGPTFileProcessor
             return items;
         }
 
-        //private List<MCQ> ParseMcqs(string raw)
-        //{
-        //    var list = new List<MCQ>();
-        //    var blocks = raw
-        //        .Split(new[] { "\r\n\r\n", "\n\n" }, StringSplitOptions.RemoveEmptyEntries)
-        //        .Select(b => b.Trim());
+        
 
-        //    foreach (var block in blocks)
-        //    {
-        //        var lines = block
-        //            .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
-        //            .Select(l => l.Trim())
-        //            .ToArray();
-
-        //        var mcq = new MCQ();
-        //        foreach (var line in lines)
-        //        {
-        //            if (line.StartsWith("Question:", StringComparison.OrdinalIgnoreCase))
-        //                mcq.Question = line.Substring("Question:".Length).Trim();
-        //            else if (line.StartsWith("A)", StringComparison.OrdinalIgnoreCase))
-        //                mcq.A = line.Substring(2).Trim();
-        //            else if (line.StartsWith("B)", StringComparison.OrdinalIgnoreCase))
-        //                mcq.B = line.Substring(2).Trim();
-        //            else if (line.StartsWith("C)", StringComparison.OrdinalIgnoreCase))
-        //                mcq.C = line.Substring(2).Trim();
-        //            else if (line.StartsWith("D)", StringComparison.OrdinalIgnoreCase))
-        //                mcq.D = line.Substring(2).Trim();
-        //            else if (line.StartsWith("Answer:", StringComparison.OrdinalIgnoreCase))
-        //                mcq.Answer = line.Substring("Answer:".Length).Trim();
-        //        }
-        //        // only add if we got at least a question and an answer
-        //        if (!string.IsNullOrWhiteSpace(mcq.Question) && !string.IsNullOrWhiteSpace(mcq.Answer))
-        //            list.Add(mcq);
-        //    }
-
-        //    return list;
-        //}
-
-        /// <summary>
+        
         /// Write a list of MCQs out to CSV or TSV.
-        /// </summary>
-        /// <param name="mcqs">Parsed questions</param>
-        /// <param name="filePath">Full path ending in “.csv” or “.tsv”</param>
-        /// <param name="useComma">True =&gt; comma-delimited (CSV), false =&gt; tab-delimited (TSV)</param>
         private void SaveMcqsToDelimitedFile(
-    List<McqItem> items,
-    string path,
-    bool useCommaDelimiter
-)
+                List<McqItem> items,
+                string path,
+                bool useCommaDelimiter
+            )
         {
             var delim = useCommaDelimiter ? "," : "\t";
 
@@ -3233,95 +2589,13 @@ namespace ChatGPTFileProcessor
 
 
 
-        //private void SaveMcqsToDelimitedFile(List<MCQ> mcqs, string filePath, bool useComma = false)
-        //{
-        //    char delim = useComma ? ',' : '\t';
-        //    using (var sw = new StreamWriter(filePath, false, Encoding.UTF8))
-        //    {
-        //        // header
-        //        sw.WriteLine($"Question{delim}A{delim}B{delim}C{delim}D{delim}Answer");
-
-        //        foreach (var q in mcqs)
-        //        {
-        //            // for CSV only: wrap fields in quotes if they contain commas or quotes
-        //            Func<string, string> esc = field =>
-        //            {
-        //                if (!useComma) // TSV never needs escaping
-        //                    return field.Replace("\t", " ");
-        //                // CSV escape:
-        //                var f = field.Replace("\"", "\"\"");
-        //                if (f.Contains(",") || f.Contains("\"") || f.Contains("\n"))
-        //                    return $"\"{f}\"";
-        //                return f;
-        //            };
-
-        //            sw.WriteLine(
-        //                esc(q.Question) + delim +
-        //                esc(q.A) + delim +
-        //                esc(q.B) + delim +
-        //                esc(q.C) + delim +
-        //                esc(q.D) + delim +
-        //                esc(q.Answer)
-        //            );
-        //        }
-        //    }
-
-        //    UpdateStatus($"MCQs exported to {Path.GetFileName(filePath)}");
-        //}
 
 
-
-
-        ///// <summary>
-        ///// Split your raw cloze text into individual blocks
-        ///// </summary>
-        //private List<string> ParseCloze(string raw)
-        //{
-        //    return raw
-        //      .Split(new[] { "\r\n\r\n", "\n\n" }, StringSplitOptions.RemoveEmptyEntries)
-        //      .Select(b => b.Trim().Replace("\r\n", " ")) // collapse any internal new-lines
-        //      .ToList();
-        //}
-
-        ///// <summary>
-        ///// Write a two-column (Text,Extra) CSV/TSV for Anki’s Cloze note type
-        ///// </summary>
-        //private void SaveClozeToDelimitedFile(List<string> entries, string path, bool useComma)
-        //{
-        //    char sep = useComma ? ',' : '\t';
-        //    // UTF8 without BOM helps avoid field-name mismatches
-        //    using (var sw = new StreamWriter(path, false, new UTF8Encoding(false)))
-        //    {
-
-        //        // header—map Column1→Text, Column2→Extra in Anki
-        //        if (useComma)
-        //            sw.WriteLine("\"Text\",\"Extra\"");
-        //        else
-        //            sw.WriteLine("Text\tExtra");
-
-        //        foreach (var entry in entries)
-        //        {
-        //            // escape for CSV
-        //            if (useComma)
-        //            {
-        //                var e = entry.Replace("\"", "\"\"");
-        //                sw.WriteLine($"\"{e}\",\"\"");  // blank Extra
-        //            }
-        //            else
-        //            {
-        //                sw.WriteLine(entry + "\t");     // trailing tab = empty Extra
-        //            }
-        //        }
-        //    }
-        //}
-
-        /// <summary>
         /// Parse raw cloze blocks into (Sentence,Answer) pairs.
         /// Expects blocks like:
         ///   Sentence: "_______________ is a miotic drug."
         ///   Answer: Pilocarpine
         /// separated by blank lines.
-        /// </summary>
         private List<(string Sentence, string Answer)> ParseCloze(string raw)
         {
             var list = new List<(string, string)>();
@@ -3343,35 +2617,10 @@ namespace ChatGPTFileProcessor
             return list;
         }
 
-        //private List<(string Sentence, string Answer)> ParseCloze(string raw)
-        //{
-        //    var list = new List<(string, string)>();
-        //    // split on blank-line (2+ newlines)
-        //    var blocks = Regex.Split(raw.Trim(), @"\r?\n\s*\r?\n");
-        //    foreach (var block in blocks)
-        //    {
-        //        string sent = null, ans = null;
-        //        foreach (var line in block.Split('\n'))
-        //        {
-        //            var t = line.Trim();
-        //            if (t.StartsWith("Sentence:", StringComparison.OrdinalIgnoreCase))
-        //                sent = t.Substring("Sentence:".Length).Trim().Trim('"');
-        //            else if (t.StartsWith("Answer:", StringComparison.OrdinalIgnoreCase))
-        //                ans = t.Substring("Answer:".Length).Trim();
-        //        }
-        //        if (!string.IsNullOrEmpty(sent) && !string.IsNullOrEmpty(ans))
-        //            list.Add((sent, ans));
-        //    }
-        //    return list;
-        //}
 
 
-
-
-        /// <summary>
         /// Write out cloze pairs to CSV or TSV:
         /// columns: Sentence [with blank], Answer
-        /// </summary>
         private void SaveClozeToDelimitedFile(List<(string Sentence, string Answer)> items,
                                                string path,
                                                bool useCommaDelimiter)
@@ -3423,40 +2672,6 @@ namespace ChatGPTFileProcessor
                 textEditAPIKey.Properties.ReadOnly = false;
             }
         }
-
-        
-
-        //        private void SaveClozeToDelimitedFile(
-        //    List<(string Sentence, string Answer)> items,
-        //    string path,
-        //    bool useCommaDelimiter
-        //)
-        //        {
-        //            char sep = useCommaDelimiter ? ',' : '\t';
-        //            using (var w = new StreamWriter(path, false, Encoding.UTF8))
-        //            {
-        //                // **no header** is actually fine for a single-column import,
-        //                // but if you want one you could do:
-        //                // w.WriteLine("Text");
-
-        //                foreach (var (sent, ans) in items)
-        //                {
-        //                    // inject your cloze markup back into the sentence
-        //                    var markup = $"{{{{c1::{ans}}}}}";
-        //                    var line = sent.Replace("_______________", markup);
-
-        //                    // if CSV, wrap any commas/newlines in quotes
-        //                    if (useCommaDelimiter && (line.Contains(',') || line.Contains('\n')))
-        //                    {
-        //                        line = "\"" + line.Replace("\"", "\"\"") + "\"";
-        //                    }
-
-        //                    w.WriteLine(line);
-        //                }
-        //            }
-        //        }
-
-
 
     }
 }
