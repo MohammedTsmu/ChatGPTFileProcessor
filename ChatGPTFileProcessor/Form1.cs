@@ -1,4 +1,9 @@
-﻿using System;
+﻿using DevExpress.Utils.CommonDialogs;
+using DevExpress.Utils.MVVM;
+using DevExpress.XtraEditors.Controls;
+using Microsoft.Office.Interop.Word;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -9,10 +14,6 @@ using System.Text.Json.Nodes;  // Add this at the top of your file if not presen
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using DevExpress.Utils.MVVM;
-using DevExpress.XtraEditors.Controls;
-using Microsoft.Office.Interop.Word;
-using Newtonsoft.Json;
 using Task = System.Threading.Tasks.Task;
 using Word = Microsoft.Office.Interop.Word;
 
@@ -36,8 +37,13 @@ namespace ChatGPTFileProcessor
         private PictureBox loadingIcon;
         private TextBox logTextBox;
 
+        // يُسجّل آخر مجلد إخراج فعلي تم استخدامه أثناء آخر تشغيل
+        private string _lastOutputRoot = null;
 
-        
+        // يُسجّل آخر ملف PDF اختاره المستخدم من واجهة الاختيار
+        private string _lastSelectedPdfPath = null;
+
+
 
         public Form1()
         {
@@ -230,6 +236,7 @@ namespace ChatGPTFileProcessor
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     selectedPdfPath = openFileDialog.FileName;
+                    _lastSelectedPdfPath = openFileDialog.FileName; // أو المتغير الذي تحمل به المسار
 
                     using (var pageForm = new PageSelectionForm())
                     {
@@ -244,6 +251,7 @@ namespace ChatGPTFileProcessor
                 }
             }
         }
+
 
 
 
@@ -343,6 +351,7 @@ namespace ChatGPTFileProcessor
                 // بدلاً من: string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                 // احصل على المجلد النهائي حسب الخيارات
                 string outputRoot = ResolveBaseOutputFolder(filePath, timeStamp, modelName);
+                _lastOutputRoot = outputRoot; // سجّل آخر مجلد فعلي استخدمته
 
                 // 💾 أعلن أين سنحفظ
                 UpdateOverlayLog($"💾 Saving outputs to: {outputRoot}");
@@ -3097,18 +3106,35 @@ namespace ChatGPTFileProcessor
             }
         }
 
-        //private void btnBrowseOutputFolder_Click(object sender, EventArgs e)
+
+        //private void btnOpenOutputFolder_Click(object sender, EventArgs e)
         //{
-
+        //    try
+        //    {
+        //        var path = GetOutputFolder();
+        //        if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+        //        System.Diagnostics.Process.Start("explorer.exe", path);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Cannot open folder: " + ex.Message);
+        //    }
         //}
-
         private void btnOpenOutputFolder_Click(object sender, EventArgs e)
         {
             try
             {
-                var path = GetOutputFolder();
+                var path = GetEffectiveOutputFolderForUi();
                 if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-                System.Diagnostics.Process.Start("explorer.exe", path);
+
+                // افتح المجلد في Windows Explorer
+                var psi = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "explorer.exe",
+                    Arguments = path,
+                    UseShellExecute = true
+                };
+                System.Diagnostics.Process.Start(psi);
             }
             catch (Exception ex)
             {
@@ -3116,9 +3142,26 @@ namespace ChatGPTFileProcessor
             }
         }
 
-        //private void btnOpenOutputFolder_Click(object sender, EventArgs e)
-        //{
 
-        //}
+        private string GetEffectiveOutputFolderForUi()
+        {
+            // أولوية 1: آخر مجلد إخراج فعلي (قد يكون مجلد جلسة)
+            if (!string.IsNullOrWhiteSpace(_lastOutputRoot) && Directory.Exists(_lastOutputRoot))
+                return _lastOutputRoot;
+
+            // أولوية 2: إذا مفعل حفظ بجانب الـ PDF وكان عندنا PDF مختار
+            if (Properties.Settings.Default.SaveBesidePdf &&
+                !string.IsNullOrWhiteSpace(_lastSelectedPdfPath) &&
+                File.Exists(_lastSelectedPdfPath))
+            {
+                var pdfDir = Path.GetDirectoryName(_lastSelectedPdfPath); // يُرجع مجلد المسار
+                if (!string.IsNullOrWhiteSpace(pdfDir) && Directory.Exists(pdfDir))
+                    return pdfDir;
+            }
+
+            // أولوية 3: المجلد المخصص (الإعداد)
+            return GetOutputFolder();
+        }
+
     }
 }
