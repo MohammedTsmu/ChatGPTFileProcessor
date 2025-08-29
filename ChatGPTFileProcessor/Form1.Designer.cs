@@ -572,7 +572,7 @@
             this.chkTableExtract.Size = new System.Drawing.Size(233, 24);
             toolTipTitleItem3.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             toolTipTitleItem3.Appearance.Options.UseFont = true;
-            toolTipTitleItem3.Text = "Not completed / Not ready";
+            toolTipTitleItem3.Text = "Beta!";
             toolTipItem16.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             toolTipItem16.Appearance.Options.UseFont = true;
             toolTipItem16.Text = "Convert PDF content into tabulated information";
