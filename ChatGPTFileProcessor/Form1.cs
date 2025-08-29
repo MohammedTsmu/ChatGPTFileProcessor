@@ -705,30 +705,41 @@ namespace ChatGPTFileProcessor
                 }
 
 
-                // 3.11) Table Extraction prompt
-                string tableExtractPrompt;
-                if (isMedical)
-                {
-                    tableExtractPrompt =
-                        $"If these page(s) contain any MEDICAL TABLES (e.g., drug doses, indications, side effects, lab values), " +
-                        $"extract each table into markdown format in {generalLangName}.  Follow this exact format:\n\n" +
-                        $"| Column1         | Column2                   | Column3            |\n" +
-                        $"|-----------------|---------------------------|--------------------|\n" +
-                        $"| data11 (e.g., drug) | data12 (e.g., dose)   | data13 (e.g., side effect) |\n" +
-                        $"| data21         | data22                     | data23             |\n\n" +
-                        $"If no table is present, respond exactly: “No table found.”";
-                }
-                else
-                {
-                    tableExtractPrompt =
-                        $"If these page(s) contain any tables (e.g., schedules, comparisons, statistics), " +
-                        $"extract each table into markdown format in {generalLangName}.  Follow this exact format:\n\n" +
-                        $"| Column1 | Column2 | Column3 |\n" +
-                        $"|---------|---------|---------|\n" +
-                        $"| data11  | data12  | data13  |\n" +
-                        $"| data21  | data22  | data23  |\n\n" +
-                        $"If no table is present, respond exactly: “No table found.”";
-                }
+                //// 3.11) Table Extraction prompt
+                //string tableExtractPrompt;
+                //if (isMedical)
+                //{
+                //    tableExtractPrompt =
+                //        $"If these page(s) contain any MEDICAL TABLES (e.g., drug doses, indications, side effects, lab values), " +
+                //        $"extract each table into markdown format in {generalLangName}.  Follow this exact format:\n\n" +
+                //        $"| Column1         | Column2                   | Column3            |\n" +
+                //        $"|-----------------|---------------------------|--------------------|\n" +
+                //        $"| data11 (e.g., drug) | data12 (e.g., dose)   | data13 (e.g., side effect) |\n" +
+                //        $"| data21         | data22                     | data23             |\n\n" +
+                //        $"If no table is present, respond exactly: “No table found.”";
+                //}
+                //else
+                //{
+                //    tableExtractPrompt =
+                //        $"If these page(s) contain any tables (e.g., schedules, comparisons, statistics), " +
+                //        $"extract each table into markdown format in {generalLangName}.  Follow this exact format:\n\n" +
+                //        $"| Column1 | Column2 | Column3 |\n" +
+                //        $"|---------|---------|---------|\n" +
+                //        $"| data11  | data12  | data13  |\n" +
+                //        $"| data21  | data22  | data23  |\n\n" +
+                //        $"If no table is present, respond exactly: “No table found.”";
+                //}
+                string tableExtractPrompt =
+                    "From the following text, extract every table you can logically infer. " +
+                    "For EACH table:\n" +
+                    "1) Print a title line exactly as: TABLE: <table title>\n" +
+                    "2) Then output a valid Markdown pipe table:\n" +
+                    "| Column1 | Column2 | ... |\n" +
+                    "| --- | --- | ... |\n" +
+                    "| row1col1 | row1col2 | ... |\n" +
+                    "(No extra commentary; keep one blank line between tables.)\n" +
+                    "Escape pipes inside cells as &#124; if needed.\n";
+
 
 
                 // 3.12) Simplified Explanation prompt
@@ -1349,7 +1360,7 @@ namespace ChatGPTFileProcessor
                             }
 
                             // ── NEW: Simplified Explanation
-                            if (chkTableExtract.Checked)
+                            if (chkSimplified.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Simplified Explanation…");
                                 string pagesSI = await ProcessPdfPagesMultimodal(pageGroup, apiKey, simplifiedPrompt);
@@ -1536,7 +1547,7 @@ namespace ChatGPTFileProcessor
                             }
 
                             // ── NEW: Simplified Explanation
-                            if (chkTableExtract.Checked)
+                            if (chkSimplified.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Simplified Explanation…");
                                 string pagesSI = await ProcessPdfPagesMultimodal(pageGroup, apiKey, simplifiedPrompt);
@@ -1721,7 +1732,7 @@ namespace ChatGPTFileProcessor
                             }
 
                             // ── NEW: Simplified Explanation
-                            if (chkTableExtract.Checked)
+                            if (chkSimplified.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Simplified Explanation…");
                                 string pagesSI = await ProcessPdfPagesMultimodal(pageGroup, apiKey, simplifiedPrompt);
@@ -1821,7 +1832,7 @@ namespace ChatGPTFileProcessor
                     // 2) now parse & save out a .csv/.tsv
                     var parsed = ParseMcqs(mcqsRaw);
                     bool useComma = chkUseCommaDelimiter.Checked;    // or read from your combo
-                    var delPath = Path.ChangeExtension(mcqsFilePath,useComma ? ".csv" : ".tsv");
+                    var delPath = Path.ChangeExtension(mcqsFilePath, useComma ? ".csv" : ".tsv");
 
                     SaveMcqsToDelimitedFile(parsed, delPath, useComma);
                 }
@@ -1900,7 +1911,7 @@ namespace ChatGPTFileProcessor
                     UpdateStatus($"Vocabulary export saved: {Path.GetFileName(vocabDelimitedPath)}");
                 }
 
-                
+
 
                 // ── New features:
                 if (chkSummary.Checked)
@@ -1909,7 +1920,7 @@ namespace ChatGPTFileProcessor
                 if (chkTakeaways.Checked)
                     SaveContentToFile(allTakeaways.ToString(), takeawaysFilePath, "Key Takeaways");
 
-                
+
 
                 if (chkCloze.Checked)
                 {
@@ -1958,8 +1969,12 @@ namespace ChatGPTFileProcessor
                 if (chkConceptMap.Checked)
                     SaveContentToFile(allConceptMap.ToString(), conceptMapFilePath, "Concept Relationships");
 
+                //if (chkTableExtract.Checked)
+                //SaveContentToFile(allTableExtract.ToString(), tableFilePath, "Table Extractions");
                 if (chkTableExtract.Checked)
-                    SaveContentToFile(allTableExtract.ToString(), tableFilePath, "Table Extractions");
+                    SaveMarkdownTablesToWord(allTableExtract.ToString(), tableFilePath, "Table Extractions");
+
+
 
                 if (chkSimplified.Checked)
                     SaveContentToFile(allSimplified.ToString(), simplifiedFilePath, "Simplified Explanation");
@@ -2036,6 +2051,132 @@ namespace ChatGPTFileProcessor
                 doc.Close();
                 wordApp.Quit();
             }
+            UpdateStatus($"Results saved successfully to {filePath}");
+        }
+
+        // NEW: Save markdown-style tables to a real Word table using Interop.
+        // Works on C# 7.3 and .NET Framework 4.7.2 (no modern features).
+        private void SaveMarkdownTablesToWord(string markdown, string filePath, string sectionTitle)
+        {
+            Word.Application wordApp = new Word.Application();
+            Word.Document doc = wordApp.Documents.Add();
+
+            try
+            {
+                // Add a title
+                Word.Paragraph titlePara = doc.Content.Paragraphs.Add();
+                titlePara.Range.Text = sectionTitle;
+                titlePara.Range.Font.Size = 14;
+                titlePara.Format.SpaceAfter = 10;
+                titlePara.Range.InsertParagraphAfter();
+
+                if (string.IsNullOrWhiteSpace(markdown) || markdown.Trim().Equals("No table found.", StringComparison.OrdinalIgnoreCase))
+                {
+                    Word.Paragraph p = doc.Content.Paragraphs.Add();
+                    p.Range.Text = "No table found.";
+                    p.Range.InsertParagraphAfter();
+                    doc.SaveAs2(filePath);
+                    return;
+                }
+
+                // Prepare
+                string text = markdown.Replace("\r\n", "\n");
+                string[] lines = text.Split('\n');
+
+                // Regex to detect the alignment/separator row like: |---|:---:|---|
+                var alignRow = new System.Text.RegularExpressions.Regex(@"^\|\s*:?-+\s*(\|\s*:?-+\s*)+\|$");
+
+                int i = 0;
+                while (i < lines.Length)
+                {
+                    string line = lines[i].Trim();
+
+                    // Skip blanks
+                    if (string.IsNullOrWhiteSpace(line)) { i++; continue; }
+
+                    // Non-table text (headers like "=== Pages 1–3 ===")
+                    if (!line.StartsWith("|"))
+                    {
+                        Word.Paragraph p = doc.Content.Paragraphs.Add();
+                        p.Range.Text = line;
+                        p.Range.InsertParagraphAfter();
+                        i++;
+                        continue;
+                    }
+
+                    // Collect a contiguous block of pipe-rows (a table)
+                    System.Collections.Generic.List<string> tableLines = new System.Collections.Generic.List<string>();
+                    while (i < lines.Length && lines[i].Trim().StartsWith("|"))
+                    {
+                        tableLines.Add(lines[i].Trim());
+                        i++;
+                    }
+
+                    // Parse the table: ignore alignment row(s)
+                    System.Collections.Generic.List<string[]> rows = new System.Collections.Generic.List<string[]>();
+                    for (int k = 0; k < tableLines.Count; k++)
+                    {
+                        string t = tableLines[k];
+
+                        // Ignore separator/alignment rows like |---|:---:|---|
+                        if (alignRow.IsMatch(t)) continue;
+
+                        // Trim outer pipes and split
+                        string inner = t;
+                        if (inner.StartsWith("|")) inner = inner.Substring(1);
+                        if (inner.EndsWith("|")) inner = inner.Substring(0, inner.Length - 1);
+
+                        string[] cells = inner.Split(new[] { '|' }, StringSplitOptions.None);
+                        for (int c = 0; c < cells.Length; c++)
+                            cells[c] = cells[c].Trim();
+
+                        rows.Add(cells);
+                    }
+
+                    if (rows.Count == 0)
+                        continue;
+
+                    // Determine max columns
+                    int cols = 0;
+                    for (int r = 0; r < rows.Count; r++)
+                        if (rows[r].Length > cols) cols = rows[r].Length;
+
+                    // Add a table
+                    Word.Paragraph tblPara = doc.Content.Paragraphs.Add();
+                    Word.Range rng = tblPara.Range;
+                    Word.Table tbl = doc.Tables.Add(rng, rows.Count, cols);
+
+                    // Borders & formatting
+                    tbl.Borders.Enable = 1;
+                    tbl.Rows[1].Range.Bold = 1;
+
+                    // Fill cells
+                    for (int r = 0; r < rows.Count; r++)
+                    {
+                        for (int c = 0; c < cols; c++)
+                        {
+                            string cellText = (c < rows[r].Length) ? rows[r][c] : string.Empty;
+                            tbl.Cell(r + 1, c + 1).Range.Text = cellText;
+                        }
+                    }
+
+                    // Auto-fit
+                    tbl.AutoFitBehavior(Word.WdAutoFitBehavior.wdAutoFitContent);
+
+                    // Space after each table
+                    Word.Paragraph after = doc.Content.Paragraphs.Add();
+                    after.Range.InsertParagraphAfter();
+                }
+
+                // Save
+                doc.SaveAs2(filePath);
+            }
+            finally
+            {
+                doc.Close();
+                wordApp.Quit();
+            }
+
             UpdateStatus($"Results saved successfully to {filePath}");
         }
 
@@ -2307,7 +2448,7 @@ namespace ChatGPTFileProcessor
 
 
 
-        
+
 
         /// Sends up to N images (in pageGroup) plus the text prompt in one chat call.
         /// This works for batchSize = 2 or 3.
@@ -2469,7 +2610,7 @@ namespace ChatGPTFileProcessor
         {
             if (enabled && !string.IsNullOrWhiteSpace(path))
                 //UpdateOverlayLog($"{label} → {path}");
-            UpdateOverlayLog($"{label} → {Path.GetFileName(path)}");
+                UpdateOverlayLog($"{label} → {Path.GetFileName(path)}");
         }
 
 
@@ -2499,7 +2640,7 @@ namespace ChatGPTFileProcessor
             chkTranslatedSections.Checked = Properties.Settings.Default.GenerateTranslatedSections;
             chkExplainTerms.Checked = Properties.Settings.Default.GenerateExplainTerms;
             chkArabicExplainTerms.Checked = Properties.Settings.Default.ArabicExplainTerms;
-            
+
             chkUseSessionFolder.Checked = Properties.Settings.Default.UseSessionFolder;
             chkSaveBesidePdf.Checked = Properties.Settings.Default.SaveBesidePdf;
             chkOrganizeByType.Checked = Properties.Settings.Default.OrganizeByType;
@@ -2714,7 +2855,7 @@ namespace ChatGPTFileProcessor
         private void cmbGeneralLang_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateStatus("General Language...Changed");
-            
+
             // store the DisplayName of the selected language
             var selectedDisplay = cmbGeneralLang.SelectedItem as string;
             if (!string.IsNullOrWhiteSpace(selectedDisplay))
@@ -2966,9 +3107,9 @@ namespace ChatGPTFileProcessor
             return items;
         }
 
-        
 
-        
+
+
         /// Write a list of MCQs out to CSV or TSV.
         private void SaveMcqsToDelimitedFile(
                 List<McqItem> items,
