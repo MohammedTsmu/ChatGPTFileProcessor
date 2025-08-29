@@ -240,14 +240,17 @@ namespace ChatGPTFileProcessor
 
                     using (var pageForm = new PageSelectionForm())
                     {
-                        pageForm.LoadPdfPreview(selectedPdfPath);
-                        if (pageForm.ShowDialog() == DialogResult.OK)
+                        // لا تستدعِ LoadPdfPreview هنا
+                        pageForm.PendingPdfPath = selectedPdfPath;     // مرّر المسار فقط
+
+                        if (pageForm.ShowDialog(this) == DialogResult.OK)
                         {
                             selectedFromPage = pageForm.FromPage;
                             selectedToPage = pageForm.ToPage;
                             labelFileName.Text = selectedPdfPath;
                         }
                     }
+
                 }
             }
         }
