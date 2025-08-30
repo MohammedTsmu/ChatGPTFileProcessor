@@ -2026,7 +2026,205 @@ namespace ChatGPTFileProcessor
 
 
 
-        // Method to save content to specific file
+        //// Method to save content to specific file
+        //private void SaveContentToFile(string content, string filePath, string sectionTitle)
+        //{
+        //    Word.Application wordApp = new Word.Application();
+        //    Word.Document doc = wordApp.Documents.Add();
+
+        //    try
+        //    {
+        //        Word.Paragraph titlePara = doc.Content.Paragraphs.Add();
+        //        titlePara.Range.Text = sectionTitle;
+        //        //titlePara.Range.Font.Bold = 1;
+        //        titlePara.Range.Font.Size = 14;
+        //        titlePara.Format.SpaceAfter = 10;
+        //        titlePara.Range.InsertParagraphAfter();
+
+        //        Word.Paragraph contentPara = doc.Content.Paragraphs.Add();
+        //        contentPara.Range.Text = content;
+        //        contentPara.Range.Font.Bold = 0;
+        //        contentPara.Format.SpaceAfter = 10;
+        //        contentPara.Range.InsertParagraphAfter();
+
+        //        doc.SaveAs2(filePath);
+        //    }
+        //    finally
+        //    {
+        //        doc.Close();
+        //        wordApp.Quit();
+        //    }
+        //    UpdateStatus($"Results saved successfully to {filePath}");
+        //}
+
+        //// NEW: Save markdown-style tables to a real Word table using Interop.
+        //// Works on C# 7.3 and .NET Framework 4.7.2 (no modern features).
+        //private void SaveMarkdownTablesToWord(string markdown, string filePath, string sectionTitle)
+        //{
+        //    Word.Application wordApp = new Word.Application();
+        //    Word.Document doc = wordApp.Documents.Add();
+
+        //    try
+        //    {
+        //        // Add a title
+        //        Word.Paragraph titlePara = doc.Content.Paragraphs.Add();
+        //        titlePara.Range.Text = sectionTitle;
+        //        titlePara.Range.Font.Size = 14;
+        //        titlePara.Format.SpaceAfter = 10;
+        //        titlePara.Range.InsertParagraphAfter();
+
+        //        if (string.IsNullOrWhiteSpace(markdown) || markdown.Trim().Equals("No table found.", StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            Word.Paragraph p = doc.Content.Paragraphs.Add();
+        //            p.Range.Text = "No table found.";
+        //            p.Range.InsertParagraphAfter();
+        //            doc.SaveAs2(filePath);
+        //            return;
+        //        }
+
+        //        // Prepare
+        //        string text = markdown.Replace("\r\n", "\n");
+        //        string[] lines = text.Split('\n');
+
+        //        // Regex to detect the alignment/separator row like: |---|:---:|---|
+        //        var alignRow = new System.Text.RegularExpressions.Regex(@"^\|\s*:?-+\s*(\|\s*:?-+\s*)+\|$");
+
+        //        int i = 0;
+        //        while (i < lines.Length)
+        //        {
+        //            string line = lines[i].Trim();
+
+        //            // Skip blanks
+        //            if (string.IsNullOrWhiteSpace(line)) { i++; continue; }
+
+        //            // Non-table text (headers like "=== Pages 1–3 ===")
+        //            if (!line.StartsWith("|"))
+        //            {
+        //                Word.Paragraph p = doc.Content.Paragraphs.Add();
+        //                p.Range.Text = line;
+        //                p.Range.InsertParagraphAfter();
+        //                i++;
+        //                continue;
+        //            }
+
+        //            // Collect a contiguous block of pipe-rows (a table)
+        //            System.Collections.Generic.List<string> tableLines = new System.Collections.Generic.List<string>();
+        //            while (i < lines.Length && lines[i].Trim().StartsWith("|"))
+        //            {
+        //                tableLines.Add(lines[i].Trim());
+        //                i++;
+        //            }
+
+        //            // Parse the table: ignore alignment row(s)
+        //            System.Collections.Generic.List<string[]> rows = new System.Collections.Generic.List<string[]>();
+        //            for (int k = 0; k < tableLines.Count; k++)
+        //            {
+        //                string t = tableLines[k];
+
+        //                // Ignore separator/alignment rows like |---|:---:|---|
+        //                if (alignRow.IsMatch(t)) continue;
+
+        //                // Trim outer pipes and split
+        //                string inner = t;
+        //                if (inner.StartsWith("|")) inner = inner.Substring(1);
+        //                if (inner.EndsWith("|")) inner = inner.Substring(0, inner.Length - 1);
+
+        //                string[] cells = inner.Split(new[] { '|' }, StringSplitOptions.None);
+        //                for (int c = 0; c < cells.Length; c++)
+        //                    cells[c] = cells[c].Trim();
+
+        //                rows.Add(cells);
+        //            }
+
+        //            if (rows.Count == 0)
+        //                continue;
+
+        //            // Determine max columns
+        //            int cols = 0;
+        //            for (int r = 0; r < rows.Count; r++)
+        //                if (rows[r].Length > cols) cols = rows[r].Length;
+
+        //            // Add a table
+        //            Word.Paragraph tblPara = doc.Content.Paragraphs.Add();
+        //            Word.Range rng = tblPara.Range;
+        //            Word.Table tbl = doc.Tables.Add(rng, rows.Count, cols);
+
+        //            // Borders & formatting
+        //            tbl.Borders.Enable = 1;
+        //            tbl.Rows[1].Range.Bold = 1;
+
+        //            // Fill cells
+        //            for (int r = 0; r < rows.Count; r++)
+        //            {
+        //                for (int c = 0; c < cols; c++)
+        //                {
+        //                    string cellText = (c < rows[r].Length) ? rows[r][c] : string.Empty;
+        //                    tbl.Cell(r + 1, c + 1).Range.Text = cellText;
+        //                }
+        //            }
+
+        //            // Auto-fit
+        //            tbl.AutoFitBehavior(Word.WdAutoFitBehavior.wdAutoFitContent);
+
+        //            // Space after each table
+        //            Word.Paragraph after = doc.Content.Paragraphs.Add();
+        //            after.Range.InsertParagraphAfter();
+        //        }
+
+        //        // Save
+        //        doc.SaveAs2(filePath);
+        //    }
+        //    finally
+        //    {
+        //        doc.Close();
+        //        wordApp.Quit();
+        //    }
+
+        //    UpdateStatus($"Results saved successfully to {filePath}");
+        //}
+
+
+
+
+        //// Method to save content to specific file (بصيغة فقرات تحترم RTL/LTR لكل سطر)
+        //private void SaveContentToFile(string content, string filePath, string sectionTitle)
+        //{
+        //    Word.Application wordApp = new Word.Application();
+        //    Word.Document doc = wordApp.Documents.Add();
+
+        //    try
+        //    {
+        //        // عنوان القسم (يتنسّق تلقائيًا حسب اللغة)
+        //        Word.Paragraph titlePara = doc.Content.Paragraphs.Add();
+        //        ApplyBiDiToRange(titlePara.Range, sectionTitle);
+        //        titlePara.Range.Font.Size = 14;
+        //        titlePara.Format.SpaceAfter = 10;
+        //        titlePara.Range.InsertParagraphAfter();
+
+        //        // المحتوى: فقرة لكل سطر مع BiDi تلقائي
+        //        string safe = content ?? string.Empty;
+        //        string[] lines = safe.Replace("\r\n", "\n").Split('\n');
+        //        foreach (var line in lines)
+        //        {
+        //            Word.Paragraph p = doc.Content.Paragraphs.Add();
+        //            ApplyBiDiToRange(p.Range, line);
+        //            p.Range.Font.Bold = 0;
+        //            p.Format.SpaceAfter = 10;
+        //            p.Range.InsertParagraphAfter();
+        //        }
+
+        //        doc.SaveAs2(filePath);
+        //    }
+        //    finally
+        //    {
+        //        doc.Close();
+        //        wordApp.Quit();
+        //    }
+
+        //    UpdateStatus($"Results saved successfully to {filePath}");
+        //}
+
+        // Method to save content to specific file (بصيغة فقرات تحترم RTL/LTR + Alignment)
         private void SaveContentToFile(string content, string filePath, string sectionTitle)
         {
             Word.Application wordApp = new Word.Application();
@@ -2034,18 +2232,35 @@ namespace ChatGPTFileProcessor
 
             try
             {
+                // عنوان القسم
                 Word.Paragraph titlePara = doc.Content.Paragraphs.Add();
-                titlePara.Range.Text = sectionTitle;
-                //titlePara.Range.Font.Bold = 1;
+                ApplyBiDiToRange(titlePara.Range, sectionTitle);
+                // فرض المحاذاة صراحةً حسب اللغة
+                titlePara.Alignment = LooksArabic(sectionTitle)
+                    ? Word.WdParagraphAlignment.wdAlignParagraphRight
+                    : Word.WdParagraphAlignment.wdAlignParagraphLeft;
+
                 titlePara.Range.Font.Size = 14;
                 titlePara.Format.SpaceAfter = 10;
                 titlePara.Range.InsertParagraphAfter();
 
-                Word.Paragraph contentPara = doc.Content.Paragraphs.Add();
-                contentPara.Range.Text = content;
-                contentPara.Range.Font.Bold = 0;
-                contentPara.Format.SpaceAfter = 10;
-                contentPara.Range.InsertParagraphAfter();
+                // المحتوى: فقرة لكل سطر مع BiDi + Alignment صريح
+                string safe = content ?? string.Empty;
+                string[] lines = safe.Replace("\r\n", "\n").Split('\n');
+                foreach (var line in lines)
+                {
+                    Word.Paragraph p = doc.Content.Paragraphs.Add();
+                    ApplyBiDiToRange(p.Range, line);
+
+                    // مهم: المحاذاة تُضبط بعد وضع النص
+                    p.Alignment = LooksArabic(line)
+                        ? Word.WdParagraphAlignment.wdAlignParagraphRight
+                        : Word.WdParagraphAlignment.wdAlignParagraphLeft;
+
+                    p.Range.Font.Bold = 0;
+                    p.Format.SpaceAfter = 10;
+                    p.Range.InsertParagraphAfter();
+                }
 
                 doc.SaveAs2(filePath);
             }
@@ -2054,11 +2269,125 @@ namespace ChatGPTFileProcessor
                 doc.Close();
                 wordApp.Quit();
             }
+
             UpdateStatus($"Results saved successfully to {filePath}");
         }
 
-        // NEW: Save markdown-style tables to a real Word table using Interop.
-        // Works on C# 7.3 and .NET Framework 4.7.2 (no modern features).
+
+        //// NEW: Save markdown-style tables to a real Word table using Interop (مع BiDi لكل خلية/سطر)
+        //private void SaveMarkdownTablesToWord(string markdown, string filePath, string sectionTitle)
+        //{
+        //    Word.Application wordApp = new Word.Application();
+        //    Word.Document doc = wordApp.Documents.Add();
+
+        //    try
+        //    {
+        //        // عنوان
+        //        Word.Paragraph titlePara = doc.Content.Paragraphs.Add();
+        //        ApplyBiDiToRange(titlePara.Range, sectionTitle);
+        //        titlePara.Range.Font.Size = 14;
+        //        titlePara.Format.SpaceAfter = 10;
+        //        titlePara.Range.InsertParagraphAfter();
+
+        //        if (string.IsNullOrWhiteSpace(markdown) ||
+        //            markdown.Trim().Equals("No table found.", StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            Word.Paragraph p = doc.Content.Paragraphs.Add();
+        //            ApplyBiDiToRange(p.Range, "No table found.");
+        //            p.Range.InsertParagraphAfter();
+        //            doc.SaveAs2(filePath);
+        //            return;
+        //        }
+
+        //        string text = markdown.Replace("\r\n", "\n");
+        //        string[] lines = text.Split('\n');
+
+        //        var alignRow = new System.Text.RegularExpressions.Regex(@"^\|\s*:?-+\s*(\|\s*:?-+\s*)+\|$");
+
+        //        int i = 0;
+        //        while (i < lines.Length)
+        //        {
+        //            string line = lines[i].Trim();
+
+        //            // أسطر ليست جداول (عناوين/فواصل): اكتبها مع BiDi
+        //            if (string.IsNullOrWhiteSpace(line)) { i++; continue; }
+        //            if (!line.StartsWith("|"))
+        //            {
+        //                Word.Paragraph p = doc.Content.Paragraphs.Add();
+        //                ApplyBiDiToRange(p.Range, line);
+        //                p.Range.InsertParagraphAfter();
+        //                i++;
+        //                continue;
+        //            }
+
+        //            // تجميع أسطر الجدول المتتالية
+        //            var tableLines = new System.Collections.Generic.List<string>();
+        //            while (i < lines.Length && lines[i].Trim().StartsWith("|"))
+        //            {
+        //                tableLines.Add(lines[i].Trim());
+        //                i++;
+        //            }
+
+        //            // تحويلها لصفوف/أعمدة (تجاهل سطر المحاذاة)
+        //            var rows = new System.Collections.Generic.List<string[]>();
+        //            for (int k = 0; k < tableLines.Count; k++)
+        //            {
+        //                string t = tableLines[k];
+        //                if (alignRow.IsMatch(t)) continue;
+
+        //                string inner = t;
+        //                if (inner.StartsWith("|")) inner = inner.Substring(1);
+        //                if (inner.EndsWith("|")) inner = inner.Substring(0, inner.Length - 1);
+
+        //                string[] cells = inner.Split(new[] { '|' }, StringSplitOptions.None);
+        //                for (int c = 0; c < cells.Length; c++) cells[c] = cells[c].Trim();
+        //                rows.Add(cells);
+        //            }
+
+        //            if (rows.Count == 0) continue;
+
+        //            // أعمدة
+        //            int cols = 0;
+        //            for (int r = 0; r < rows.Count; r++) if (rows[r].Length > cols) cols = rows[r].Length;
+
+        //            // إنشاء الجدول
+        //            Word.Paragraph tblPara = doc.Content.Paragraphs.Add();
+        //            Word.Range rng = tblPara.Range;
+        //            Word.Table tbl = doc.Tables.Add(rng, rows.Count, cols);
+        //            tbl.Borders.Enable = 1;
+        //            if (rows.Count > 0) tbl.Rows[1].Range.Bold = 1;
+
+        //            // تعبئة الخلايا + BiDi لكل خلية
+        //            for (int r = 0; r < rows.Count; r++)
+        //            {
+        //                for (int c = 0; c < cols; c++)
+        //                {
+        //                    string cellText = (c < rows[r].Length) ? rows[r][c] : string.Empty;
+        //                    Word.Range cellRange = tbl.Cell(r + 1, c + 1).Range;
+        //                    // Word يضيف علامات نهاية خلية تلقائيًا؛ نحافظ على النص فقط
+        //                    string clean = (cellText ?? string.Empty).TrimEnd('\r', '\a');
+        //                    ApplyBiDiToRange(cellRange, clean);
+        //                }
+        //            }
+
+        //            // ملاءمة ذاتية + سطر فارغ بعد كل جدول
+        //            tbl.AutoFitBehavior(Word.WdAutoFitBehavior.wdAutoFitContent);
+        //            Word.Paragraph after = doc.Content.Paragraphs.Add();
+        //            after.Range.InsertParagraphAfter();
+        //        }
+
+        //        doc.SaveAs2(filePath);
+        //    }
+        //    finally
+        //    {
+        //        doc.Close();
+        //        wordApp.Quit();
+        //    }
+
+        //    UpdateStatus($"Results saved successfully to {filePath}");
+        //}
+
+        // NEW: Save markdown-style tables to a real Word table using Interop (مع BiDi + Alignment لكل خلية)
         private void SaveMarkdownTablesToWord(string markdown, string filePath, string sectionTitle)
         {
             Word.Application wordApp = new Word.Application();
@@ -2066,27 +2395,30 @@ namespace ChatGPTFileProcessor
 
             try
             {
-                // Add a title
+                // عنوان
                 Word.Paragraph titlePara = doc.Content.Paragraphs.Add();
-                titlePara.Range.Text = sectionTitle;
+                ApplyBiDiToRange(titlePara.Range, sectionTitle);
+                titlePara.Alignment = LooksArabic(sectionTitle)
+                    ? Word.WdParagraphAlignment.wdAlignParagraphRight
+                    : Word.WdParagraphAlignment.wdAlignParagraphLeft;
                 titlePara.Range.Font.Size = 14;
                 titlePara.Format.SpaceAfter = 10;
                 titlePara.Range.InsertParagraphAfter();
 
-                if (string.IsNullOrWhiteSpace(markdown) || markdown.Trim().Equals("No table found.", StringComparison.OrdinalIgnoreCase))
+                if (string.IsNullOrWhiteSpace(markdown) ||
+                    markdown.Trim().Equals("No table found.", StringComparison.OrdinalIgnoreCase))
                 {
                     Word.Paragraph p = doc.Content.Paragraphs.Add();
-                    p.Range.Text = "No table found.";
+                    ApplyBiDiToRange(p.Range, "No table found.");
+                    p.Alignment = Word.WdParagraphAlignment.wdAlignParagraphLeft; // نص إنجليزي
                     p.Range.InsertParagraphAfter();
                     doc.SaveAs2(filePath);
                     return;
                 }
 
-                // Prepare
                 string text = markdown.Replace("\r\n", "\n");
                 string[] lines = text.Split('\n');
 
-                // Regex to detect the alignment/separator row like: |---|:---:|---|
                 var alignRow = new System.Text.RegularExpressions.Regex(@"^\|\s*:?-+\s*(\|\s*:?-+\s*)+\|$");
 
                 int i = 0;
@@ -2094,84 +2426,80 @@ namespace ChatGPTFileProcessor
                 {
                     string line = lines[i].Trim();
 
-                    // Skip blanks
+                    // أسطر ليست جداول (عناوين/فواصل)
                     if (string.IsNullOrWhiteSpace(line)) { i++; continue; }
-
-                    // Non-table text (headers like "=== Pages 1–3 ===")
                     if (!line.StartsWith("|"))
                     {
                         Word.Paragraph p = doc.Content.Paragraphs.Add();
-                        p.Range.Text = line;
+                        ApplyBiDiToRange(p.Range, line);
+                        p.Alignment = LooksArabic(line)
+                            ? Word.WdParagraphAlignment.wdAlignParagraphRight
+                            : Word.WdParagraphAlignment.wdAlignParagraphLeft;
                         p.Range.InsertParagraphAfter();
                         i++;
                         continue;
                     }
 
-                    // Collect a contiguous block of pipe-rows (a table)
-                    System.Collections.Generic.List<string> tableLines = new System.Collections.Generic.List<string>();
+                    // تجميع أسطر الجدول المتتالية
+                    var tableLines = new System.Collections.Generic.List<string>();
                     while (i < lines.Length && lines[i].Trim().StartsWith("|"))
                     {
                         tableLines.Add(lines[i].Trim());
                         i++;
                     }
 
-                    // Parse the table: ignore alignment row(s)
-                    System.Collections.Generic.List<string[]> rows = new System.Collections.Generic.List<string[]>();
+                    // تحويلها لصفوف/أعمدة (تجاهل سطر المحاذاة)
+                    var rows = new System.Collections.Generic.List<string[]>();
                     for (int k = 0; k < tableLines.Count; k++)
                     {
                         string t = tableLines[k];
-
-                        // Ignore separator/alignment rows like |---|:---:|---|
                         if (alignRow.IsMatch(t)) continue;
 
-                        // Trim outer pipes and split
                         string inner = t;
                         if (inner.StartsWith("|")) inner = inner.Substring(1);
                         if (inner.EndsWith("|")) inner = inner.Substring(0, inner.Length - 1);
 
                         string[] cells = inner.Split(new[] { '|' }, StringSplitOptions.None);
-                        for (int c = 0; c < cells.Length; c++)
-                            cells[c] = cells[c].Trim();
-
+                        for (int c = 0; c < cells.Length; c++) cells[c] = cells[c].Trim();
                         rows.Add(cells);
                     }
 
-                    if (rows.Count == 0)
-                        continue;
+                    if (rows.Count == 0) continue;
 
-                    // Determine max columns
+                    // أعمدة
                     int cols = 0;
                     for (int r = 0; r < rows.Count; r++)
                         if (rows[r].Length > cols) cols = rows[r].Length;
 
-                    // Add a table
+                    // إنشاء الجدول
                     Word.Paragraph tblPara = doc.Content.Paragraphs.Add();
                     Word.Range rng = tblPara.Range;
                     Word.Table tbl = doc.Tables.Add(rng, rows.Count, cols);
-
-                    // Borders & formatting
                     tbl.Borders.Enable = 1;
-                    tbl.Rows[1].Range.Bold = 1;
+                    if (rows.Count > 0) tbl.Rows[1].Range.Bold = 1;
 
-                    // Fill cells
+                    // تعبئة الخلايا + BiDi + Alignment صريح
                     for (int r = 0; r < rows.Count; r++)
                     {
                         for (int c = 0; c < cols; c++)
                         {
                             string cellText = (c < rows[r].Length) ? rows[r][c] : string.Empty;
-                            tbl.Cell(r + 1, c + 1).Range.Text = cellText;
+                            Word.Range cellRange = tbl.Cell(r + 1, c + 1).Range;
+                            string clean = (cellText ?? string.Empty).TrimEnd('\r', '\a');
+
+                            ApplyBiDiToRange(cellRange, clean);
+                            cellRange.ParagraphFormat.Alignment = LooksArabic(clean)
+                                ? Word.WdParagraphAlignment.wdAlignParagraphRight
+                                : Word.WdParagraphAlignment.wdAlignParagraphLeft;
                         }
                     }
 
-                    // Auto-fit
+                    // ملاءمة ذاتية + سطر فارغ بعد كل جدول
                     tbl.AutoFitBehavior(Word.WdAutoFitBehavior.wdAutoFitContent);
-
-                    // Space after each table
                     Word.Paragraph after = doc.Content.Paragraphs.Add();
                     after.Range.InsertParagraphAfter();
                 }
 
-                // Save
                 doc.SaveAs2(filePath);
             }
             finally
@@ -2182,6 +2510,100 @@ namespace ChatGPTFileProcessor
 
             UpdateStatus($"Results saved successfully to {filePath}");
         }
+
+
+
+        // يحدّد إن كان النص “يبدو عربيًا”: العربية الأساسية 0600–06FF +
+        // Arabic Supplement 0750–077F + Arabic Extended-A 08A0–08FF +
+        // Arabic Presentation Forms-A/B: FB50–FDFF و FE70–FEFF + الأرقام العربية 0660–0669
+        private static bool LooksArabic(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return false;
+            for (int i = 0; i < s.Length; i++)
+            {
+                int u = s[i];
+                if ((u >= 0x0600 && u <= 0x06FF) || // Arabic
+                    (u >= 0x0750 && u <= 0x077F) || // Arabic Supplement
+                    (u >= 0x08A0 && u <= 0x08FF) || // Arabic Extended-A
+                    (u >= 0xFB50 && u <= 0xFDFF) || // Arabic Presentation Forms-A
+                    (u >= 0xFE70 && u <= 0xFEFF) || // Arabic Presentation Forms-B
+                    (u >= 0x0660 && u <= 0x0669))   // Arabic-Indic digits
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        //// طبّق اتجاه/محاذاة وخط مناسبين حسب اللغة على Word.Range
+        //private static void ApplyBiDiToRange(Word.Range rng, string text)
+        //{
+        //    bool isAr = LooksArabic(text);
+        //    string safe = text ?? string.Empty;
+
+        //    // اكتب النص أولاً
+        //    rng.Text = safe;
+
+        //    var ro = isAr ? Word.WdReadingOrder.wdReadingOrderRtl
+        //                  : Word.WdReadingOrder.wdReadingOrderLtr;
+        //    var al = isAr ? Word.WdParagraphAlignment.wdAlignParagraphRight
+        //                  : Word.WdParagraphAlignment.wdAlignParagraphLeft;
+
+        //    // طبّق على تنسيق الفقرة في الـRange
+        //    rng.ParagraphFormat.ReadingOrder = ro;
+        //    rng.ParagraphFormat.Alignment = al;
+
+        //    // طبّق أيضاً على كل فقرة ضمن الـRange (بعض البيئات تحتاج هذا)
+        //    foreach (Word.Paragraph para in rng.Paragraphs)
+        //    {
+        //        try
+        //        {
+        //            para.Format.ReadingOrder = ro;
+        //            para.Alignment = al;  // فرض المحاذاة يمين/يسار
+        //        }
+        //        finally
+        //        {
+        //            try { System.Runtime.InteropServices.Marshal.ReleaseComObject(para); } catch { }
+        //        }
+        //    }
+
+        //    // خطوط BiDi
+        //    try
+        //    {
+        //        if (isAr) { rng.Font.NameBi = "Segoe UI"; rng.Font.SizeBi = rng.Font.Size; }
+        //        else { rng.Font.Name = "Segoe UI"; }
+        //    }
+        //    catch { }
+        //}
+
+        // يحسم RTL/LTR + Alignment يقينًا باستخدام Selection.RtlPara / LtrPara
+        private static void ApplyBiDiToRange(Word.Range rng, string text)
+        {
+            bool isAr = LooksArabic(text);
+            string safe = text ?? string.Empty;
+
+            // اكتب النص أولاً
+            rng.Text = safe;
+
+            // اختر المدى وطبّق الأمر المناسب (يضبط الاتجاه + المحاذاة معًا)
+            rng.Select();
+            Word.Selection sel = rng.Application.Selection;
+
+            if (isAr)
+            {
+                sel.RtlPara(); // يجعل الفقرة RTL ويضبط المحاذاة يمينًا
+                try { sel.Range.Font.NameBi = "Segoe UI"; } catch { }
+                sel.Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphRight;
+            }
+            else
+            {
+                sel.LtrPara(); // يجعل الفقرة LTR ويضبط المحاذاة يسارًا
+                try { sel.Range.Font.Name = "Segoe UI"; } catch { }
+                sel.Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphLeft;
+            }
+        }
+
+
 
 
         private void LoadApiKeyAndModel()
