@@ -1,6 +1,8 @@
-﻿using DevExpress.Utils.CommonDialogs;
+﻿using DevExpress.Export.Xl;
+using DevExpress.Utils.CommonDialogs;
 using DevExpress.Utils.MVVM;
 using DevExpress.XtraEditors.Controls;
+using DevExpress.XtraExport.Implementation;
 using Microsoft.Office.Interop.Word;
 using Newtonsoft.Json;
 using System;
@@ -12,11 +14,11 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json.Nodes;  // Add this at the top of your file if not present
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Task = System.Threading.Tasks.Task;
 using Word = Microsoft.Office.Interop.Word;
-
 
 
 
@@ -52,7 +54,24 @@ namespace ChatGPTFileProcessor
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            // أفرغ العناصر أولاً
+            comboBoxEditModel.Properties.Items.Clear();
+
+            // أضف الموديلات المتوفرة
             comboBoxEditModel.Properties.Items.Add("gpt-4o"); // Add gpt-4o model to the combo box
+            comboBoxEditModel.Properties.Items.Add("gpt-5");
+
+            //// حمّل الموديل السابق إذا محفوظ
+            //string savedModel = Properties.Settings.Default.SelectedModel;
+            //if (!string.IsNullOrEmpty(savedModel) && comboBoxEditModel.Properties.Items.Contains(savedModel))
+            //{
+            //    comboBoxEditModel.SelectedItem = savedModel;
+            //}
+            //else
+            //{
+            //    // إذا ماكو محفوظ، خلي الافتراضي gpt-4o
+            //    comboBoxEditModel.SelectedItem = "gpt-4o";
+            //}
 
             InitializeOverlay();
 
@@ -277,6 +296,74 @@ namespace ChatGPTFileProcessor
                 return;
             }
 
+            // --- BEFORE try ---
+            // سيُستخدم في finally، لذا لازم يكون معرّف هنا
+            string outputFolder = GetOutputFolder();
+            System.IO.Directory.CreateDirectory(outputFolder);
+
+            // سنبني منه قائمة المقاطع التي ستُكتب في ملف Word الموحد
+            var allExtractedTexts = new List<string>(); // using System.Collections.Generic;
+
+            // 4) استخراج صور كل الصفحات المحددة في الواجهة
+            var allPages = ConvertPdfToImages(filePath);
+
+            // 5) إنشاء StringBuilder لكل قسم من الأقسام الأربع
+            // 5) Prepare StringBuilders for whichever sections are checked
+            StringBuilder allDefinitions = chkDefinitions.Checked ? new StringBuilder() : null;
+            StringBuilder allMCQs = chkMCQs.Checked ? new StringBuilder() : null;
+            StringBuilder allFlashcards = chkFlashcards.Checked ? new StringBuilder() : null;
+            StringBuilder allVocabulary = chkVocabulary.Checked ? new StringBuilder() : null;
+
+            //New feateure
+            StringBuilder allSummary = chkSummary.Checked ? new StringBuilder() : null;
+            StringBuilder allTakeaways = chkTakeaways.Checked ? new StringBuilder() : null;
+            StringBuilder allCloze = chkCloze.Checked ? new StringBuilder() : null;
+            StringBuilder allTrueFalse = chkTrueFalse.Checked ? new StringBuilder() : null;
+            StringBuilder allOutline = chkOutline.Checked ? new StringBuilder() : null;
+            StringBuilder allConceptMap = chkConceptMap.Checked ? new StringBuilder() : null;
+            StringBuilder allTableExtract = chkTableExtract.Checked ? new StringBuilder() : null;
+            StringBuilder allSimplified = chkSimplified.Checked ? new StringBuilder() : null;
+            StringBuilder allCaseStudy = chkCaseStudy.Checked ? new StringBuilder() : null;
+            StringBuilder allKeywords = chkKeywords.Checked ? new StringBuilder() : null;
+            StringBuilder allTranslatedSections = chkTranslatedSections.Checked ? new StringBuilder() : null;
+            // NEW: Explain Terms
+            StringBuilder allExplainTerms = chkExplainTerms.Checked ? new StringBuilder() : null;
+
+
+            // Check if at least one section is selected
+            //if (allDefinitions == null && allMCQs == null && allFlashcards == null && allVocabulary == null)
+            if (allDefinitions == null
+                 && allMCQs == null
+                 && allFlashcards == null
+                 && allVocabulary == null
+                 && allSummary == null
+                 && allTakeaways == null
+                 && allCloze == null
+                 && allTrueFalse == null
+                 && allOutline == null
+                 && allConceptMap == null
+                 && allTableExtract == null
+                 && allSimplified == null
+                 && allCaseStudy == null
+                 && allKeywords == null
+                 && allTranslatedSections == null
+                 && allExplainTerms == null)
+            {
+                MessageBox.Show("Please select at least one section to process.", "No Sections Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                buttonProcessFile.Enabled = true;
+                buttonBrowseFile.Enabled = true;
+
+                // Enable the maximize and minimize buttons again
+                this.MaximizeBox = true; // Disable maximize button
+                this.MinimizeBox = true; // Disable minimize button
+                this.Text = "ChatGPT File Processor"; // Reset form title
+
+                UpdateStatus("❌ No sections selected for processing.");
+
+                HideOverlay();
+                return;
+            }
+
             try
             {
                 // منع النقرات المتكررة أثناء المعالجة
@@ -288,15 +375,16 @@ namespace ChatGPTFileProcessor
                 this.MinimizeBox = false; // Disable minimize button
                 this.Text = "Processing PDF..."; // Update form title to indicate processing
 
-                ShowOverlay("🔄 Processing, please wait...");
-                UpdateOverlayLog("S T A R T   G E N E R A T I N G...");
-                UpdateOverlayLog("🚀 Starting GPT-4o multimodal processing...");
-
                 // اسم النموذج والـ timestamp لإنشاء مسارات الملفات
                 string modelName = comboBoxEditModel.SelectedItem?.ToString() ?? "gpt-4o"; // Use the new combo box for model selection
                 string timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-                //string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                string outputFolder = GetOutputFolder();
+                ////string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                //string outputFolder = GetOutputFolder();
+
+                ShowOverlay("🔄 Processing, please wait...");
+                UpdateOverlayLog("S T A R T   G E N E R A T I N G...");
+                UpdateOverlayLog($"🚀 Starting {modelName} multimodal processing...");
+
                 Directory.CreateDirectory(outputFolder);
 
                 //// Prepare file‐paths
@@ -1395,64 +1483,64 @@ namespace ChatGPTFileProcessor
 
 
 
-                // 4) استخراج صور كل الصفحات المحددة في الواجهة
-                var allPages = ConvertPdfToImages(filePath);
+                //// 4) استخراج صور كل الصفحات المحددة في الواجهة
+                //var allPages = ConvertPdfToImages(filePath);
 
-                // 5) إنشاء StringBuilder لكل قسم من الأقسام الأربع
-                // 5) Prepare StringBuilders for whichever sections are checked
-                StringBuilder allDefinitions = chkDefinitions.Checked ? new StringBuilder() : null;
-                StringBuilder allMCQs = chkMCQs.Checked ? new StringBuilder() : null;
-                StringBuilder allFlashcards = chkFlashcards.Checked ? new StringBuilder() : null;
-                StringBuilder allVocabulary = chkVocabulary.Checked ? new StringBuilder() : null;
+                //// 5) إنشاء StringBuilder لكل قسم من الأقسام الأربع
+                //// 5) Prepare StringBuilders for whichever sections are checked
+                //StringBuilder allDefinitions = chkDefinitions.Checked ? new StringBuilder() : null;
+                //StringBuilder allMCQs = chkMCQs.Checked ? new StringBuilder() : null;
+                //StringBuilder allFlashcards = chkFlashcards.Checked ? new StringBuilder() : null;
+                //StringBuilder allVocabulary = chkVocabulary.Checked ? new StringBuilder() : null;
 
-                //New feateure
-                StringBuilder allSummary = chkSummary.Checked ? new StringBuilder() : null;
-                StringBuilder allTakeaways = chkTakeaways.Checked ? new StringBuilder() : null;
-                StringBuilder allCloze = chkCloze.Checked ? new StringBuilder() : null;
-                StringBuilder allTrueFalse = chkTrueFalse.Checked ? new StringBuilder() : null;
-                StringBuilder allOutline = chkOutline.Checked ? new StringBuilder() : null;
-                StringBuilder allConceptMap = chkConceptMap.Checked ? new StringBuilder() : null;
-                StringBuilder allTableExtract = chkTableExtract.Checked ? new StringBuilder() : null;
-                StringBuilder allSimplified = chkSimplified.Checked ? new StringBuilder() : null;
-                StringBuilder allCaseStudy = chkCaseStudy.Checked ? new StringBuilder() : null;
-                StringBuilder allKeywords = chkKeywords.Checked ? new StringBuilder() : null;
-                StringBuilder allTranslatedSections = chkTranslatedSections.Checked ? new StringBuilder() : null;
-                // NEW: Explain Terms
-                StringBuilder allExplainTerms = chkExplainTerms.Checked ? new StringBuilder() : null;
+                ////New feateure
+                //StringBuilder allSummary = chkSummary.Checked ? new StringBuilder() : null;
+                //StringBuilder allTakeaways = chkTakeaways.Checked ? new StringBuilder() : null;
+                //StringBuilder allCloze = chkCloze.Checked ? new StringBuilder() : null;
+                //StringBuilder allTrueFalse = chkTrueFalse.Checked ? new StringBuilder() : null;
+                //StringBuilder allOutline = chkOutline.Checked ? new StringBuilder() : null;
+                //StringBuilder allConceptMap = chkConceptMap.Checked ? new StringBuilder() : null;
+                //StringBuilder allTableExtract = chkTableExtract.Checked ? new StringBuilder() : null;
+                //StringBuilder allSimplified = chkSimplified.Checked ? new StringBuilder() : null;
+                //StringBuilder allCaseStudy = chkCaseStudy.Checked ? new StringBuilder() : null;
+                //StringBuilder allKeywords = chkKeywords.Checked ? new StringBuilder() : null;
+                //StringBuilder allTranslatedSections = chkTranslatedSections.Checked ? new StringBuilder() : null;
+                //// NEW: Explain Terms
+                //StringBuilder allExplainTerms = chkExplainTerms.Checked ? new StringBuilder() : null;
 
-                // Check if at least one section is selected
-                //if (allDefinitions == null && allMCQs == null && allFlashcards == null && allVocabulary == null)
-                if (allDefinitions == null
-                     && allMCQs == null
-                     && allFlashcards == null
-                     && allVocabulary == null
-                     && allSummary == null
-                     && allTakeaways == null
-                     && allCloze == null
-                     && allTrueFalse == null
-                     && allOutline == null
-                     && allConceptMap == null
-                     && allTableExtract == null
-                     && allSimplified == null
-                     && allCaseStudy == null
-                     && allKeywords == null
-                     && allTranslatedSections == null
-                     && allExplainTerms == null)
-                {
-                    MessageBox.Show("Please select at least one section to process.", "No Sections Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    buttonProcessFile.Enabled = true;
-                    buttonBrowseFile.Enabled = true;
+                //// Check if at least one section is selected
+                ////if (allDefinitions == null && allMCQs == null && allFlashcards == null && allVocabulary == null)
+                //if (allDefinitions == null
+                //     && allMCQs == null
+                //     && allFlashcards == null
+                //     && allVocabulary == null
+                //     && allSummary == null
+                //     && allTakeaways == null
+                //     && allCloze == null
+                //     && allTrueFalse == null
+                //     && allOutline == null
+                //     && allConceptMap == null
+                //     && allTableExtract == null
+                //     && allSimplified == null
+                //     && allCaseStudy == null
+                //     && allKeywords == null
+                //     && allTranslatedSections == null
+                //     && allExplainTerms == null)
+                //{
+                //    MessageBox.Show("Please select at least one section to process.", "No Sections Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //    buttonProcessFile.Enabled = true;
+                //    buttonBrowseFile.Enabled = true;
 
-                    // Enable the maximize and minimize buttons again
-                    this.MaximizeBox = true; // Disable maximize button
-                    this.MinimizeBox = true; // Disable minimize button
-                    this.Text = "ChatGPT File Processor"; // Reset form title
+                //    // Enable the maximize and minimize buttons again
+                //    this.MaximizeBox = true; // Disable maximize button
+                //    this.MinimizeBox = true; // Disable minimize button
+                //    this.Text = "ChatGPT File Processor"; // Reset form title
 
-                    UpdateStatus("❌ No sections selected for processing.");
+                //    UpdateStatus("❌ No sections selected for processing.");
 
-                    HideOverlay();
-                    return;
-                }
+                //    HideOverlay();
+                //    return;
+                //}
 
                 // 6) تحديد حجم الدفعة (batch size) من الواجهة
                 int batchSize = (int)radioPageBatchSize.EditValue; // reads 1, 2 or 3
@@ -1471,7 +1559,7 @@ namespace ChatGPTFileProcessor
                             if (chkDefinitions.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Definitions)...");
-                                string pageDef = await ProcessPdfPageMultimodal(image, apiKey, definitionsPrompt);
+                                string pageDef = await ProcessPdfPageMultimodal(image, apiKey, definitionsPrompt, modelName);
                                 allDefinitions.AppendLine($"===== Page {pageNumber} =====");
                                 allDefinitions.AppendLine(pageDef);
                                 allDefinitions.AppendLine();
@@ -1480,7 +1568,7 @@ namespace ChatGPTFileProcessor
                             if (chkMCQs.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (MCQs)...");
-                                string pageMCQs = await ProcessPdfPageMultimodal(image, apiKey, mcqsPrompt);
+                                string pageMCQs = await ProcessPdfPageMultimodal(image, apiKey, mcqsPrompt, modelName);
                                 allMCQs.AppendLine($"===== Page {pageNumber} =====");
                                 allMCQs.AppendLine(pageMCQs);
                                 allMCQs.AppendLine();
@@ -1489,7 +1577,7 @@ namespace ChatGPTFileProcessor
                             if (chkFlashcards.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Flashcards)...");
-                                string pageFlash = await ProcessPdfPageMultimodal(image, apiKey, flashcardsPrompt);
+                                string pageFlash = await ProcessPdfPageMultimodal(image, apiKey, flashcardsPrompt, modelName);
                                 allFlashcards.AppendLine($"===== Page {pageNumber} =====");
                                 allFlashcards.AppendLine(pageFlash);
                                 allFlashcards.AppendLine();
@@ -1498,7 +1586,7 @@ namespace ChatGPTFileProcessor
                             if (chkVocabulary.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending page {pageNumber} to GPT (Vocabulary)...");
-                                string pageVocab = await ProcessPdfPageMultimodal(image, apiKey, vocabularyPrompt);
+                                string pageVocab = await ProcessPdfPageMultimodal(image, apiKey, vocabularyPrompt, modelName);
                                 allVocabulary.AppendLine($"===== Page {pageNumber} =====");
                                 allVocabulary.AppendLine(pageVocab);
                                 allVocabulary.AppendLine();
@@ -1508,7 +1596,7 @@ namespace ChatGPTFileProcessor
                             if (chkSummary.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Summary…");
-                                string pageSum = await ProcessPdfPageMultimodal(image, apiKey, summaryPrompt);
+                                string pageSum = await ProcessPdfPageMultimodal(image, apiKey, summaryPrompt, modelName);
                                 allSummary.AppendLine($"===== Page {pageNumber} =====");
                                 allSummary.AppendLine(pageSum);
                                 allSummary.AppendLine();
@@ -1518,7 +1606,7 @@ namespace ChatGPTFileProcessor
                             if (chkTakeaways.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Key Takeaways…");
-                                string pageTA = await ProcessPdfPageMultimodal(image, apiKey, takeawaysPrompt);
+                                string pageTA = await ProcessPdfPageMultimodal(image, apiKey, takeawaysPrompt,modelName);
                                 allTakeaways.AppendLine($"===== Page {pageNumber} =====");
                                 allTakeaways.AppendLine(pageTA);
                                 allTakeaways.AppendLine();
@@ -1528,7 +1616,7 @@ namespace ChatGPTFileProcessor
                             if (chkCloze.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Cloze…");
-                                string pageCL = await ProcessPdfPageMultimodal(image, apiKey, clozePrompt);
+                                string pageCL = await ProcessPdfPageMultimodal(image, apiKey, clozePrompt,modelName);
                                 allCloze.AppendLine($"===== Page {pageNumber} =====");
                                 allCloze.AppendLine(pageCL);
                                 allCloze.AppendLine();
@@ -1538,7 +1626,7 @@ namespace ChatGPTFileProcessor
                             if (chkTrueFalse.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending page {pageNumber} → True/False…");
-                                string pageTF = await ProcessPdfPageMultimodal(image, apiKey, trueFalsePrompt);
+                                string pageTF = await ProcessPdfPageMultimodal(image, apiKey, trueFalsePrompt,modelName);
                                 allTrueFalse.AppendLine($"===== Page {pageNumber} =====");
                                 allTrueFalse.AppendLine(pageTF);
                                 allTrueFalse.AppendLine();
@@ -1548,7 +1636,7 @@ namespace ChatGPTFileProcessor
                             if (chkOutline.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Outline…");
-                                string pageOL = await ProcessPdfPageMultimodal(image, apiKey, outlinePrompt);
+                                string pageOL = await ProcessPdfPageMultimodal(image, apiKey, outlinePrompt,modelName);
                                 allOutline.AppendLine($"===== Page {pageNumber} =====");
                                 allOutline.AppendLine(pageOL);
                                 allOutline.AppendLine();
@@ -1558,7 +1646,7 @@ namespace ChatGPTFileProcessor
                             if (chkConceptMap.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Concept Map…");
-                                string pageCM = await ProcessPdfPageMultimodal(image, apiKey, conceptMapPrompt);
+                                string pageCM = await ProcessPdfPageMultimodal(image, apiKey, conceptMapPrompt,modelName);
                                 allConceptMap.AppendLine($"===== Page {pageNumber} =====");
                                 allConceptMap.AppendLine(pageCM);
                                 allConceptMap.AppendLine();
@@ -1568,7 +1656,7 @@ namespace ChatGPTFileProcessor
                             if (chkTableExtract.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Table Extract…");
-                                string pageTE = await ProcessPdfPageMultimodal(image, apiKey, tableExtractPrompt);
+                                string pageTE = await ProcessPdfPageMultimodal(image, apiKey, tableExtractPrompt,modelName);
                                 allTableExtract.AppendLine($"===== Page {pageNumber} =====");
                                 allTableExtract.AppendLine(pageTE);
                                 allTableExtract.AppendLine();
@@ -1578,7 +1666,7 @@ namespace ChatGPTFileProcessor
                             if (chkSimplified.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Simplified Explanation…");
-                                string pageSI = await ProcessPdfPageMultimodal(image, apiKey, simplifiedPrompt);
+                                string pageSI = await ProcessPdfPageMultimodal(image, apiKey, simplifiedPrompt,modelName);
                                 allSimplified.AppendLine($"===== Page {pageNumber} =====");
                                 allSimplified.AppendLine(pageSI);
                                 allSimplified.AppendLine();
@@ -1588,7 +1676,7 @@ namespace ChatGPTFileProcessor
                             if (chkCaseStudy.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Case Study…");
-                                string pageCS = await ProcessPdfPageMultimodal(image, apiKey, caseStudyPrompt);
+                                string pageCS = await ProcessPdfPageMultimodal(image, apiKey, caseStudyPrompt,modelName);
                                 allCaseStudy.AppendLine($"===== Page {pageNumber} =====");
                                 allCaseStudy.AppendLine(pageCS);
                                 allCaseStudy.AppendLine();
@@ -1598,7 +1686,7 @@ namespace ChatGPTFileProcessor
                             if (chkKeywords.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Keywords…");
-                                string pageKW = await ProcessPdfPageMultimodal(image, apiKey, keywordsPrompt);
+                                string pageKW = await ProcessPdfPageMultimodal(image, apiKey, keywordsPrompt,modelName);
                                 allKeywords.AppendLine($"===== Page {pageNumber} =====");
                                 allKeywords.AppendLine(pageKW);
                                 allKeywords.AppendLine();
@@ -1608,7 +1696,7 @@ namespace ChatGPTFileProcessor
                             if (chkTranslatedSections.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Translated Sections…");
-                                string pageTS = await ProcessPdfPageMultimodal(image, apiKey, translatedSectionsPrompt);
+                                string pageTS = await ProcessPdfPageMultimodal(image, apiKey, translatedSectionsPrompt,modelName);
                                 allTranslatedSections.AppendLine($"===== Page {pageNumber} =====");
                                 allTranslatedSections.AppendLine(pageTS);
                                 allTranslatedSections.AppendLine();
@@ -1618,7 +1706,7 @@ namespace ChatGPTFileProcessor
                             if (chkExplainTerms.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending page {pageNumber} → Explain Terms…");
-                                string pageET = await ProcessPdfPageMultimodal(image, apiKey, explainTermsPrompt);
+                                string pageET = await ProcessPdfPageMultimodal(image, apiKey, explainTermsPrompt,modelName);
                                 allExplainTerms.AppendLine($"===== Page {pageNumber} =====");
                                 allExplainTerms.AppendLine(pageET);
                                 allExplainTerms.AppendLine();
@@ -1648,7 +1736,7 @@ namespace ChatGPTFileProcessor
                             if (chkDefinitions.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Definitions) …");
-                                string pagesDef = await ProcessPdfPagesMultimodal(pageGroup, apiKey, definitionsPrompt);
+                                string pagesDef = await ProcessPdfPagesMultimodal(pageGroup, apiKey, definitionsPrompt, modelName);
                                 allDefinitions.AppendLine(header);
                                 allDefinitions.AppendLine(pagesDef);
                                 allDefinitions.AppendLine();
@@ -1657,7 +1745,7 @@ namespace ChatGPTFileProcessor
                             if (chkMCQs.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (MCQs) …");
-                                string pagesMCQs = await ProcessPdfPagesMultimodal(pageGroup, apiKey, mcqsPrompt);
+                                string pagesMCQs = await ProcessPdfPagesMultimodal(pageGroup, apiKey, mcqsPrompt, modelName);
                                 allMCQs.AppendLine(header);
                                 allMCQs.AppendLine(pagesMCQs);
                                 allMCQs.AppendLine();
@@ -1666,7 +1754,7 @@ namespace ChatGPTFileProcessor
                             if (chkFlashcards.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Flashcards) …");
-                                string pagesFlash = await ProcessPdfPagesMultimodal(pageGroup, apiKey, flashcardsPrompt);
+                                string pagesFlash = await ProcessPdfPagesMultimodal(pageGroup, apiKey, flashcardsPrompt, modelName);
                                 allFlashcards.AppendLine(header);
                                 allFlashcards.AppendLine(pagesFlash);
                                 allFlashcards.AppendLine();
@@ -1675,7 +1763,7 @@ namespace ChatGPTFileProcessor
                             if (chkVocabulary.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Vocabulary) …");
-                                string pagesVocab = await ProcessPdfPagesMultimodal(pageGroup, apiKey, vocabularyPrompt);
+                                string pagesVocab = await ProcessPdfPagesMultimodal(pageGroup, apiKey, vocabularyPrompt, modelName);
                                 allVocabulary.AppendLine(header);
                                 allVocabulary.AppendLine(pagesVocab);
                                 allVocabulary.AppendLine();
@@ -1685,7 +1773,7 @@ namespace ChatGPTFileProcessor
                             if (chkSummary.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Summary…");
-                                string pagesSum = await ProcessPdfPagesMultimodal(pageGroup, apiKey, summaryPrompt);
+                                string pagesSum = await ProcessPdfPagesMultimodal(pageGroup, apiKey, summaryPrompt, modelName);
                                 allSummary.AppendLine(header);
                                 allSummary.AppendLine(pagesSum);
                                 allSummary.AppendLine();
@@ -1695,7 +1783,7 @@ namespace ChatGPTFileProcessor
                             if (chkTakeaways.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Key Takeaways…");
-                                string pagesTA = await ProcessPdfPagesMultimodal(pageGroup, apiKey, takeawaysPrompt);
+                                string pagesTA = await ProcessPdfPagesMultimodal(pageGroup, apiKey, takeawaysPrompt, modelName);
                                 allTakeaways.AppendLine(header);
                                 allTakeaways.AppendLine(pagesTA);
                                 allTakeaways.AppendLine();
@@ -1705,7 +1793,7 @@ namespace ChatGPTFileProcessor
                             if (chkCloze.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Cloze…");
-                                string pagesCL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, clozePrompt);
+                                string pagesCL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, clozePrompt, modelName);
                                 allCloze.AppendLine(header);
                                 allCloze.AppendLine(pagesCL);
                                 allCloze.AppendLine();
@@ -1715,7 +1803,7 @@ namespace ChatGPTFileProcessor
                             if (chkTrueFalse.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → True/False…");
-                                string pagesTF = await ProcessPdfPagesMultimodal(pageGroup, apiKey, trueFalsePrompt);
+                                string pagesTF = await ProcessPdfPagesMultimodal(pageGroup, apiKey, trueFalsePrompt, modelName);
                                 allTrueFalse.AppendLine(header);
                                 allTrueFalse.AppendLine(pagesTF);
                                 allTrueFalse.AppendLine();
@@ -1725,7 +1813,7 @@ namespace ChatGPTFileProcessor
                             if (chkOutline.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Outline…");
-                                string pagesOL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, outlinePrompt);
+                                string pagesOL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, outlinePrompt, modelName);
                                 allOutline.AppendLine(header);
                                 allOutline.AppendLine(pagesOL);
                                 allOutline.AppendLine();
@@ -1735,7 +1823,7 @@ namespace ChatGPTFileProcessor
                             if (chkConceptMap.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Concept Map…");
-                                string pagesCM = await ProcessPdfPagesMultimodal(pageGroup, apiKey, conceptMapPrompt);
+                                string pagesCM = await ProcessPdfPagesMultimodal(pageGroup, apiKey, conceptMapPrompt, modelName);
                                 allConceptMap.AppendLine(header);
                                 allConceptMap.AppendLine(pagesCM);
                                 allConceptMap.AppendLine();
@@ -1745,7 +1833,7 @@ namespace ChatGPTFileProcessor
                             if (chkTableExtract.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Table Extract…");
-                                string pagesTE = await ProcessPdfPagesMultimodal(pageGroup, apiKey, tableExtractPrompt);
+                                string pagesTE = await ProcessPdfPagesMultimodal(pageGroup, apiKey, tableExtractPrompt, modelName);
                                 allTableExtract.AppendLine(header);
                                 allTableExtract.AppendLine(pagesTE);
                                 allTableExtract.AppendLine();
@@ -1755,7 +1843,7 @@ namespace ChatGPTFileProcessor
                             if (chkSimplified.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Simplified Explanation…");
-                                string pagesSI = await ProcessPdfPagesMultimodal(pageGroup, apiKey, simplifiedPrompt);
+                                string pagesSI = await ProcessPdfPagesMultimodal(pageGroup, apiKey, simplifiedPrompt, modelName);
                                 allSimplified.AppendLine(header);
                                 allSimplified.AppendLine(pagesSI);
                                 allSimplified.AppendLine();
@@ -1765,7 +1853,7 @@ namespace ChatGPTFileProcessor
                             if (chkCaseStudy.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Case Study…");
-                                string pagesCS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, caseStudyPrompt);
+                                string pagesCS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, caseStudyPrompt, modelName);
                                 allCaseStudy.AppendLine(header);
                                 allCaseStudy.AppendLine(pagesCS);
                                 allCaseStudy.AppendLine();
@@ -1775,7 +1863,7 @@ namespace ChatGPTFileProcessor
                             if (chkKeywords.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Keywords…");
-                                string pagesKW = await ProcessPdfPagesMultimodal(pageGroup, apiKey, keywordsPrompt);
+                                string pagesKW = await ProcessPdfPagesMultimodal(pageGroup, apiKey, keywordsPrompt, modelName);
                                 allKeywords.AppendLine(header);
                                 allKeywords.AppendLine(pagesKW);
                                 allKeywords.AppendLine();
@@ -1785,7 +1873,7 @@ namespace ChatGPTFileProcessor
                             if (chkTranslatedSections.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Translated Sections…");
-                                string pagesTS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, translatedSectionsPrompt);
+                                string pagesTS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, translatedSectionsPrompt, modelName);
                                 allTranslatedSections.AppendLine(header);
                                 allTranslatedSections.AppendLine(pagesTS);
                                 allTranslatedSections.AppendLine();
@@ -1795,7 +1883,7 @@ namespace ChatGPTFileProcessor
                             if (chkExplainTerms.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Explain Terms…");
-                                string pagesET = await ProcessPdfPagesMultimodal(pageGroup, apiKey, explainTermsPrompt);
+                                string pagesET = await ProcessPdfPagesMultimodal(pageGroup, apiKey, explainTermsPrompt, modelName);
                                 allExplainTerms.AppendLine(header);
                                 allExplainTerms.AppendLine(pagesET);
                                 allExplainTerms.AppendLine();
@@ -1832,7 +1920,7 @@ namespace ChatGPTFileProcessor
                             if (chkDefinitions.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Definitions)...");
-                                string pagesDef = await ProcessPdfPagesMultimodal(pageGroup, apiKey, definitionsPrompt);
+                                string pagesDef = await ProcessPdfPagesMultimodal(pageGroup, apiKey, definitionsPrompt, modelName);
                                 allDefinitions.AppendLine(header);
                                 allDefinitions.AppendLine(pagesDef);
                                 allDefinitions.AppendLine();
@@ -1842,7 +1930,7 @@ namespace ChatGPTFileProcessor
                             if (chkMCQs.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (MCQs)...");
-                                string pagesMCQs = await ProcessPdfPagesMultimodal(pageGroup, apiKey, mcqsPrompt);
+                                string pagesMCQs = await ProcessPdfPagesMultimodal(pageGroup, apiKey, mcqsPrompt, modelName);
                                 allMCQs.AppendLine(header);
                                 allMCQs.AppendLine(pagesMCQs);
                                 allMCQs.AppendLine();
@@ -1852,7 +1940,7 @@ namespace ChatGPTFileProcessor
                             if (chkFlashcards.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Flashcards)...");
-                                string pagesFlash = await ProcessPdfPagesMultimodal(pageGroup, apiKey, flashcardsPrompt);
+                                string pagesFlash = await ProcessPdfPagesMultimodal(pageGroup, apiKey, flashcardsPrompt, modelName);
                                 allFlashcards.AppendLine(header);
                                 allFlashcards.AppendLine(pagesFlash);
                                 allFlashcards.AppendLine();
@@ -1862,7 +1950,7 @@ namespace ChatGPTFileProcessor
                             if (chkVocabulary.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Vocabulary)...");
-                                string pagesVocab = await ProcessPdfPagesMultimodal(pageGroup, apiKey, vocabularyPrompt);
+                                string pagesVocab = await ProcessPdfPagesMultimodal(pageGroup, apiKey, vocabularyPrompt, modelName);
                                 allVocabulary.AppendLine(header);
                                 allVocabulary.AppendLine(pagesVocab);
                                 allVocabulary.AppendLine();
@@ -1872,7 +1960,7 @@ namespace ChatGPTFileProcessor
                             if (chkSummary.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Summary…");
-                                string pagesSum = await ProcessPdfPagesMultimodal(pageGroup, apiKey, summaryPrompt);
+                                string pagesSum = await ProcessPdfPagesMultimodal(pageGroup, apiKey, summaryPrompt, modelName);
                                 allSummary.AppendLine(header);
                                 allSummary.AppendLine(pagesSum);
                                 allSummary.AppendLine();
@@ -1882,7 +1970,7 @@ namespace ChatGPTFileProcessor
                             if (chkTakeaways.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Key Takeaways…");
-                                string pagesTA = await ProcessPdfPagesMultimodal(pageGroup, apiKey, takeawaysPrompt);
+                                string pagesTA = await ProcessPdfPagesMultimodal(pageGroup, apiKey, takeawaysPrompt, modelName);
                                 allTakeaways.AppendLine(header);
                                 allTakeaways.AppendLine(pagesTA);
                                 allTakeaways.AppendLine();
@@ -1892,7 +1980,7 @@ namespace ChatGPTFileProcessor
                             if (chkCloze.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Cloze…");
-                                string pagesCL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, clozePrompt);
+                                string pagesCL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, clozePrompt, modelName);
                                 allCloze.AppendLine(header);
                                 allCloze.AppendLine(pagesCL);
                                 allCloze.AppendLine();
@@ -1902,7 +1990,7 @@ namespace ChatGPTFileProcessor
                             if (chkTrueFalse.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → True/False…");
-                                string pagesTF = await ProcessPdfPagesMultimodal(pageGroup, apiKey, trueFalsePrompt);
+                                string pagesTF = await ProcessPdfPagesMultimodal(pageGroup, apiKey, trueFalsePrompt, modelName);
                                 allTrueFalse.AppendLine(header);
                                 allTrueFalse.AppendLine(pagesTF);
                                 allTrueFalse.AppendLine();
@@ -1912,7 +2000,7 @@ namespace ChatGPTFileProcessor
                             if (chkOutline.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Outline…");
-                                string pagesOL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, outlinePrompt);
+                                string pagesOL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, outlinePrompt, modelName);
                                 allOutline.AppendLine(header);
                                 allOutline.AppendLine(pagesOL);
                                 allOutline.AppendLine();
@@ -1922,7 +2010,7 @@ namespace ChatGPTFileProcessor
                             if (chkConceptMap.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Concept Map…");
-                                string pagesCM = await ProcessPdfPagesMultimodal(pageGroup, apiKey, conceptMapPrompt);
+                                string pagesCM = await ProcessPdfPagesMultimodal(pageGroup, apiKey, conceptMapPrompt, modelName);
                                 allConceptMap.AppendLine(header);
                                 allConceptMap.AppendLine(pagesCM);
                                 allConceptMap.AppendLine();
@@ -1932,7 +2020,7 @@ namespace ChatGPTFileProcessor
                             if (chkTableExtract.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Table Extract…");
-                                string pagesTE = await ProcessPdfPagesMultimodal(pageGroup, apiKey, tableExtractPrompt);
+                                string pagesTE = await ProcessPdfPagesMultimodal(pageGroup, apiKey, tableExtractPrompt, modelName);
                                 allTableExtract.AppendLine(header);
                                 allTableExtract.AppendLine(pagesTE);
                                 allTableExtract.AppendLine();
@@ -1942,7 +2030,7 @@ namespace ChatGPTFileProcessor
                             if (chkSimplified.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Simplified Explanation…");
-                                string pagesSI = await ProcessPdfPagesMultimodal(pageGroup, apiKey, simplifiedPrompt);
+                                string pagesSI = await ProcessPdfPagesMultimodal(pageGroup, apiKey, simplifiedPrompt, modelName);
                                 allSimplified.AppendLine(header);
                                 allSimplified.AppendLine(pagesSI);
                                 allSimplified.AppendLine();
@@ -1952,7 +2040,7 @@ namespace ChatGPTFileProcessor
                             if (chkCaseStudy.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Case Study…");
-                                string pagesCS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, caseStudyPrompt);
+                                string pagesCS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, caseStudyPrompt, modelName);
                                 allCaseStudy.AppendLine(header);
                                 allCaseStudy.AppendLine(pagesCS);
                                 allCaseStudy.AppendLine();
@@ -1962,7 +2050,7 @@ namespace ChatGPTFileProcessor
                             if (chkKeywords.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Keywords…");
-                                string pagesKW = await ProcessPdfPagesMultimodal(pageGroup, apiKey, keywordsPrompt);
+                                string pagesKW = await ProcessPdfPagesMultimodal(pageGroup, apiKey, keywordsPrompt, modelName);
                                 allKeywords.AppendLine(header);
                                 allKeywords.AppendLine(pagesKW);
                                 allKeywords.AppendLine();
@@ -1972,7 +2060,7 @@ namespace ChatGPTFileProcessor
                             if (chkTranslatedSections.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Translated Sections…");
-                                string pagesTS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, translatedSectionsPrompt);
+                                string pagesTS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, translatedSectionsPrompt, modelName);
                                 allTranslatedSections.AppendLine(header);
                                 allTranslatedSections.AppendLine(pagesTS);
                                 allTranslatedSections.AppendLine();
@@ -1982,7 +2070,7 @@ namespace ChatGPTFileProcessor
                             if (chkExplainTerms.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Explain Terms…");
-                                string pagesET = await ProcessPdfPagesMultimodal(pageGroup, apiKey, explainTermsPrompt);
+                                string pagesET = await ProcessPdfPagesMultimodal(pageGroup, apiKey, explainTermsPrompt, modelName);
                                 allExplainTerms.AppendLine(header);
                                 allExplainTerms.AppendLine(pagesET);
                                 allExplainTerms.AppendLine();
@@ -2017,7 +2105,7 @@ namespace ChatGPTFileProcessor
                             if (chkDefinitions.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Definitions)...");
-                                string pagesDef = await ProcessPdfPagesMultimodal(pageGroup, apiKey, definitionsPrompt);
+                                string pagesDef = await ProcessPdfPagesMultimodal(pageGroup, apiKey, definitionsPrompt, modelName);
                                 allDefinitions.AppendLine(header);
                                 allDefinitions.AppendLine(pagesDef);
                                 allDefinitions.AppendLine();
@@ -2027,7 +2115,7 @@ namespace ChatGPTFileProcessor
                             if (chkMCQs.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (MCQs)...");
-                                string pagesMCQs = await ProcessPdfPagesMultimodal(pageGroup, apiKey, mcqsPrompt);
+                                string pagesMCQs = await ProcessPdfPagesMultimodal(pageGroup, apiKey, mcqsPrompt, modelName);
                                 allMCQs.AppendLine(header);
                                 allMCQs.AppendLine(pagesMCQs);
                                 allMCQs.AppendLine();
@@ -2037,7 +2125,7 @@ namespace ChatGPTFileProcessor
                             if (chkFlashcards.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Flashcards)...");
-                                string pagesFlash = await ProcessPdfPagesMultimodal(pageGroup, apiKey, flashcardsPrompt);
+                                string pagesFlash = await ProcessPdfPagesMultimodal(pageGroup, apiKey, flashcardsPrompt, modelName);
                                 allFlashcards.AppendLine(header);
                                 allFlashcards.AppendLine(pagesFlash);
                                 allFlashcards.AppendLine();
@@ -2047,7 +2135,7 @@ namespace ChatGPTFileProcessor
                             if (chkVocabulary.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} to GPT (Vocabulary)...");
-                                string pagesVocab = await ProcessPdfPagesMultimodal(pageGroup, apiKey, vocabularyPrompt);
+                                string pagesVocab = await ProcessPdfPagesMultimodal(pageGroup, apiKey, vocabularyPrompt, modelName);
                                 allVocabulary.AppendLine(header);
                                 allVocabulary.AppendLine(pagesVocab);
                                 allVocabulary.AppendLine();
@@ -2057,7 +2145,7 @@ namespace ChatGPTFileProcessor
                             if (chkSummary.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Summary…");
-                                string pagesSum = await ProcessPdfPagesMultimodal(pageGroup, apiKey, summaryPrompt);
+                                string pagesSum = await ProcessPdfPagesMultimodal(pageGroup, apiKey, summaryPrompt, modelName);
                                 allSummary.AppendLine(header);
                                 allSummary.AppendLine(pagesSum);
                                 allSummary.AppendLine();
@@ -2067,7 +2155,7 @@ namespace ChatGPTFileProcessor
                             if (chkTakeaways.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Key Takeaways…");
-                                string pagesTA = await ProcessPdfPagesMultimodal(pageGroup, apiKey, takeawaysPrompt);
+                                string pagesTA = await ProcessPdfPagesMultimodal(pageGroup, apiKey, takeawaysPrompt, modelName);
                                 allTakeaways.AppendLine(header);
                                 allTakeaways.AppendLine(pagesTA);
                                 allTakeaways.AppendLine();
@@ -2077,7 +2165,7 @@ namespace ChatGPTFileProcessor
                             if (chkCloze.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Cloze…");
-                                string pagesCL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, clozePrompt);
+                                string pagesCL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, clozePrompt, modelName);
                                 allCloze.AppendLine(header);
                                 allCloze.AppendLine(pagesCL);
                                 allCloze.AppendLine();
@@ -2087,7 +2175,7 @@ namespace ChatGPTFileProcessor
                             if (chkTrueFalse.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → True/False…");
-                                string pagesTF = await ProcessPdfPagesMultimodal(pageGroup, apiKey, trueFalsePrompt);
+                                string pagesTF = await ProcessPdfPagesMultimodal(pageGroup, apiKey, trueFalsePrompt, modelName);
                                 allTrueFalse.AppendLine(header);
                                 allTrueFalse.AppendLine(pagesTF);
                                 allTrueFalse.AppendLine();
@@ -2097,7 +2185,7 @@ namespace ChatGPTFileProcessor
                             if (chkOutline.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Outline…");
-                                string pagesOL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, outlinePrompt);
+                                string pagesOL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, outlinePrompt, modelName);
                                 allOutline.AppendLine(header);
                                 allOutline.AppendLine(pagesOL);
                                 allOutline.AppendLine();
@@ -2107,7 +2195,7 @@ namespace ChatGPTFileProcessor
                             if (chkConceptMap.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Concept Map…");
-                                string pagesCM = await ProcessPdfPagesMultimodal(pageGroup, apiKey, conceptMapPrompt);
+                                string pagesCM = await ProcessPdfPagesMultimodal(pageGroup, apiKey, conceptMapPrompt, modelName);
                                 allConceptMap.AppendLine(header);
                                 allConceptMap.AppendLine(pagesCM);
                                 allConceptMap.AppendLine();
@@ -2117,7 +2205,7 @@ namespace ChatGPTFileProcessor
                             if (chkTableExtract.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Table Extract…");
-                                string pagesTE = await ProcessPdfPagesMultimodal(pageGroup, apiKey, tableExtractPrompt);
+                                string pagesTE = await ProcessPdfPagesMultimodal(pageGroup, apiKey, tableExtractPrompt, modelName);
                                 allTableExtract.AppendLine(header);
                                 allTableExtract.AppendLine(pagesTE);
                                 allTableExtract.AppendLine();
@@ -2127,7 +2215,7 @@ namespace ChatGPTFileProcessor
                             if (chkSimplified.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Simplified Explanation…");
-                                string pagesSI = await ProcessPdfPagesMultimodal(pageGroup, apiKey, simplifiedPrompt);
+                                string pagesSI = await ProcessPdfPagesMultimodal(pageGroup, apiKey, simplifiedPrompt, modelName);
                                 allSimplified.AppendLine(header);
                                 allSimplified.AppendLine(pagesSI);
                                 allSimplified.AppendLine();
@@ -2137,7 +2225,7 @@ namespace ChatGPTFileProcessor
                             if (chkCaseStudy.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Case Study…");
-                                string pagesCS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, caseStudyPrompt);
+                                string pagesCS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, caseStudyPrompt, modelName);
                                 allCaseStudy.AppendLine(header);
                                 allCaseStudy.AppendLine(pagesCS);
                                 allCaseStudy.AppendLine();
@@ -2147,7 +2235,7 @@ namespace ChatGPTFileProcessor
                             if (chkKeywords.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Keywords…");
-                                string pagesKW = await ProcessPdfPagesMultimodal(pageGroup, apiKey, keywordsPrompt);
+                                string pagesKW = await ProcessPdfPagesMultimodal(pageGroup, apiKey, keywordsPrompt, modelName);
                                 allKeywords.AppendLine(header);
                                 allKeywords.AppendLine(pagesKW);
                                 allKeywords.AppendLine();
@@ -2157,7 +2245,7 @@ namespace ChatGPTFileProcessor
                             if (chkTranslatedSections.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Translated Sections…");
-                                string pagesTS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, translatedSectionsPrompt);
+                                string pagesTS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, translatedSectionsPrompt, modelName);
                                 allTranslatedSections.AppendLine(header);
                                 allTranslatedSections.AppendLine(pagesTS);
                                 allTranslatedSections.AppendLine();
@@ -2167,7 +2255,7 @@ namespace ChatGPTFileProcessor
                             if (chkExplainTerms.Checked)
                             {
                                 UpdateOverlayLog($"🖼️ Sending pages {startPage}–{endPage} → Explain Terms…");
-                                string pagesET = await ProcessPdfPagesMultimodal(pageGroup, apiKey, explainTermsPrompt);
+                                string pagesET = await ProcessPdfPagesMultimodal(pageGroup, apiKey, explainTermsPrompt, modelName);
                                 allExplainTerms.AppendLine(header);
                                 allExplainTerms.AppendLine(pagesET);
                                 allExplainTerms.AppendLine();
@@ -2349,9 +2437,6 @@ namespace ChatGPTFileProcessor
 
 
 
-
-
-
                 if (chkTrueFalse.Checked)
                     SaveContentToFile(allTrueFalse.ToString(), tfFilePath, "True/False Questions");
 
@@ -2361,12 +2446,8 @@ namespace ChatGPTFileProcessor
                 if (chkConceptMap.Checked)
                     SaveContentToFile(allConceptMap.ToString(), conceptMapFilePath, "Concept Relationships");
 
-                //if (chkTableExtract.Checked)
-                //SaveContentToFile(allTableExtract.ToString(), tableFilePath, "Table Extractions");
                 if (chkTableExtract.Checked)
                     SaveMarkdownTablesToWord(allTableExtract.ToString(), tableFilePath, "Table Extractions");
-
-
 
                 if (chkSimplified.Checked)
                     SaveContentToFile(allSimplified.ToString(), simplifiedFilePath, "Simplified Explanation");
@@ -2398,19 +2479,201 @@ namespace ChatGPTFileProcessor
                 UpdateStatus("❌ An error occurred during processing.");
                 UpdateOverlayLog("❌ An error occurred during processing: " + ex.Message);
             }
+            //finally
+            //{
+            //    // 1) اجمع النصوص المستخرجة (نفس الترتيب)
+            //    List<string> extractedPages = allExtractedTexts; // تأكد أنها معمّرة هنا
+
+            //    // 2) مسار الإخراج
+            //    string docxPath = System.IO.Path.Combine(outputFolder,
+            //        "Result_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".docx");
+
+            //    // 3) تحديث اللوج على UI thread
+            //    if (this.InvokeRequired)
+            //        this.BeginInvoke(new Action(() => UpdateOverlayLog("📝 Generating Word file...")));
+            //    else
+            //        UpdateOverlayLog("📝 Generating Word file...");
+
+
+
+            //    //// نبني المستند الموحد من المخرجات المختارة
+            //    //allExtractedTexts.Clear();
+
+            //    //if (chkDefinitions.Checked)
+            //    //    allExtractedTexts.Add("=== Definitions ===\r\n" + allDefinitions.ToString());
+
+            //    //if (chkMCQs.Checked)
+            //    //    allExtractedTexts.Add("=== MCQs ===\r\n" + allMCQs.ToString());
+
+            //    //if (chkFlashcards.Checked)
+            //    //    allExtractedTexts.Add("=== Flashcards ===\r\n" + allFlashcards.ToString());
+
+            //    //if (chkVocabulary.Checked)
+            //    //    allExtractedTexts.Add("=== Vocabulary ===\r\n" + FormatVocabulary(allVocabulary.ToString()));
+
+            //    //if (chkSummary.Checked)
+            //    //    allExtractedTexts.Add("=== Page Summaries ===\r\n" + allSummary.ToString());
+
+            //    //if (chkTakeaways.Checked)
+            //    //    allExtractedTexts.Add("=== Key Takeaways ===\r\n" + allTakeaways.ToString());
+
+            //    //if (chkCloze.Checked)
+            //    //    allExtractedTexts.Add("=== Cloze ===\r\n" + allCloze.ToString());
+
+            //    //if (chkTrueFalse.Checked)
+            //    //    allExtractedTexts.Add("=== True/False ===\r\n" + allTrueFalse.ToString());
+
+            //    //if (chkOutline.Checked)
+            //    //    allExtractedTexts.Add("=== Outline ===\r\n" + allOutline.ToString());
+
+            //    //if (chkConceptMap.Checked)
+            //    //    allExtractedTexts.Add("=== Concept Map ===\r\n" + allConceptMap.ToString());
+
+            //    //if (chkTableExtract.Checked)
+            //    //    allExtractedTexts.Add("=== Table Extractions ===\r\n" + allTableExtract.ToString());
+
+            //    //if (chkSimplified.Checked)
+            //    //    allExtractedTexts.Add("=== Simplified Explanation ===\r\n" + allSimplified.ToString());
+
+            //    //if (chkCaseStudy.Checked)
+            //    //    allExtractedTexts.Add("=== Case Study ===\r\n" + allCaseStudy.ToString());
+
+            //    //if (chkKeywords.Checked)
+            //    //    allExtractedTexts.Add("=== High-Yield Keywords ===\r\n" + allKeywords.ToString());
+
+            //    //if (chkTranslatedSections.Checked)
+            //    //    allExtractedTexts.Add("=== Translated Sections ===\r\n" + allTranslatedSections.ToString());
+
+            //    //if (chkExplainTerms.Checked)
+            //    //    allExtractedTexts.Add("=== Explain Terms ===\r\n" + allExplainTerms.ToString());
+
+
+
+
+            //    // 4) توليد ملف Word على STA thread (مهم)
+            //    RunOnStaThread(() => ExportToWord_Core(docxPath, extractedPages));
+
+            //    // 5) رجوع لواجهة المستخدم
+            //    if (this.InvokeRequired)
+            //        this.BeginInvoke(new Action(() => UpdateOverlayLog("✅ Word file generated: " + docxPath)));
+            //    else
+            //        UpdateOverlayLog("✅ Word file generated: " + docxPath);
+
+            //    // إعادة تفعيل الأزرار
+            //    buttonProcessFile.Enabled = true;
+            //    buttonBrowseFile.Enabled = true;
+            //    // Disable the maximize and minimize of the processing form
+            //    this.MaximizeBox = true; // Disable maximize button
+            //    this.MinimizeBox = true; // Disable minimize button
+            //    this.Text = "ChatGPT File Processor"; // Reset form title
+
+            //    UpdateStatus("🔚 Processing finished.");
+            //    UpdateOverlayLog("🔚 Processing finished.");
+            //    HideOverlay();
+            //}
             finally
             {
+
+                // (أ) حضّر قائمة المقاطع التي ستُكتب في الملف الموحّد
+                allExtractedTexts.Clear();
+
+                //// ===== StringBuilders used across the whole method =====
+                //var allDefinitions = new StringBuilder();
+                //var allMCQs = new StringBuilder();
+                //var allFlashcards = new StringBuilder();
+                //var allVocabulary = new StringBuilder();
+                //var allSummary = new StringBuilder();
+                //var allTakeaways = new StringBuilder();
+                //var allCloze = new StringBuilder();
+                //var allTrueFalse = new StringBuilder();
+                //var allOutline = new StringBuilder();
+                //var allConceptMap = new StringBuilder();
+                //var allTableExtract = new StringBuilder();
+                //var allSimplified = new StringBuilder();
+                //var allCaseStudy = new StringBuilder();
+                //var allKeywords = new StringBuilder();
+                //var allTranslatedSections = new StringBuilder();
+                //var allExplainTerms = new StringBuilder();
+
+                if (chkDefinitions.Checked)
+                    allExtractedTexts.Add("=== Definitions ===\r\n" + allDefinitions.ToString());
+
+                if (chkMCQs.Checked)
+                    allExtractedTexts.Add("=== MCQs ===\r\n" + allMCQs.ToString());
+
+                if (chkFlashcards.Checked)
+                    allExtractedTexts.Add("=== Flashcards ===\r\n" + allFlashcards.ToString());
+
+                if (chkVocabulary.Checked)
+                    allExtractedTexts.Add("=== Vocabulary ===\r\n" + FormatVocabulary(allVocabulary.ToString()));
+
+                if (chkSummary.Checked)
+                    allExtractedTexts.Add("=== Page Summaries ===\r\n" + allSummary.ToString());
+
+                if (chkTakeaways.Checked)
+                    allExtractedTexts.Add("=== Key Takeaways ===\r\n" + allTakeaways.ToString());
+
+                if (chkCloze.Checked)
+                    allExtractedTexts.Add("=== Cloze ===\r\n" + allCloze.ToString());
+
+                if (chkTrueFalse.Checked)
+                    allExtractedTexts.Add("=== True/False ===\r\n" + allTrueFalse.ToString());
+
+                if (chkOutline.Checked)
+                    allExtractedTexts.Add("=== Outline ===\r\n" + allOutline.ToString());
+
+                if (chkConceptMap.Checked)
+                    allExtractedTexts.Add("=== Concept Map ===\r\n" + allConceptMap.ToString());
+
+                if (chkTableExtract.Checked)
+                    allExtractedTexts.Add("=== Table Extractions ===\r\n" + allTableExtract.ToString());
+
+                if (chkSimplified.Checked)
+                    allExtractedTexts.Add("=== Simplified Explanation ===\r\n" + allSimplified.ToString());
+
+                if (chkCaseStudy.Checked)
+                    allExtractedTexts.Add("=== Case Study ===\r\n" + allCaseStudy.ToString());
+
+                if (chkKeywords.Checked)
+                    allExtractedTexts.Add("=== High-Yield Keywords ===\r\n" + allKeywords.ToString());
+
+                if (chkTranslatedSections.Checked)
+                    allExtractedTexts.Add("=== Translated Sections ===\r\n" + allTranslatedSections.ToString());
+
+                if (chkExplainTerms.Checked)
+                    allExtractedTexts.Add("=== Explain Terms ===\r\n" + allExplainTerms.ToString());
+
+                // (ب) حدّد مسار ملف الـ Word الموحّد
+                string docxPath = Path.Combine(
+                    outputFolder, "Result_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".docx");
+
+                // (ج) تحديث اللوج على UI thread
+                if (this.InvokeRequired)
+                    this.BeginInvoke(new Action(() => UpdateOverlayLog("📝 Generating Word file...")));
+                else
+                    UpdateOverlayLog("📝 Generating Word file...");
+
+                // (د) توليد ملف Word على ثريد STA (مهم لتجنّب DisconnectedContext)
+                RunOnStaThread(() => ExportToWord_Core(docxPath, allExtractedTexts));
+
+                // (هـ) لوج نجاح
+                if (this.InvokeRequired)
+                    this.BeginInvoke(new Action(() => UpdateOverlayLog("✅ Word file generated: " + docxPath)));
+                else
+                    UpdateOverlayLog("✅ Word file generated: " + docxPath);
+
+                // (و) إعادة تفعيل الواجهة والتنظيف
                 buttonProcessFile.Enabled = true;
                 buttonBrowseFile.Enabled = true;
-                // Disable the maximize and minimize of the processing form
-                this.MaximizeBox = true; // Disable maximize button
-                this.MinimizeBox = true; // Disable minimize button
-                this.Text = "ChatGPT File Processor"; // Reset form title
+                this.MaximizeBox = true;
+                this.MinimizeBox = true;
+                this.Text = "ChatGPT File Processor";
 
                 UpdateStatus("🔚 Processing finished.");
                 UpdateOverlayLog("🔚 Processing finished.");
                 HideOverlay();
             }
+
         }
 
 
@@ -3129,181 +3392,361 @@ namespace ChatGPTFileProcessor
 
 
 
-        public async System.Threading.Tasks.Task<string> SendImageToGPTAsync(Image image, string apiKey)
+        //public async System.Threading.Tasks.Task<string>SendImageToGPTAsync(Image image, string apiKey, string modelName)
+        //{
+        //    using (var ms = new MemoryStream())
+        //    {
+        //        image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+        //        var base64 = Convert.ToBase64String(ms.ToArray());
+
+        //        var jsonBody = new
+        //        {
+        //            model = modelName, // <-- ديناميكي
+        //            messages = new[]
+        //            {
+        //        new
+        //        {
+        //            role = "user",
+        //            content = new object[]
+        //            {
+        //                new { type = "image_url", image_url = new { url = $"data:image/png;base64,{base64}" } },
+        //                new { type = "text", text = "Please extract all readable content from this page including equations, tables, and diagrams if present." }
+        //            }
+        //        }
+        //    }
+        //        };
+
+        //        const int maxRetries = 3;
+        //        const int delayMs = 1500;
+
+        //        for (int attempt = 1; attempt <= maxRetries; attempt++)
+        //        {
+        //            try
+        //            {
+        //                using (var http = new HttpClient())
+        //                {
+        //                    http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
+
+        //                    var content = new StringContent(JsonConvert.SerializeObject(jsonBody), Encoding.UTF8, "application/json");
+        //                    var response = await http.PostAsync("https://api.openai.com/v1/chat/completions", content);
+        //                    if (!response.IsSuccessStatusCode)
+        //                    {
+        //                        throw new Exception($"API Error: {response.StatusCode} - {await response.Content.ReadAsStringAsync()}");
+        //                    }
+
+
+        //                    response.EnsureSuccessStatusCode(); // Throws if not 2xx
+
+        //                    var result = await response.Content.ReadAsStringAsync();
+        //                    return result;
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                if (attempt == maxRetries)
+        //                    throw new Exception($"❌ Failed after {maxRetries} attempts. Last error: {ex.Message}");
+
+        //                await Task.Delay(delayMs);
+        //            }
+        //        }
+
+        //        return null; // Should not reach here
+        //    }
+        //}
+        public async System.Threading.Tasks.Task<string> SendImageToGPTAsync(Image image, string apiKey, string modelName)
         {
-            using (var ms = new MemoryStream())
+            // 1) تصغير + ضغط
+            string base64;
+            using (var scaled = ResizeForApi(image, 1280))
             {
-                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                var base64 = Convert.ToBase64String(ms.ToArray());
-
-                var jsonBody = new
-                {
-                    model = "gpt-4o",
-                    messages = new[]
-                    {
-                new
-                {
-                    role = "user",
-                    content = new object[]
-                    {
-                        new { type = "image_url", image_url = new { url = $"data:image/png;base64,{base64}" } },
-                        new { type = "text", text = "Please extract all readable content from this page including equations, tables, and diagrams if present." }
-                    }
-                }
+                base64 = ToBase64Jpeg(scaled, 85L);
             }
-                };
 
-                const int maxRetries = 3;
-                const int delayMs = 1500;
-
-                for (int attempt = 1; attempt <= maxRetries; attempt++)
-                {
-                    try
-                    {
-                        using (var http = new HttpClient())
-                        {
-                            http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
-
-                            var content = new StringContent(JsonConvert.SerializeObject(jsonBody), Encoding.UTF8, "application/json");
-                            var response = await http.PostAsync("https://api.openai.com/v1/chat/completions", content);
-                            if (!response.IsSuccessStatusCode)
-                            {
-                                throw new Exception($"API Error: {response.StatusCode} - {await response.Content.ReadAsStringAsync()}");
-                            }
-
-
-                            response.EnsureSuccessStatusCode(); // Throws if not 2xx
-
-                            var result = await response.Content.ReadAsStringAsync();
-                            return result;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        if (attempt == maxRetries)
-                            throw new Exception($"❌ Failed after {maxRetries} attempts. Last error: {ex.Message}");
-
-                        await Task.Delay(delayMs);
-                    }
-                }
-
-                return null; // Should not reach here
-            }
-        }
-
-
-
-        /// يعالج صفحةً واحدةً (كـ صورة) بطريقة Multimodal: يرسل الصورة + التعليمات النصّية دفعةً واحدة إلى GPT-4o.
-        /// يرجع النصّ الناتج (مثل التعاريف أو الأسئلة) مباشرة.
-        private async Task<string> ProcessPdfPageMultimodal(Image image, string apiKey, string taskPrompt)
-        {
-            // 1. تحويل الصورة إلى Base64
-            using (var ms = new MemoryStream())
+            var jsonBody = new
             {
-                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                string base64 = Convert.ToBase64String(ms.ToArray());
-
-                // 2. بناء JSON payload لإرسال الصورة مع النص دفعةً واحدة
-                var requestBody = new
+                model = modelName,
+                messages = new[]
                 {
-                    //In the future you can change this model gpt-40 with user selection model name dynamiclly, right now it is static due to the app designed for one model.
-                    model = "gpt-4o",
-                    messages = new object[]
-                    {
             new
             {
                 role = "user",
                 content = new object[]
                 {
-                    new
-                    {
-                        type = "image_url",
-                        image_url = new { url = $"data:image/png;base64,{base64}" }
-                    },
-                    new
-                    {
-                        type = "text",
-                        text = taskPrompt
-                    }
+                    new { type = "image_url", image_url = new { url = "data:image/jpeg;base64," + base64 } },
+                    new { type = "text", text = "Please extract all readable content from this page including equations, tables, and diagrams if present." }
                 }
             }
-                    }
-                };
+        }
+            };
 
-                string jsonContent = System.Text.Json.JsonSerializer.Serialize(
-                    requestBody,
-                    new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }
-                );
+            // إعداد الترويسات
+            _http.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
 
+            const int maxRetries = 3;
+            int delayMs = 1200;
 
-
-                // 3. إرسال الطلب للـ Chat Completion endpoint
-                using (var client = new HttpClient())
+            for (int attempt = 1; attempt <= maxRetries; attempt++)
+            {
+                var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromMinutes(7));
+                try
                 {
+                    var content = new StringContent(
+                        Newtonsoft.Json.JsonConvert.SerializeObject(jsonBody), Encoding.UTF8, "application/json");
 
-                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + apiKey);
-
-                    var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
+                    var response = await _http.PostAsync("https://api.openai.com/v1/chat/completions", content, cts.Token);
+                    string body = await response.Content.ReadAsStringAsync(); // بدون Token في .NET Framework
 
                     if (!response.IsSuccessStatusCode)
-                    {
-                        string error = await response.Content.ReadAsStringAsync();
-                        throw new Exception($"API Error: {response.StatusCode} - {error}");
-                    }
+                        throw new Exception("API Error: " + (int)response.StatusCode + " - " + body);
 
-                    // 4. قراءة النتيجة (النص الناتج) وإرجاعه
-                    string resultJson = await response.Content.ReadAsStringAsync();
-                    var jsonNode = JsonNode.Parse(resultJson);
-                    return jsonNode?["choices"]?[0]?["message"]?["content"]?.ToString() ?? "";
+                    return body; // JSON خام
+                }
+                catch (TaskCanceledException)
+                {
+                    if (attempt == maxRetries) throw;
+                    await Task.Delay(delayMs);
+                    delayMs *= 2;
+                }
+                catch
+                {
+                    if (attempt == maxRetries) throw;
+                    await Task.Delay(delayMs);
+                    delayMs *= 2;
+                }
+                finally
+                {
+                    cts.Dispose();
                 }
             }
+
+            return null;
         }
 
 
 
 
 
-        /// Sends up to N images (in pageGroup) plus the text prompt in one chat call.
-        /// This works for batchSize = 2 or 3.
-        private async Task<string> ProcessPdfPagesMultimodal(
-            List<(int pageNumber, Image image)> pageGroup,
-            string apiKey,
-            string taskPrompt
-        )
-        {
-            // 1. Convert each image to a Base64 segment
-            var imageContents = new List<object>();
-            foreach (var (pageNumber, image) in pageGroup)
-            {
-                using (var ms = new MemoryStream())
-                {
+        ///// يعالج صفحةً واحدةً (كـ صورة) بطريقة Multimodal: يرسل الصورة + التعليمات النصّية دفعةً واحدة إلى GPT-4o.
+        ///// يرجع النصّ الناتج (مثل التعاريف أو الأسئلة) مباشرة.
+        //private async Task<string> ProcessPdfPageMultimodal(Image image, string apiKey, string taskPrompt, string modelName)
+        //{
+        //    // 1. تحويل الصورة إلى Base64
+        //    using (var ms = new MemoryStream())
+        //    {
+        //        image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+        //        string base64 = Convert.ToBase64String(ms.ToArray());
 
-                    image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                    var base64 = Convert.ToBase64String(ms.ToArray());
-                    imageContents.Add(new
-                    {
-                        type = "image_url",
-                        image_url = new { url = $"data:image/png;base64,{base64}" }
-                    });
-                }
+        //        var requestBody = new
+        //        {
+        //            model = modelName, // <-- ديناميكي
+        //            messages = new object[]
+        //            {
+        //        new
+        //        {
+        //            role = "user",
+        //            content = new object[]
+        //            {
+        //                new { type = "image_url", image_url = new { url = $"data:image/png;base64,{base64}" } },
+        //                new { type = "text", text = taskPrompt }
+        //            }
+        //        }
+        //            }
+        //        };
+
+        //        string jsonContent = System.Text.Json.JsonSerializer.Serialize(
+        //            requestBody,
+        //            new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }
+        //        );
+
+
+
+        //        // 3. إرسال الطلب للـ Chat Completion endpoint
+        //        using (var client = new HttpClient())
+        //        {
+
+        //            client.DefaultRequestHeaders.Add("Authorization", "Bearer " + apiKey);
+
+        //            var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+        //            HttpResponseMessage response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
+
+        //            if (!response.IsSuccessStatusCode)
+        //            {
+        //                string error = await response.Content.ReadAsStringAsync();
+        //                throw new Exception($"API Error: {response.StatusCode} - {error}");
+        //            }
+
+        //            // 4. قراءة النتيجة (النص الناتج) وإرجاعه
+        //            string resultJson = await response.Content.ReadAsStringAsync();
+        //            var jsonNode = JsonNode.Parse(resultJson);
+        //            return jsonNode?["choices"]?[0]?["message"]?["content"]?.ToString() ?? "";
+        //        }
+        //    }
+        //}
+
+
+
+        //private async Task<string> ProcessPdfPageMultimodal(Image image, string apiKey, string taskPrompt, string modelName)
+        //{
+        //    string base64;
+        //    using (var scaled = ResizeForApi(image, 1280))
+        //    {
+        //        base64 = ToBase64Jpeg(scaled, 85L);
+        //    }
+
+        //    var requestBody = new
+        //    {
+        //        model = modelName,
+        //        messages = new object[]
+        //        {
+        //    new
+        //    {
+        //        role = "user",
+        //        content = new object[]
+        //        {
+        //            new { type = "image_url", image_url = new { url = "data:image/jpeg;base64," + base64 } },
+        //            new { type = "text", text = taskPrompt }
+        //        }
+        //    }
+        //        }
+        //    };
+
+        //    var jsonContent = System.Text.Json.JsonSerializer.Serialize(
+        //        requestBody,
+        //        new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }
+        //    );
+
+        //    _http.DefaultRequestHeaders.Authorization =
+        //        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
+
+        //    var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromMinutes(7));
+        //    try
+        //    {
+        //        var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+        //        var response = await _http.PostAsync("https://api.openai.com/v1/chat/completions", httpContent, cts.Token);
+
+        //        string resultJson = await response.Content.ReadAsStringAsync(); // بدون Token
+        //        if (!response.IsSuccessStatusCode)
+        //            throw new Exception("API Error: " + response.StatusCode + " - " + resultJson);
+
+        //        var jsonNode = System.Text.Json.Nodes.JsonNode.Parse(resultJson);
+        //        return jsonNode?["choices"]?[0]?["message"]?["content"]?.ToString() ?? "";
+        //    }
+        //    finally
+        //    {
+        //        cts.Dispose();
+        //    }
+        //}
+
+
+        //private async Task<string> ProcessPdfPageMultimodal(Image image, string apiKey, string taskPrompt, string modelName)
+        //{
+        //    // تصغير + ضغط
+        //    string base64;
+        //    using (var scaled = ResizeForApi(image, 1024)) // تقدر ترجع 1280 إذا تحب
+        //    {
+        //        base64 = ToBase64Jpeg(scaled, 80L);       // 80 لتقليل الحجم/الوقت
+        //    }
+
+        //    var requestBody = new
+        //    {
+        //        model = modelName,
+        //        messages = new object[]
+        //        {
+        //    new
+        //    {
+        //        role = "user",
+        //        content = new object[]
+        //        {
+        //            new { type = "image_url", image_url = new { url = "data:image/jpeg;base64," + base64 } },
+        //            new { type = "text", text = taskPrompt }
+        //        }
+        //    }
+        //        }
+        //    };
+
+        //    var jsonContent = System.Text.Json.JsonSerializer.Serialize(
+        //        requestBody,
+        //        new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }
+        //    );
+
+        //    _http.DefaultRequestHeaders.Authorization =
+        //        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
+
+        //    const int maxRetries = 4;
+        //    int delayMs = 1200;
+
+        //    for (int attempt = 1; attempt <= maxRetries; attempt++)
+        //    {
+        //        var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromMinutes(7));
+        //        try
+        //        {
+        //            var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+        //            var response = await _http.PostAsync("https://api.openai.com/v1/chat/completions", httpContent, cts.Token);
+
+        //            string resultJson = await response.Content.ReadAsStringAsync(); // بدون Token في .NET Framework
+
+        //            int status = (int)response.StatusCode;
+        //            bool transient = (status == 429) || (status >= 500);
+
+        //            if (!response.IsSuccessStatusCode)
+        //            {
+        //                if (transient && attempt < maxRetries)
+        //                    throw new Exception("Transient: " + status + " - " + resultJson);
+
+        //                throw new Exception("API Error: " + status + " - " + resultJson);
+        //            }
+
+        //            var jsonNode = System.Text.Json.Nodes.JsonNode.Parse(resultJson);
+        //            var text = jsonNode?["choices"]?[0]?["message"]?["content"]?.ToString();
+        //            return string.IsNullOrEmpty(text) ? "No content returned." : text;
+        //        }
+        //        catch (TaskCanceledException)
+        //        {
+        //            if (attempt == maxRetries) throw;
+        //            await Task.Delay(delayMs);
+        //            delayMs *= 2;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            if (!ex.Message.StartsWith("Transient") || attempt == maxRetries)
+        //                throw;
+
+        //            await Task.Delay(delayMs);
+        //            delayMs *= 2;
+        //        }
+        //        finally
+        //        {
+        //            cts.Dispose();
+        //        }
+        //    }
+
+        //    return "No content returned.";
+        //}
+
+        private async Task<string> ProcessPdfPageMultimodal(
+    Image image, string apiKey, string taskPrompt, string modelName)
+        {
+            // تصغير + ضغط لتقليل زمن الرفع/المعالجة
+            string base64;
+            using (var scaled = ResizeForApi(image, 1024))  // ارجعها 1280 إذا تحب جودة أعلى
+            {
+                base64 = ToBase64Jpeg(scaled, 80L);         // 80 = حجم أقل وسرعة أعلى
             }
 
-            // 2. Build a single “content” array: [ image1, image2, (maybe image3), { type="text", text=taskPrompt } ]
-            var fullContent = new List<object>();
-            fullContent.AddRange(imageContents);
-            fullContent.Add(new { type = "text", text = taskPrompt });
-
-            // 3. Assemble top‐level request
             var requestBody = new
             {
-                model = "gpt-4o",
+                model = modelName,
                 messages = new object[]
                 {
             new
             {
                 role = "user",
-                content = fullContent.ToArray()
+                content = new object[]
+                {
+                    new { type = "image_url", image_url = new { url = "data:image/jpeg;base64," + base64 } },
+                    new { type = "text", text = taskPrompt }
+                }
             }
                 }
             };
@@ -3313,32 +3756,578 @@ namespace ChatGPTFileProcessor
                 new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }
             );
 
-            using (var client = new HttpClient())
+            const int maxRetries = 4;
+            int delayMs = 1200;
+
+            for (int attempt = 1; attempt <= maxRetries; attempt++)
             {
-
-                client.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
-
-                var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-                var response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
-
-                if (!response.IsSuccessStatusCode)
+                var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromMinutes(7)); // أطول من _http.Timeout
+                try
                 {
-                    string error = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"API Error: {response.StatusCode} – {error}");
-                }
+                    using (var req = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/chat/completions"))
+                    {
+                        req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
+                        req.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-                string resultJson = await response.Content.ReadAsStringAsync();
-                var jsonNode = JsonNode.Parse(resultJson);
-                return jsonNode?["choices"]?[0]?["message"]?["content"]?.ToString()
-                       ?? "No content returned.";
+                        using (var resp = await _http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, cts.Token))
+                        {
+                            string resultJson = await resp.Content.ReadAsStringAsync();
+                            int status = (int)resp.StatusCode;
+                            bool transient = (status == 429) || (status >= 500);
+
+                            if (!resp.IsSuccessStatusCode)
+                            {
+                                if (transient && attempt < maxRetries)
+                                    throw new Exception("Transient: " + status + " - " + resultJson);
+
+                                throw new Exception("API Error: " + status + " - " + resultJson);
+                            }
+
+                            var jsonNode = System.Text.Json.Nodes.JsonNode.Parse(resultJson);
+                            var text = jsonNode?["choices"]?[0]?["message"]?["content"]?.ToString();
+                            return string.IsNullOrEmpty(text) ? "No content returned." : text;
+                        }
+                    }
+                }
+                catch (TaskCanceledException)
+                {
+                    if (attempt == maxRetries) throw;
+                    await Task.Delay(delayMs); delayMs *= 2;
+                }
+                catch (Exception ex)
+                {
+                    if (!ex.Message.StartsWith("Transient") || attempt == maxRetries) throw;
+                    await Task.Delay(delayMs); delayMs *= 2;
+                }
+                finally
+                {
+                    cts.Dispose();
+                }
             }
+
+            return "No content returned.";
         }
 
 
 
 
 
+
+
+        ///// Sends up to N images (in pageGroup) plus the text prompt in one chat call.
+        ///// This works for batchSize = 2 or 3.
+        //private async Task<string> ProcessPdfPagesMultimodal(
+        //    List<(int pageNumber, Image image)> pageGroup,
+        //    string apiKey,
+        //    string taskPrompt,
+        //    string modelName
+        //)
+        //{
+        //    // 1. Convert each image to a Base64 segment
+        //    var imageContents = new List<object>();
+        //    foreach (var (pageNumber, image) in pageGroup)
+        //    {
+        //        using (var ms = new MemoryStream())
+        //        {
+
+        //            image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+        //            var base64 = Convert.ToBase64String(ms.ToArray());
+        //            imageContents.Add(new
+        //            {
+        //                type = "image_url",
+        //                image_url = new { url = $"data:image/png;base64,{base64}" }
+        //            });
+        //        }
+        //    }
+
+        //    // 2. Build a single “content” array: [ image1, image2, (maybe image3), { type="text", text=taskPrompt } ]
+        //    var fullContent = new List<object>();
+        //    fullContent.AddRange(imageContents);
+        //    fullContent.Add(new { type = "text", text = taskPrompt });
+
+        //    // 3. Assemble top‐level request
+        //    var requestBody = new
+        //    {
+        //        model = modelName, // <-- ديناميكي
+        //        messages = new object[]
+        //        {
+        //            new { role = "user", content = fullContent.ToArray() }
+        //        }
+        //    };
+
+        //    string jsonContent = System.Text.Json.JsonSerializer.Serialize(
+        //        requestBody,
+        //        new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }
+        //    );
+
+        //    using (var client = new HttpClient())
+        //    {
+
+        //        client.DefaultRequestHeaders.Authorization =
+        //            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
+
+        //        var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+        //        var response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
+
+        //        if (!response.IsSuccessStatusCode)
+        //        {
+        //            string error = await response.Content.ReadAsStringAsync();
+        //            throw new Exception($"API Error: {response.StatusCode} – {error}");
+        //        }
+
+        //        string resultJson = await response.Content.ReadAsStringAsync();
+        //        var jsonNode = JsonNode.Parse(resultJson);
+        //        return jsonNode?["choices"]?[0]?["message"]?["content"]?.ToString()
+        //               ?? "No content returned.";
+        //    }
+        //}
+
+
+        //    private async Task<string> ProcessPdfPagesMultimodal(
+        //List<(int pageNumber, Image image)> pageGroup,
+        //string apiKey,
+        //string taskPrompt,
+        //string modelName)
+        //    {
+        //        var imageContents = new List<object>();
+        //        foreach (var tuple in pageGroup)
+        //        {
+        //            var pageNumber = tuple.pageNumber;
+        //            var img = tuple.image;
+
+        //            string base64;
+        //            using (var scaled = ResizeForApi(img, 1280))
+        //            {
+        //                base64 = ToBase64Jpeg(scaled, 85L);
+        //            }
+
+        //            imageContents.Add(new
+        //            {
+        //                type = "image_url",
+        //                image_url = new { url = "data:image/jpeg;base64," + base64 }
+        //            });
+        //        }
+
+        //        var fullContent = new List<object>();
+        //        fullContent.AddRange(imageContents);
+        //        fullContent.Add(new { type = "text", text = taskPrompt });
+
+        //        var requestBody = new
+        //        {
+        //            model = modelName,
+        //            messages = new object[]
+        //            {
+        //        new { role = "user", content = fullContent.ToArray() }
+        //            }
+        //        };
+
+        //        var jsonContent = System.Text.Json.JsonSerializer.Serialize(
+        //            requestBody,
+        //            new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }
+        //        );
+
+        //        _http.DefaultRequestHeaders.Authorization =
+        //            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
+
+        //        var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromMinutes(7));
+        //        try
+        //        {
+        //            var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+        //            var response = await _http.PostAsync("https://api.openai.com/v1/chat/completions", httpContent, cts.Token);
+
+        //            string resultJson = await response.Content.ReadAsStringAsync(); // بدون Token
+        //            if (!response.IsSuccessStatusCode)
+        //                throw new Exception("API Error: " + response.StatusCode + " – " + resultJson);
+
+        //            var jsonNode = System.Text.Json.Nodes.JsonNode.Parse(resultJson);
+        //            return jsonNode?["choices"]?[0]?["message"]?["content"]?.ToString()
+        //                   ?? "No content returned.";
+        //        }
+        //        finally
+        //        {
+        //            cts.Dispose();
+        //        }
+        //    }
+
+
+
+        //    private async Task<string> ProcessPdfPagesMultimodal(
+        //List<(int pageNumber, Image image)> pageGroup,
+        //string apiKey,
+        //string taskPrompt,
+        //string modelName)
+        //    {
+        //        var imageContents = new List<object>();
+        //        foreach (var tuple in pageGroup)
+        //        {
+        //            var img = tuple.image;
+
+        //            string base64;
+        //            using (var scaled = ResizeForApi(img, 1024)) // تقدر ترجع 1280 إذا تحب
+        //            {
+        //                base64 = ToBase64Jpeg(scaled, 80L);
+        //            }
+
+        //            imageContents.Add(new
+        //            {
+        //                type = "image_url",
+        //                image_url = new { url = "data:image/jpeg;base64," + base64 }
+        //            });
+        //        }
+
+        //        var fullContent = new List<object>();
+        //        fullContent.AddRange(imageContents);
+        //        fullContent.Add(new { type = "text", text = taskPrompt });
+
+        //        var requestBody = new
+        //        {
+        //            model = modelName,
+        //            messages = new object[]
+        //            {
+        //        new { role = "user", content = fullContent.ToArray() }
+        //            }
+        //        };
+
+        //        var jsonContent = System.Text.Json.JsonSerializer.Serialize(
+        //            requestBody,
+        //            new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }
+        //        );
+
+        //        _http.DefaultRequestHeaders.Authorization =
+        //            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
+
+        //        const int maxRetries = 4;
+        //        int delayMs = 1200;
+
+        //        for (int attempt = 1; attempt <= maxRetries; attempt++)
+        //        {
+        //            var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromMinutes(7));
+        //            try
+        //            {
+        //                var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+        //                var response = await _http.PostAsync("https://api.openai.com/v1/chat/completions", httpContent, cts.Token);
+
+        //                string resultJson = await response.Content.ReadAsStringAsync(); // بدون Token
+        //                int status = (int)response.StatusCode;
+        //                bool transient = (status == 429) || (status >= 500);
+
+        //                if (!response.IsSuccessStatusCode)
+        //                {
+        //                    if (transient && attempt < maxRetries)
+        //                        throw new Exception("Transient: " + status + " - " + resultJson);
+
+        //                    throw new Exception("API Error: " + status + " – " + resultJson);
+        //                }
+
+        //                var jsonNode = System.Text.Json.Nodes.JsonNode.Parse(resultJson);
+        //                var text = jsonNode?["choices"]?[0]?["message"]?["content"]?.ToString();
+        //                return string.IsNullOrEmpty(text) ? "No content returned." : text;
+        //            }
+        //            catch (TaskCanceledException)
+        //            {
+        //                if (attempt == maxRetries) throw;
+        //                await Task.Delay(delayMs);
+        //                delayMs *= 2;
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                if (!ex.Message.StartsWith("Transient") || attempt == maxRetries)
+        //                    throw;
+
+        //                await Task.Delay(delayMs);
+        //                delayMs *= 2;
+        //            }
+        //            finally
+        //            {
+        //                cts.Dispose();
+        //            }
+        //        }
+
+        //        return "No content returned.";
+        //    }
+
+        private async Task<string> ProcessPdfPagesMultimodal(
+    List<(int pageNumber, Image image)> pageGroup,
+    string apiKey,
+    string taskPrompt,
+    string modelName)
+        {
+            var imageContents = new List<object>();
+            foreach (var tuple in pageGroup)
+            {
+                var img = tuple.image;
+
+                string base64;
+                using (var scaled = ResizeForApi(img, 1024))
+                {
+                    base64 = ToBase64Jpeg(scaled, 80L);
+                }
+
+                imageContents.Add(new
+                {
+                    type = "image_url",
+                    image_url = new { url = "data:image/jpeg;base64," + base64 }
+                });
+            }
+
+            var fullContent = new List<object>();
+            fullContent.AddRange(imageContents);
+            fullContent.Add(new { type = "text", text = taskPrompt });
+
+            var requestBody = new
+            {
+                model = modelName,
+                messages = new object[]
+                {
+            new { role = "user", content = fullContent.ToArray() }
+                }
+            };
+
+            string jsonContent = System.Text.Json.JsonSerializer.Serialize(
+                requestBody,
+                new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }
+            );
+
+            const int maxRetries = 4;
+            int delayMs = 1200;
+
+            for (int attempt = 1; attempt <= maxRetries; attempt++)
+            {
+                var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromMinutes(7));
+                try
+                {
+                    using (var req = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/chat/completions"))
+                    {
+                        req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
+                        req.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                        using (var resp = await _http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, cts.Token))
+                        {
+                            string resultJson = await resp.Content.ReadAsStringAsync();
+                            int status = (int)resp.StatusCode;
+                            bool transient = (status == 429) || (status >= 500);
+
+                            if (!resp.IsSuccessStatusCode)
+                            {
+                                if (transient && attempt < maxRetries)
+                                    throw new Exception("Transient: " + status + " - " + resultJson);
+
+                                throw new Exception("API Error: " + status + " – " + resultJson);
+                            }
+
+                            var jsonNode = System.Text.Json.Nodes.JsonNode.Parse(resultJson);
+                            var text = jsonNode?["choices"]?[0]?["message"]?["content"]?.ToString();
+                            return string.IsNullOrEmpty(text) ? "No content returned." : text;
+                        }
+                    }
+                }
+                catch (TaskCanceledException)
+                {
+                    if (attempt == maxRetries) throw;
+                    await Task.Delay(delayMs); delayMs *= 2;
+                }
+                catch (Exception ex)
+                {
+                    if (!ex.Message.StartsWith("Transient") || attempt == maxRetries) throw;
+                    await Task.Delay(delayMs); delayMs *= 2;
+                }
+                finally
+                {
+                    cts.Dispose();
+                }
+            }
+
+            return "No content returned.";
+        }
+
+
+
+
+
+
+        // HttpClient مُشترك للتطبيق كله (أفضل ممارسة + نتفادى مشاكل المنافذ/المهلات)
+        // HttpClient مُشترك (C# 7.3 متوافق)
+        private static readonly HttpClient _http = new HttpClient(
+            new HttpClientHandler
+            {
+                AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate
+            })
+        {
+            Timeout = TimeSpan.FromMinutes(6) // زدها إذا تحتاج
+        };
+
+        // (اختياري) تأكيد TLS 1.2
+        static Form1()
+        {
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+        }
+
+        // تصغير الصورة قبل الإرسال
+        private static Image ResizeForApi(Image src, int maxWidth = 1280)
+        {
+            if (src.Width <= maxWidth) return (Image)src.Clone();
+            int newHeight = (int)Math.Round(src.Height * (maxWidth / (double)src.Width));
+            var bmp = new Bitmap(maxWidth, newHeight);
+            using (var g = Graphics.FromImage(bmp))
+            {
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                g.DrawImage(src, 0, 0, maxWidth, newHeight);
+            }
+            return bmp;
+        }
+
+        // حفظ JPEG بجودة مضبوطة ثم تحويله إلى Base64
+        private static string ToBase64Jpeg(Image img, long jpegQuality = 85L)
+        {
+            using (var ms = new MemoryStream())
+            {
+                var enc = System.Drawing.Imaging.ImageCodecInfo.GetImageEncoders()
+                    .First(e => e.MimeType == "image/jpeg");
+                var ep = new System.Drawing.Imaging.EncoderParameters(1);
+                ep.Param[0] = new System.Drawing.Imaging.EncoderParameter(
+                    System.Drawing.Imaging.Encoder.Quality, jpegQuality);
+                img.Save(ms, enc, ep);
+                return Convert.ToBase64String(ms.ToArray());
+            }
+        }
+
+
+        //// Run an action on a separate STA thread (for clipboard or other STA-only operations)
+        //private void RunOnStaThread(Action action)
+        //{
+        //    var t = new System.Threading.Thread(() =>
+        //    {
+        //        action();
+        //    });
+        //    t.IsBackground = true;
+        //    t.SetApartmentState(System.Threading.ApartmentState.STA);
+        //    t.Start();
+        //    t.Join(); // انتظر إكمال التوليد قبل المتابعة
+        //}
+
+        //private static void SafeReleaseCom(object com)
+        //{
+        //    if (com == null) return;
+        //    try { System.Runtime.InteropServices.Marshal.FinalReleaseComObject(com); }
+        //    catch { /* تجاهل */ }
+        //}
+        private void RunOnStaThread(Action action)
+        {
+            var t = new System.Threading.Thread(() => { action(); });
+            t.IsBackground = true;
+            t.SetApartmentState(System.Threading.ApartmentState.STA); // مهم قبل Start
+            t.Start();
+            t.Join();
+        }
+
+        private static void SafeReleaseCom(object com)
+        {
+            if (com == null) return;
+            try { System.Runtime.InteropServices.Marshal.FinalReleaseComObject(com); }
+            catch { /* ignore */ }
+        }
+
+
+        //private void ExportToWord_Core(string outputPath, IList<string> pageTexts)
+        //{
+        //    Microsoft.Office.Interop.Word.Application wordApp = null;
+        //    Microsoft.Office.Interop.Word.Document doc = null;
+
+        //    try
+        //    {
+        //        wordApp = new Microsoft.Office.Interop.Word.Application();
+        //        wordApp.Visible = false;
+
+        //        doc = wordApp.Documents.Add();
+
+        //        // اكتب صفحة صفحة
+        //        for (int i = 0; i < pageTexts.Count; i++)
+        //        {
+        //            string pageTitle = "Page " + (i + 1);
+        //            string pageBody = pageTexts[i] ?? string.Empty;
+
+        //            // أضف عنوان بسيط
+        //            var rngTitle = doc.Content; // نهاية المستند
+        //            rngTitle.Collapse(Microsoft.Office.Interop.Word.WdCollapseDirection.wdCollapseEnd);
+        //            rngTitle.Text = pageTitle + System.Environment.NewLine;
+        //            rngTitle.set_Style("Heading 1");
+
+        //            // أضف النص
+        //            var rng = doc.Content;
+        //            rng.Collapse(Microsoft.Office.Interop.Word.WdCollapseDirection.wdCollapseEnd);
+        //            rng.Text = pageBody + System.Environment.NewLine + System.Environment.NewLine;
+
+        //            // حرّر الـ Range COM فورًا
+        //            SafeReleaseCom(rngTitle);
+        //            SafeReleaseCom(rng);
+        //        }
+
+        //        doc.SaveAs2(outputPath);
+        //        doc.Close(false);
+        //        wordApp.Quit(false);
+        //    }
+        //    finally
+        //    {
+        //        // حرّر COM بترتيب عكسي
+        //        SafeReleaseCom(doc);
+        //        SafeReleaseCom(wordApp);
+
+        //        // تنظيف نهائي موصى به
+        //        GC.Collect();
+        //        GC.WaitForPendingFinalizers();
+        //        GC.Collect();
+        //        GC.WaitForPendingFinalizers();
+        //    }
+        //}
+        private void ExportToWord_Core(string outputPath, IList<string> pageTexts)
+        {
+            Word.Application wordApp = null;
+            Word.Document doc = null;
+
+            try
+            {
+                wordApp = new Word.Application();
+                wordApp.Visible = false;
+                doc = wordApp.Documents.Add();
+
+                for (int i = 0; i < pageTexts.Count; i++)
+                {
+                    string pageTitle = "Page " + (i + 1);
+                    string pageBody = pageTexts[i] ?? string.Empty;
+
+                    Word.Range rngTitle = doc.Content;
+                    rngTitle.Collapse(Word.WdCollapseDirection.wdCollapseEnd);
+                    rngTitle.Text = pageTitle + Environment.NewLine;
+                    rngTitle.set_Style("Heading 1");
+
+                    Word.Range rng = doc.Content;
+                    rng.Collapse(Word.WdCollapseDirection.wdCollapseEnd);
+                    rng.Text = pageBody + Environment.NewLine + Environment.NewLine;
+
+                    SafeReleaseCom(rngTitle);
+                    SafeReleaseCom(rng);
+                }
+
+                doc.SaveAs2(outputPath);
+                doc.Close(false);
+                wordApp.Quit(false);
+            }
+            finally
+            {
+                SafeReleaseCom(doc);
+                SafeReleaseCom(wordApp);
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+        }
+
+
+
+
+        // Overlay panel and its controls
         private void InitializeOverlay()
         {
             overlayPanel = new Panel
