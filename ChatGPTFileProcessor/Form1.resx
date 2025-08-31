@@ -229,7 +229,7 @@
 3• Send 3 PDF pages at a time. GPT will have three pages’ context.
 4• Send 4 PDF pages together so GPT sees more context at once.</value>
   </data>
-  <data name="toolTipItem17.Text" xml:space="preserve">
+  <data name="toolTipItem13.Text" xml:space="preserve">
     <value>1 = Send each page individually.
 
 2 = Send two pages in a single GPT query.
@@ -298,6 +298,9 @@
   </data>
   <metadata name="buttonsToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
+  </metadata>
+  <metadata name="labelsToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>177, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
