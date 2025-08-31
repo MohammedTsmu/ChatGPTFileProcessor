@@ -367,7 +367,7 @@ namespace ChatGPTFileProcessor
                 UpdateOverlayLog("▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽");
                 ShowOverlay("▶▶▶ 🔄 Processing, please wait...");
                 UpdateOverlayLog("▰▰▰▰▰ S T A R T   G E N E R A T I N G ▰▰▰▰▰");
-                UpdateOverlayLog($"▶▶▶ 🚀 Starting {modelName} multimodal processing...");
+                UpdateOverlayLog($"▶▶▶ Starting {modelName} multimodal processing...");
 
                 Directory.CreateDirectory(outputFolder);
 
@@ -378,9 +378,9 @@ namespace ChatGPTFileProcessor
 
                 // 💾 أعلن أين سنحفظ
                 UpdateOverlayLog($"▶▶▶ 💾 Saving outputs to: {outputRoot}");
-                UpdateOverlayLog($"Options → SaveBesidePdf={Properties.Settings.Default.SaveBesidePdf}, " +
-                                 $"SessionFolder={Properties.Settings.Default.UseSessionFolder}, " +
-                                 $"OrganizeByType={Properties.Settings.Default.OrganizeByType}");
+                UpdateOverlayLog($"▰▰▰ Options → SaveBesidePdf={Properties.Settings.Default.SaveBesidePdf}, " +
+                                 $"▰▰▰ SessionFolder={Properties.Settings.Default.UseSessionFolder}, " +
+                                 $"▰▰▰ OrganizeByType ={Properties.Settings.Default.OrganizeByType}");
 
                 // بناء أسماء الملفات
                 string defName = $"Definitions_{modelName}_{timeStamp}.docx";
