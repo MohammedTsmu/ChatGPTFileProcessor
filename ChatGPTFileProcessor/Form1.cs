@@ -364,9 +364,9 @@ namespace ChatGPTFileProcessor
 
                 UpdateOverlayLog("                                   ");
                 UpdateOverlayLog("                                   ");
-                UpdateOverlayLog("▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽");
                 ShowOverlay("▶▶▶ 🔄 Processing, please wait...");
                 UpdateOverlayLog("▰▰▰▰▰ S T A R T   G E N E R A T I N G ▰▰▰▰▰");
+                UpdateOverlayLog("▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△");
                 UpdateOverlayLog($"▶▶▶ Starting {modelName} multimodal processing...");
 
                 Directory.CreateDirectory(outputFolder);
@@ -2318,8 +2318,8 @@ namespace ChatGPTFileProcessor
 
                 //// 8) إظهار رسالة انتهاء المعالجة
                 UpdateOverlayLog("✅ Processing complete. Files saved to Desktop as selected outputs.");
+                UpdateOverlayLog("▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽");
                 UpdateOverlayLog("▰▰▰▰▰ E N D   G E N E R A T I N G ▰▰▰▰▰");
-                UpdateOverlayLog("▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△");
                 UpdateOverlayLog("------------------------------------------------------");
                 UpdateOverlayLog("                                                     ");
                 UpdateOverlayLog("                                                     ");
@@ -3473,11 +3473,11 @@ namespace ChatGPTFileProcessor
             loadingIcon = new PictureBox
             {
                 //Size = new Size(120, 120),
-                Size = new Size(600, 320),
+                Size = new Size(800, 320),
                 SizeMode = PictureBoxSizeMode.StretchImage,
                 Image = Properties.Resources.loading_gif,
                 //Location = new System.Drawing.Point(centerX - 60, overlayPanel.Height / 2 - 150)
-                Location = new System.Drawing.Point(centerX - 300, overlayPanel.Height / 2 - 300)
+                Location = new System.Drawing.Point(centerX - 400, overlayPanel.Height / 2 - 300)
             };
 
             statusLabel = new Label
@@ -3485,26 +3485,28 @@ namespace ChatGPTFileProcessor
                 AutoSize = false,
                 //Size = new Size(400, 40),
 
-                Size = new Size(600, 40),
+                Size = new Size(800, 40),
                 TextAlign = ContentAlignment.MiddleCenter,
                 ForeColor = Color.White,
                 Font = new System.Drawing.Font("Segoe UI", 12, FontStyle.Bold),
                 //Location = new System.Drawing.Point(centerX - 200, loadingIcon.Bottom + 10),
-                Location = new System.Drawing.Point(centerX - 300, loadingIcon.Bottom + 10),
+                Location = new System.Drawing.Point(centerX - 400, loadingIcon.Bottom + 10),
                 Text = "⏳ Processing, please wait...",
-                Anchor = AnchorStyles.None
+                //Anchor = AnchorStyles.None
             };
 
             logTextBox = new TextBox
             {
-                Size = new Size(600, 200),
+                Size = new Size(800, 250),
                 Multiline = true,
                 ReadOnly = true,
                 ScrollBars = ScrollBars.Vertical,
                 BackColor = Color.DarkSlateBlue,
                 ForeColor = Color.White,
-                Font = new System.Drawing.Font("Consolas", 10),
-                Location = new System.Drawing.Point(centerX - 300, statusLabel.Bottom + 10)
+                //Font = new System.Drawing.Font("Consolas", 10),
+                Font = new System.Drawing.Font("Arial", 11),
+                //Location = new System.Drawing.Point(centerX - 300, statusLabel.Bottom + 10)
+                Location = new System.Drawing.Point(centerX - 400, statusLabel.Bottom + 10)
             };
 
             overlayPanel.Controls.Add(loadingIcon);
