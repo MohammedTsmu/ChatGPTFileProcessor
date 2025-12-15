@@ -343,7 +343,6 @@ namespace ChatGPTFileProcessor
                 // منع النقرات المتكررة أثناء المعالجة
                 buttonProcessFile.Enabled = false;
                 buttonBrowseFile.Enabled = false;
-                buttonBrowseFile.Enabled = false;
                 // Disable the maximize and minimize of the processing form
                 this.MaximizeBox = false; // Disable maximize button
                 this.MinimizeBox = false; // Disable minimize button
@@ -1778,16 +1777,6 @@ namespace ChatGPTFileProcessor
                 else
                     UpdateOverlayLog("▰▰▰📝 Generating Word file...");
 
-                ExportToWord_DocX(docxPath, allExtractedTexts);
-
-
-
-                // (ج) تحديث اللوج
-                if (this.InvokeRequired)
-                    this.BeginInvoke(new Action(() => UpdateOverlayLog("▰▰▰ 📝 Generating Word file...")));
-                else
-                    UpdateOverlayLog("▰▰▰📝 Generating Word file...");
-
                 // 🔧 Do the heavy work off the UI thread
                 await Task.Run(() => ExportToWord_DocX(docxPath, allExtractedTexts));
 
@@ -1809,6 +1798,17 @@ namespace ChatGPTFileProcessor
                 UpdateStatus("▰▰▰ Processing finished ▰▰▰");
                 UpdateOverlayLog("▰▰▰ Processing finished ▰▰▰");
                 HideOverlay();
+            }
+            finally
+            {
+                // Dispose all images to prevent memory leaks
+                if (allPages != null)
+                {
+                    foreach (var (pageNumber, image) in allPages)
+                    {
+                        image?.Dispose();
+                    }
+                }
             }
         }
 
@@ -2166,7 +2166,8 @@ namespace ChatGPTFileProcessor
                 }
                 catch (TaskCanceledException)
                 {
-                    if (attempt == maxRetries) throw;
+                    // Check if cancellation was requested (timeout) vs network issue
+                    if (cts.IsCancellationRequested || attempt == maxRetries) throw;
                     await Task.Delay(delayMs);
                     delayMs *= 2;
                 }
@@ -2255,7 +2256,8 @@ namespace ChatGPTFileProcessor
                 }
                 catch (TaskCanceledException)
                 {
-                    if (attempt == maxRetries) throw;
+                    // Check if cancellation was requested (timeout) vs network issue
+                    if (cts.IsCancellationRequested || attempt == maxRetries) throw;
                     await Task.Delay(delayMs); delayMs *= 2;
                 }
                 catch (Exception ex)
@@ -2352,7 +2354,8 @@ namespace ChatGPTFileProcessor
                 }
                 catch (TaskCanceledException)
                 {
-                    if (attempt == maxRetries) throw;
+                    // Check if cancellation was requested (timeout) vs network issue
+                    if (cts.IsCancellationRequested || attempt == maxRetries) throw;
                     await Task.Delay(delayMs); delayMs *= 2;
                 }
                 catch (Exception ex)
@@ -2389,7 +2392,7 @@ namespace ChatGPTFileProcessor
         // تصغير الصورة قبل الإرسال
         private static SDImage ResizeForApi(SDImage src, int maxWidth = 1280)
         {
-            if (src.Width <= maxWidth) return (SDImage)src.Clone();
+            if (src.Width <= maxWidth) return new Bitmap(src);
             int newHeight = (int)Math.Round(src.Height * (maxWidth / (double)src.Width));
             var bmp = new Bitmap(maxWidth, newHeight);
             using (var g = Graphics.FromImage(bmp))
@@ -2512,15 +2515,16 @@ namespace ChatGPTFileProcessor
 
         private void UpdateOverlayLog(string message)
         {
-            if (logTextBox == null) return; // prevent error if not initialized
+            var textBox = logTextBox; // Create local copy for thread safety
+            if (textBox == null) return; // prevent error if not initialized
 
-            if (logTextBox.InvokeRequired)
+            if (textBox.InvokeRequired)
             {
-                logTextBox.Invoke(new System.Action(() => logTextBox.AppendText(message + Environment.NewLine)));
+                textBox.Invoke(new System.Action(() => textBox.AppendText(message + Environment.NewLine)));
             }
             else
             {
-                logTextBox.AppendText(message + Environment.NewLine);
+                textBox.AppendText(message + Environment.NewLine);
             }
         }
 
