@@ -1,12 +1,11 @@
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Running;
+using Microsoft.VSDiagnostics;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using Microsoft.VSDiagnostics;
 
 namespace ChatGPTFileProcessor.Benchmarks
 {
@@ -14,15 +13,15 @@ namespace ChatGPTFileProcessor.Benchmarks
     public class ImageProcessingBenchmark
     {
         private Image _testImage;
-        
+
         // Cached encoder (optimization)
-        private static readonly ImageCodecInfo _jpegEncoder = 
+        private static readonly ImageCodecInfo _jpegEncoder =
             ImageCodecInfo.GetImageEncoders().First(e => e.MimeType == "image/jpeg");
-        
+
         // Cache for testing
         private Dictionary<int, string> _base64Cache;
         private Dictionary<int, Image> _resizedCache;
-        
+
         [GlobalSetup]
         public void Setup()
         {
@@ -31,16 +30,16 @@ namespace ChatGPTFileProcessor.Benchmarks
             using (var g = Graphics.FromImage(_testImage))
             {
                 g.Clear(Color.White);
-                g.DrawString("Test PDF Page Content", 
-                    new Font("Arial", 20), 
-                    Brushes.Black, 
+                g.DrawString("Test PDF Page Content",
+                    new Font("Arial", 20),
+                    Brushes.Black,
                     new PointF(100, 100));
             }
-            
+
             _base64Cache = new Dictionary<int, string>();
             _resizedCache = new Dictionary<int, Image>();
         }
-        
+
         [GlobalCleanup]
         public void Cleanup()
         {
@@ -50,7 +49,7 @@ namespace ChatGPTFileProcessor.Benchmarks
                 img?.Dispose();
             }
         }
-        
+
         [Benchmark(Baseline = true)]
         public string Current_ResizeAndEncode()
         {
@@ -65,7 +64,7 @@ namespace ChatGPTFileProcessor.Benchmarks
             }
             return result;
         }
-        
+
         [Benchmark]
         public string Optimized_WithCache()
         {
@@ -77,7 +76,7 @@ namespace ChatGPTFileProcessor.Benchmarks
             }
             return result;
         }
-        
+
         // Helper methods from Form1.cs
         private static Image ResizeForApi(Image src, int maxWidth = 1280)
         {
@@ -91,7 +90,7 @@ namespace ChatGPTFileProcessor.Benchmarks
             }
             return bmp;
         }
-        
+
         private static string ToBase64Jpeg(Image img, long jpegQuality = 85L)
         {
             using (var ms = new MemoryStream())
@@ -104,7 +103,7 @@ namespace ChatGPTFileProcessor.Benchmarks
                 return Convert.ToBase64String(ms.ToArray());
             }
         }
-        
+
         // Optimized version using cached encoder
         private static string ToBase64JpegOptimized(Image img, long jpegQuality = 85L)
         {
@@ -116,28 +115,28 @@ namespace ChatGPTFileProcessor.Benchmarks
                 return Convert.ToBase64String(ms.ToArray());
             }
         }
-        
+
         // Cache helper methods
         private string GetOrCreateBase64(int pageNumber, Image sourceImage, int maxWidth, long jpegQuality)
         {
             if (_base64Cache.TryGetValue(pageNumber, out string cached))
                 return cached;
-            
+
             Image resized = GetOrCreateResizedImage(pageNumber, sourceImage, maxWidth);
             string base64 = ToBase64JpegOptimized(resized, jpegQuality);
             _base64Cache[pageNumber] = base64;
-            
+
             return base64;
         }
-        
+
         private Image GetOrCreateResizedImage(int pageNumber, Image sourceImage, int maxWidth)
         {
             if (_resizedCache.TryGetValue(pageNumber, out Image cached))
                 return cached;
-            
+
             Image resized = ResizeForApi(sourceImage, maxWidth);
             _resizedCache[pageNumber] = resized;
-            
+
             return resized;
         }
     }

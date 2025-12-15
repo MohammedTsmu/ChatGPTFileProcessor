@@ -1,15 +1,13 @@
 ﻿using DevExpress.Utils;
 using DevExpress.XtraBars.Ribbon;
 using DevExpress.XtraBars.Ribbon.Gallery;
+using DevExpress.XtraSplashScreen;// Overlay form
 using PdfiumViewer;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-
-using DevExpress.XtraSplashScreen;// Overlay form
 
 
 namespace ChatGPTFileProcessor

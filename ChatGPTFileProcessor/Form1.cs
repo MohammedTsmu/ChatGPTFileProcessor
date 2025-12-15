@@ -1,25 +1,17 @@
-﻿using DevExpress.Export.Xl;
-using DevExpress.Utils.CommonDialogs;
-using DevExpress.Utils.MVVM;
-using DevExpress.XtraEditors.Controls;
-using DevExpress.XtraExport.Implementation;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Task = System.Threading.Tasks.Task;
-using SDImage = System.Drawing.Image;
-using Xceed.Words.NET;
 using Xceed.Document.NET;
+using Xceed.Words.NET;
+using SDImage = System.Drawing.Image;
+using Task = System.Threading.Tasks.Task;
 
 
 
@@ -417,613 +409,6 @@ namespace ChatGPTFileProcessor
                 string keywordsFilePath = PathInTypeFolder(outputRoot, "Keywords", keywName);
                 string translatedSectionsFilePath = PathInTypeFolder(outputRoot, "TranslatedSections", transName);
                 string explainTermsFilePath = PathInTypeFolder(outputRoot, "ExplainTerms", explName);
-
-
-
-                //bool includeArabicExplain = chkArabicExplainTerms.Checked;
-
-                //// 3.1) prompt for Definitions in “GeneralLanguage” (e.g. user picks “French”)
-                //// 1) Read which “General Language” the user picked:
-                //string generalLangName = cmbGeneralLang.SelectedItem as string ?? "English";
-
-                //// 2) Read the “Medical Material” checkbox:
-                //bool isMedical = chkMedicalMaterial.Checked;
-                //// 3) Read the “Vocabulary Language” dropdown:
-                //string vocabLangName = cmbVocabLang.SelectedItem as string ?? "Arabic";
-
-                ////// 3) Build each prompt with a little conditional text:
-                //// 3.1) Definitions prompt\
-                //string definitionsPrompt;
-                //if (isMedical)
-                //{
-                //    // When medical mode is on, enforce clinically accurate language,
-                //    // include brief usage/context if relevant, and keep medical terms correct.
-                //    definitionsPrompt =
-                //        $"In {generalLangName}, provide concise MEDICAL DEFINITIONS for each key medical term found on these page(s). " +
-                //        $"For each term, output exactly (no numbering):\n\n" +
-                //        $"- Term: <the term as a heading>\n" +
-                //        $"- Definition: <a 1–2 sentence clinical definition in {generalLangName}, including brief context or indication if applicable>\n\n" +
-                //        $"Use precise medical terminology and separate each entry with a blank line.";
-                //}
-                //else
-                //{
-                //    definitionsPrompt =
-                //        $"In {generalLangName}, provide concise DEFINITIONS for each key term found on these page(s). " +
-                //        $"For each term, output exactly (no numbering):\n\n" +
-                //        $"- Term: <the term as a heading>\n" +
-                //        $"- Definition: <a 1–2 sentence definition in {generalLangName}>\n\n" +
-                //        $"Separate entries with a blank line.";
-                //}
-
-
-                //// 3.2) MCQs prompt
-                //// Best Version (preserved for reference)
-                ////string mcqsPrompt =
-                ////    //$"Generate 5 MULTIPLE‐CHOICE QUESTIONS in {generalLangName} " +
-                ////    $"Generate MULTIPLE‐CHOICE QUESTIONS in {generalLangName} " +
-                ////    $"based strictly on the content of these page(s).  Follow this pattern exactly (no deviations):\n\n" +
-                ////    $"Question: <Write the question here in {generalLangName}>\n" +
-                ////    $"A) <Option A in {generalLangName}>\n" +
-                ////    $"B) <Option B in {generalLangName}>\n" +
-                ////    $"C) <Option C in {generalLangName}>\n" +
-                ////    $"D) <Option D in {generalLangName}>\n" +
-                ////    $"Answer: <Exactly one letter: A, B, C, or D>\n\n" +
-                ////    $"Separate each MCQ block with a single blank line.  Do NOT include any extra text.";
-
-                //string mcqsPrompt;
-                //if (isMedical)
-                //{
-                //    mcqsPrompt =
-                //        $"Generate MULTIPLE-CHOICE QUESTIONS (in {generalLangName}) focused on the MEDICAL content of these page(s).  " +
-                //        $"Write exactly (no deviations):\n\n" +
-                //        $"Question: <Compose a clinically relevant question in {generalLangName}, using proper medical terminology>\n" +
-                //        $"A) <Option A in {generalLangName}>\n" +
-                //        $"B) <Option B in {generalLangName}>\n" +
-                //        $"C) <Option C in {generalLangName}>\n" +
-                //        $"D) <Option D in {generalLangName}>\n" +
-                //        $"Answer: <Exactly one letter: A, B, C, or D>\n\n" +
-                //        $"Separate each MCQ block with a blank line.  Do NOT include any explanations after the answer.";
-                //}
-                //else
-                //{
-                //    mcqsPrompt =
-                //        $"Generate MULTIPLE-CHOICE QUESTIONS (in {generalLangName}) based strictly on the content of these page(s).  " +
-                //        $"Write exactly (no deviations):\n\n" +
-                //        $"Question: <Write the question here in {generalLangName}>\n" +
-                //        $"A) <Option A in {generalLangName}>\n" +
-                //        $"B) <Option B in {generalLangName}>\n" +
-                //        $"C) <Option C in {generalLangName}>\n" +
-                //        $"D) <Option D in {generalLangName}>\n" +
-                //        $"Answer: <Exactly one letter: A, B, C, or D>\n\n" +
-                //        $"Separate each MCQ block with a blank line.  Do NOT include any extra text.";
-                //}
-
-
-                //// 3.3) Flashcards prompt
-                //// Best Version (preserved for reference)
-                ////string flashcardsPrompt =
-                ////    $"Create FLASHCARDS in {generalLangName} for each key " +
-                ////    $"{(isMedical ? "medical " : "")}term on these page(s).  Use this exact format (no deviations):\n\n" +
-                ////    //$"Front: <Term in {generalLangName}>\n" +
-                ////    $"Front: <Term>\n" +
-                ////    $"Back:  <One- or two- or three- sentence definition in {generalLangName}>\n\n" +
-                ////    $"Leave exactly one blank line between each card.  Do NOT number or bullet anything.";
-
-                //string flashcardsPrompt;
-                //if (isMedical)
-                //{
-                //    flashcardsPrompt =
-                //        $"Create MEDICAL FLASHCARDS in {generalLangName} for each key medical or pharmaceutical term on these page(s).  " +
-                //        $"Use this exact format (no deviations):\n\n" +
-                //        $"Front: <Term>\n" +
-                //        $"Back:  <A 1–2 sentence clinical definition/use in {generalLangName}, including indication if relevant>\n\n" +
-                //        $"Separate each card with a blank line; do NOT number or bullet anything.";
-                //}
-                //else
-                //{
-                //    flashcardsPrompt =
-                //        $"Create FLASHCARDS in {generalLangName} for each key term on these page(s).  " +
-                //        $"Use this exact format (no deviations):\n\n" +
-                //        $"Front: <Term>\n" +
-                //        $"Back:  <One- or two-sentence definition in {generalLangName}>\n\n" +
-                //        $"Separate each card with a blank line; do NOT number or bullet anything.";
-                //}
-
-
-                //// 3.4) Vocabulary prompt
-                //// Best Version (preserved for reference)
-                ////string vocabularyPrompt =
-                ////    $"Extract IMPORTANT VOCABULARY TERMS from these page(s) and translate them into {vocabLangName}.  Use exactly this format (no bullets or numbering):\n\n" +
-                ////    //$"EnglishTerm – {vocabLangName}Translation\n\n" +
-                ////    $"OriginalTerm – {vocabLangName}Translation\n\n" +
-                ////    $"Leave exactly one blank line between each entry.  If a term doesn’t have a direct translation, write “– [Translation Needed]”.";
-
-                //string vocabularyPrompt =
-                //    $"Extract IMPORTANT VOCABULARY TERMS from these page(s) and translate them into {vocabLangName}.  " +
-                //    $"Use exactly this format (no bullets or numbering):\n\n" +
-                //    $"OriginalTerm – {vocabLangName}Translation\n\n" +
-                //    $"Leave exactly one blank line between each entry.  If a term doesn’t have a direct translation, write “– [Translation Needed]”.";
-
-
-                //// 3.5) Summary prompt
-                //// Best Version (preserved for reference)
-                ////string summaryPrompt =
-                ////    //$"In {generalLangName}, write a concise SUMMARY (2–3 sentences) of the content on these page(s). " +
-                ////    $"In {generalLangName}, write a concise SUMMARY (2–3-4-5-6-7-8-9-10 sentences) of the content on these page(s). " +
-                ////    $"{(isMedical ? "Highlight key medical concepts; keep technical terms accurate." : "")}" +
-                ////    $"\n\nFormat your summary as plain prose (no bullets or numbering).";
-
-                //string summaryPrompt;
-                //if (isMedical)
-                //{
-                //    summaryPrompt =
-                //        $"In {generalLangName}, write a concise MEDICAL SUMMARY (3–5 sentences) of the content on these page(s).  " +
-                //        $"Highlight key medical concepts and maintain technical accuracy (e.g., pathophysiology, indications, contraindications).  " +
-                //        $"Format as plain prose (no bullets or numbering).";
-                //}
-                //else
-                //{
-                //    summaryPrompt =
-                //        $"In {generalLangName}, write a concise SUMMARY (3–5 sentences) of the content on these page(s).  " +
-                //        $"Format as plain prose (no bullets or numbering).";
-                //}
-
-
-                //// 3.6) Key Takeaways prompt
-                //// Best Version (preserved for reference)
-                ////string takeawaysPrompt =
-                ////    //$"List 5 KEY TAKEAWAYS (in {generalLangName}) from these page(s), formatted as bullets.  " +
-                ////    $"List KEY TAKEAWAYS (in {generalLangName}) from these page(s), formatted as bullets.  " +
-                ////    $"Each line must begin with a dash and a space, like:\n" +
-                ////    $"- Takeaway 1\n" +
-                ////    $"- Takeaway 2\n" +
-                ////    $"…\n\n" +
-                ////    $"{(isMedical ? "Include any critical medical terms and their context." : "")}";
-
-                //string takeawaysPrompt;
-                //if (isMedical)
-                //{
-                //    takeawaysPrompt =
-                //        $"List KEY TAKEAWAYS (in {generalLangName}) from these page(s), formatted as bullets.  " +
-                //        $"Each line must begin with a dash and a space, for example:\n" +
-                //        $"- Takeaway 1\n" +
-                //        $"- Takeaway 2\n\n" +
-                //        $"Include critical medical terms, their context, and implications for patient care.";
-                //}
-                //else
-                //{
-                //    takeawaysPrompt =
-                //        $"List KEY TAKEAWAYS (in {generalLangName}) from these page(s), formatted as bullets.  " +
-                //        $"Each line must begin with a dash and a space, for example:\n" +
-                //        $"- Takeaway 1\n" +
-                //        $"- Takeaway 2\n\n";
-                //}
-
-
-                //// 3.7) Fill-in-the-Blank (Cloze) prompt
-                //// Best Version (preserved for reference)
-                ////string clozePrompt =
-                ////    //$"Generate 5 FILL‐IN‐THE‐BLANK sentences (in {generalLangName}) based on these page(s).  " +
-                ////    $"Generate FILL‐IN‐THE‐BLANK sentences (in {generalLangName}) based on these page(s).  " +
-                ////    $"Each entry should consist of two lines:\n\n" +
-                ////    $"Sentence:“_______________ is <brief clue>.”\n" +
-                ////    $"Answer: <the correct word or phrase> (in {generalLangName}).\n\n" +
-                ////    //$"For example:\nSentence: “_____[Pilocarpine]_____ is a miotic drug.”\nAnswer: Pilocarpine\n\n" +
-                ////    $"For example:\nSentence: “_______________ is a miotic drug.”\nAnswer: Pilocarpine\n\n" +
-                ////    $"Leave a single blank line between each pair.  Do NOT embed the answer inside the blank.";
-
-                //string clozePrompt;
-                //if (isMedical)
-                //{
-                //    clozePrompt =
-                //        $"Generate FILL-IN-THE-BLANK sentences (in {generalLangName}) based on these page(s), focusing on medical terminology.  " +
-                //        $"Each entry should consist of two lines:\n\n" +
-                //        $"Sentence: \"_______________ is <brief medical clue>.\"\n" +
-                //        $"Answer: <the correct medical term or phrase> (in {generalLangName}).\n\n" +
-                //        $"For example:\n" +
-                //        $"Sentence: \"_______________ is a cholinergic agonist used to treat glaucoma.\"\n" +
-                //        $"Answer: Pilocarpine\n\n" +
-                //        $"Leave exactly one blank line between each pair; do NOT show the answer inside the blank.";
-                //}
-                //else
-                //{
-                //    clozePrompt =
-                //        $"Generate FILL-IN-THE-BLANK sentences (in {generalLangName}) based on these page(s).  " +
-                //        $"Each entry should consist of two lines:\n\n" +
-                //        $"Sentence: \"_______________ is <brief clue>.\"\n" +
-                //        $"Answer: <the correct word or phrase> (in {generalLangName}).\n\n" +
-                //        $"For example:\n" +
-                //        $"Sentence: \"_______________ is the capital of France.\"\n" +
-                //        $"Answer: Paris\n\n" +
-                //        $"Leave exactly one blank line between each pair; do NOT show the answer inside the blank.";
-                //}
-
-
-                //// 3.8) True/False Questions prompt
-                //// Best Version (preserved for reference)
-                ////string trueFalsePrompt =
-                ////    //$"Generate 5 TRUE/FALSE statements (in {generalLangName}) based on these page(s).  " +
-                ////    $"Generate TRUE/FALSE statements (in {generalLangName}) based on these page(s).  " +
-                ////    $"Each block should be two lines:\n\n" +
-                ////    $"Statement: <write a true‐or‐false sentence here>\n" +
-                ////    $"Answer: <True or False>\n\n" +
-                ////    $"Leave exactly one blank line between each pair.  Do NOT write any additional explanation.";
-
-                //string trueFalsePrompt;
-                //if (isMedical)
-                //{
-                //    trueFalsePrompt =
-                //        $"Generate TRUE/FALSE statements (in {generalLangName}) focused on the medical content of these page(s).  " +
-                //        $"Each block should be two lines:\n\n" +
-                //        $"Statement: <a clinically accurate true-or-false sentence>\n" +
-                //        $"Answer: <True or False>\n\n" +
-                //        $"Leave exactly one blank line between each pair; do NOT provide explanations.";
-                //}
-                //else
-                //{
-                //    trueFalsePrompt =
-                //        $"Generate TRUE/FALSE statements (in {generalLangName}) based on these page(s).  " +
-                //        $"Each block should be two lines:\n\n" +
-                //        $"Statement: <write a true-or-false sentence>\n" +
-                //        $"Answer: <True or False>\n\n" +
-                //        $"Leave exactly one blank line between each pair; do NOT provide explanations.";
-                //}
-
-
-                //// 3.9) Outline prompt
-                //// Best Version (preserved for reference)
-                ////string outlinePrompt =
-                ////    $"Produce a hierarchical OUTLINE in {generalLangName} for the material on these page(s).  " +
-                ////    $"Use numbered levels (e.g., “1. Main Heading,” “1.1 Subheading,” “1.1.1 Detail”).  " +
-                ////    $"Do NOT use bullet points—strictly use decimal numbering.  " +
-                ////    $"{(isMedical ? "Include medical subheadings where appropriate." : "")}";
-
-                //string outlinePrompt;
-                //if (isMedical)
-                //{
-                //    outlinePrompt =
-                //        $"Produce a hierarchical MEDICAL OUTLINE in {generalLangName} for the material on these page(s).  " +
-                //        $"Use decimal numbering (e.g., “1. Topic,” “1.1 Subtopic,” “1.1.1 Detail”).  " +
-                //        $"Include specific medical subheadings (e.g., pathophysiology, clinical presentation, management) where appropriate.";
-                //}
-                //else
-                //{
-                //    outlinePrompt =
-                //        $"Produce a hierarchical OUTLINE in {generalLangName} for the material on these page(s).  " +
-                //        $"Use decimal numbering (e.g., “1. Topic,” “1.1 Subtopic,” “1.1.1 Detail”).  " +
-                //        $"Do NOT use bullet points—strictly use decimal numbering.";
-                //}
-
-
-                //// 3.10) Concept Map prompt
-                //// Best Version (preserved for reference)
-                ////string conceptMapPrompt =
-                ////    $"List the key CONCEPTS from these page(s) and show how they relate, in {generalLangName}.  " +
-                ////    $"For each pair, use one of these formats exactly:\n" +
-                ////    $"“ConceptA → relates to → ConceptB”\n" +
-                ////    $"or\n" +
-                ////    $"“ConceptA — contrasts with — ConceptC”\n\n" +
-                ////    $"Separate each relationship on its own line.  Provide at least 5 relationships.";
-
-                //string conceptMapPrompt;
-                //if (isMedical)
-                //{
-                //    conceptMapPrompt =
-                //        $"List the key MEDICAL CONCEPTS from these page(s) and show how they relate, in {generalLangName}.  " +
-                //        $"For each pair, use exactly one of these formats:\n" +
-                //        $"“ConceptA → relates to → ConceptB”\n" +
-                //        $"or\n" +
-                //        $"“ConceptA — contrasts with — ConceptC”\n\n" +
-                //        $"Focus on clinical or pathophysiological relationships.  Provide at least 5 relationships.";
-                //}
-                //else
-                //{
-                //    conceptMapPrompt =
-                //        $"List the key CONCEPTS from these page(s) and show how they relate, in {generalLangName}.  " +
-                //        $"For each pair, use exactly one of these formats:\n" +
-                //        $"“ConceptA → relates to → ConceptB”\n" +
-                //        $"or\n" +
-                //        $"“ConceptA — contrasts with — ConceptC”\n\n" +
-                //        $"Separate each relationship on its own line.  Provide at least 5 relationships.";
-                //}
-
-
-                ////// 3.11) Table Extraction prompt
-                ////string tableExtractPrompt;
-                ////if (isMedical)
-                ////{
-                ////    tableExtractPrompt =
-                ////        $"If these page(s) contain any MEDICAL TABLES (e.g., drug doses, indications, side effects, lab values), " +
-                ////        $"extract each table into markdown format in {generalLangName}.  Follow this exact format:\n\n" +
-                ////        $"| Column1         | Column2                   | Column3            |\n" +
-                ////        $"|-----------------|---------------------------|--------------------|\n" +
-                ////        $"| data11 (e.g., drug) | data12 (e.g., dose)   | data13 (e.g., side effect) |\n" +
-                ////        $"| data21         | data22                     | data23             |\n\n" +
-                ////        $"If no table is present, respond exactly: “No table found.”";
-                ////}
-                ////else
-                ////{
-                ////    tableExtractPrompt =
-                ////        $"If these page(s) contain any tables (e.g., schedules, comparisons, statistics), " +
-                ////        $"extract each table into markdown format in {generalLangName}.  Follow this exact format:\n\n" +
-                ////        $"| Column1 | Column2 | Column3 |\n" +
-                ////        $"|---------|---------|---------|\n" +
-                ////        $"| data11  | data12  | data13  |\n" +
-                ////        $"| data21  | data22  | data23  |\n\n" +
-                ////        $"If no table is present, respond exactly: “No table found.”";
-                ////}
-                //string tableExtractPrompt =
-                //    "From the following text, extract every table you can logically infer. " +
-                //    "For EACH table:\n" +
-                //    "1) Print a title line exactly as: TABLE: <table title>\n" +
-                //    "2) Then output a valid Markdown pipe table:\n" +
-                //    "| Column1 | Column2 | ... |\n" +
-                //    "| --- | --- | ... |\n" +
-                //    "| row1col1 | row1col2 | ... |\n" +
-                //    "(No extra commentary; keep one blank line between tables.)\n" +
-                //    "Escape pipes inside cells as &#124; if needed.\n";
-
-
-
-                //// 3.12) Simplified Explanation prompt
-                //// Best Version (preserved for reference)
-                ////string simplifiedPrompt =
-                ////    $"Explain the content of these page(s) in simpler language, as if teaching a first-year medical student.  " +
-                ////    $"Use {generalLangName}.  Define any technical or medical jargon in parentheses the first time it appears.  " +
-                ////    $"Write one cohesive paragraph—no bullets or lists.";
-
-                //string simplifiedPrompt;
-                //if (isMedical)
-                //{
-                //    simplifiedPrompt =
-                //        $"Explain the content of these page(s) in simpler language (in {generalLangName}), as if teaching a first-year medical student.  " +
-                //        $"Define any technical/medical jargon in parentheses upon first use.  " +
-                //        $"Write one cohesive paragraph—no bullets or lists.";
-                //}
-                //else
-                //{
-                //    simplifiedPrompt =
-                //        $"Explain the content of these page(s) in simpler language (in {generalLangName}).  " +
-                //        $"Write one cohesive paragraph—no bullets or lists.";
-                //}
-
-
-                //// 3.13) Case Study prompt
-                //// Best Version (preserved for reference)
-                ////string caseStudyPrompt =
-                ////    $"Write a short CLINICAL VIGNETTE (1 paragraph) based on these page(s), in {generalLangName}.  " +
-                ////    $"Include:\n" +
-                ////    $"- Patient age and gender\n" +
-                ////    $"- Presenting complaint or symptom\n" +
-                ////    $"- Key pertinent findings (e.g., vital signs, lab results)\n\n" +
-                ////    $"Then immediately follow with a single multiple-choice question (in {generalLangName}) about the most likely diagnosis or next step.  " +
-                ////    $"Format exactly:\n" +
-                ////    $"\nMCQ: <The question text>\n" +
-                ////    $"A) <Option A>\n" +
-                ////    $"B) <Option B>\n" +
-                ////    $"C) <Option C>\n" +
-                ////    $"D) <Option D>\n" +
-                ////    $"Answer: <A, B, C, or D>\n\n" +
-                ////    //$"No extra commentary—only the vignette paragraph, blank line, then the MCQ block.";
-                ////    $"No extra commentary—only the vignette paragraph, blank line, then the MCQ block, at least two cases.";
-
-                //string caseStudyPrompt;
-                //if (isMedical)
-                //{
-                //    caseStudyPrompt =
-                //        $"Write a short CLINICAL VIGNETTE (1 paragraph) based on these page(s), in {generalLangName}.  " +
-                //        $"Include:\n" +
-                //        $"- Patient age and gender\n" +
-                //        $"- Presenting complaint or symptom\n" +
-                //        $"- Key pertinent findings (e.g., vital signs, lab results)\n\n" +
-                //        $"Then immediately follow with a MULTIPLE-CHOICE QUESTION (in {generalLangName}) about the most likely diagnosis or next step.  " +
-                //        $"Format exactly:\n\n" +
-                //        $"MCQ: <The question text>\n" +
-                //        $"A) <Option A>\n" +
-                //        $"B) <Option B>\n" +
-                //        $"C) <Option C>\n" +
-                //        $"D) <Option D>\n" +
-                //        $"Answer: <A, B, C, or D>\n\n" +
-                //        $"No extra commentary—only the vignette paragraph, blank line, then the MCQ block.";
-                //}
-                //else
-                //{
-                //    caseStudyPrompt =
-                //        $"Write a short CASE SCENARIO (1 paragraph) based on these page(s), in {generalLangName}.  " +
-                //        $"Then follow with a MULTIPLE-CHOICE QUESTION (in {generalLangName}) about a key concept.  " +
-                //        $"Format exactly:\n\n" +
-                //        $"MCQ: <The question text>\n" +
-                //        $"A) <Option A>\n" +
-                //        $"B) <Option B>\n" +
-                //        $"C) <Option C>\n" +
-                //        $"D) <Option D>\n" +
-                //        $"Answer: <A, B, C, or D>\n\n" +
-                //        $"No extra commentary—only the scenario paragraph, blank line, then the MCQ block.";
-                //}
-
-
-                //// 3.14) Keywords prompt
-                //// Best Version (preserved for reference)
-                ////string keywordsPrompt =
-                ////    $"List the HIGH-YIELD KEYWORDS from these page(s) in {generalLangName}.  " +
-                ////    $"Output as a comma-separated list (e.g., “keyword1, keyword2, keyword3”).  " +
-                ////    $"Do NOT include definitions—only the keywords themselves.  " +
-                ////    $"Provide at least 8–10 keywords.";
-
-                //string keywordsPrompt;
-                //if (isMedical)
-                //{
-                //    keywordsPrompt =
-                //        $"List the HIGH-YIELD MEDICAL KEYWORDS from these page(s) in {generalLangName}.  " +
-                //        $"Output as a comma-separated list (e.g., “keyword1, keyword2, keyword3”).  " +
-                //        $"Do NOT include definitions—only the keywords themselves.  " +
-                //        $"Provide at least 8–10 medical terms.";
-                //}
-                //else
-                //{
-                //    keywordsPrompt =
-                //        $"List the HIGH-YIELD KEYWORDS from these page(s) in {generalLangName}.  " +
-                //        $"Output as a comma-separated list (e.g., “keyword1, keyword2, keyword3”).  " +
-                //        $"Do NOT include definitions—only the keywords themselves.  " +
-                //        $"Provide at least 8–10 keywords.";
-                //}
-
-                ////Translated Section Prompt
-                //string translatedSectionsPrompt =
-                //    $"Translate the following text from {generalLangName} into {vocabLangName}. " +
-                //    $"Keep every sentence or paragraph exactly as it is in the original language. " +
-                //    $"After each sentence or paragraph, provide the translation immediately below it. " +
-                //    $"Do not remove or shorten any part of the original text. " +
-                //    //$"Use clear labels in the output: start the original with 'Original:' and the translation with 'Translation:'. " +
-                //    $"Do not add any introductions, explanations, notes, or extra formatting. " +
-                //    $"Only output the text in the requested format.";
-
-                ////// 3.16) Explain Terms prompt
-                ////string explainTermsPrompt;
-                ////if (isMedical)
-                ////{
-                ////    // وضع طبي: ركّز على المصطلحات الطبية غير الشائعة
-                ////    explainTermsPrompt =
-                ////        $"Identify KEY MEDICAL TERMS on these page(s) that a non-specialist may not understand. " +
-                ////        $"For EACH term, output EXACTLY:\n\n" +
-                ////        $"Term: <the term as written>\n" +
-                ////        $"Pronunciation: </IPA or syllable breakdown/>\n" +
-                ////        $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
-                ////        $"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
-                ////        $"If the term is an abbreviation, first expand it.\n\n" +
-                ////        $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
-                ////}
-                ////else
-                ////{
-                ////    // عام: مصطلحات تقنية/علمية عامة
-                ////    explainTermsPrompt =
-                ////        $"Identify KEY TECHNICAL TERMS on these page(s) that a non-specialist may not understand. " +
-                ////        $"For EACH term, output EXACTLY:\n\n" +
-                ////        $"Term: <the term as written>\n" +
-                ////        $"Pronunciation: </IPA or syllable breakdown/>\n" +
-                ////        $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
-                ////        $"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
-                ////        $"If the term is an abbreviation, first expand it.\n\n" +
-                ////        $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
-                ////}
-
-
-                ////// 3.16) Explain Terms prompt (with optional Arabic beside general language)
-                ////string explainTermsPrompt;
-
-                ////string arabicBlock =
-                ////    includeArabicExplain
-                ////        ? "ArabicExplanation (Arabic): <2–3 sentences in clear Arabic>\n" +
-                ////          "ArabicAnalogy (Arabic): <a simple analogy/example in Arabic>\n"
-                ////        : ""; // empty if not selected
-
-                ////if (isMedical)
-                ////{
-                ////    explainTermsPrompt =
-                ////        $"Identify KEY MEDICAL TERMS on these page(s) that a non-specialist may not understand. " +
-                ////        $"For EACH term, output EXACTLY:\n\n" +
-                ////        $"Term: <the term as written>\n" +
-                ////        $"Pronunciation: </IPA or syllable breakdown/>\n" +
-                ////        $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
-                ////        $"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
-                ////        arabicBlock +
-                ////        $"If the term is an abbreviation, first expand it.\n\n" +
-                ////        $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
-                ////}
-                ////else
-                ////{
-                ////    explainTermsPrompt =
-                ////        $"Identify KEY TECHNICAL TERMS on these page(s) that a non-specialist may not understand. " +
-                ////        $"For EACH term, output EXACTLY:\n\n" +
-                ////        $"Term: <the term as written>\n" +
-                ////        $"Pronunciation: </IPA or syllable breakdown/>\n" +
-                ////        $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
-                ////        $"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
-                ////        arabicBlock +
-                ////        $"If the term is an abbreviation, first expand it.\n\n" +
-                ////        $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
-                ////}
-
-
-                ////// 3.16) Explain Terms prompt (IPA + syllables in one line + optional Arabic)
-                ////string explainTermsPrompt;
-
-                ////string arabicBlock =
-                ////    includeArabicExplain
-                ////        ? "ArabicExplanation (Arabic): <2–3 sentences in clear Arabic>\n" +
-                ////          "ArabicAnalogy (Arabic): <a simple analogy/example in Arabic>\n"
-                ////        : ""; // empty if not selected
-
-                ////if (isMedical)
-                ////{
-                ////    explainTermsPrompt =
-                ////        $"Identify KEY MEDICAL TERMS on these page(s) that a non-specialist may not understand. " +
-                ////        $"For EACH term, output EXACTLY:\n\n" +
-                ////        $"Term: <the term as written>\n" +
-                ////        $"Pronunciation: IPA = </International Phonetic Alphabet/>, Syllables = <break into simple syllables>\n" +
-                ////        $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
-                ////        $"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
-                ////        arabicBlock +
-                ////        $"If the term is an abbreviation, first expand it.\n\n" +
-                ////        $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
-                ////}
-                ////else
-                ////{
-                ////    explainTermsPrompt =
-                ////        $"Identify KEY TECHNICAL TERMS on these page(s) that a non-specialist may not understand. " +
-                ////        $"For EACH term, output EXACTLY:\n\n" +
-                ////        $"Term: <the term as written>\n" +
-                ////        $"Pronunciation: IPA = </International Phonetic Alphabet/>, Syllables = <break into simple syllables>\n" +
-                ////        $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
-                ////        $"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
-                ////        arabicBlock +
-                ////        $"If the term is an abbreviation, first expand it.\n\n" +
-                ////        $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
-                ////}
-
-                //// 3.16) Explain Terms prompt (numbered terms + IPA + syllables + optional Arabic)
-                //string explainTermsPrompt;
-
-                //string arabicBlock =
-                //    includeArabicExplain
-                //        ? "ArabicExplanation (Arabic): <2–3 sentences in clear Arabic>\n" +
-                //          "ArabicAnalogy (Arabic): <a simple analogy/example in Arabic>\n"
-                //        : ""; // empty if not selected
-
-                //if (isMedical)
-                //{
-                //    explainTermsPrompt =
-                //        $"Identify KEY MEDICAL TERMS on these page(s) that a non-specialist may not understand. " +
-                //        $"Number each term block sequentially (1, 2, 3, ...). " +
-                //        $"For EACH term, output EXACTLY:\n\n" +
-                //        $"<Number>. Term: <the term as written>\n" +
-                //        $"Pronunciation: IPA = </International Phonetic Alphabet/>, Syllables = <break into simple syllables>\n" +
-                //        $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
-                //        //$"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
-                //        //arabicBlock +
-                //        $"If the term is an abbreviation, first expand it.\n\n" +
-                //        $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
-                //}
-                //else
-                //{
-                //    explainTermsPrompt =
-                //        $"Identify KEY TECHNICAL TERMS on these page(s) that a non-specialist may not understand. " +
-                //        $"Number each term block sequentially (1, 2, 3, ...). " +
-                //        $"For EACH term, output EXACTLY:\n\n" +
-                //        $"<Number>. Term: <the term as written>\n" +
-                //        $"Pronunciation: IPA = </International Phonetic Alphabet/>, Syllables = <break into simple syllables>\n" +
-                //        $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
-                //        //$"Analogy ({generalLangName}): <a simple analogy or everyday example>\n" +
-                //        //arabicBlock +
-                //        $"If the term is an abbreviation, first expand it.\n\n" +
-                //        $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
-                //}
-
-
-
-
-
-
 
 
                 // جمع كل المطالبات في قائمة
@@ -1471,7 +856,7 @@ namespace ChatGPTFileProcessor
                             if (chkTakeaways.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Key Takeaways…");
-                                string pageTA = await ProcessPdfPageMultimodal(image, apiKey, takeawaysPrompt,modelName);
+                                string pageTA = await ProcessPdfPageMultimodal(image, apiKey, takeawaysPrompt, modelName);
                                 allTakeaways.AppendLine($"===== Page {pageNumber} =====");
                                 allTakeaways.AppendLine(pageTA);
                                 allTakeaways.AppendLine();
@@ -1481,7 +866,7 @@ namespace ChatGPTFileProcessor
                             if (chkCloze.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Cloze…");
-                                string pageCL = await ProcessPdfPageMultimodal(image, apiKey, clozePrompt,modelName);
+                                string pageCL = await ProcessPdfPageMultimodal(image, apiKey, clozePrompt, modelName);
                                 allCloze.AppendLine($"===== Page {pageNumber} =====");
                                 allCloze.AppendLine(pageCL);
                                 allCloze.AppendLine();
@@ -1491,7 +876,7 @@ namespace ChatGPTFileProcessor
                             if (chkTrueFalse.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → True/False…");
-                                string pageTF = await ProcessPdfPageMultimodal(image, apiKey, trueFalsePrompt,modelName);
+                                string pageTF = await ProcessPdfPageMultimodal(image, apiKey, trueFalsePrompt, modelName);
                                 allTrueFalse.AppendLine($"===== Page {pageNumber} =====");
                                 allTrueFalse.AppendLine(pageTF);
                                 allTrueFalse.AppendLine();
@@ -1501,7 +886,7 @@ namespace ChatGPTFileProcessor
                             if (chkOutline.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Outline…");
-                                string pageOL = await ProcessPdfPageMultimodal(image, apiKey, outlinePrompt,modelName);
+                                string pageOL = await ProcessPdfPageMultimodal(image, apiKey, outlinePrompt, modelName);
                                 allOutline.AppendLine($"===== Page {pageNumber} =====");
                                 allOutline.AppendLine(pageOL);
                                 allOutline.AppendLine();
@@ -1511,7 +896,7 @@ namespace ChatGPTFileProcessor
                             if (chkConceptMap.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Concept Map…");
-                                string pageCM = await ProcessPdfPageMultimodal(image, apiKey, conceptMapPrompt,modelName);
+                                string pageCM = await ProcessPdfPageMultimodal(image, apiKey, conceptMapPrompt, modelName);
                                 allConceptMap.AppendLine($"===== Page {pageNumber} =====");
                                 allConceptMap.AppendLine(pageCM);
                                 allConceptMap.AppendLine();
@@ -1521,7 +906,7 @@ namespace ChatGPTFileProcessor
                             if (chkTableExtract.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Table Extract…");
-                                string pageTE = await ProcessPdfPageMultimodal(image, apiKey, tableExtractPrompt,modelName);
+                                string pageTE = await ProcessPdfPageMultimodal(image, apiKey, tableExtractPrompt, modelName);
                                 allTableExtract.AppendLine($"===== Page {pageNumber} =====");
                                 allTableExtract.AppendLine(pageTE);
                                 allTableExtract.AppendLine();
@@ -1531,7 +916,7 @@ namespace ChatGPTFileProcessor
                             if (chkSimplified.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Simplified Explanation…");
-                                string pageSI = await ProcessPdfPageMultimodal(image, apiKey, simplifiedPrompt,modelName);
+                                string pageSI = await ProcessPdfPageMultimodal(image, apiKey, simplifiedPrompt, modelName);
                                 allSimplified.AppendLine($"===== Page {pageNumber} =====");
                                 allSimplified.AppendLine(pageSI);
                                 allSimplified.AppendLine();
@@ -1541,7 +926,7 @@ namespace ChatGPTFileProcessor
                             if (chkCaseStudy.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Case Study…");
-                                string pageCS = await ProcessPdfPageMultimodal(image, apiKey, caseStudyPrompt,modelName);
+                                string pageCS = await ProcessPdfPageMultimodal(image, apiKey, caseStudyPrompt, modelName);
                                 allCaseStudy.AppendLine($"===== Page {pageNumber} =====");
                                 allCaseStudy.AppendLine(pageCS);
                                 allCaseStudy.AppendLine();
@@ -1551,7 +936,7 @@ namespace ChatGPTFileProcessor
                             if (chkKeywords.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Keywords…");
-                                string pageKW = await ProcessPdfPageMultimodal(image, apiKey, keywordsPrompt,modelName);
+                                string pageKW = await ProcessPdfPageMultimodal(image, apiKey, keywordsPrompt, modelName);
                                 allKeywords.AppendLine($"===== Page {pageNumber} =====");
                                 allKeywords.AppendLine(pageKW);
                                 allKeywords.AppendLine();
@@ -1561,7 +946,7 @@ namespace ChatGPTFileProcessor
                             if (chkTranslatedSections.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Translated Sections…");
-                                string pageTS = await ProcessPdfPageMultimodal(image, apiKey, translatedSectionsPrompt,modelName);
+                                string pageTS = await ProcessPdfPageMultimodal(image, apiKey, translatedSectionsPrompt, modelName);
                                 allTranslatedSections.AppendLine($"===== Page {pageNumber} =====");
                                 allTranslatedSections.AppendLine(pageTS);
                                 allTranslatedSections.AppendLine();
@@ -1571,7 +956,7 @@ namespace ChatGPTFileProcessor
                             if (chkExplainTerms.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Explain Terms…");
-                                string pageET = await ProcessPdfPageMultimodal(image, apiKey, explainTermsPrompt,modelName);
+                                string pageET = await ProcessPdfPageMultimodal(image, apiKey, explainTermsPrompt, modelName);
                                 allExplainTerms.AppendLine($"===== Page {pageNumber} =====");
                                 allExplainTerms.AppendLine(pageET);
                                 allExplainTerms.AppendLine();
@@ -2427,95 +1812,7 @@ namespace ChatGPTFileProcessor
             }
         }
 
-
-
-        //// Method to save content to specific file (بصيغة فقرات تحترم RTL/LTR لكل سطر)
-        //private void SaveContentToFile(string content, string filePath, string sectionTitle)
-        //{
-        //    Word.Application wordApp = new Word.Application();
-        //    Word.Document doc = wordApp.Documents.Add();
-
-        //    try
-        //    {
-        //        // عنوان القسم (يتنسّق تلقائيًا حسب اللغة)
-        //        Word.Paragraph titlePara = doc.Content.Paragraphs.Add();
-        //        ApplyBiDiToRange(titlePara.Range, sectionTitle);
-        //        titlePara.Range.Font.Size = 14;
-        //        titlePara.Format.SpaceAfter = 10;
-        //        titlePara.Range.InsertParagraphAfter();
-
-        //        // المحتوى: فقرة لكل سطر مع BiDi تلقائي
-        //        string safe = content ?? string.Empty;
-        //        string[] lines = safe.Replace("\r\n", "\n").Split('\n');
-        //        foreach (var line in lines)
-        //        {
-        //            Word.Paragraph p = doc.Content.Paragraphs.Add();
-        //            ApplyBiDiToRange(p.Range, line);
-        //            p.Range.Font.Bold = 0;
-        //            p.Format.SpaceAfter = 10;
-        //            p.Range.InsertParagraphAfter();
-        //        }
-
-        //        doc.SaveAs2(filePath);
-        //    }
-        //    finally
-        //    {
-        //        doc.Close();
-        //        wordApp.Quit();
-        //    }
-
-        //    UpdateStatus($"Results saved successfully to {filePath}");
-        //}
-
-        //// Method to save content to specific file (بصيغة فقرات تحترم RTL/LTR + Alignment)
-        //private void SaveContentToFile(string content, string filePath, string sectionTitle)
-        //{
-        //    Word.Application wordApp = new Word.Application();
-        //    Word.Document doc = wordApp.Documents.Add();
-
-        //    try
-        //    {
-        //        // عنوان القسم
-        //        Word.Paragraph titlePara = doc.Content.Paragraphs.Add();
-        //        ApplyBiDiToRange(titlePara.Range, sectionTitle);
-        //        // فرض المحاذاة صراحةً حسب اللغة
-        //        titlePara.Alignment = LooksArabic(sectionTitle)
-        //            ? Word.WdParagraphAlignment.wdAlignParagraphRight
-        //            : Word.WdParagraphAlignment.wdAlignParagraphLeft;
-
-        //        titlePara.Range.Font.Size = 14;
-        //        titlePara.Format.SpaceAfter = 10;
-        //        titlePara.Range.InsertParagraphAfter();
-
-        //        // المحتوى: فقرة لكل سطر مع BiDi + Alignment صريح
-        //        string safe = content ?? string.Empty;
-        //        string[] lines = safe.Replace("\r\n", "\n").Split('\n');
-        //        foreach (var line in lines)
-        //        {
-        //            Word.Paragraph p = doc.Content.Paragraphs.Add();
-        //            ApplyBiDiToRange(p.Range, line);
-
-        //            // مهم: المحاذاة تُضبط بعد وضع النص
-        //            p.Alignment = LooksArabic(line)
-        //                ? Word.WdParagraphAlignment.wdAlignParagraphRight
-        //                : Word.WdParagraphAlignment.wdAlignParagraphLeft;
-
-        //            p.Range.Font.Bold = 0;
-        //            p.Format.SpaceAfter = 10;
-        //            p.Range.InsertParagraphAfter();
-        //        }
-
-        //        doc.SaveAs2(filePath);
-        //    }
-        //    finally
-        //    {
-        //        doc.Close();
-        //        wordApp.Quit();
-        //    }
-
-        //    UpdateStatus($"Results saved successfully to {filePath}");
-        //}
-
+      
         private void SaveContentToFile(string content, string filePath, string sectionTitle)
         {
             using (var doc = DocX.Create(filePath))
@@ -2537,240 +1834,6 @@ namespace ChatGPTFileProcessor
                 doc.Save();
             }
         }
-
-
-
-
-        //// NEW: Save markdown-style tables to a real Word table using Interop (مع BiDi + Alignment لكل خلية)
-        //private void SaveMarkdownTablesToWord(string markdown, string filePath, string sectionTitle)
-        //{
-        //    Word.Application wordApp = new Word.Application();
-        //    Word.Document doc = wordApp.Documents.Add();
-
-        //    try
-        //    {
-        //        // عنوان
-        //        Word.Paragraph titlePara = doc.Content.Paragraphs.Add();
-        //        ApplyBiDiToRange(titlePara.Range, sectionTitle);
-        //        titlePara.Alignment = LooksArabic(sectionTitle)
-        //            ? Word.WdParagraphAlignment.wdAlignParagraphRight
-        //            : Word.WdParagraphAlignment.wdAlignParagraphLeft;
-        //        titlePara.Range.Font.Size = 14;
-        //        titlePara.Format.SpaceAfter = 10;
-        //        titlePara.Range.InsertParagraphAfter();
-
-        //        if (string.IsNullOrWhiteSpace(markdown) ||
-        //            markdown.Trim().Equals("No table found.", StringComparison.OrdinalIgnoreCase))
-        //        {
-        //            Word.Paragraph p = doc.Content.Paragraphs.Add();
-        //            ApplyBiDiToRange(p.Range, "No table found.");
-        //            p.Alignment = Word.WdParagraphAlignment.wdAlignParagraphLeft; // نص إنجليزي
-        //            p.Range.InsertParagraphAfter();
-        //            doc.SaveAs2(filePath);
-        //            return;
-        //        }
-
-        //        string text = markdown.Replace("\r\n", "\n");
-        //        string[] lines = text.Split('\n');
-
-        //        var alignRow = new System.Text.RegularExpressions.Regex(@"^\|\s*:?-+\s*(\|\s*:?-+\s*)+\|$");
-
-        //        int i = 0;
-        //        while (i < lines.Length)
-        //        {
-        //            string line = lines[i].Trim();
-
-        //            // أسطر ليست جداول (عناوين/فواصل)
-        //            if (string.IsNullOrWhiteSpace(line)) { i++; continue; }
-        //            if (!line.StartsWith("|"))
-        //            {
-        //                Word.Paragraph p = doc.Content.Paragraphs.Add();
-        //                ApplyBiDiToRange(p.Range, line);
-        //                p.Alignment = LooksArabic(line)
-        //                    ? Word.WdParagraphAlignment.wdAlignParagraphRight
-        //                    : Word.WdParagraphAlignment.wdAlignParagraphLeft;
-        //                p.Range.InsertParagraphAfter();
-        //                i++;
-        //                continue;
-        //            }
-
-        //            // تجميع أسطر الجدول المتتالية
-        //            var tableLines = new System.Collections.Generic.List<string>();
-        //            while (i < lines.Length && lines[i].Trim().StartsWith("|"))
-        //            {
-        //                tableLines.Add(lines[i].Trim());
-        //                i++;
-        //            }
-
-        //            // تحويلها لصفوف/أعمدة (تجاهل سطر المحاذاة)
-        //            var rows = new System.Collections.Generic.List<string[]>();
-        //            for (int k = 0; k < tableLines.Count; k++)
-        //            {
-        //                string t = tableLines[k];
-        //                if (alignRow.IsMatch(t)) continue;
-
-        //                string inner = t;
-        //                if (inner.StartsWith("|")) inner = inner.Substring(1);
-        //                if (inner.EndsWith("|")) inner = inner.Substring(0, inner.Length - 1);
-
-        //                string[] cells = inner.Split(new[] { '|' }, StringSplitOptions.None);
-        //                for (int c = 0; c < cells.Length; c++) cells[c] = cells[c].Trim();
-        //                rows.Add(cells);
-        //            }
-
-        //            if (rows.Count == 0) continue;
-
-        //            // أعمدة
-        //            int cols = 0;
-        //            for (int r = 0; r < rows.Count; r++)
-        //                if (rows[r].Length > cols) cols = rows[r].Length;
-
-        //            // إنشاء الجدول
-        //            Word.Paragraph tblPara = doc.Content.Paragraphs.Add();
-        //            Word.Range rng = tblPara.Range;
-        //            Word.Table tbl = doc.Tables.Add(rng, rows.Count, cols);
-        //            tbl.Borders.Enable = 1;
-        //            if (rows.Count > 0) tbl.Rows[1].Range.Bold = 1;
-
-        //            // تعبئة الخلايا + BiDi + Alignment صريح
-        //            for (int r = 0; r < rows.Count; r++)
-        //            {
-        //                for (int c = 0; c < cols; c++)
-        //                {
-        //                    string cellText = (c < rows[r].Length) ? rows[r][c] : string.Empty;
-        //                    Word.Range cellRange = tbl.Cell(r + 1, c + 1).Range;
-        //                    string clean = (cellText ?? string.Empty).TrimEnd('\r', '\a');
-
-        //                    ApplyBiDiToRange(cellRange, clean);
-        //                    cellRange.ParagraphFormat.Alignment = LooksArabic(clean)
-        //                        ? Word.WdParagraphAlignment.wdAlignParagraphRight
-        //                        : Word.WdParagraphAlignment.wdAlignParagraphLeft;
-        //                }
-        //            }
-
-        //            // ملاءمة ذاتية + سطر فارغ بعد كل جدول
-        //            tbl.AutoFitBehavior(Word.WdAutoFitBehavior.wdAutoFitContent);
-        //            Word.Paragraph after = doc.Content.Paragraphs.Add();
-        //            after.Range.InsertParagraphAfter();
-        //        }
-
-        //        doc.SaveAs2(filePath);
-        //    }
-        //    finally
-        //    {
-        //        doc.Close();
-        //        wordApp.Quit();
-        //    }
-
-        //    UpdateStatus($"Results saved successfully to {filePath}");
-        //}
-
-        //private void SaveMarkdownTablesToWord(string markdown, string filePath, string sectionTitle)
-        //{
-        //    using (var doc = DocX.Create(filePath))
-        //    {
-        //        var title = doc.InsertParagraph(sectionTitle).FontSize(14).SpacingAfter(10);
-        //        title.Alignment = LooksArabic(sectionTitle) ? Alignment.right : Alignment.left;
-
-        //        if (string.IsNullOrWhiteSpace(markdown) ||
-        //            markdown.Trim().Equals("No table found.", StringComparison.OrdinalIgnoreCase))
-        //        {
-        //            doc.InsertParagraph("No table found.").Alignment = Alignment.left;
-        //            doc.Save();
-        //            UpdateStatus($"Results saved successfully to {filePath}");
-        //            return;
-        //        }
-
-        //        var lines = markdown.Replace("\r\n", "\n").Split('\n');
-        //        var alignRow = new System.Text.RegularExpressions.Regex(@"^\|\s*:?-+\s*(\|\s*:?-+\s*)+\|$");
-
-        //        int i = 0;
-        //        while (i < lines.Length)
-        //        {
-        //            var line = lines[i].Trim();
-
-        //            // نص عادي
-        //            if (string.IsNullOrWhiteSpace(line) || !line.StartsWith("|"))
-        //            {
-        //                if (!string.IsNullOrWhiteSpace(line))
-        //                {
-        //                    var p = doc.InsertParagraph(line).SpacingAfter(6);
-        //                    p.Alignment = LooksArabic(line) ? Alignment.right : Alignment.left;
-        //                }
-        //                i++;
-        //                continue;
-        //            }
-
-        //            // تجميع أسطر الجدول
-        //            var tableLines = new List<string>();
-        //            while (i < lines.Length && lines[i].Trim().StartsWith("|"))
-        //            {
-        //                tableLines.Add(lines[i].Trim());
-        //                i++;
-        //            }
-
-        //            // تحويل إلى صفوف/أعمدة (تجاهل سطر المحاذاة)
-        //            var rows = new List<string[]>();
-        //            foreach (var tl in tableLines)
-        //            {
-        //                if (alignRow.IsMatch(tl)) continue;
-        //                var inner = tl.Trim('|');
-        //                var cells = inner.Split('|').Select(c => c.Trim()).ToArray();
-        //                rows.Add(cells);
-        //            }
-        //            if (rows.Count == 0) continue;
-
-        //            int cols = rows.Max(r => r.Length);
-        //            var tbl = doc.AddTable(rows.Count, cols);
-        //            tbl.Design = TableDesign.TableGrid;
-
-        //            //for (int r = 0; r < rows.Count; r++)
-        //            //{
-        //            //    for (int c = 0; c < cols; c++)
-        //            //    {
-        //            //        var cellText = c < rows[r].Length ? rows[r][c] : string.Empty;
-        //            //        var para = tbl.Rows[r].Cells[c].Paragraphs[0];
-
-        //            //        // 🔧 لا تستخدم ReplaceText القديم (المتقادم)
-        //            //        para.Text = "";                 // امسح أي نص افتراضي
-        //            //        para.Append(cellText ?? "");    // اكتب النص
-        //            //        para.Alignment = LooksArabic(cellText) ? Alignment.right : Alignment.left;
-        //            //    }
-        //            //}
-        //            for (int r = 0; r < rows.Count; r++)
-        //            {
-        //                for (int c = 0; c < cols; c++)
-        //                {
-        //                    var cellText = c < rows[r].Length ? rows[r][c] : string.Empty;
-
-        //                    // خذ الفقرة الأولى في الخلية
-        //                    var para = tbl.Rows[r].Cells[c].Paragraphs[0];
-
-        //                    // امسح أي نص افتراضي (Text خاصية قراءة فقط؛ استعمل RemoveText/ReplaceText)
-        //                    if (!string.IsNullOrEmpty(para.Text))
-        //                        para.RemoveText(0);              // يحذف كل النص الموجود
-
-        //                    // اكتب النص الجديد
-        //                    para.Append(cellText ?? string.Empty);
-
-        //                    // المحاذاة حسب اللغة
-        //                    para.Alignment = LooksArabic(cellText) ? Alignment.right : Alignment.left;
-        //                }
-        //            }
-
-
-        //            // اجعل الصف الأول عناوين إن وجد أكثر من صف
-        //            if (rows.Count > 1)
-        //                foreach (var p in tbl.Rows[0].Cells.SelectMany(x => x.Paragraphs)) p.Bold();
-
-        //            doc.InsertTable(tbl);
-        //            doc.InsertParagraph().SpacingAfter(8);
-        //        }
-
-        //        doc.Save();
-        //    }
-        //    UpdateStatus($"Results saved successfully to {filePath}");
-        //}
 
 
         private void SaveMarkdownTablesToWord(string markdown, string filePath, string sectionTitle)
@@ -2902,74 +1965,6 @@ namespace ChatGPTFileProcessor
             }
             return false;
         }
-
-        //// طبّق اتجاه/محاذاة وخط مناسبين حسب اللغة على Word.Range
-        //private static void ApplyBiDiToRange(Word.Range rng, string text)
-        //{
-        //    bool isAr = LooksArabic(text);
-        //    string safe = text ?? string.Empty;
-
-        //    // اكتب النص أولاً
-        //    rng.Text = safe;
-
-        //    var ro = isAr ? Word.WdReadingOrder.wdReadingOrderRtl
-        //                  : Word.WdReadingOrder.wdReadingOrderLtr;
-        //    var al = isAr ? Word.WdParagraphAlignment.wdAlignParagraphRight
-        //                  : Word.WdParagraphAlignment.wdAlignParagraphLeft;
-
-        //    // طبّق على تنسيق الفقرة في الـRange
-        //    rng.ParagraphFormat.ReadingOrder = ro;
-        //    rng.ParagraphFormat.Alignment = al;
-
-        //    // طبّق أيضاً على كل فقرة ضمن الـRange (بعض البيئات تحتاج هذا)
-        //    foreach (Word.Paragraph para in rng.Paragraphs)
-        //    {
-        //        try
-        //        {
-        //            para.Format.ReadingOrder = ro;
-        //            para.Alignment = al;  // فرض المحاذاة يمين/يسار
-        //        }
-        //        finally
-        //        {
-        //            try { System.Runtime.InteropServices.Marshal.ReleaseComObject(para); } catch { }
-        //        }
-        //    }
-
-        //    // خطوط BiDi
-        //    try
-        //    {
-        //        if (isAr) { rng.Font.NameBi = "Segoe UI"; rng.Font.SizeBi = rng.Font.Size; }
-        //        else { rng.Font.Name = "Segoe UI"; }
-        //    }
-        //    catch { }
-        //}
-
-        //// يحسم RTL/LTR + Alignment يقينًا باستخدام Selection.RtlPara / LtrPara
-        //private static void ApplyBiDiToRange(Word.Range rng, string text)
-        //{
-        //    bool isAr = LooksArabic(text);
-        //    string safe = text ?? string.Empty;
-
-        //    // اكتب النص أولاً
-        //    rng.Text = safe;
-
-        //    // اختر المدى وطبّق الأمر المناسب (يضبط الاتجاه + المحاذاة معًا)
-        //    rng.Select();
-        //    Word.Selection sel = rng.Application.Selection;
-
-        //    if (isAr)
-        //    {
-        //        sel.RtlPara(); // يجعل الفقرة RTL ويضبط المحاذاة يمينًا
-        //        try { sel.Range.Font.NameBi = "Segoe UI"; } catch { }
-        //        sel.Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphRight;
-        //    }
-        //    else
-        //    {
-        //        sel.LtrPara(); // يجعل الفقرة LTR ويضبط المحاذاة يسارًا
-        //        try { sel.Range.Font.Name = "Segoe UI"; } catch { }
-        //        sel.Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphLeft;
-        //    }
-        //}
 
 
         private static void AppendWithBiDi(Paragraph p, string text)
@@ -3578,7 +2573,7 @@ namespace ChatGPTFileProcessor
             chkSaveBesidePdf.Checked = Properties.Settings.Default.SaveBesidePdf;
             chkOrganizeByType.Checked = Properties.Settings.Default.OrganizeByType;
             textEditOutputFolder.Text = GetOutputFolder();
-            
+
             // API Key and model:
             textEditAPIKey.ReadOnly = Properties.Settings.Default.ApiKeyLock;
         }
