@@ -56,9 +56,9 @@ namespace ChatGPTFileProcessor.Services
         /// Resizes an image for API transmission
         /// </summary>
         /// <param name="src">Source image</param>
-        /// <param name="maxWidth">Maximum width (default 1280)</param>
+        /// <param name="maxWidth">Maximum width (default from Constants.MAX_IMAGE_WIDTH)</param>
         /// <returns>Resized image</returns>
-        public static SDImage ResizeForApi(SDImage src, int maxWidth = 1280)
+        public static SDImage ResizeForApi(SDImage src, int maxWidth = Constants.MAX_IMAGE_WIDTH)
         {
             if (src.Width <= maxWidth) return new Bitmap(src);
             int newHeight = (int)Math.Round(src.Height * (maxWidth / (double)src.Width));
@@ -75,9 +75,9 @@ namespace ChatGPTFileProcessor.Services
         /// Converts image to Base64-encoded JPEG with specified quality
         /// </summary>
         /// <param name="img">Source image</param>
-        /// <param name="jpegQuality">JPEG quality (default 85)</param>
+        /// <param name="jpegQuality">JPEG quality (default from Constants.JPEG_QUALITY)</param>
         /// <returns>Base64-encoded string</returns>
-        public static string ToBase64Jpeg(SDImage img, long jpegQuality = 85L)
+        public static string ToBase64Jpeg(SDImage img, long jpegQuality = Constants.JPEG_QUALITY)
         {
             using (var ms = new MemoryStream())
             {

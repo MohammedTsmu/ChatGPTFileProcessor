@@ -6,8 +6,8 @@ namespace ChatGPTFileProcessor.Helpers
     public static class Constants
     {
         // Image Processing Constants
-        public const int MAX_IMAGE_WIDTH = 1024;
-        public const long JPEG_QUALITY = 80L;
+        public const int MAX_IMAGE_WIDTH = 1024;  // Optimized for speed; use 1280 for higher quality
+        public const long JPEG_QUALITY = 80L;     // Optimized for speed; use 85L for higher quality
         public const int HIGH_DPI = 300;
 
         // API Retry Constants
