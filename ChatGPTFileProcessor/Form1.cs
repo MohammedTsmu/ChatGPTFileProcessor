@@ -841,7 +841,7 @@ namespace ChatGPTFileProcessor
                                 allVocabulary.AppendLine();
                             }
 
-                            // ── NEW: Summary
+                            // ─ـ NEW: Summary
                             if (chkSummary.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Summary…");
@@ -851,7 +851,7 @@ namespace ChatGPTFileProcessor
                                 allSummary.AppendLine();
                             }
 
-                            // ── NEW: Key Takeaways
+                            // ─ـ NEW: Key Takeaways
                             if (chkTakeaways.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Key Takeaways…");
@@ -861,7 +861,7 @@ namespace ChatGPTFileProcessor
                                 allTakeaways.AppendLine();
                             }
 
-                            // ── NEW: Cloze
+                            // ─ـ NEW: Cloze
                             if (chkCloze.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Cloze…");
@@ -871,7 +871,7 @@ namespace ChatGPTFileProcessor
                                 allCloze.AppendLine();
                             }
 
-                            // ── NEW: True/False
+                            // ─ـ NEW: True/False
                             if (chkTrueFalse.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → True/False…");
@@ -881,7 +881,7 @@ namespace ChatGPTFileProcessor
                                 allTrueFalse.AppendLine();
                             }
 
-                            // ── NEW: Outline
+                            // ─ـ NEW: Outline
                             if (chkOutline.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Outline…");
@@ -891,7 +891,7 @@ namespace ChatGPTFileProcessor
                                 allOutline.AppendLine();
                             }
 
-                            // ── NEW: Concept Map
+                            // ─ـ NEW: Concept Map
                             if (chkConceptMap.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Concept Map…");
@@ -901,7 +901,7 @@ namespace ChatGPTFileProcessor
                                 allConceptMap.AppendLine();
                             }
 
-                            // ── NEW: Table Extraction
+                            // ─ـ NEW: Table Extraction
                             if (chkTableExtract.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Table Extract…");
@@ -911,7 +911,7 @@ namespace ChatGPTFileProcessor
                                 allTableExtract.AppendLine();
                             }
 
-                            // ── NEW: Simplified Explanation
+                            // ─ـ NEW: Simplified Explanation
                             if (chkSimplified.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Simplified Explanation…");
@@ -921,7 +921,7 @@ namespace ChatGPTFileProcessor
                                 allSimplified.AppendLine();
                             }
 
-                            // ── NEW: Case Study Scenario
+                            // ─ـ NEW: Case Study Scenario
                             if (chkCaseStudy.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Case Study…");
@@ -931,7 +931,7 @@ namespace ChatGPTFileProcessor
                                 allCaseStudy.AppendLine();
                             }
 
-                            // ── NEW: High-Yield Keywords
+                            // ─ـ NEW: High-Yield Keywords
                             if (chkKeywords.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Keywords…");
@@ -941,7 +941,7 @@ namespace ChatGPTFileProcessor
                                 allKeywords.AppendLine();
                             }
 
-                            // ── NEW: Translated Sections
+                            // ─ـ NEW: Translated Sections
                             if (chkTranslatedSections.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Translated Sections…");
@@ -1018,7 +1018,7 @@ namespace ChatGPTFileProcessor
                                 allVocabulary.AppendLine();
                             }
 
-                            // ── NEW: Summary
+                            // ─ـ NEW: Summary
                             if (chkSummary.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Summary…");
@@ -1028,7 +1028,7 @@ namespace ChatGPTFileProcessor
                                 allSummary.AppendLine();
                             }
 
-                            // ── NEW: Key Takeaways
+                            // ─ـ NEW: Key Takeaways
                             if (chkTakeaways.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Key Takeaways…");
@@ -1038,7 +1038,7 @@ namespace ChatGPTFileProcessor
                                 allTakeaways.AppendLine();
                             }
 
-                            // ── NEW: Cloze
+                            // ─ـ NEW: Cloze
                             if (chkCloze.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Cloze…");
@@ -1048,7 +1048,7 @@ namespace ChatGPTFileProcessor
                                 allCloze.AppendLine();
                             }
 
-                            // ── NEW: True/False
+                            // ─ـ NEW: True/False
                             if (chkTrueFalse.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → True/False…");
@@ -1058,7 +1058,7 @@ namespace ChatGPTFileProcessor
                                 allTrueFalse.AppendLine();
                             }
 
-                            // ── NEW: Outline
+                            // ─ـ NEW: Outline
                             if (chkOutline.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Outline…");
@@ -1068,7 +1068,7 @@ namespace ChatGPTFileProcessor
                                 allOutline.AppendLine();
                             }
 
-                            // ── NEW: Concept Map
+                            // ─ـ NEW: Concept Map
                             if (chkConceptMap.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Concept Map…");
@@ -1078,7 +1078,7 @@ namespace ChatGPTFileProcessor
                                 allConceptMap.AppendLine();
                             }
 
-                            // ── NEW: Table Extraction
+                            // ─ـ NEW: Table Extraction
                             if (chkTableExtract.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Table Extract…");
@@ -1088,7 +1088,7 @@ namespace ChatGPTFileProcessor
                                 allTableExtract.AppendLine();
                             }
 
-                            // ── NEW: Simplified Explanation
+                            // ─ـ NEW: Simplified Explanation
                             if (chkSimplified.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Simplified Explanation…");
@@ -1098,7 +1098,7 @@ namespace ChatGPTFileProcessor
                                 allSimplified.AppendLine();
                             }
 
-                            // ── NEW: Case Study Scenario
+                            // ─ـ NEW: Case Study Scenario
                             if (chkCaseStudy.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Case Study…");
@@ -1108,7 +1108,7 @@ namespace ChatGPTFileProcessor
                                 allCaseStudy.AppendLine();
                             }
 
-                            // ── NEW: High-Yield Keywords
+                            // ─ـ NEW: High-Yield Keywords
                             if (chkKeywords.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Keywords…");
@@ -1118,7 +1118,7 @@ namespace ChatGPTFileProcessor
                                 allKeywords.AppendLine();
                             }
 
-                            // ── NEW: Translated Sections
+                            // ─ـ NEW: Translated Sections
                             if (chkTranslatedSections.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Translated Sections…");
@@ -1203,7 +1203,7 @@ namespace ChatGPTFileProcessor
                                 allVocabulary.AppendLine();
                             }
 
-                            // ── NEW: Summary
+                            // ─ـ NEW: Summary
                             if (chkSummary.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Summary…");
@@ -1213,7 +1213,7 @@ namespace ChatGPTFileProcessor
                                 allSummary.AppendLine();
                             }
 
-                            // ── NEW: Key Takeaways
+                            // ─ـ NEW: Key Takeaways
                             if (chkTakeaways.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Key Takeaways…");
@@ -1223,7 +1223,7 @@ namespace ChatGPTFileProcessor
                                 allTakeaways.AppendLine();
                             }
 
-                            // ── NEW: Cloze
+                            // ─ـ NEW: Cloze
                             if (chkCloze.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Cloze…");
@@ -1233,7 +1233,7 @@ namespace ChatGPTFileProcessor
                                 allCloze.AppendLine();
                             }
 
-                            // ── NEW: True/False
+                            // ─ـ NEW: True/False
                             if (chkTrueFalse.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → True/False…");
@@ -1243,7 +1243,7 @@ namespace ChatGPTFileProcessor
                                 allTrueFalse.AppendLine();
                             }
 
-                            // ── NEW: Outline
+                            // ─ـ NEW: Outline
                             if (chkOutline.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Outline…");
@@ -1253,7 +1253,7 @@ namespace ChatGPTFileProcessor
                                 allOutline.AppendLine();
                             }
 
-                            // ── NEW: Concept Map
+                            // ─ـ NEW: Concept Map
                             if (chkConceptMap.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Concept Map…");
@@ -1263,7 +1263,7 @@ namespace ChatGPTFileProcessor
                                 allConceptMap.AppendLine();
                             }
 
-                            // ── NEW: Table Extraction
+                            // ─ـ NEW: Table Extraction
                             if (chkTableExtract.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Table Extract…");
@@ -1273,7 +1273,7 @@ namespace ChatGPTFileProcessor
                                 allTableExtract.AppendLine();
                             }
 
-                            // ── NEW: Simplified Explanation
+                            // ─ـ NEW: Simplified Explanation
                             if (chkSimplified.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Simplified Explanation…");
@@ -1283,7 +1283,7 @@ namespace ChatGPTFileProcessor
                                 allSimplified.AppendLine();
                             }
 
-                            // ── NEW: Case Study Scenario
+                            // ─ـ NEW: Case Study Scenario
                             if (chkCaseStudy.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Case Study…");
@@ -1293,7 +1293,7 @@ namespace ChatGPTFileProcessor
                                 allCaseStudy.AppendLine();
                             }
 
-                            // ── NEW: High-Yield Keywords
+                            // ─ـ NEW: High-Yield Keywords
                             if (chkKeywords.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Keywords…");
@@ -1303,7 +1303,7 @@ namespace ChatGPTFileProcessor
                                 allKeywords.AppendLine();
                             }
 
-                            // ── NEW: Translated Sections
+                            // ─ـ NEW: Translated Sections
                             if (chkTranslatedSections.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Translated Sections…");
@@ -1323,10 +1323,10 @@ namespace ChatGPTFileProcessor
                                 allExplainTerms.AppendLine();
                             }
 
-
                             UpdateOverlayLog($"▶▶▶ ✅ Pages {startPage}–{endPage} done.");
                         }
                         break;
+
 
                     case 4:
                         // ─── Four‐page‐batch mode ───
@@ -1388,7 +1388,7 @@ namespace ChatGPTFileProcessor
                                 allVocabulary.AppendLine();
                             }
 
-                            // ── NEW: Summary
+                            // ─ـ NEW: Summary
                             if (chkSummary.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Summary…");
@@ -1398,7 +1398,7 @@ namespace ChatGPTFileProcessor
                                 allSummary.AppendLine();
                             }
 
-                            // ── NEW: Key Takeaways
+                            // ─ـ NEW: Key Takeaways
                             if (chkTakeaways.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Key Takeaways…");
@@ -1408,7 +1408,7 @@ namespace ChatGPTFileProcessor
                                 allTakeaways.AppendLine();
                             }
 
-                            // ── NEW: Cloze
+                            // ─ـ NEW: Cloze
                             if (chkCloze.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Cloze…");
@@ -1418,7 +1418,7 @@ namespace ChatGPTFileProcessor
                                 allCloze.AppendLine();
                             }
 
-                            // ── NEW: True/False
+                            // ─ـ NEW: True/False
                             if (chkTrueFalse.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → True/False…");
@@ -1428,7 +1428,7 @@ namespace ChatGPTFileProcessor
                                 allTrueFalse.AppendLine();
                             }
 
-                            // ── NEW: Outline
+                            // ─ـ NEW: Outline
                             if (chkOutline.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Outline…");
@@ -1438,7 +1438,7 @@ namespace ChatGPTFileProcessor
                                 allOutline.AppendLine();
                             }
 
-                            // ── NEW: Concept Map
+                            // ─ـ NEW: Concept Map
                             if (chkConceptMap.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Concept Map…");
@@ -1448,7 +1448,7 @@ namespace ChatGPTFileProcessor
                                 allConceptMap.AppendLine();
                             }
 
-                            // ── NEW: Table Extraction
+                            // ─ـ NEW: Table Extraction
                             if (chkTableExtract.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Table Extract…");
@@ -1458,7 +1458,7 @@ namespace ChatGPTFileProcessor
                                 allTableExtract.AppendLine();
                             }
 
-                            // ── NEW: Simplified Explanation
+                            // ─ـ NEW: Simplified Explanation
                             if (chkSimplified.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Simplified Explanation…");
@@ -1468,7 +1468,7 @@ namespace ChatGPTFileProcessor
                                 allSimplified.AppendLine();
                             }
 
-                            // ── NEW: Case Study Scenario
+                            // ─ـ NEW: Case Study Scenario
                             if (chkCaseStudy.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Case Study…");
@@ -1478,7 +1478,7 @@ namespace ChatGPTFileProcessor
                                 allCaseStudy.AppendLine();
                             }
 
-                            // ── NEW: High-Yield Keywords
+                            // ─ـ NEW: High-Yield Keywords
                             if (chkKeywords.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Keywords…");
@@ -1488,7 +1488,7 @@ namespace ChatGPTFileProcessor
                                 allKeywords.AppendLine();
                             }
 
-                            // ── NEW: Translated Sections
+                            // ─ـ NEW: Translated Sections
                             if (chkTranslatedSections.Checked)
                             {
                                 UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Translated Sections…");
@@ -1509,7 +1509,7 @@ namespace ChatGPTFileProcessor
                             }
 
 
-                            UpdateOverlayLog($"▶▶▶✅ Pages {startPage}–{endPage} done.");
+                            UpdateOverlayLog($"▶▶▶ ✅ Pages {startPage}–{endPage} done.");
                         }
                         break;
                     default:
@@ -1708,12 +1708,6 @@ namespace ChatGPTFileProcessor
                 UpdateOverlayLog("                                                     ");
                 UpdateOverlayLog("                                                     ");
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("❌ Error: " + ex.Message, "Processing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                UpdateStatus("❌ An error occurred during processing.");
-                UpdateOverlayLog("❌ An error occurred during processing: " + ex.Message);
-            }
             finally
             {
                 // نبني المستند الموحد من المخرجات المختارة
@@ -1798,9 +1792,7 @@ namespace ChatGPTFileProcessor
                 UpdateStatus("▰▰▰ Processing finished ▰▰▰");
                 UpdateOverlayLog("▰▰▰ Processing finished ▰▰▰");
                 HideOverlay();
-            }
-            finally
-            {
+    
                 // Dispose all images to prevent memory leaks
                 if (allPages != null)
                 {
@@ -2746,7 +2738,6 @@ namespace ChatGPTFileProcessor
             Properties.Settings.Default.SaveBesidePdf = chkSaveBesidePdf.Checked;
             Properties.Settings.Default.Save();
             UpdateStatus($"Save Beside PDF…{(chkSaveBesidePdf.Checked ? "▶ Activated" : "▶ Deactivated")}");
-
         }
 
         private void chkOrganizeByType_CheckedChanged(object sender, EventArgs e)
@@ -2919,6 +2910,7 @@ namespace ChatGPTFileProcessor
                     else if (t.StartsWith("Back:", StringComparison.OrdinalIgnoreCase))
                         back = t.Substring("Back:".Length).Trim();
                 }
+                // only add if we got at least a question and answer
                 if (!string.IsNullOrEmpty(front) && !string.IsNullOrEmpty(back))
                     cards.Add((front, back));
             }
@@ -3025,7 +3017,7 @@ namespace ChatGPTFileProcessor
                 string Escape(string field)
                 {
                     // wrap in quotes if it contains delim or newline
-                    if (field.Contains(delim) || field.Contains("\n"))
+                    if (field.Contains(delim) || field.Contains("\"") || field.Contains("\n"))
                     {
                         // double up any existing quotes
                         var escaped = field.Replace("\"", "\"\"");
@@ -3161,7 +3153,7 @@ namespace ChatGPTFileProcessor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Cannot open folder: " + ex.Message);
+                MessageBox.Show("❌ Cannot open folder: " + ex.Message);
             }
         }
 
