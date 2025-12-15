@@ -2156,7 +2156,7 @@ namespace ChatGPTFileProcessor
                     var content = new StringContent(
                         Newtonsoft.Json.JsonConvert.SerializeObject(jsonBody), Encoding.UTF8, "application/json");
 
-                    var response = await _http.PostAsync("https://api.openai.com/v1/chat/completions", content, cts.Token);
+                    var response = await _http.PostAsync("v1/chat/completions", content, cts.Token);
                     string body = await response.Content.ReadAsStringAsync(); // بدون Token في .NET Framework
 
                     if (!response.IsSuccessStatusCode)
@@ -2229,7 +2229,7 @@ namespace ChatGPTFileProcessor
                 var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromMinutes(7)); // أطول من _http.Timeout
                 try
                 {
-                    using (var req = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/chat/completions"))
+                    using (var req = new HttpRequestMessage(HttpMethod.Post, "v1/chat/completions"))
                     {
                         req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
                         req.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
@@ -2327,7 +2327,7 @@ namespace ChatGPTFileProcessor
                 var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromMinutes(7));
                 try
                 {
-                    using (var req = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/chat/completions"))
+                    using (var req = new HttpRequestMessage(HttpMethod.Post, "v1/chat/completions"))
                     {
                         req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
                         req.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
@@ -2380,7 +2380,8 @@ namespace ChatGPTFileProcessor
                 AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate
             })
         {
-            Timeout = TimeSpan.FromMinutes(6) // زدها إذا تحتاج
+            Timeout = TimeSpan.FromMinutes(6), // زدها إذا تحتاج
+            BaseAddress = new Uri("https://api.openai.com/")
         };
 
         // (اختياري) تأكيد TLS 1.2
