@@ -121,7 +121,55 @@ namespace ChatGPTFileProcessor
             //cmbDelimiter.SelectedIndex = 0; // default to TSV
         }
 
+        #region Helper Classes for Batch Processing
 
+        /// <summary>
+        /// Container for all prompt strings. Null values indicate disabled sections.
+        /// </summary>
+        private class ContentPrompts
+        {
+            public string Definitions { get; set; }
+            public string MCQs { get; set; }
+            public string Flashcards { get; set; }
+            public string Vocabulary { get; set; }
+            public string Summary { get; set; }
+            public string Takeaways { get; set; }
+            public string Cloze { get; set; }
+            public string TrueFalse { get; set; }
+            public string Outline { get; set; }
+            public string ConceptMap { get; set; }
+            public string TableExtract { get; set; }
+            public string Simplified { get; set; }
+            public string CaseStudy { get; set; }
+            public string Keywords { get; set; }
+            public string TranslatedSections { get; set; }
+            public string ExplainTerms { get; set; }
+        }
+
+        /// <summary>
+        /// Container for all StringBuilder instances that accumulate generated content.
+        /// </summary>
+        private class ContentBuilders
+        {
+            public StringBuilder Definitions { get; set; }
+            public StringBuilder MCQs { get; set; }
+            public StringBuilder Flashcards { get; set; }
+            public StringBuilder Vocabulary { get; set; }
+            public StringBuilder Summary { get; set; }
+            public StringBuilder Takeaways { get; set; }
+            public StringBuilder Cloze { get; set; }
+            public StringBuilder TrueFalse { get; set; }
+            public StringBuilder Outline { get; set; }
+            public StringBuilder ConceptMap { get; set; }
+            public StringBuilder TableExtract { get; set; }
+            public StringBuilder Simplified { get; set; }
+            public StringBuilder CaseStudy { get; set; }
+            public StringBuilder Keywords { get; set; }
+            public StringBuilder TranslatedSections { get; set; }
+            public StringBuilder ExplainTerms { get; set; }
+        }
+
+        #endregion
         private void buttonSaveAPIKey_Click(object sender, EventArgs e)
         {
             string apiKey = textEditAPIKey.Text.Trim();
@@ -795,726 +843,57 @@ namespace ChatGPTFileProcessor
                 int batchSize = (int)radioPageBatchSize.EditValue; // reads 1, 2 or 3
 
 
-                switch (batchSize)
+                // Create container with prompt strings (null = section disabled)
+                var prompts = new ContentPrompts
                 {
-                    case 1:
+                    Definitions = chkDefinitions.Checked ? definitionsPrompt : null,
+                    MCQs = chkMCQs.Checked ? mcqsPrompt : null,
+                    Flashcards = chkFlashcards.Checked ? flashcardsPrompt : null,
+                    Vocabulary = chkVocabulary.Checked ? vocabularyPrompt : null,
+                    Summary = chkSummary.Checked ? summaryPrompt : null,
+                    Takeaways = chkTakeaways.Checked ? takeawaysPrompt : null,
+                    Cloze = chkCloze.Checked ? clozePrompt : null,
+                    TrueFalse = chkTrueFalse.Checked ? trueFalsePrompt : null,
+                    Outline = chkOutline.Checked ? outlinePrompt : null,
+                    ConceptMap = chkConceptMap.Checked ? conceptMapPrompt : null,
+                    TableExtract = chkTableExtract.Checked ? tableExtractPrompt : null,
+                    Simplified = chkSimplified.Checked ? simplifiedPrompt : null,
+                    CaseStudy = chkCaseStudy.Checked ? caseStudyPrompt : null,
+                    Keywords = chkKeywords.Checked ? keywordsPrompt : null,
+                    TranslatedSections = chkTranslatedSections.Checked ? translatedSectionsPrompt : null,
+                    ExplainTerms = chkExplainTerms.Checked ? explainTermsPrompt : null
+                };
+
+                // Create container with references to the StringBuilders
+                var builders = new ContentBuilders
+                {
+                    Definitions = allDefinitions,
+                    MCQs = allMCQs,
+                    Flashcards = allFlashcards,
+                    Vocabulary = allVocabulary,
+                    Summary = allSummary,
+                    Takeaways = allTakeaways,
+                    Cloze = allCloze,
+                    TrueFalse = allTrueFalse,
+                    Outline = allOutline,
+                    ConceptMap = allConceptMap,
+                    TableExtract = allTableExtract,
+                    Simplified = allSimplified,
+                    CaseStudy = allCaseStudy,
+                    Keywords = allKeywords,
+                    TranslatedSections = allTranslatedSections,
+                    ExplainTerms = allExplainTerms
+                };
+
+                // Validate batch size
+                if (batchSize < 1 || batchSize > 4)
+                {
+                    throw new InvalidOperationException($"Unexpected batchSize: {batchSize}");
+                }
+
+                // Process all batches - this single line replaces the entire 720-line switch statement!
+                await ProcessAllBatchesAsync(allPages, batchSize, apiKey, modelName, prompts, builders);
 
-                        // ─── One‐page‐at‐a‐time mode ───
-
-                        // 6) حلقة لمعالجة كل صفحة عبر Multimodal (صورة + نص)
-                        // 6) Loop through each page, only calling ProcessPdfPageMultimodal if that section is enabled:
-                        foreach (var (pageNumber, image) in allPages)
-                        {
-                            if (chkDefinitions.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} to GPT (Definitions)...");
-                                string pageDef = await ProcessPdfPageMultimodal(image, apiKey, definitionsPrompt, modelName);
-                                allDefinitions.AppendLine($"===== Page {pageNumber} =====");
-                                allDefinitions.AppendLine(pageDef);
-                                allDefinitions.AppendLine();
-                            }
-
-                            if (chkMCQs.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} to GPT (MCQs)...");
-                                string pageMCQs = await ProcessPdfPageMultimodal(image, apiKey, mcqsPrompt, modelName);
-                                allMCQs.AppendLine($"===== Page {pageNumber} =====");
-                                allMCQs.AppendLine(pageMCQs);
-                                allMCQs.AppendLine();
-                            }
-
-                            if (chkFlashcards.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} to GPT (Flashcards)...");
-                                string pageFlash = await ProcessPdfPageMultimodal(image, apiKey, flashcardsPrompt, modelName);
-                                allFlashcards.AppendLine($"===== Page {pageNumber} =====");
-                                allFlashcards.AppendLine(pageFlash);
-                                allFlashcards.AppendLine();
-                            }
-
-                            if (chkVocabulary.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} to GPT (Vocabulary)...");
-                                string pageVocab = await ProcessPdfPageMultimodal(image, apiKey, vocabularyPrompt, modelName);
-                                allVocabulary.AppendLine($"===== Page {pageNumber} =====");
-                                allVocabulary.AppendLine(pageVocab);
-                                allVocabulary.AppendLine();
-                            }
-
-                            // ─ـ NEW: Summary
-                            if (chkSummary.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Summary…");
-                                string pageSum = await ProcessPdfPageMultimodal(image, apiKey, summaryPrompt, modelName);
-                                allSummary.AppendLine($"===== Page {pageNumber} =====");
-                                allSummary.AppendLine(pageSum);
-                                allSummary.AppendLine();
-                            }
-
-                            // ─ـ NEW: Key Takeaways
-                            if (chkTakeaways.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Key Takeaways…");
-                                string pageTA = await ProcessPdfPageMultimodal(image, apiKey, takeawaysPrompt, modelName);
-                                allTakeaways.AppendLine($"===== Page {pageNumber} =====");
-                                allTakeaways.AppendLine(pageTA);
-                                allTakeaways.AppendLine();
-                            }
-
-                            // ─ـ NEW: Cloze
-                            if (chkCloze.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Cloze…");
-                                string pageCL = await ProcessPdfPageMultimodal(image, apiKey, clozePrompt, modelName);
-                                allCloze.AppendLine($"===== Page {pageNumber} =====");
-                                allCloze.AppendLine(pageCL);
-                                allCloze.AppendLine();
-                            }
-
-                            // ─ـ NEW: True/False
-                            if (chkTrueFalse.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → True/False…");
-                                string pageTF = await ProcessPdfPageMultimodal(image, apiKey, trueFalsePrompt, modelName);
-                                allTrueFalse.AppendLine($"===== Page {pageNumber} =====");
-                                allTrueFalse.AppendLine(pageTF);
-                                allTrueFalse.AppendLine();
-                            }
-
-                            // ─ـ NEW: Outline
-                            if (chkOutline.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Outline…");
-                                string pageOL = await ProcessPdfPageMultimodal(image, apiKey, outlinePrompt, modelName);
-                                allOutline.AppendLine($"===== Page {pageNumber} =====");
-                                allOutline.AppendLine(pageOL);
-                                allOutline.AppendLine();
-                            }
-
-                            // ─ـ NEW: Concept Map
-                            if (chkConceptMap.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Concept Map…");
-                                string pageCM = await ProcessPdfPageMultimodal(image, apiKey, conceptMapPrompt, modelName);
-                                allConceptMap.AppendLine($"===== Page {pageNumber} =====");
-                                allConceptMap.AppendLine(pageCM);
-                                allConceptMap.AppendLine();
-                            }
-
-                            // ─ـ NEW: Table Extraction
-                            if (chkTableExtract.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Table Extract…");
-                                string pageTE = await ProcessPdfPageMultimodal(image, apiKey, tableExtractPrompt, modelName);
-                                allTableExtract.AppendLine($"===== Page {pageNumber} =====");
-                                allTableExtract.AppendLine(pageTE);
-                                allTableExtract.AppendLine();
-                            }
-
-                            // ─ـ NEW: Simplified Explanation
-                            if (chkSimplified.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Simplified Explanation…");
-                                string pageSI = await ProcessPdfPageMultimodal(image, apiKey, simplifiedPrompt, modelName);
-                                allSimplified.AppendLine($"===== Page {pageNumber} =====");
-                                allSimplified.AppendLine(pageSI);
-                                allSimplified.AppendLine();
-                            }
-
-                            // ─ـ NEW: Case Study Scenario
-                            if (chkCaseStudy.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Case Study…");
-                                string pageCS = await ProcessPdfPageMultimodal(image, apiKey, caseStudyPrompt, modelName);
-                                allCaseStudy.AppendLine($"===== Page {pageNumber} =====");
-                                allCaseStudy.AppendLine(pageCS);
-                                allCaseStudy.AppendLine();
-                            }
-
-                            // ─ـ NEW: High-Yield Keywords
-                            if (chkKeywords.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Keywords…");
-                                string pageKW = await ProcessPdfPageMultimodal(image, apiKey, keywordsPrompt, modelName);
-                                allKeywords.AppendLine($"===== Page {pageNumber} =====");
-                                allKeywords.AppendLine(pageKW);
-                                allKeywords.AppendLine();
-                            }
-
-                            // ─ـ NEW: Translated Sections
-                            if (chkTranslatedSections.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Translated Sections…");
-                                string pageTS = await ProcessPdfPageMultimodal(image, apiKey, translatedSectionsPrompt, modelName);
-                                allTranslatedSections.AppendLine($"===== Page {pageNumber} =====");
-                                allTranslatedSections.AppendLine(pageTS);
-                                allTranslatedSections.AppendLine();
-                            }
-
-                            //-- NEW: ExplainTerms
-                            if (chkExplainTerms.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending page {pageNumber} → Explain Terms…");
-                                string pageET = await ProcessPdfPageMultimodal(image, apiKey, explainTermsPrompt, modelName);
-                                allExplainTerms.AppendLine($"===== Page {pageNumber} =====");
-                                allExplainTerms.AppendLine(pageET);
-                                allExplainTerms.AppendLine();
-                            }
-
-
-                            UpdateOverlayLog($"▶▶▶ ✅ Page {pageNumber} done.");
-                        }
-                        break;
-
-
-                    case 2:
-                        // ——— Mode: 2 pages at a time ———
-                        for (int i = 0; i < allPages.Count; i += 2)
-                        {
-                            // build a small group of up to 2 pages
-                            var pageGroup = new List<(int pageNumber, SDImage image)>();
-                            for (int j = i; j < i + 2 && j < allPages.Count; j++)
-                                pageGroup.Add(allPages[j]);
-
-                            int startPage = pageGroup.First().pageNumber;
-                            int endPage = pageGroup.Last().pageNumber;
-                            string header = (startPage == endPage)
-                                ? $"===== Page {startPage} ====="
-                                : $"===== Pages {startPage}–{endPage} =====";
-
-                            if (chkDefinitions.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} to GPT (Definitions) …");
-                                string pagesDef = await ProcessPdfPagesMultimodal(pageGroup, apiKey, definitionsPrompt, modelName);
-                                allDefinitions.AppendLine(header);
-                                allDefinitions.AppendLine(pagesDef);
-                                allDefinitions.AppendLine();
-                            }
-
-                            if (chkMCQs.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} to GPT (MCQs) …");
-                                string pagesMCQs = await ProcessPdfPagesMultimodal(pageGroup, apiKey, mcqsPrompt, modelName);
-                                allMCQs.AppendLine(header);
-                                allMCQs.AppendLine(pagesMCQs);
-                                allMCQs.AppendLine();
-                            }
-
-                            if (chkFlashcards.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} to GPT (Flashcards) …");
-                                string pagesFlash = await ProcessPdfPagesMultimodal(pageGroup, apiKey, flashcardsPrompt, modelName);
-                                allFlashcards.AppendLine(header);
-                                allFlashcards.AppendLine(pagesFlash);
-                                allFlashcards.AppendLine();
-                            }
-
-                            if (chkVocabulary.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} to GPT (Vocabulary) …");
-                                string pagesVocab = await ProcessPdfPagesMultimodal(pageGroup, apiKey, vocabularyPrompt, modelName);
-                                allVocabulary.AppendLine(header);
-                                allVocabulary.AppendLine(pagesVocab);
-                                allVocabulary.AppendLine();
-                            }
-
-                            // ─ـ NEW: Summary
-                            if (chkSummary.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Summary…");
-                                string pagesSum = await ProcessPdfPagesMultimodal(pageGroup, apiKey, summaryPrompt, modelName);
-                                allSummary.AppendLine(header);
-                                allSummary.AppendLine(pagesSum);
-                                allSummary.AppendLine();
-                            }
-
-                            // ─ـ NEW: Key Takeaways
-                            if (chkTakeaways.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Key Takeaways…");
-                                string pagesTA = await ProcessPdfPagesMultimodal(pageGroup, apiKey, takeawaysPrompt, modelName);
-                                allTakeaways.AppendLine(header);
-                                allTakeaways.AppendLine(pagesTA);
-                                allTakeaways.AppendLine();
-                            }
-
-                            // ─ـ NEW: Cloze
-                            if (chkCloze.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Cloze…");
-                                string pagesCL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, clozePrompt, modelName);
-                                allCloze.AppendLine(header);
-                                allCloze.AppendLine(pagesCL);
-                                allCloze.AppendLine();
-                            }
-
-                            // ─ـ NEW: True/False
-                            if (chkTrueFalse.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → True/False…");
-                                string pagesTF = await ProcessPdfPagesMultimodal(pageGroup, apiKey, trueFalsePrompt, modelName);
-                                allTrueFalse.AppendLine(header);
-                                allTrueFalse.AppendLine(pagesTF);
-                                allTrueFalse.AppendLine();
-                            }
-
-                            // ─ـ NEW: Outline
-                            if (chkOutline.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Outline…");
-                                string pagesOL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, outlinePrompt, modelName);
-                                allOutline.AppendLine(header);
-                                allOutline.AppendLine(pagesOL);
-                                allOutline.AppendLine();
-                            }
-
-                            // ─ـ NEW: Concept Map
-                            if (chkConceptMap.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Concept Map…");
-                                string pagesCM = await ProcessPdfPagesMultimodal(pageGroup, apiKey, conceptMapPrompt, modelName);
-                                allConceptMap.AppendLine(header);
-                                allConceptMap.AppendLine(pagesCM);
-                                allConceptMap.AppendLine();
-                            }
-
-                            // ─ـ NEW: Table Extraction
-                            if (chkTableExtract.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Table Extract…");
-                                string pagesTE = await ProcessPdfPagesMultimodal(pageGroup, apiKey, tableExtractPrompt, modelName);
-                                allTableExtract.AppendLine(header);
-                                allTableExtract.AppendLine(pagesTE);
-                                allTableExtract.AppendLine();
-                            }
-
-                            // ─ـ NEW: Simplified Explanation
-                            if (chkSimplified.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Simplified Explanation…");
-                                string pagesSI = await ProcessPdfPagesMultimodal(pageGroup, apiKey, simplifiedPrompt, modelName);
-                                allSimplified.AppendLine(header);
-                                allSimplified.AppendLine(pagesSI);
-                                allSimplified.AppendLine();
-                            }
-
-                            // ─ـ NEW: Case Study Scenario
-                            if (chkCaseStudy.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Case Study…");
-                                string pagesCS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, caseStudyPrompt, modelName);
-                                allCaseStudy.AppendLine(header);
-                                allCaseStudy.AppendLine(pagesCS);
-                                allCaseStudy.AppendLine();
-                            }
-
-                            // ─ـ NEW: High-Yield Keywords
-                            if (chkKeywords.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Keywords…");
-                                string pagesKW = await ProcessPdfPagesMultimodal(pageGroup, apiKey, keywordsPrompt, modelName);
-                                allKeywords.AppendLine(header);
-                                allKeywords.AppendLine(pagesKW);
-                                allKeywords.AppendLine();
-                            }
-
-                            // ─ـ NEW: Translated Sections
-                            if (chkTranslatedSections.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Translated Sections…");
-                                string pagesTS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, translatedSectionsPrompt, modelName);
-                                allTranslatedSections.AppendLine(header);
-                                allTranslatedSections.AppendLine(pagesTS);
-                                allTranslatedSections.AppendLine();
-                            }
-
-                            //-- NEW: ExplainTerms
-                            if (chkExplainTerms.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Explain Terms…");
-                                string pagesET = await ProcessPdfPagesMultimodal(pageGroup, apiKey, explainTermsPrompt, modelName);
-                                allExplainTerms.AppendLine(header);
-                                allExplainTerms.AppendLine(pagesET);
-                                allExplainTerms.AppendLine();
-                            }
-
-                            UpdateOverlayLog($"▶▶▶ ✅ Pages {startPage}–{endPage} done.");
-                        }
-                        break;
-
-
-                    case 3:
-                        // ─── Three‐page‐batch mode ───
-
-                        // 6) Instead of one‐by‐one, we chunk into groups of three pages at a time:
-                        for (int i = 0; i < allPages.Count; i += 3)
-                        {
-                            // Build up to a 3‐page slice
-                            var pageGroup = new List<(int pageNumber, SDImage image)>();
-                            for (int j = i; j < i + 3 && j < allPages.Count; j++)
-                            {
-                                pageGroup.Add(allPages[j]);
-                            }
-
-                            // We’ll label them by “Pages X–Y” or “Page X” if only one in the group
-                            int startPage = pageGroup.First().pageNumber;
-                            int endPage = pageGroup.Last().pageNumber;
-                            string header = (startPage == endPage)
-                                ? $"===== Page {startPage} ====="
-                                : $"===== Pages {startPage}–{endPage} =====";
-
-                            // 6a) Definitions
-                            if (chkDefinitions.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} to GPT (Definitions)...");
-                                string pagesDef = await ProcessPdfPagesMultimodal(pageGroup, apiKey, definitionsPrompt, modelName);
-                                allDefinitions.AppendLine(header);
-                                allDefinitions.AppendLine(pagesDef);
-                                allDefinitions.AppendLine();
-                            }
-
-                            // 6b) MCQs
-                            if (chkMCQs.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} to GPT (MCQs)...");
-                                string pagesMCQs = await ProcessPdfPagesMultimodal(pageGroup, apiKey, mcqsPrompt, modelName);
-                                allMCQs.AppendLine(header);
-                                allMCQs.AppendLine(pagesMCQs);
-                                allMCQs.AppendLine();
-                            }
-
-                            // 6c) Flashcards
-                            if (chkFlashcards.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} to GPT (Flashcards)...");
-                                string pagesFlash = await ProcessPdfPagesMultimodal(pageGroup, apiKey, flashcardsPrompt, modelName);
-                                allFlashcards.AppendLine(header);
-                                allFlashcards.AppendLine(pagesFlash);
-                                allFlashcards.AppendLine();
-                            }
-
-                            // 6d) Vocabulary
-                            if (chkVocabulary.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} to GPT (Vocabulary)...");
-                                string pagesVocab = await ProcessPdfPagesMultimodal(pageGroup, apiKey, vocabularyPrompt, modelName);
-                                allVocabulary.AppendLine(header);
-                                allVocabulary.AppendLine(pagesVocab);
-                                allVocabulary.AppendLine();
-                            }
-
-                            // ─ـ NEW: Summary
-                            if (chkSummary.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Summary…");
-                                string pagesSum = await ProcessPdfPagesMultimodal(pageGroup, apiKey, summaryPrompt, modelName);
-                                allSummary.AppendLine(header);
-                                allSummary.AppendLine(pagesSum);
-                                allSummary.AppendLine();
-                            }
-
-                            // ─ـ NEW: Key Takeaways
-                            if (chkTakeaways.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Key Takeaways…");
-                                string pagesTA = await ProcessPdfPagesMultimodal(pageGroup, apiKey, takeawaysPrompt, modelName);
-                                allTakeaways.AppendLine(header);
-                                allTakeaways.AppendLine(pagesTA);
-                                allTakeaways.AppendLine();
-                            }
-
-                            // ─ـ NEW: Cloze
-                            if (chkCloze.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Cloze…");
-                                string pagesCL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, clozePrompt, modelName);
-                                allCloze.AppendLine(header);
-                                allCloze.AppendLine(pagesCL);
-                                allCloze.AppendLine();
-                            }
-
-                            // ─ـ NEW: True/False
-                            if (chkTrueFalse.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → True/False…");
-                                string pagesTF = await ProcessPdfPagesMultimodal(pageGroup, apiKey, trueFalsePrompt, modelName);
-                                allTrueFalse.AppendLine(header);
-                                allTrueFalse.AppendLine(pagesTF);
-                                allTrueFalse.AppendLine();
-                            }
-
-                            // ─ـ NEW: Outline
-                            if (chkOutline.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Outline…");
-                                string pagesOL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, outlinePrompt, modelName);
-                                allOutline.AppendLine(header);
-                                allOutline.AppendLine(pagesOL);
-                                allOutline.AppendLine();
-                            }
-
-                            // ─ـ NEW: Concept Map
-                            if (chkConceptMap.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Concept Map…");
-                                string pagesCM = await ProcessPdfPagesMultimodal(pageGroup, apiKey, conceptMapPrompt, modelName);
-                                allConceptMap.AppendLine(header);
-                                allConceptMap.AppendLine(pagesCM);
-                                allConceptMap.AppendLine();
-                            }
-
-                            // ─ـ NEW: Table Extraction
-                            if (chkTableExtract.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Table Extract…");
-                                string pagesTE = await ProcessPdfPagesMultimodal(pageGroup, apiKey, tableExtractPrompt, modelName);
-                                allTableExtract.AppendLine(header);
-                                allTableExtract.AppendLine(pagesTE);
-                                allTableExtract.AppendLine();
-                            }
-
-                            // ─ـ NEW: Simplified Explanation
-                            if (chkSimplified.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Simplified Explanation…");
-                                string pagesSI = await ProcessPdfPagesMultimodal(pageGroup, apiKey, simplifiedPrompt, modelName);
-                                allSimplified.AppendLine(header);
-                                allSimplified.AppendLine(pagesSI);
-                                allSimplified.AppendLine();
-                            }
-
-                            // ─ـ NEW: Case Study Scenario
-                            if (chkCaseStudy.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Case Study…");
-                                string pagesCS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, caseStudyPrompt, modelName);
-                                allCaseStudy.AppendLine(header);
-                                allCaseStudy.AppendLine(pagesCS);
-                                allCaseStudy.AppendLine();
-                            }
-
-                            // ─ـ NEW: High-Yield Keywords
-                            if (chkKeywords.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Keywords…");
-                                string pagesKW = await ProcessPdfPagesMultimodal(pageGroup, apiKey, keywordsPrompt, modelName);
-                                allKeywords.AppendLine(header);
-                                allKeywords.AppendLine(pagesKW);
-                                allKeywords.AppendLine();
-                            }
-
-                            // ─ـ NEW: Translated Sections
-                            if (chkTranslatedSections.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Translated Sections…");
-                                string pagesTS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, translatedSectionsPrompt, modelName);
-                                allTranslatedSections.AppendLine(header);
-                                allTranslatedSections.AppendLine(pagesTS);
-                                allTranslatedSections.AppendLine();
-                            }
-
-                            //-- NEW: ExplainTerms
-                            if (chkExplainTerms.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Explain Terms…");
-                                string pagesET = await ProcessPdfPagesMultimodal(pageGroup, apiKey, explainTermsPrompt, modelName);
-                                allExplainTerms.AppendLine(header);
-                                allExplainTerms.AppendLine(pagesET);
-                                allExplainTerms.AppendLine();
-                            }
-
-                            UpdateOverlayLog($"▶▶▶ ✅ Pages {startPage}–{endPage} done.");
-                        }
-                        break;
-
-
-                    case 4:
-                        // ─── Four‐page‐batch mode ───
-
-                        // 6) Instead of one‐by‐one, we chunk into groups of three pages at a time:
-                        for (int i = 0; i < allPages.Count; i += 4)
-                        {
-                            // Build up to a 4‐page slice
-                            var pageGroup = new List<(int pageNumber, SDImage image)>();
-                            for (int j = i; j < i + 4 && j < allPages.Count; j++)
-                            {
-                                pageGroup.Add(allPages[j]);
-                            }
-
-                            // We’ll label them by “Pages X–Y” or “Page X” if only one in the group
-                            int startPage = pageGroup.First().pageNumber;
-                            int endPage = pageGroup.Last().pageNumber;
-                            string header = (startPage == endPage)
-                                ? $"===== Page {startPage} ====="
-                                : $"===== Pages {startPage}–{endPage} =====";
-
-                            // 6a) Definitions
-                            if (chkDefinitions.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} to GPT (Definitions)...");
-                                string pagesDef = await ProcessPdfPagesMultimodal(pageGroup, apiKey, definitionsPrompt, modelName);
-                                allDefinitions.AppendLine(header);
-                                allDefinitions.AppendLine(pagesDef);
-                                allDefinitions.AppendLine();
-                            }
-
-                            // 6b) MCQs
-                            if (chkMCQs.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} to GPT (MCQs)...");
-                                string pagesMCQs = await ProcessPdfPagesMultimodal(pageGroup, apiKey, mcqsPrompt, modelName);
-                                allMCQs.AppendLine(header);
-                                allMCQs.AppendLine(pagesMCQs);
-                                allMCQs.AppendLine();
-                            }
-
-                            // 6c) Flashcards
-                            if (chkFlashcards.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} to GPT (Flashcards)...");
-                                string pagesFlash = await ProcessPdfPagesMultimodal(pageGroup, apiKey, flashcardsPrompt, modelName);
-                                allFlashcards.AppendLine(header);
-                                allFlashcards.AppendLine(pagesFlash);
-                                allFlashcards.AppendLine();
-                            }
-
-                            // 6d) Vocabulary
-                            if (chkVocabulary.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} to GPT (Vocabulary)...");
-                                string pagesVocab = await ProcessPdfPagesMultimodal(pageGroup, apiKey, vocabularyPrompt, modelName);
-                                allVocabulary.AppendLine(header);
-                                allVocabulary.AppendLine(pagesVocab);
-                                allVocabulary.AppendLine();
-                            }
-
-                            // ─ـ NEW: Summary
-                            if (chkSummary.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Summary…");
-                                string pagesSum = await ProcessPdfPagesMultimodal(pageGroup, apiKey, summaryPrompt, modelName);
-                                allSummary.AppendLine(header);
-                                allSummary.AppendLine(pagesSum);
-                                allSummary.AppendLine();
-                            }
-
-                            // ─ـ NEW: Key Takeaways
-                            if (chkTakeaways.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Key Takeaways…");
-                                string pagesTA = await ProcessPdfPagesMultimodal(pageGroup, apiKey, takeawaysPrompt, modelName);
-                                allTakeaways.AppendLine(header);
-                                allTakeaways.AppendLine(pagesTA);
-                                allTakeaways.AppendLine();
-                            }
-
-                            // ─ـ NEW: Cloze
-                            if (chkCloze.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Cloze…");
-                                string pagesCL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, clozePrompt, modelName);
-                                allCloze.AppendLine(header);
-                                allCloze.AppendLine(pagesCL);
-                                allCloze.AppendLine();
-                            }
-
-                            // ─ـ NEW: True/False
-                            if (chkTrueFalse.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → True/False…");
-                                string pagesTF = await ProcessPdfPagesMultimodal(pageGroup, apiKey, trueFalsePrompt, modelName);
-                                allTrueFalse.AppendLine(header);
-                                allTrueFalse.AppendLine(pagesTF);
-                                allTrueFalse.AppendLine();
-                            }
-
-                            // ─ـ NEW: Outline
-                            if (chkOutline.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Outline…");
-                                string pagesOL = await ProcessPdfPagesMultimodal(pageGroup, apiKey, outlinePrompt, modelName);
-                                allOutline.AppendLine(header);
-                                allOutline.AppendLine(pagesOL);
-                                allOutline.AppendLine();
-                            }
-
-                            // ─ـ NEW: Concept Map
-                            if (chkConceptMap.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Concept Map…");
-                                string pagesCM = await ProcessPdfPagesMultimodal(pageGroup, apiKey, conceptMapPrompt, modelName);
-                                allConceptMap.AppendLine(header);
-                                allConceptMap.AppendLine(pagesCM);
-                                allConceptMap.AppendLine();
-                            }
-
-                            // ─ـ NEW: Table Extraction
-                            if (chkTableExtract.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Table Extract…");
-                                string pagesTE = await ProcessPdfPagesMultimodal(pageGroup, apiKey, tableExtractPrompt, modelName);
-                                allTableExtract.AppendLine(header);
-                                allTableExtract.AppendLine(pagesTE);
-                                allTableExtract.AppendLine();
-                            }
-
-                            // ─ـ NEW: Simplified Explanation
-                            if (chkSimplified.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Simplified Explanation…");
-                                string pagesSI = await ProcessPdfPagesMultimodal(pageGroup, apiKey, simplifiedPrompt, modelName);
-                                allSimplified.AppendLine(header);
-                                allSimplified.AppendLine(pagesSI);
-                                allSimplified.AppendLine();
-                            }
-
-                            // ─ـ NEW: Case Study Scenario
-                            if (chkCaseStudy.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Case Study…");
-                                string pagesCS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, caseStudyPrompt, modelName);
-                                allCaseStudy.AppendLine(header);
-                                allCaseStudy.AppendLine(pagesCS);
-                                allCaseStudy.AppendLine();
-                            }
-
-                            // ─ـ NEW: High-Yield Keywords
-                            if (chkKeywords.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Keywords…");
-                                string pagesKW = await ProcessPdfPagesMultimodal(pageGroup, apiKey, keywordsPrompt, modelName);
-                                allKeywords.AppendLine(header);
-                                allKeywords.AppendLine(pagesKW);
-                                allKeywords.AppendLine();
-                            }
-
-                            // ─ـ NEW: Translated Sections
-                            if (chkTranslatedSections.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Translated Sections…");
-                                string pagesTS = await ProcessPdfPagesMultimodal(pageGroup, apiKey, translatedSectionsPrompt, modelName);
-                                allTranslatedSections.AppendLine(header);
-                                allTranslatedSections.AppendLine(pagesTS);
-                                allTranslatedSections.AppendLine();
-                            }
-
-                            //-- NEW: ExplainTerms
-                            if (chkExplainTerms.Checked)
-                            {
-                                UpdateOverlayLog($"▶▶▶ Sending pages {startPage}–{endPage} → Explain Terms…");
-                                string pagesET = await ProcessPdfPagesMultimodal(pageGroup, apiKey, explainTermsPrompt, modelName);
-                                allExplainTerms.AppendLine(header);
-                                allExplainTerms.AppendLine(pagesET);
-                                allExplainTerms.AppendLine();
-                            }
-
-
-                            UpdateOverlayLog($"▶▶▶ ✅ Pages {startPage}–{endPage} done.");
-                        }
-                        break;
-                    default:
-                        throw new InvalidOperationException($"Unexpected batchSize: {batchSize}");
-                } // end of batch size switch
 
 
 
@@ -2364,6 +1743,119 @@ namespace ChatGPTFileProcessor
             return "No content returned.";
         }
 
+        #region Batch Processing Helper Methods
+
+        /// <summary>
+        /// Processes all pages in batches of the specified size.
+        /// Replaces the 4-case switch statement with a single unified implementation.
+        /// </summary>
+        /// <param name="allPages">List of all pages to process</param>
+        /// <param name="batchSize">Number of pages per batch (1-4)</param>
+        /// <param name="apiKey">OpenAI API key</param>
+        /// <param name="modelName">Model name (e.g., "gpt-4o")</param>
+        /// <param name="prompts">Container with prompt strings (null = section disabled)</param>
+        /// <param name="builders">Container with StringBuilders to accumulate results</param>
+        private async Task ProcessAllBatchesAsync(
+            List<(int pageNumber, SDImage image)> allPages,
+            int batchSize,
+            string apiKey,
+            string modelName,
+            ContentPrompts prompts,
+            ContentBuilders builders)
+        {
+            for (int i = 0; i < allPages.Count; i += batchSize)
+            {
+                // Build a group of up to batchSize pages
+                var pageGroup = new List<(int pageNumber, SDImage image)>();
+                for (int j = i; j < i + batchSize && j < allPages.Count; j++)
+                {
+                    pageGroup.Add(allPages[j]);
+                }
+
+                // Create header label for this batch
+                int startPage = pageGroup.First().pageNumber;
+                int endPage = pageGroup.Last().pageNumber;
+                string header = (startPage == endPage)
+                    ? $"===== Page {startPage} ====="
+                    : $"===== Pages {startPage}–{endPage} =====";
+
+                // Process all enabled sections for this batch
+                await ProcessPageBatchAsync(pageGroup, apiKey, modelName, prompts, builders, header, startPage, endPage);
+
+                // Log completion
+                string completionMsg = (startPage == endPage)
+                    ? $"Page {startPage}"
+                    : $"Pages {startPage}–{endPage}";
+                UpdateOverlayLog($"▶▶▶ ✅ {completionMsg} done.");
+            }
+        }
+
+        /// <summary>
+        /// Processes a single batch of pages for all enabled content types.
+        /// </summary>
+        private async Task ProcessPageBatchAsync(
+            List<(int pageNumber, SDImage image)> pageGroup,
+            string apiKey,
+            string modelName,
+            ContentPrompts prompts,
+            ContentBuilders builders,
+            string header,
+            int startPage,
+            int endPage)
+        {
+            // Local helper function to process a single section
+            // This avoids repeating the same pattern 16 times
+            async Task ProcessSectionAsync(StringBuilder builder, string prompt, string sectionName)
+            {
+                // Skip if section is disabled (builder is null) or prompt is empty
+                if (builder == null || string.IsNullOrEmpty(prompt))
+                    return;
+
+                // Log which section we're processing
+                string pageLabel = (startPage == endPage)
+                    ? $"page {startPage}"
+                    : $"pages {startPage}–{endPage}";
+                UpdateOverlayLog($"▶▶▶ Sending {pageLabel} to GPT ({sectionName})...");
+
+                // Call the appropriate API method based on batch size
+                string result;
+                if (pageGroup.Count == 1)
+                {
+                    // Single page - use the single-image method
+                    result = await ProcessPdfPageMultimodal(pageGroup[0].image, apiKey, prompt, modelName);
+                }
+                else
+                {
+                    // Multiple pages - use the multi-image method
+                    result = await ProcessPdfPagesMultimodal(pageGroup, apiKey, prompt, modelName);
+                }
+
+                // Append results to the builder
+                builder.AppendLine(header);
+                builder.AppendLine(result);
+                builder.AppendLine();
+            }
+
+            // Process each section in order (matches your original code order)
+            await ProcessSectionAsync(builders.Definitions, prompts.Definitions, "Definitions");
+            await ProcessSectionAsync(builders.MCQs, prompts.MCQs, "MCQs");
+            await ProcessSectionAsync(builders.Flashcards, prompts.Flashcards, "Flashcards");
+            await ProcessSectionAsync(builders.Vocabulary, prompts.Vocabulary, "Vocabulary");
+            await ProcessSectionAsync(builders.Summary, prompts.Summary, "Summary");
+            await ProcessSectionAsync(builders.Takeaways, prompts.Takeaways, "Key Takeaways");
+            await ProcessSectionAsync(builders.Cloze, prompts.Cloze, "Cloze");
+            await ProcessSectionAsync(builders.TrueFalse, prompts.TrueFalse, "True/False");
+            await ProcessSectionAsync(builders.Outline, prompts.Outline, "Outline");
+            await ProcessSectionAsync(builders.ConceptMap, prompts.ConceptMap, "Concept Map");
+            await ProcessSectionAsync(builders.TableExtract, prompts.TableExtract, "Table Extract");
+            await ProcessSectionAsync(builders.Simplified, prompts.Simplified, "Simplified Explanation");
+            await ProcessSectionAsync(builders.CaseStudy, prompts.CaseStudy, "Case Study");
+            await ProcessSectionAsync(builders.Keywords, prompts.Keywords, "Keywords");
+            await ProcessSectionAsync(builders.TranslatedSections, prompts.TranslatedSections, "Translated Sections");
+            await ProcessSectionAsync(builders.ExplainTerms, prompts.ExplainTerms, "Explain Terms");
+        }
+
+        #endregion
 
         // HttpClient مُشترك للتطبيق كله (أفضل ممارسة + نتفادى مشاكل المنافذ/المهلات)
         private static readonly HttpClient _http = new HttpClient(
