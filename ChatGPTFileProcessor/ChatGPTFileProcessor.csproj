@@ -254,6 +254,9 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\Constants.cs" />
+    <Compile Include="Models\LanguageInfo.cs" />
+    <Compile Include="Models\McqItem.cs" />
     <Compile Include="PageSelectionForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -262,6 +265,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\PdfProcessingService.cs" />
     <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>
