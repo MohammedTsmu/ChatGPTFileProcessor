@@ -51,9 +51,32 @@ namespace ChatGPTFileProcessor
             // أفرغ العناصر أولاً
             comboBoxEditModel.Properties.Items.Clear();
 
-            // أضف الموديلات المتوفرة
-            comboBoxEditModel.Properties.Items.Add("gpt-4o"); // Add gpt-4o model to the combo box
-            comboBoxEditModel.Properties.Items.Add("gpt-5");
+            // ===== أضف الموديلات الأحدث (2025) =====
+            // GPT-5 Series - Latest and most capable
+            comboBoxEditModel.Properties.Items.Add("gpt-5.2");              // الأحدث - ديسمبر 2025
+            comboBoxEditModel.Properties.Items.Add("gpt-5.2-thinking");     // مع تفكير موسع
+            comboBoxEditModel.Properties.Items.Add("gpt-5.1");              // نموذج التفكير
+            comboBoxEditModel.Properties.Items.Add("gpt-5");                // النموذج الأساسي
+            comboBoxEditModel.Properties.Items.Add("gpt-5-mini");           // أسرع وأرخص
+            comboBoxEditModel.Properties.Items.Add("gpt-5-nano");           // الأسرع والأرخص
+            comboBoxEditModel.Properties.Items.Add("gpt-5-chat-latest");    // للمحادثات
+
+            // O-Series Reasoning Models - Best for complex analysis
+            comboBoxEditModel.Properties.Items.Add("o3");                   // للتحليل المعقد
+            comboBoxEditModel.Properties.Items.Add("o4-mini");              // نموذج تفكير فعال
+            comboBoxEditModel.Properties.Items.Add("o3-mini");              // النسخة السابقة
+            comboBoxEditModel.Properties.Items.Add("o1");                   // النموذج الأصلي
+
+            // GPT-4.1 Series - Excellent for coding
+            comboBoxEditModel.Properties.Items.Add("gpt-4.1");              // ممتاز للبرمجة
+            comboBoxEditModel.Properties.Items.Add("gpt-4.1-mini");         // النسخة المصغرة
+            comboBoxEditModel.Properties.Items.Add("gpt-4.1-nano");         // فائق السرعة
+
+            // GPT-4o Series - Legacy but still good
+            comboBoxEditModel.Properties.Items.Add("chatgpt-4o-latest");    // آخر نسخة من 4o
+            comboBoxEditModel.Properties.Items.Add("gpt-4o");               // النموذج الأصلي
+            comboBoxEditModel.Properties.Items.Add("gpt-4o-mini");          // خيار اقتصادي
+
 
 
             InitializeOverlay();
@@ -397,7 +420,8 @@ namespace ChatGPTFileProcessor
                 this.Text = "Processing PDF..."; // Update form title to indicate processing
 
                 // اسم النموذج والـ timestamp لإنشاء مسارات الملفات
-                string modelName = comboBoxEditModel.SelectedItem?.ToString() ?? "gpt-4o"; // Use the new combo box for model selection
+                //string modelName = comboBoxEditModel.SelectedItem?.ToString() ?? "gpt-4o"; // Use the new combo box for model selection
+                string modelName = comboBoxEditModel.SelectedItem?.ToString() ?? "gpt-5.2"; // Updated to latest model
                 //string timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 string timeStamp = DateTime.Now.ToString("yyyy_MM_dd___HH_mmss");
 
