@@ -2852,6 +2852,9 @@ namespace ChatGPTFileProcessor
         /// <summary>
         /// Creates an Anki .apkg file from MCQ data
         /// </summary>
+        /// <summary>
+        /// Creates an Anki .apkg file from MCQ data
+        /// </summary>
         private void SaveMcqsToApkg(List<McqItem> items, string outputPath, string deckName)
         {
             try
@@ -2870,14 +2873,15 @@ namespace ChatGPTFileProcessor
                 // MCQ format: Question, Options, Answer
                 ankiDeck.SetFields("Question", "Options", "Answer");
 
-                // ✨ FIXED: Show Question + Options on FRONT, Answer on BACK
-                ankiDeck.SetFormat("{0}\\n\\n{1}\\n<hr id=answer>\\n<b>Correct Answer: {2}</b>");
+                // Format: Question on top, Options below with spacing, Answer on back
+                ankiDeck.SetFormat("{0}<br><br>{1}\\n<hr id=answer>\\n<b>Correct Answer: {2}</b>");
 
                 foreach (var mcq in items)
                 {
                     if (!string.IsNullOrWhiteSpace(mcq.Question))
                     {
-                        string options = $"A) {mcq.OptionA}\nB) {mcq.OptionB}\nC) {mcq.OptionC}\nD) {mcq.OptionD}";
+                        // Format options with HTML line breaks for better readability
+                        string options = $"A) {mcq.OptionA}<br><br>B) {mcq.OptionB}<br><br>C) {mcq.OptionC}<br><br>D) {mcq.OptionD}";
                         ankiDeck.AddItem(mcq.Question, options, mcq.Answer);
                     }
                 }
