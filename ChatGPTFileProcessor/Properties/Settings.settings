@@ -83,5 +83,8 @@
     <Setting Name="OrganizeByType" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="ReasoningEffort" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Auto</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

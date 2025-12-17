@@ -346,5 +346,17 @@ namespace ChatGPTFileProcessor.Properties {
                 this["OrganizeByType"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Auto")]
+        public string ReasoningEffort {
+            get {
+                return ((string)(this["ReasoningEffort"]));
+            }
+            set {
+                this["ReasoningEffort"] = value;
+            }
+        }
     }
 }

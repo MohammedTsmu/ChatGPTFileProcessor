@@ -37,6 +37,7 @@ namespace ChatGPTFileProcessor
         // يُسجّل آخر ملف PDF اختاره المستخدم من واجهة الاختيار
         private string _lastSelectedPdfPath = null;
 
+        private string selectedReasoningEffort = "medium"; // default
 
 
 
@@ -51,32 +52,59 @@ namespace ChatGPTFileProcessor
             // أفرغ العناصر أولاً
             comboBoxEditModel.Properties.Items.Clear();
 
-            // ===== أضف الموديلات الأحدث (2025) =====
-            // GPT-5 Series - Latest and most capable
-            comboBoxEditModel.Properties.Items.Add("gpt-5.2");              // الأحدث - ديسمبر 2025
-            comboBoxEditModel.Properties.Items.Add("gpt-5.2-thinking");     // مع تفكير موسع
-            comboBoxEditModel.Properties.Items.Add("gpt-5.1");              // نموذج التفكير
-            comboBoxEditModel.Properties.Items.Add("gpt-5");                // النموذج الأساسي
-            comboBoxEditModel.Properties.Items.Add("gpt-5-mini");           // أسرع وأرخص
-            comboBoxEditModel.Properties.Items.Add("gpt-5-nano");           // الأسرع والأرخص
-            comboBoxEditModel.Properties.Items.Add("gpt-5-chat-latest");    // للمحادثات
+            // GPT-5 Series (Latest) - ALL support vision + reasoning
+            comboBoxEditModel.Properties.Items.Add("gpt-5.2");              // ⭐ Recommended
+            comboBoxEditModel.Properties.Items.Add("gpt-5.2-thinking");
+            comboBoxEditModel.Properties.Items.Add("gpt-5.1");
+            comboBoxEditModel.Properties.Items.Add("gpt-5");
+            comboBoxEditModel.Properties.Items.Add("gpt-5-mini");
+            comboBoxEditModel.Properties.Items.Add("gpt-5-nano");
+            comboBoxEditModel.Properties.Items.Add("gpt-5-chat-latest");
 
-            // O-Series Reasoning Models - Best for complex analysis
-            comboBoxEditModel.Properties.Items.Add("o3");                   // للتحليل المعقد
-            comboBoxEditModel.Properties.Items.Add("o4-mini");              // نموذج تفكير فعال
-            comboBoxEditModel.Properties.Items.Add("o3-mini");              // النسخة السابقة
-            comboBoxEditModel.Properties.Items.Add("o1");                   // النموذج الأصلي
+            // O-Series Reasoning Models (ONLY models with vision support!)
+            comboBoxEditModel.Properties.Items.Add("o3");                   // ✅ Vision + Reasoning
+            comboBoxEditModel.Properties.Items.Add("o4-mini");              // ✅ Vision + Reasoning
+            // NOTE: o3-mini, o1, o1-mini removed - they DON'T support vision in API!
 
-            // GPT-4.1 Series - Excellent for coding
-            comboBoxEditModel.Properties.Items.Add("gpt-4.1");              // ممتاز للبرمجة
-            comboBoxEditModel.Properties.Items.Add("gpt-4.1-mini");         // النسخة المصغرة
-            comboBoxEditModel.Properties.Items.Add("gpt-4.1-nano");         // فائق السرعة
+            // GPT-4.1 Series (Vision, no reasoning)
+            comboBoxEditModel.Properties.Items.Add("gpt-4.1");
+            comboBoxEditModel.Properties.Items.Add("gpt-4.1-mini");
+            comboBoxEditModel.Properties.Items.Add("gpt-4.1-nano");
 
-            // GPT-4o Series - Legacy but still good
-            comboBoxEditModel.Properties.Items.Add("chatgpt-4o-latest");    // آخر نسخة من 4o
-            comboBoxEditModel.Properties.Items.Add("gpt-4o");               // النموذج الأصلي
-            comboBoxEditModel.Properties.Items.Add("gpt-4o-mini");          // خيار اقتصادي
+            // GPT-4o Series (Legacy, vision only)
+            comboBoxEditModel.Properties.Items.Add("chatgpt-4o-latest");
+            comboBoxEditModel.Properties.Items.Add("gpt-4o");
+            comboBoxEditModel.Properties.Items.Add("gpt-4o-mini");
 
+
+            // ▼ Populate the "Reasoning Effort" dropdown
+            comboBoxReasoningEffort.Properties.Items.Clear();
+            comboBoxReasoningEffort.Properties.Items.Add("Auto (Recommended)");
+            comboBoxReasoningEffort.Properties.Items.Add("Low - Fast");
+            comboBoxReasoningEffort.Properties.Items.Add("Medium - Balanced");
+            comboBoxReasoningEffort.Properties.Items.Add("High - Best Quality");
+
+            // Load saved reasoning effort preference
+            var savedEffort = Properties.Settings.Default.ReasoningEffort;
+            if (!string.IsNullOrWhiteSpace(savedEffort))
+            {
+                for (int i = 0; i < comboBoxReasoningEffort.Properties.Items.Count; i++)
+                {
+                    if (comboBoxReasoningEffort.Properties.Items[i].ToString().ToLower().Contains(savedEffort))
+                    {
+                        comboBoxReasoningEffort.SelectedIndex = i;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                comboBoxReasoningEffort.SelectedIndex = 2; // Default to "Medium - Balanced"
+            }
+
+            // Initially disable reasoning effort until a reasoning model is selected
+            comboBoxReasoningEffort.Enabled = false;
+            comboBoxReasoningEffort.Properties.Appearance.ForeColor = System.Drawing.Color.Gray;
 
 
             InitializeOverlay();
@@ -1434,12 +1462,85 @@ namespace ChatGPTFileProcessor
             UpdateStatus("▶ Model changed, saving selection...");
             SaveApiKeyAndModel();
         }
+
+        //private void comboBoxEditModel_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    string modelName = comboBoxEditModel.SelectedItem?.ToString() ?? "";
+        //    string modelType = GetReasoningModelType(modelName);
+
+        //    UpdateStatus("▶ Model changed, saving selection...");
+        //    SaveApiKeyAndModel();
+
+        //    // Update reasoning effort dropdown based on model
+        //    if (modelType == "none")
+        //    {
+        //        // Non-reasoning model selected
+        //        comboBoxReasoningEffort.Enabled = false;
+        //        comboBoxReasoningEffort.Properties.Appearance.ForeColor = System.Drawing.Color.Gray;
+        //        UpdateStatus($"▶ {modelName} selected (does not support reasoning effort)");
+        //    }
+        //    else if (modelType == "o-series-pro")
+        //    {
+        //        // O3-pro only supports high
+        //        comboBoxReasoningEffort.Enabled = false;
+        //        comboBoxReasoningEffort.Properties.Appearance.ForeColor = System.Drawing.Color.Orange;
+        //        UpdateStatus($"▶ 🧠 {modelName} always uses HIGH reasoning (cannot be changed)");
+        //    }
+        //    else
+        //    {
+        //        // Reasoning model selected - enable dropdown
+        //        comboBoxReasoningEffort.Enabled = true;
+        //        comboBoxReasoningEffort.Properties.Appearance.ForeColor = System.Drawing.Color.Blue;
+        //        UpdateStatus($"▶ 🧠 {modelName} supports advanced reasoning!");
+        //        UpdateStatus($"▶ Current reasoning effort: {comboBoxReasoningEffort.Text}");
+
+        //        // Show info about supported values
+        //        switch (modelType)
+        //        {
+        //            case "o-series":
+        //                UpdateStatus($"▶ Supported: Low, Medium, High");
+        //                break;
+        //            case "gpt5":
+        //                UpdateStatus($"▶ Supported: Low, Medium, High (minimal not recommended)");
+        //                break;
+        //            case "gpt5-codex":
+        //                UpdateStatus($"▶ Supported: Low, Medium, High");
+        //                break;
+        //            case "gpt5-codex-max":
+        //                UpdateStatus($"▶ Supported: Low, Medium, High + XHigh!");
+        //                break;
+        //        }
+        //    }
+        //}
+
         private void comboBoxEditModel_SelectedIndexChanged(object sender, EventArgs e)
         {
+            string modelName = comboBoxEditModel.SelectedItem?.ToString() ?? "";
+            string modelType = GetReasoningModelType(modelName);
+
             UpdateStatus("▶ Model changed, saving selection...");
             SaveApiKeyAndModel();
-        }
 
+            // Show model capabilities
+            bool hasVision = true;  // All models in our dropdown now have vision!
+            bool hasReasoning = (modelType != "none");
+
+            if (hasReasoning)
+            {
+                // Reasoning model selected - enable reasoning effort
+                comboBoxReasoningEffort.Enabled = true;
+                comboBoxReasoningEffort.Properties.Appearance.ForeColor = System.Drawing.Color.Blue;
+                UpdateStatus($"▶ 🧠 {modelName} supports: Vision ✓ + Reasoning ✓");
+                UpdateStatus($"▶ Current reasoning effort: {comboBoxReasoningEffort.Text}");
+            }
+            else
+            {
+                // Non-reasoning model (but still has vision!)
+                comboBoxReasoningEffort.Enabled = false;
+                comboBoxReasoningEffort.Properties.Appearance.ForeColor = System.Drawing.Color.Gray;
+                UpdateStatus($"▶ {modelName} supports: Vision ✓ (no reasoning)");
+            }
+        }
 
 
         // Function to format definitions
@@ -1618,19 +1719,17 @@ namespace ChatGPTFileProcessor
                     model = modelName,
                     messages = new object[]
                     {
-                new
+            new
+            {
+                role = "user",
+                content = new object[]
                 {
-                    role = "user",
-                    content = new object[]
-                    {
-                        new { type = "image_url", image_url = new { url = "data:image/jpeg;base64," + base64 } },
-                        new { type = "text", text = taskPrompt }
-                    }
+                    new { type = "image_url", image_url = new { url = "data:image/jpeg;base64," + base64 } },
+                    new { type = "text", text = taskPrompt }
                 }
+            }
                     },
-                    reasoning_effort = "medium"  // Options: "minimal", "low", "medium", "high"
-                                                 // You can change "medium" to "high" for even better quality (but slower/more expensive)
-                                                 // Or "low" for faster processing
+                    reasoning_effort = GetReasoningEffort(modelName)  // ← Can be "low, medium, high" totally controlled from UI
                 };
             }
             else
@@ -1703,9 +1802,40 @@ namespace ChatGPTFileProcessor
                 }
                 catch (Exception ex)
                 {
-                    if (!ex.Message.StartsWith("Transient") || attempt == maxRetries) throw;
-                    await Task.Delay(delayMs);
-                    delayMs *= 2;
+                    // Log the full error for debugging
+                    UpdateOverlayLog($"❌ API Error: {ex.Message}");
+
+                    // Check if it's a reasoning_effort error
+                    if (ex.Message.Contains("reasoning_effort") && ex.Message.Contains("Unsupported"))
+                    {
+                        UpdateOverlayLog("❌ ERROR: Invalid reasoning_effort for this model!");
+                        UpdateOverlayLog("▶ Tip: This model doesn't support the selected reasoning level.");
+                        UpdateOverlayLog($"▶ Model type: {GetReasoningModelType(modelName)}");
+
+                        // Suggest fix
+                        if (ex.Message.Contains("minimal"))
+                        {
+                            UpdateOverlayLog("▶ Fix: Remove 'minimal' - use Low, Medium, or High instead");
+                        }
+                    }
+
+                    // Check if it's a vision/image error (THE NEW ERROR YOU'RE GETTING!)
+                    if (ex.Message.Contains("image_url") &&
+                        (ex.Message.Contains("not supported") || ex.Message.Contains("only supported by certain")))
+                    {
+                        UpdateOverlayLog("❌ ERROR: This model does NOT support images!");
+                        UpdateOverlayLog($"▶ You selected: {modelName}");
+                        UpdateOverlayLog("▶ This model cannot process PDF images via API.");
+                        UpdateOverlayLog("");
+                        UpdateOverlayLog("💡 SOLUTION: Select a vision-capable model:");
+                        UpdateOverlayLog("  • gpt-5.2 (recommended)");
+                        UpdateOverlayLog("  • o3 (best reasoning with vision)");
+                        UpdateOverlayLog("  • o4-mini (fast reasoning with vision)");
+                        UpdateOverlayLog("  • gpt-4o (reliable, no reasoning)");
+                    }
+
+                    // Re-throw the exception
+                    throw;
                 }
                 finally
                 {
@@ -1772,9 +1902,9 @@ namespace ChatGPTFileProcessor
                     model = modelName,
                     messages = new object[]
                     {
-                new { role = "user", content = fullContent.ToArray() }
+            new { role = "user", content = fullContent.ToArray() }
                     },
-                    reasoning_effort = "medium"  // Options: "minimal", "low", "medium", "high"
+                    reasoning_effort = GetReasoningEffort(modelName) // ← Can be "low, medium, high" totally controlled from UI
                 };
             }
             else
@@ -1856,28 +1986,103 @@ namespace ChatGPTFileProcessor
         // ===========================================================================
         // HELPER FUNCTION: IsReasoningModel
         // ===========================================================================
-        // This helper function detects if a model is an o-series reasoning model
-
         /// <summary>
-        /// Checks if the given model name is an o-series reasoning model.
-        /// O-series models support the reasoning_effort parameter.
+        /// Checks if the given model supports reasoning_effort parameter.
+        /// Returns the model type: "none", "o-series", "gpt5", or "gpt5-codex-max"
         /// </summary>
-        /// <param name="modelName">The model name (e.g., "o3", "gpt-5", "gpt-4o")</param>
-        /// <returns>True if it's an o-series model, false otherwise</returns>
-        private bool IsReasoningModel(string modelName)
+        private string GetReasoningModelType(string modelName)
         {
             if (string.IsNullOrEmpty(modelName))
-                return false;
+                return "none";
 
             string model = modelName.ToLower().Trim();
 
-            // Check if it starts with "o" followed by a number (o1, o3, o4, etc.)
-            // This covers: o1, o1-mini, o3, o3-mini, o4-mini, etc.
-            return model.StartsWith("o1") ||
-                   model.StartsWith("o3") ||
-                   model.StartsWith("o4") ||
-                   model.StartsWith("o2");  // Future-proof for o2 if it comes out
+            // O-series models with vision support
+            if (model == "o3" || model == "o4-mini")
+                return "o-series";
+
+            // GPT-5 series (all support vision + reasoning)
+            if (model.StartsWith("gpt-5"))
+            {
+                // Special handling for different GPT-5 variants
+                if (model.Contains("codex-max"))
+                    return "gpt5-codex-max";
+                if (model.Contains("codex"))
+                    return "gpt5-codex";
+                return "gpt5";
+            }
+
+            // All other models don't support reasoning_effort
+            return "none";
         }
+
+        /// <summary>
+        /// Simple check if model supports ANY reasoning_effort
+        /// </summary>
+        private bool IsReasoningModel(string modelName)
+        {
+            if (string.IsNullOrEmpty(modelName)) return false;
+
+            string model = modelName.ToLower().Trim();
+
+            // O-series models that SUPPORT vision (o3, o4-mini only)
+            if (model == "o3" || model == "o4-mini")
+                return true;
+
+            // GPT-5 series models (all support vision + reasoning)
+            if (model.StartsWith("gpt-5"))
+                return true;
+
+            // All other models
+            return false;
+        }
+
+        /// <summary>
+        /// Gets the appropriate reasoning effort for the given model.
+        /// Returns null if model doesn't support reasoning_effort.
+        /// Returns the correct value based on model type.
+        /// </summary>
+        /// 
+
+
+        //private string GetReasoningEffort(string modelName)
+        //{
+        //    string modelType = GetReasoningModelType(modelName);
+
+        //    // Model doesn't support reasoning
+        //    if (modelType == "none")
+        //        return null;
+
+        //    // O3-pro only supports "high"
+        //    if (modelType == "o-series-pro")
+        //        return "high";
+
+        //    // If user selected "Auto", decide based on the model type
+        //    if (selectedReasoningEffort == "auto")
+        //    {
+        //        // Default to medium for all reasoning models
+        //        return "medium";
+        //    }
+
+        //    // Return the user's selection
+        //    return selectedReasoningEffort;
+        //}
+
+        private string GetReasoningEffort(string modelName)
+        {
+            // Only return reasoning effort for reasoning models
+            if (!IsReasoningModel(modelName))
+                return null;
+
+            // If user selected "Auto", use medium as default
+            if (selectedReasoningEffort == "auto")
+                return "medium";
+
+            // Return the user's selection
+            return selectedReasoningEffort;
+        }
+
+
         #region Batch Processing Helper Methods
 
         /// <summary>
@@ -2803,6 +3008,41 @@ namespace ChatGPTFileProcessor
 
             // أولوية 3: المجلد المخصص (الإعداد)
             return GetOutputFolder();
+        }
+
+        private void comboBoxReasoningEffort_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string selected = comboBoxReasoningEffort.SelectedItem?.ToString();
+            if (string.IsNullOrEmpty(selected))
+                return;
+
+            // Extract the key part (Auto, Low, Medium, High)
+            string effort = "medium"; // default
+            if (selected.Contains("Low"))
+                effort = "low";
+            else if (selected.Contains("Medium"))
+                effort = "medium";
+            else if (selected.Contains("High"))
+                effort = "high";
+            else if (selected.Contains("Auto"))
+                effort = "auto";
+
+            // Save to variable and settings
+            selectedReasoningEffort = effort;
+            Properties.Settings.Default.ReasoningEffort = effort;
+            Properties.Settings.Default.Save();
+
+            // Update status
+            UpdateStatus($"▶ Reasoning Effort set to: {selected}");
+
+            // Show info message if o-series model is selected
+            string currentModel = comboBoxEditModel.SelectedItem?.ToString() ?? "";
+            string modelType = GetReasoningModelType(currentModel);
+
+            if (modelType != "none")
+            {
+                UpdateStatus($"▶ This setting will be used with {currentModel}");
+            }
         }
     }
 }
