@@ -12,7 +12,7 @@ using Xceed.Document.NET;
 using Xceed.Words.NET;
 using SDImage = System.Drawing.Image;
 using Task = System.Threading.Tasks.Task;
-
+using AnkiSharp;
 
 
 namespace ChatGPTFileProcessor
@@ -987,10 +987,13 @@ namespace ChatGPTFileProcessor
 
                     // 2) now parse & save out a .csv/.tsv
                     var parsed = ParseMcqs(mcqsRaw);
-                    bool useComma = chkUseCommaDelimiter.Checked;    // or read from your combo
+                    bool useComma = chkUseCommaDelimiter.Checked;
                     var delPath = Path.ChangeExtension(mcqsFilePath, useComma ? ".csv" : ".tsv");
 
                     SaveMcqsToDelimitedFile(parsed, delPath, useComma);
+
+                    // 3) ✨ NEW: Create .apkg file for direct Anki import
+                    SaveMcqsToApkg(parsed, mcqsFilePath, "MCQs");
                 }
 
 
@@ -1007,8 +1010,11 @@ namespace ChatGPTFileProcessor
                     var flashCsvPath = Path.ChangeExtension(flashcardsFilePath,
                         chkUseCommaDelimiter.Checked ? ".csv" : ".tsv");
 
-                    // 4) Write it out
+                    // 4) Write CSV/TSV
                     SaveFlashcardsToDelimitedFile(parsed, flashCsvPath, chkUseCommaDelimiter.Checked);
+
+                    // 5) ✨ NEW: Create .apkg file for direct Anki import
+                    SaveFlashcardsToApkg(parsed, flashcardsFilePath, "Flashcards");
                 }
 
 
@@ -1069,34 +1075,53 @@ namespace ChatGPTFileProcessor
                 if (chkTakeaways.Checked)
                     SaveContentToFile(allTakeaways.ToString(), takeawaysFilePath, "Key Takeaways");
 
+                //if (chkCloze.Checked)
+                //{
+                //    // 1) Word export (unchanged)
+                //    string clozeRaw = allCloze.ToString();
+                //    SaveContentToFile(clozeRaw, clozeFilePath, "Fill-in-the-Blank (Cloze)");
+
+                //    // 2) Delimited export for Anki
+                //    var parsed = ParseCloze(clozeRaw);                     // your (sentence,answer) pairs
+                //    bool useComma = chkUseCommaDelimiter.Checked;             // true ⇒ CSV, false ⇒ TSV
+                //    string ext = useComma ? ".csv" : ".tsv";
+                //    string outPath = Path.ChangeExtension(clozeFilePath, ext);
+
+                //    using (var sw = new StreamWriter(outPath, false, Encoding.UTF8))
+                //    {
+                //        // _no header_ → Anki will import every line into the Text field
+                //        foreach (var (sentence, answer) in parsed)
+                //        {
+                //            // inject the {{c1::answer}} into the blank
+                //            var markup = $"{{{{c1::{answer}}}}}";
+                //            var line = sentence.Replace("_______________", markup);
+
+                //            // if CSV and the line itself has commas or newlines, wrap in quotes
+                //            if (useComma && (line.Contains(',') || line.Contains('\n')))
+                //                line = $"\"{line.Replace("\"", "\"\"")}\"";
+
+                //            sw.WriteLine(line);
+                //        }
+                //    }
+
+                //    UpdateStatus($"✅ Cloze exports saved: {Path.GetFileName(clozeFilePath)} and {Path.GetFileName(outPath)}");
+                //}
+
                 if (chkCloze.Checked)
                 {
-                    // 1) Word export (unchanged)
                     string clozeRaw = allCloze.ToString();
-                    SaveContentToFile(clozeRaw, clozeFilePath, "Fill-in-the-Blank (Cloze)");
+                    SaveContentToFile(clozeRaw, clozeFilePath, "Cloze Deletions");
 
-                    // 2) Delimited export for Anki
-                    var parsed = ParseCloze(clozeRaw);                     // your (sentence,answer) pairs
-                    bool useComma = chkUseCommaDelimiter.Checked;             // true ⇒ CSV, false ⇒ TSV
+                    // now also export to CSV/TSV
+                    var parsed = ParseCloze(clozeRaw);
+                    bool useComma = chkUseCommaDelimiter.Checked;
                     string ext = useComma ? ".csv" : ".tsv";
                     string outPath = Path.ChangeExtension(clozeFilePath, ext);
 
-                    using (var sw = new StreamWriter(outPath, false, Encoding.UTF8))
-                    {
-                        // _no header_ → Anki will import every line into the Text field
-                        foreach (var (sentence, answer) in parsed)
-                        {
-                            // inject the {{c1::answer}} into the blank
-                            var markup = $"{{{{c1::{answer}}}}}";
-                            var line = sentence.Replace("_______________", markup);
+                    SaveClozeToDelimitedFile(parsed, outPath, useComma);
 
-                            // if CSV and the line itself has commas or newlines, wrap in quotes
-                            if (useComma && (line.Contains(',') || line.Contains('\n')))
-                                line = $"\"{line.Replace("\"", "\"\"")}\"";
-
-                            sw.WriteLine(line);
-                        }
-                    }
+                    // ✨ NEW: Create .apkg file for direct Anki import
+                    SaveClozeToApkg(parsed, clozeFilePath, "Cloze");
 
                     UpdateStatus($"✅ Cloze exports saved: {Path.GetFileName(clozeFilePath)} and {Path.GetFileName(outPath)}");
                 }
@@ -2774,6 +2799,146 @@ namespace ChatGPTFileProcessor
                         w.WriteLine($"{front}{sep}{back}");
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Creates an Anki .apkg file from flashcard data
+        /// </summary>
+        private void SaveFlashcardsToApkg(List<(string Front, string Back)> cards, string outputPath, string deckName)
+        {
+            try
+            {
+                if (cards == null || cards.Count == 0)
+                {
+                    UpdateOverlayLog($"⚠️ No flashcards to export to Anki for {deckName}");
+                    return;
+                }
+
+                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
+                string folder = Path.GetDirectoryName(apkgPath);
+
+                Anki ankiDeck = new Anki(deckName);
+                ankiDeck.SetFields("Front", "Back");
+                ankiDeck.SetFormat("{0}\\n<hr id=answer>\\n{1}");
+
+                foreach (var (front, back) in cards)
+                {
+                    if (!string.IsNullOrWhiteSpace(front) && !string.IsNullOrWhiteSpace(back))
+                    {
+                        ankiDeck.AddItem(front, back);
+                    }
+                }
+
+                ankiDeck.CreateApkgFile(folder + "\\");
+
+                string generatedFile = Path.Combine(folder, deckName + ".apkg");
+                if (File.Exists(generatedFile) && generatedFile != apkgPath)
+                {
+                    if (File.Exists(apkgPath))
+                        File.Delete(apkgPath);
+                    File.Move(generatedFile, apkgPath);
+                }
+
+                UpdateOverlayLog($"✅ Anki deck saved: {Path.GetFileName(apkgPath)}");
+            }
+            catch (Exception ex)
+            {
+                UpdateOverlayLog($"❌ Error creating Anki deck: {ex.Message}");
+            }
+        }
+
+
+        /// <summary>
+        /// Creates an Anki .apkg file from MCQ data
+        /// </summary>
+        private void SaveMcqsToApkg(List<McqItem> items, string outputPath, string deckName)
+        {
+            try
+            {
+                if (items == null || items.Count == 0)
+                {
+                    UpdateOverlayLog($"⚠️ No MCQs to export to Anki for {deckName}");
+                    return;
+                }
+
+                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
+                string folder = Path.GetDirectoryName(apkgPath);
+
+                Anki ankiDeck = new Anki(deckName);
+                ankiDeck.SetFields("Question", "Options", "Answer");
+                ankiDeck.SetFormat("{0}\\n<hr id=answer>\\n{1}\\n<br><b>Correct Answer: {2}</b>");
+
+                foreach (var mcq in items)
+                {
+                    if (!string.IsNullOrWhiteSpace(mcq.Question))
+                    {
+                        string options = $"A) {mcq.OptionA}\nB) {mcq.OptionB}\nC) {mcq.OptionC}\nD) {mcq.OptionD}";
+                        ankiDeck.AddItem(mcq.Question, options, mcq.Answer);
+                    }
+                }
+
+                ankiDeck.CreateApkgFile(folder + "\\");
+
+                string generatedFile = Path.Combine(folder, deckName + ".apkg");
+                if (File.Exists(generatedFile) && generatedFile != apkgPath)
+                {
+                    if (File.Exists(apkgPath))
+                        File.Delete(apkgPath);
+                    File.Move(generatedFile, apkgPath);
+                }
+
+                UpdateOverlayLog($"✅ Anki MCQ deck saved: {Path.GetFileName(apkgPath)}");
+            }
+            catch (Exception ex)
+            {
+                UpdateOverlayLog($"❌ Error creating MCQ Anki deck: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Creates an Anki .apkg file from Cloze deletion data
+        /// </summary>
+        private void SaveClozeToApkg(List<(string Sentence, string Answer)> items, string outputPath, string deckName)
+        {
+            try
+            {
+                if (items == null || items.Count == 0)
+                {
+                    UpdateOverlayLog($"⚠️ No cloze items to export to Anki for {deckName}");
+                    return;
+                }
+
+                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
+                string folder = Path.GetDirectoryName(apkgPath);
+
+                Anki ankiDeck = new Anki(deckName);
+                ankiDeck.SetFields("Sentence", "Answer");
+                ankiDeck.SetFormat("{0}\\n<hr id=answer>\\n<b>{1}</b>");
+
+                foreach (var (sentence, answer) in items)
+                {
+                    if (!string.IsNullOrWhiteSpace(sentence) && !string.IsNullOrWhiteSpace(answer))
+                    {
+                        ankiDeck.AddItem(sentence, answer);
+                    }
+                }
+
+                ankiDeck.CreateApkgFile(folder + "\\");
+
+                string generatedFile = Path.Combine(folder, deckName + ".apkg");
+                if (File.Exists(generatedFile) && generatedFile != apkgPath)
+                {
+                    if (File.Exists(apkgPath))
+                        File.Delete(apkgPath);
+                    File.Move(generatedFile, apkgPath);
+                }
+
+                UpdateOverlayLog($"✅ Anki Cloze deck saved: {Path.GetFileName(apkgPath)}");
+            }
+            catch (Exception ex)
+            {
+                UpdateOverlayLog($"❌ Error creating Cloze Anki deck: {ex.Message}");
             }
         }
 
