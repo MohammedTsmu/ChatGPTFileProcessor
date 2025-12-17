@@ -2805,55 +2805,13 @@ namespace ChatGPTFileProcessor
         /// <summary>
         /// Creates an Anki .apkg file from flashcard data
         /// </summary>
-        private void SaveFlashcardsToApkg(List<(string Front, string Back)> cards, string outputPath, string deckName)
-        {
-            try
-            {
-                if (cards == null || cards.Count == 0)
-                {
-                    UpdateOverlayLog($"⚠️ No flashcards to export to Anki for {deckName}");
-                    return;
-                }
 
-                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
-                string folder = Path.GetDirectoryName(apkgPath);
 
-                Anki ankiDeck = new Anki(deckName);
-                ankiDeck.SetFields("Front", "Back");
-                ankiDeck.SetFormat("{0}\\n<hr id=answer>\\n{1}");
 
-                foreach (var (front, back) in cards)
-                {
-                    if (!string.IsNullOrWhiteSpace(front) && !string.IsNullOrWhiteSpace(back))
-                    {
-                        ankiDeck.AddItem(front, back);
-                    }
-                }
-
-                ankiDeck.CreateApkgFile(folder + "\\");
-
-                string generatedFile = Path.Combine(folder, deckName + ".apkg");
-                if (File.Exists(generatedFile) && generatedFile != apkgPath)
-                {
-                    if (File.Exists(apkgPath))
-                        File.Delete(apkgPath);
-                    File.Move(generatedFile, apkgPath);
-                }
-
-                UpdateOverlayLog($"✅ Anki deck saved: {Path.GetFileName(apkgPath)}");
-            }
-            catch (Exception ex)
-            {
-                UpdateOverlayLog($"❌ Error creating Anki deck: {ex.Message}");
-            }
-        }
 
 
         /// <summary>
-        /// Creates an Anki .apkg file from MCQ data
-        /// </summary>
-        /// <summary>
-        /// Creates an Anki .apkg file from MCQ data
+        /// Creates an Anki .apkg file from MCQ data with proper escaping
         /// </summary>
         private void SaveMcqsToApkg(List<McqItem> items, string outputPath, string deckName)
         {
@@ -2880,9 +2838,18 @@ namespace ChatGPTFileProcessor
                 {
                     if (!string.IsNullOrWhiteSpace(mcq.Question))
                     {
-                        // Format options with HTML line breaks for better readability
-                        string options = $"A) {mcq.OptionA}<br><br>B) {mcq.OptionB}<br><br>C) {mcq.OptionC}<br><br>D) {mcq.OptionD}";
-                        ankiDeck.AddItem(mcq.Question, options, mcq.Answer);
+                        // ✨ Clean and escape special characters that break SQL
+                        string cleanQuestion = CleanTextForAnki(mcq.Question);
+                        string cleanOptionA = CleanTextForAnki(mcq.OptionA);
+                        string cleanOptionB = CleanTextForAnki(mcq.OptionB);
+                        string cleanOptionC = CleanTextForAnki(mcq.OptionC);
+                        string cleanOptionD = CleanTextForAnki(mcq.OptionD);
+                        string cleanAnswer = CleanTextForAnki(mcq.Answer);
+
+                        // Format options with HTML line breaks
+                        string options = $"A) {cleanOptionA}<br><br>B) {cleanOptionB}<br><br>C) {cleanOptionC}<br><br>D) {cleanOptionD}";
+
+                        ankiDeck.AddItem(cleanQuestion, options, cleanAnswer);
                     }
                 }
 
@@ -2905,8 +2872,23 @@ namespace ChatGPTFileProcessor
         }
 
         /// <summary>
-        /// Creates an Anki .apkg file from Cloze deletion data
+        /// Helper method to clean text for Anki export - removes/escapes problematic characters
         /// </summary>
+        private string CleanTextForAnki(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return string.Empty;
+
+            // Remove or replace characters that break SQL queries
+            text = text.Replace("'", "&#39;");  // Replace single quotes with HTML entity
+            text = text.Replace("\"", "&quot;"); // Replace double quotes with HTML entity
+            text = text.Replace("\r\n", "<br>"); // Replace Windows newlines
+            text = text.Replace("\n", "<br>");   // Replace Unix newlines
+            text = text.Replace("\r", "<br>");   // Replace Mac newlines
+
+            return text.Trim();
+        }
+
         private void SaveClozeToApkg(List<(string Sentence, string Answer)> items, string outputPath, string deckName)
         {
             try
@@ -2928,7 +2910,10 @@ namespace ChatGPTFileProcessor
                 {
                     if (!string.IsNullOrWhiteSpace(sentence) && !string.IsNullOrWhiteSpace(answer))
                     {
-                        ankiDeck.AddItem(sentence, answer);
+                        // ✨ Clean text to prevent SQL errors
+                        string cleanSentence = CleanTextForAnki(sentence);
+                        string cleanAnswer = CleanTextForAnki(answer);
+                        ankiDeck.AddItem(cleanSentence, cleanAnswer);
                     }
                 }
 
@@ -2949,6 +2934,55 @@ namespace ChatGPTFileProcessor
                 UpdateOverlayLog($"❌ Error creating Cloze Anki deck: {ex.Message}");
             }
         }
+
+
+        private void SaveFlashcardsToApkg(List<(string Front, string Back)> cards, string outputPath, string deckName)
+        {
+            try
+            {
+                if (cards == null || cards.Count == 0)
+                {
+                    UpdateOverlayLog($"⚠️ No flashcards to export to Anki for {deckName}");
+                    return;
+                }
+
+                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
+                string folder = Path.GetDirectoryName(apkgPath);
+
+                Anki ankiDeck = new Anki(deckName);
+                ankiDeck.SetFields("Front", "Back");
+                ankiDeck.SetFormat("{0}\\n<hr id=answer>\\n{1}");
+
+                foreach (var (front, back) in cards)
+                {
+                    if (!string.IsNullOrWhiteSpace(front) && !string.IsNullOrWhiteSpace(back))
+                    {
+                        // ✨ Clean text to prevent SQL errors
+                        string cleanFront = CleanTextForAnki(front);
+                        string cleanBack = CleanTextForAnki(back);
+                        ankiDeck.AddItem(cleanFront, cleanBack);
+                    }
+                }
+
+                ankiDeck.CreateApkgFile(folder + "\\");
+
+                string generatedFile = Path.Combine(folder, deckName + ".apkg");
+                if (File.Exists(generatedFile) && generatedFile != apkgPath)
+                {
+                    if (File.Exists(apkgPath))
+                        File.Delete(apkgPath);
+                    File.Move(generatedFile, apkgPath);
+                }
+
+                UpdateOverlayLog($"✅ Anki deck saved: {Path.GetFileName(apkgPath)}");
+            }
+            catch (Exception ex)
+            {
+                UpdateOverlayLog($"❌ Error creating Anki deck: {ex.Message}");
+            }
+        }
+
+
 
 
         /// Represents one MCQ with 4 choices and a correct answer letter.
