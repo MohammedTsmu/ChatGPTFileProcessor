@@ -2866,8 +2866,12 @@ namespace ChatGPTFileProcessor
                 string folder = Path.GetDirectoryName(apkgPath);
 
                 Anki ankiDeck = new Anki(deckName);
+
+                // MCQ format: Question, Options, Answer
                 ankiDeck.SetFields("Question", "Options", "Answer");
-                ankiDeck.SetFormat("{0}\\n<hr id=answer>\\n{1}\\n<br><b>Correct Answer: {2}</b>");
+
+                // ✨ FIXED: Show Question + Options on FRONT, Answer on BACK
+                ankiDeck.SetFormat("{0}\\n\\n{1}\\n<hr id=answer>\\n<b>Correct Answer: {2}</b>");
 
                 foreach (var mcq in items)
                 {
