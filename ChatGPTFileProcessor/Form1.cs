@@ -976,6 +976,9 @@ namespace ChatGPTFileProcessor
                 {
                     string definitionsText = allDefinitions.ToString();
                     SaveContentToFile(FormatDefinitions(definitionsText), definitionsFilePath, "Definitions");
+
+                    // ✨ This line should be here
+                    SaveDefinitionsToApkg(definitionsText, definitionsFilePath, "Definitions");
                 }
 
                 //// 7.2) ملف MCQs (يمكن تكييف تنسيق MCQs إذا أردتم تنسيقًا أضبط)
@@ -1066,6 +1069,7 @@ namespace ChatGPTFileProcessor
                     }
 
                     UpdateStatus($"Vocabulary export saved: {Path.GetFileName(vocabDelimitedPath)}");
+                    SaveVocabularyToApkg(records, vocabularyFilePath, "Vocabulary");
                 }
 
 
@@ -1127,7 +1131,13 @@ namespace ChatGPTFileProcessor
                 }
 
                 if (chkTrueFalse.Checked)
-                    SaveContentToFile(allTrueFalse.ToString(), tfFilePath, "True/False Questions");
+                {
+                    string trueFalseText = allTrueFalse.ToString();
+                    SaveContentToFile(trueFalseText, tfFilePath, "True/False Questions");
+
+                    // ✨ NEW: Create .apkg file
+                    SaveTrueFalseToApkg(trueFalseText, tfFilePath, "TrueFalse");
+                }
 
                 if (chkOutline.Checked)
                     SaveContentToFile(allOutline.ToString(), outlineFilePath, "Outline");
@@ -1148,10 +1158,22 @@ namespace ChatGPTFileProcessor
                     SaveContentToFile(allKeywords.ToString(), keywordsFilePath, "High-Yield Keywords");
 
                 if (chkTranslatedSections.Checked)
-                    SaveContentToFile(allTranslatedSections.ToString(), translatedSectionsFilePath, "Translated Sections");
+                {
+                    string translatedText = allTranslatedSections.ToString();
+                    SaveContentToFile(translatedText, translatedSectionsFilePath, "Translated Sections");
+
+                    // ✨ NEW: Create .apkg file
+                    SaveTranslatedSectionsToApkg(translatedText, translatedSectionsFilePath, "Translated Sections");
+                }
 
                 if (chkExplainTerms.Checked)
-                    SaveContentToFile(allExplainTerms.ToString(), explainTermsFilePath, "Explain Terms");
+                {
+                    string explainTermsText = allExplainTerms.ToString();
+                    SaveContentToFile(explainTermsText, explainTermsFilePath, "Explain Terms");
+
+                    // ✨ NEW: Create .apkg file
+                    SaveExplainTermsToApkg(explainTermsText, explainTermsFilePath, "Explain Terms");
+                }
 
                 UpdateOverlayLog("✅ All selected exports finished successfully.");
 
@@ -2869,6 +2891,513 @@ namespace ChatGPTFileProcessor
             {
                 UpdateOverlayLog($"❌ Error creating MCQ Anki deck: {ex.Message}");
             }
+        }
+
+        // ========================================
+        // NEW ANKI .APKG EXPORT FUNCTIONS
+        // Add these 5 methods to your Form1.cs class
+        // (Suggested location: after the existing SaveMcqsToApkg method)
+        // ========================================
+
+        /// <summary>
+        /// Creates an Anki .apkg file from Vocabulary data (Term → Translation)
+        /// </summary>
+        private void SaveVocabularyToApkg(List<Tuple<string, string>> records, string outputPath, string deckName)
+        {
+            try
+            {
+                if (records == null || records.Count == 0)
+                {
+                    UpdateOverlayLog($"⚠️ No vocabulary to export to Anki for {deckName}");
+                    return;
+                }
+
+                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
+                string folder = Path.GetDirectoryName(apkgPath);
+
+                Anki ankiDeck = new Anki(deckName);
+                ankiDeck.SetFields("Term", "Translation");
+                ankiDeck.SetFormat("{0}\\n<hr id=answer>\\n{1}");
+
+                foreach (var record in records)
+                {
+                    string term = CleanTextForAnki(record.Item1);
+                    string translation = CleanTextForAnki(record.Item2);
+
+                    if (!string.IsNullOrWhiteSpace(term) && !string.IsNullOrWhiteSpace(translation))
+                    {
+                        ankiDeck.AddItem(term, translation);
+                    }
+                }
+
+                ankiDeck.CreateApkgFile(folder + "\\");
+
+                string generatedFile = Path.Combine(folder, deckName + ".apkg");
+                if (File.Exists(generatedFile) && generatedFile != apkgPath)
+                {
+                    if (File.Exists(apkgPath))
+                        File.Delete(apkgPath);
+                    File.Move(generatedFile, apkgPath);
+                }
+
+                UpdateOverlayLog($"✅ Anki Vocabulary deck saved: {Path.GetFileName(apkgPath)}");
+            }
+            catch (Exception ex)
+            {
+                UpdateOverlayLog($"❌ Error creating Vocabulary Anki deck: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Creates an Anki .apkg file from Definitions data
+        /// Format expects: "Term: Definition" blocks separated by blank lines
+        /// </summary>
+        private void SaveDefinitionsToApkg(string rawText, string outputPath, string deckName)
+        {
+            try
+            {
+                UpdateOverlayLog($"🔍 DEBUG: SaveDefinitionsToApkg called");
+
+                if (string.IsNullOrWhiteSpace(rawText))
+                {
+                    UpdateOverlayLog($"⚠️ No definitions text to export to Anki for {deckName}");
+                    return;
+                }
+
+                UpdateOverlayLog($"🔍 DEBUG: Raw text length: {rawText.Length}");
+
+                // Parse definitions from raw text
+                var definitions = ParseDefinitions(rawText);
+
+                UpdateOverlayLog($"🔍 DEBUG: Parsed {definitions.Count} definitions");
+
+                if (definitions.Count == 0)
+                {
+                    UpdateOverlayLog($"⚠️ No valid definitions found to export");
+                    return;
+                }
+
+                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
+                string folder = Path.GetDirectoryName(apkgPath);
+
+                Anki ankiDeck = new Anki(deckName);
+                ankiDeck.SetFields("Term", "Definition");
+                ankiDeck.SetFormat("{0}\\n<hr id=answer>\\n{1}");
+
+                int addedCount = 0;
+                foreach (var (termText, defText) in definitions)
+                {
+                    string cleanTerm = CleanTextForAnki(termText);
+                    string cleanDef = CleanTextForAnki(defText);
+
+                    if (!string.IsNullOrWhiteSpace(cleanTerm) && !string.IsNullOrWhiteSpace(cleanDef))
+                    {
+                        ankiDeck.AddItem(cleanTerm, cleanDef);
+                        addedCount++;
+                    }
+                }
+
+                UpdateOverlayLog($"🔍 DEBUG: Added {addedCount} cards to Anki deck");
+
+                ankiDeck.CreateApkgFile(folder + "\\");
+
+                string generatedFile = Path.Combine(folder, deckName + ".apkg");
+                if (File.Exists(generatedFile) && generatedFile != apkgPath)
+                {
+                    if (File.Exists(apkgPath))
+                        File.Delete(apkgPath);
+                    File.Move(generatedFile, apkgPath);
+                }
+
+                UpdateOverlayLog($"✅ Anki Definitions deck saved: {Path.GetFileName(apkgPath)}");
+            }
+            catch (Exception ex)
+            {
+                UpdateOverlayLog($"❌ Error creating Definitions Anki deck: {ex.Message}");
+                UpdateOverlayLog($"❌ Stack trace: {ex.StackTrace}");
+            }
+        }
+
+        /// <summary>
+        /// Helper to parse definitions from raw text
+        /// Expects format: "Term: Definition" or blocks separated by blank lines
+        /// </summary>
+        private List<(string Term, string Definition)> ParseDefinitions(string rawText)
+        {
+            var definitions = new List<(string, string)>();
+
+            // Split by blank lines (definition blocks)
+            var blocks = Regex.Split(rawText.Trim(), @"\r?\n\s*\r?\n");
+
+            foreach (var block in blocks)
+            {
+                if (string.IsNullOrWhiteSpace(block)) continue;
+
+                var trimmed = block.Trim();
+
+                // ✨ Handle format "Term - Definition: explanation"
+                // Example: "Hepatic lobule - Definition: The microscopic structural unit..."
+                var match = Regex.Match(trimmed, @"^(.+?)\s*-\s*Definition:\s*(.+)$", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                if (match.Success)
+                {
+                    string termText = match.Groups[1].Value.Trim();
+                    string defText = match.Groups[2].Value.Trim();
+
+                    if (!string.IsNullOrWhiteSpace(termText) && !string.IsNullOrWhiteSpace(defText))
+                    {
+                        definitions.Add((termText, defText));
+                        continue;
+                    }
+                }
+
+                // Fallback: Try other patterns
+                var lines = block.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                if (lines.Length == 0) continue;
+
+                string currentTerm = null;
+                string currentDefinition = null;
+
+                foreach (var line in lines)
+                {
+                    var lineTrimmed = line.Trim();
+
+                    // Pattern: "Term: xxx"
+                    if (lineTrimmed.StartsWith("Term:", StringComparison.OrdinalIgnoreCase))
+                    {
+                        currentTerm = lineTrimmed.Substring(5).Trim();
+                    }
+                    // Pattern: "Definition: xxx"
+                    else if (lineTrimmed.StartsWith("Definition:", StringComparison.OrdinalIgnoreCase))
+                    {
+                        currentDefinition = lineTrimmed.Substring(11).Trim();
+                    }
+                    // Pattern: "xxx: yyy" (first colon splits term and definition)
+                    else if (lineTrimmed.Contains(":") && currentTerm == null)
+                    {
+                        var colonIndex = lineTrimmed.IndexOf(':');
+                        currentTerm = lineTrimmed.Substring(0, colonIndex).Trim();
+                        currentDefinition = lineTrimmed.Substring(colonIndex + 1).Trim();
+                    }
+                    // Multi-line: append to definition
+                    else if (!string.IsNullOrWhiteSpace(lineTrimmed))
+                    {
+                        if (currentDefinition != null)
+                        {
+                            currentDefinition += " " + lineTrimmed;
+                        }
+                        else if (currentTerm != null)
+                        {
+                            currentDefinition = lineTrimmed;
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(currentTerm) && !string.IsNullOrWhiteSpace(currentDefinition))
+                {
+                    definitions.Add((currentTerm, currentDefinition));
+                }
+            }
+
+            return definitions;
+        }
+
+        /// <summary>
+        /// Creates an Anki .apkg file from Explain Terms data
+        /// </summary>
+        private void SaveExplainTermsToApkg(string rawText, string outputPath, string deckName)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(rawText))
+                {
+                    UpdateOverlayLog($"⚠️ No terms to export to Anki for {deckName}");
+                    return;
+                }
+
+                // Parse explain terms (similar to definitions)
+                var terms = ParseDefinitions(rawText); // Reuse parser as format is similar
+
+                if (terms.Count == 0)
+                {
+                    UpdateOverlayLog($"⚠️ No valid terms found to export");
+                    return;
+                }
+
+                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
+                string folder = Path.GetDirectoryName(apkgPath);
+
+                Anki ankiDeck = new Anki(deckName);
+                ankiDeck.SetFields("Term", "Explanation");
+                ankiDeck.SetFormat("{0}\\n<hr id=answer>\\n{1}");
+
+                foreach (var (term, explanation) in terms)
+                {
+                    string cleanTerm = CleanTextForAnki(term);
+                    string cleanExpl = CleanTextForAnki(explanation);
+
+                    if (!string.IsNullOrWhiteSpace(cleanTerm) && !string.IsNullOrWhiteSpace(cleanExpl))
+                    {
+                        ankiDeck.AddItem(cleanTerm, cleanExpl);
+                    }
+                }
+
+                ankiDeck.CreateApkgFile(folder + "\\");
+
+                string generatedFile = Path.Combine(folder, deckName + ".apkg");
+                if (File.Exists(generatedFile) && generatedFile != apkgPath)
+                {
+                    if (File.Exists(apkgPath))
+                        File.Delete(apkgPath);
+                    File.Move(generatedFile, apkgPath);
+                }
+
+                UpdateOverlayLog($"✅ Anki Explain Terms deck saved: {Path.GetFileName(apkgPath)}");
+            }
+            catch (Exception ex)
+            {
+                UpdateOverlayLog($"❌ Error creating Explain Terms Anki deck: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Creates an Anki .apkg file from True/False data
+        /// </summary>
+        private void SaveTrueFalseToApkg(string rawText, string outputPath, string deckName)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(rawText))
+                {
+                    UpdateOverlayLog($"⚠️ No True/False questions to export to Anki for {deckName}");
+                    return;
+                }
+
+                var questions = ParseTrueFalse(rawText);
+
+                if (questions.Count == 0)
+                {
+                    UpdateOverlayLog($"⚠️ No valid True/False questions found to export");
+                    return;
+                }
+
+                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
+                string folder = Path.GetDirectoryName(apkgPath);
+
+                Anki ankiDeck = new Anki(deckName);
+                ankiDeck.SetFields("Statement", "Answer", "Explanation");
+                ankiDeck.SetFormat("{0}\\n<hr id=answer>\\n<b>{1}</b><br><br>{2}");
+
+                foreach (var (statement, answer, explanation) in questions)
+                {
+                    string cleanStatement = CleanTextForAnki(statement);
+                    string cleanAnswer = CleanTextForAnki(answer);
+                    string cleanExplanation = CleanTextForAnki(explanation);
+
+                    if (!string.IsNullOrWhiteSpace(cleanStatement) && !string.IsNullOrWhiteSpace(cleanAnswer))
+                    {
+                        ankiDeck.AddItem(cleanStatement, cleanAnswer, cleanExplanation);
+                    }
+                }
+
+                ankiDeck.CreateApkgFile(folder + "\\");
+
+                string generatedFile = Path.Combine(folder, deckName + ".apkg");
+                if (File.Exists(generatedFile) && generatedFile != apkgPath)
+                {
+                    if (File.Exists(apkgPath))
+                        File.Delete(apkgPath);
+                    File.Move(generatedFile, apkgPath);
+                }
+
+                UpdateOverlayLog($"✅ Anki True/False deck saved: {Path.GetFileName(apkgPath)}");
+            }
+            catch (Exception ex)
+            {
+                UpdateOverlayLog($"❌ Error creating True/False Anki deck: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Helper to parse True/False questions
+        /// Expects: Statement, Answer: True/False, Explanation (optional)
+        /// </summary>
+        private List<(string Statement, string Answer, string Explanation)> ParseTrueFalse(string rawText)
+        {
+            var questions = new List<(string, string, string)>();
+            var blocks = Regex.Split(rawText.Trim(), @"\r?\n\s*\r?\n");
+
+            foreach (var block in blocks)
+            {
+                string statement = null;
+                string answer = null;
+                string explanation = "";
+
+                var lines = block.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var line in lines)
+                {
+                    var trimmed = line.Trim();
+
+                    if (trimmed.StartsWith("Statement:", StringComparison.OrdinalIgnoreCase))
+                    {
+                        statement = trimmed.Substring(10).Trim();
+                    }
+                    else if (trimmed.StartsWith("Answer:", StringComparison.OrdinalIgnoreCase))
+                    {
+                        answer = trimmed.Substring(7).Trim();
+                    }
+                    else if (trimmed.StartsWith("Explanation:", StringComparison.OrdinalIgnoreCase))
+                    {
+                        explanation = trimmed.Substring(12).Trim();
+                    }
+                    // If no explicit labels, try to detect True/False
+                    else if ((trimmed.StartsWith("True", StringComparison.OrdinalIgnoreCase) ||
+                              trimmed.StartsWith("False", StringComparison.OrdinalIgnoreCase)) &&
+                             answer == null)
+                    {
+                        answer = trimmed;
+                    }
+                    // First line might be the statement if no label
+                    else if (statement == null && !string.IsNullOrWhiteSpace(trimmed))
+                    {
+                        statement = trimmed;
+                    }
+                    // Remaining text is explanation
+                    else if (!string.IsNullOrWhiteSpace(trimmed))
+                    {
+                        explanation += (string.IsNullOrEmpty(explanation) ? "" : " ") + trimmed;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(statement) && !string.IsNullOrWhiteSpace(answer))
+                {
+                    questions.Add((statement, answer, explanation));
+                }
+            }
+
+            return questions;
+        }
+
+        /// <summary>
+        /// Creates an Anki .apkg file from Translated Sections
+        /// Front: Original text, Back: Translation
+        /// </summary>
+        private void SaveTranslatedSectionsToApkg(string rawText, string outputPath, string deckName)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(rawText))
+                {
+                    UpdateOverlayLog($"⚠️ No translated sections to export to Anki for {deckName}");
+                    return;
+                }
+
+                var sections = ParseTranslatedSections(rawText);
+
+                if (sections.Count == 0)
+                {
+                    UpdateOverlayLog($"⚠️ No valid translated sections found to export");
+                    return;
+                }
+
+                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
+                string folder = Path.GetDirectoryName(apkgPath);
+
+                Anki ankiDeck = new Anki(deckName);
+                ankiDeck.SetFields("Original", "Translation");
+                ankiDeck.SetFormat("{0}\\n<hr id=answer>\\n{1}");
+
+                foreach (var (original, translation) in sections)
+                {
+                    string cleanOriginal = CleanTextForAnki(original);
+                    string cleanTranslation = CleanTextForAnki(translation);
+
+                    if (!string.IsNullOrWhiteSpace(cleanOriginal) && !string.IsNullOrWhiteSpace(cleanTranslation))
+                    {
+                        ankiDeck.AddItem(cleanOriginal, cleanTranslation);
+                    }
+                }
+
+                ankiDeck.CreateApkgFile(folder + "\\");
+
+                string generatedFile = Path.Combine(folder, deckName + ".apkg");
+                if (File.Exists(generatedFile) && generatedFile != apkgPath)
+                {
+                    if (File.Exists(apkgPath))
+                        File.Delete(apkgPath);
+                    File.Move(generatedFile, apkgPath);
+                }
+
+                UpdateOverlayLog($"✅ Anki Translated Sections deck saved: {Path.GetFileName(apkgPath)}");
+            }
+            catch (Exception ex)
+            {
+                UpdateOverlayLog($"❌ Error creating Translated Sections Anki deck: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Helper to parse translated sections
+        /// Expects pairs of original and translated text
+        /// </summary>
+        private List<(string Original, string Translation)> ParseTranslatedSections(string rawText)
+        {
+            var sections = new List<(string, string)>();
+            var blocks = Regex.Split(rawText.Trim(), @"\r?\n\s*\r?\n");
+
+            for (int i = 0; i < blocks.Length; i++)
+            {
+                var block = blocks[i].Trim();
+                if (string.IsNullOrWhiteSpace(block)) continue;
+
+                // Look for "Original:" and "Translation:" labels
+                if (block.Contains("Original:") || block.Contains("Translation:"))
+                {
+                    string original = null;
+                    string translation = null;
+
+                    var lines = block.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var line in lines)
+                    {
+                        var trimmed = line.Trim();
+                        if (trimmed.StartsWith("Original:", StringComparison.OrdinalIgnoreCase))
+                        {
+                            original = trimmed.Substring(9).Trim();
+                        }
+                        else if (trimmed.StartsWith("Translation:", StringComparison.OrdinalIgnoreCase))
+                        {
+                            translation = trimmed.Substring(12).Trim();
+                        }
+                        else if (original != null && translation == null)
+                        {
+                            original += " " + trimmed;
+                        }
+                        else if (translation != null)
+                        {
+                            translation += " " + trimmed;
+                        }
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(original) && !string.IsNullOrWhiteSpace(translation))
+                    {
+                        sections.Add((original, translation));
+                    }
+                }
+                // Otherwise, assume alternating blocks (original, then translation)
+                else if (i + 1 < blocks.Length)
+                {
+                    string original = blocks[i].Trim();
+                    string translation = blocks[i + 1].Trim();
+
+                    if (!string.IsNullOrWhiteSpace(original) && !string.IsNullOrWhiteSpace(translation))
+                    {
+                        sections.Add((original, translation));
+                        i++; // Skip next block as we've used it
+                    }
+                }
+            }
+
+            return sections;
         }
 
         /// <summary>
