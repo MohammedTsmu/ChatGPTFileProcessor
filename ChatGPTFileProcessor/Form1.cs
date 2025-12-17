@@ -1522,7 +1522,6 @@ namespace ChatGPTFileProcessor
             SaveApiKeyAndModel();
 
             // Show model capabilities
-            bool hasVision = true;  // All models in our dropdown now have vision!
             bool hasReasoning = (modelType != "none");
 
             if (hasReasoning)
