@@ -1584,136 +1584,83 @@ namespace ChatGPTFileProcessor
 
         ///// يعالج صفحةً واحدةً (كـ صورة) بطريقة Multimodal: يرسل الصورة + التعليمات النصّية دفعةً واحدة إلى GPT-4o.
         ///// يرجع النصّ الناتج (مثل التعاريف أو الأسئلة) مباشرة.
+        // ===========================================================================
+        // FUNCTION 1: ProcessPdfPageMultimodal (Single Page Processing)
+        // ===========================================================================
+        // This function processes ONE page at a time
+
+        /// <summary>
+        /// Processes a single PDF page with multimodal vision API.
+        /// Now includes reasoning effort control for o-series models.
+        /// </summary>
         private async Task<string> ProcessPdfPageMultimodal(
-    SDImage image, string apiKey, string taskPrompt, string modelName)
+            SDImage image, string apiKey, string taskPrompt, string modelName)
         {
-            // تصغير + ضغط لتقليل زمن الرفع/المعالجة
+            // Step 1: Resize and compress the image to reduce upload time
             string base64;
-            using (var scaled = ResizeForApi(image, 1024))  // ارجعها 1280 إذا تحب جودة أعلى
+            using (var scaled = ResizeForApi(image, 1024))
             {
-                base64 = ToBase64Jpeg(scaled, 80L);         // 80 = حجم أقل وسرعة أعلى
+                base64 = ToBase64Jpeg(scaled, 80L);
             }
 
-            var requestBody = new
-            {
-                model = modelName,
-                messages = new object[]
-                {
-            new
-            {
-                role = "user",
-                content = new object[]
-                {
-                    new { type = "image_url", image_url = new { url = "data:image/jpeg;base64," + base64 } },
-                    new { type = "text", text = taskPrompt }
-                }
-            }
-                }
-            };
+            // Step 2: Detect if this is an o-series reasoning model
+            bool isReasoningModel = IsReasoningModel(modelName);
 
-            string jsonContent = System.Text.Json.JsonSerializer.Serialize(
-                requestBody,
-                new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }
-            );
+            // Step 3: Build the request body
+            // For o-series models, we add the reasoning_effort parameter
+            object requestBody;
 
-            const int maxRetries = 4;
-            int delayMs = 1200;
-
-            for (int attempt = 1; attempt <= maxRetries; attempt++)
+            if (isReasoningModel)
             {
-                var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromMinutes(7)); // أطول من _http.Timeout
-                try
+                // O-series model: Add reasoning_effort
+                requestBody = new
                 {
-                    using (var req = new HttpRequestMessage(HttpMethod.Post, "v1/chat/completions"))
+                    model = modelName,
+                    messages = new object[]
                     {
-                        req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
-                        req.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-                        using (var resp = await _http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, cts.Token))
-                        {
-                            string resultJson = await resp.Content.ReadAsStringAsync();
-                            int status = (int)resp.StatusCode;
-                            bool transient = (status == 429) || (status >= 500);
-
-                            if (!resp.IsSuccessStatusCode)
-                            {
-                                if (transient && attempt < maxRetries)
-                                    throw new Exception("Transient: " + status + " - " + resultJson);
-
-                                throw new Exception("API Error: " + status + " - " + resultJson);
-                            }
-
-                            var jsonNode = System.Text.Json.Nodes.JsonNode.Parse(resultJson);
-                            var text = jsonNode?["choices"]?[0]?["message"]?["content"]?.ToString();
-                            return string.IsNullOrEmpty(text) ? "No content returned." : text;
-                        }
+                new
+                {
+                    role = "user",
+                    content = new object[]
+                    {
+                        new { type = "image_url", image_url = new { url = "data:image/jpeg;base64," + base64 } },
+                        new { type = "text", text = taskPrompt }
                     }
                 }
-                catch (TaskCanceledException)
+                    },
+                    reasoning_effort = "medium"  // Options: "minimal", "low", "medium", "high"
+                                                 // You can change "medium" to "high" for even better quality (but slower/more expensive)
+                                                 // Or "low" for faster processing
+                };
+            }
+            else
+            {
+                // Regular model (GPT-4o, GPT-5, etc.): No reasoning_effort needed
+                requestBody = new
                 {
-                    // Check if cancellation was requested (timeout) vs network issue
-                    if (cts.IsCancellationRequested || attempt == maxRetries) throw;
-                    await Task.Delay(delayMs); delayMs *= 2;
-                }
-                catch (Exception ex)
+                    model = modelName,
+                    messages = new object[]
+                    {
+                new
                 {
-                    if (!ex.Message.StartsWith("Transient") || attempt == maxRetries) throw;
-                    await Task.Delay(delayMs); delayMs *= 2;
+                    role = "user",
+                    content = new object[]
+                    {
+                        new { type = "image_url", image_url = new { url = "data:image/jpeg;base64," + base64 } },
+                        new { type = "text", text = taskPrompt }
+                    }
                 }
-                finally
-                {
-                    cts.Dispose();
-                }
+                    }
+                };
             }
 
-            return "No content returned.";
-        }
-
-
-        //Sends up to N images (in pageGroup) plus the text prompt in one chat call.
-        //This works for batchSize = 2 or 3 or 4.
-        private async Task<string> ProcessPdfPagesMultimodal(
-    List<(int pageNumber, SDImage image)> pageGroup,
-    string apiKey,
-    string taskPrompt,
-    string modelName)
-        {
-            var imageContents = new List<object>();
-            foreach (var tuple in pageGroup)
-            {
-                var img = tuple.image;
-
-                string base64;
-                using (var scaled = ResizeForApi(img, 1024))
-                {
-                    base64 = ToBase64Jpeg(scaled, 80L);
-                }
-
-                imageContents.Add(new
-                {
-                    type = "image_url",
-                    image_url = new { url = "data:image/jpeg;base64," + base64 }
-                });
-            }
-
-            var fullContent = new List<object>();
-            fullContent.AddRange(imageContents);
-            fullContent.Add(new { type = "text", text = taskPrompt });
-
-            var requestBody = new
-            {
-                model = modelName,
-                messages = new object[]
-                {
-            new { role = "user", content = fullContent.ToArray() }
-                }
-            };
-
+            // Step 4: Serialize to JSON
             string jsonContent = System.Text.Json.JsonSerializer.Serialize(
                 requestBody,
                 new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }
             );
 
+            // Step 5: Send request with retry logic
             const int maxRetries = 4;
             int delayMs = 1200;
 
@@ -1738,9 +1685,10 @@ namespace ChatGPTFileProcessor
                                 if (transient && attempt < maxRetries)
                                     throw new Exception("Transient: " + status + " - " + resultJson);
 
-                                throw new Exception("API Error: " + status + " – " + resultJson);
+                                throw new Exception("API Error: " + status + " - " + resultJson);
                             }
 
+                            // Parse response
                             var jsonNode = System.Text.Json.Nodes.JsonNode.Parse(resultJson);
                             var text = jsonNode?["choices"]?[0]?["message"]?["content"]?.ToString();
                             return string.IsNullOrEmpty(text) ? "No content returned." : text;
@@ -1749,14 +1697,15 @@ namespace ChatGPTFileProcessor
                 }
                 catch (TaskCanceledException)
                 {
-                    // Check if cancellation was requested (timeout) vs network issue
                     if (cts.IsCancellationRequested || attempt == maxRetries) throw;
-                    await Task.Delay(delayMs); delayMs *= 2;
+                    await Task.Delay(delayMs);
+                    delayMs *= 2;
                 }
                 catch (Exception ex)
                 {
                     if (!ex.Message.StartsWith("Transient") || attempt == maxRetries) throw;
-                    await Task.Delay(delayMs); delayMs *= 2;
+                    await Task.Delay(delayMs);
+                    delayMs *= 2;
                 }
                 finally
                 {
@@ -1767,6 +1716,168 @@ namespace ChatGPTFileProcessor
             return "No content returned.";
         }
 
+
+        //Sends up to N images (in pageGroup) plus the text prompt in one chat call.
+        //This works for batchSize = 2 or 3 or 4.
+        // ===========================================================================
+        // FUNCTION 2: ProcessPdfPagesMultimodal (Multiple Pages Processing)
+        // ===========================================================================
+        // This function processes MULTIPLE pages at once (2, 3, or 4 pages)
+
+        /// <summary>
+        /// Processes multiple PDF pages with multimodal vision API.
+        /// Now includes reasoning effort control for o-series models.
+        /// </summary>
+        private async Task<string> ProcessPdfPagesMultimodal(
+            List<(int pageNumber, SDImage image)> pageGroup,
+            string apiKey,
+            string taskPrompt,
+            string modelName)
+        {
+            // Step 1: Convert all images to base64
+            var imageContents = new List<object>();
+            foreach (var tuple in pageGroup)
+            {
+                var img = tuple.image;
+
+                string base64;
+                using (var scaled = ResizeForApi(img, 1024))
+                {
+                    base64 = ToBase64Jpeg(scaled, 80L);
+                }
+
+                imageContents.Add(new
+                {
+                    type = "image_url",
+                    image_url = new { url = "data:image/jpeg;base64," + base64 }
+                });
+            }
+
+            // Step 2: Build the content array (images + text prompt)
+            var fullContent = new List<object>();
+            fullContent.AddRange(imageContents);
+            fullContent.Add(new { type = "text", text = taskPrompt });
+
+            // Step 3: Detect if this is an o-series reasoning model
+            bool isReasoningModel = IsReasoningModel(modelName);
+
+            // Step 4: Build the request body
+            object requestBody;
+
+            if (isReasoningModel)
+            {
+                // O-series model: Add reasoning_effort
+                requestBody = new
+                {
+                    model = modelName,
+                    messages = new object[]
+                    {
+                new { role = "user", content = fullContent.ToArray() }
+                    },
+                    reasoning_effort = "medium"  // Options: "minimal", "low", "medium", "high"
+                };
+            }
+            else
+            {
+                // Regular model: No reasoning_effort
+                requestBody = new
+                {
+                    model = modelName,
+                    messages = new object[]
+                    {
+                new { role = "user", content = fullContent.ToArray() }
+                    }
+                };
+            }
+
+            // Step 5: Serialize to JSON
+            string jsonContent = System.Text.Json.JsonSerializer.Serialize(
+                requestBody,
+                new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }
+            );
+
+            // Step 6: Send request with retry logic
+            const int maxRetries = 4;
+            int delayMs = 1200;
+
+            for (int attempt = 1; attempt <= maxRetries; attempt++)
+            {
+                var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromMinutes(7));
+                try
+                {
+                    using (var req = new HttpRequestMessage(HttpMethod.Post, "v1/chat/completions"))
+                    {
+                        req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
+                        req.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                        using (var resp = await _http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, cts.Token))
+                        {
+                            string resultJson = await resp.Content.ReadAsStringAsync();
+                            int status = (int)resp.StatusCode;
+                            bool transient = (status == 429) || (status >= 500);
+
+                            if (!resp.IsSuccessStatusCode)
+                            {
+                                if (transient && attempt < maxRetries)
+                                    throw new Exception("Transient: " + status + " – " + resultJson);
+
+                                throw new Exception("API Error: " + status + " – " + resultJson);
+                            }
+
+                            // Parse response
+                            var jsonNode = System.Text.Json.Nodes.JsonNode.Parse(resultJson);
+                            var text = jsonNode?["choices"]?[0]?["message"]?["content"]?.ToString();
+                            return string.IsNullOrEmpty(text) ? "No content returned." : text;
+                        }
+                    }
+                }
+                catch (TaskCanceledException)
+                {
+                    if (cts.IsCancellationRequested || attempt == maxRetries) throw;
+                    await Task.Delay(delayMs);
+                    delayMs *= 2;
+                }
+                catch (Exception ex)
+                {
+                    if (!ex.Message.StartsWith("Transient") || attempt == maxRetries) throw;
+                    await Task.Delay(delayMs);
+                    delayMs *= 2;
+                }
+                finally
+                {
+                    cts.Dispose();
+                }
+            }
+
+            return "No content returned.";
+        }
+
+
+        // ===========================================================================
+        // HELPER FUNCTION: IsReasoningModel
+        // ===========================================================================
+        // This helper function detects if a model is an o-series reasoning model
+
+        /// <summary>
+        /// Checks if the given model name is an o-series reasoning model.
+        /// O-series models support the reasoning_effort parameter.
+        /// </summary>
+        /// <param name="modelName">The model name (e.g., "o3", "gpt-5", "gpt-4o")</param>
+        /// <returns>True if it's an o-series model, false otherwise</returns>
+        private bool IsReasoningModel(string modelName)
+        {
+            if (string.IsNullOrEmpty(modelName))
+                return false;
+
+            string model = modelName.ToLower().Trim();
+
+            // Check if it starts with "o" followed by a number (o1, o3, o4, etc.)
+            // This covers: o1, o1-mini, o3, o3-mini, o4-mini, etc.
+            return model.StartsWith("o1") ||
+                   model.StartsWith("o3") ||
+                   model.StartsWith("o4") ||
+                   model.StartsWith("o2");  // Future-proof for o2 if it comes out
+        }
         #region Batch Processing Helper Methods
 
         /// <summary>
