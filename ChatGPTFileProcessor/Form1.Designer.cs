@@ -501,7 +501,7 @@
             this.chkTranslatedSections.Name = "chkTranslatedSections";
             this.chkTranslatedSections.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkTranslatedSections.Properties.Appearance.Options.UseFont = true;
-            this.chkTranslatedSections.Properties.Caption = "Generate Translated Sections";
+            this.chkTranslatedSections.Properties.Caption = "Translated Sections";
             this.chkTranslatedSections.Size = new System.Drawing.Size(356, 24);
             this.chkTranslatedSections.TabIndex = 39;
             this.chkTranslatedSections.CheckedChanged += new System.EventHandler(this.chkTranslatedSections_CheckedChanged);
@@ -614,7 +614,7 @@
             this.chkOutline.Name = "chkOutline";
             this.chkOutline.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkOutline.Properties.Appearance.Options.UseFont = true;
-            this.chkOutline.Properties.Caption = "Generate Outline";
+            this.chkOutline.Properties.Caption = "Outline";
             this.chkOutline.Size = new System.Drawing.Size(233, 24);
             this.chkOutline.TabIndex = 33;
             this.chkOutline.CheckedChanged += new System.EventHandler(this.chkOutline_CheckedChanged);
@@ -990,7 +990,7 @@
             this.chkVocabulary.Name = "chkVocabulary";
             this.chkVocabulary.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkVocabulary.Properties.Appearance.Options.UseFont = true;
-            this.chkVocabulary.Properties.Caption = "Generate Vocabulary";
+            this.chkVocabulary.Properties.Caption = "Vocabulary";
             this.chkVocabulary.Size = new System.Drawing.Size(233, 24);
             this.chkVocabulary.TabIndex = 13;
             this.chkVocabulary.CheckedChanged += new System.EventHandler(this.chkVocabulary_CheckedChanged);
@@ -1001,7 +1001,7 @@
             this.chkFlashcards.Name = "chkFlashcards";
             this.chkFlashcards.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkFlashcards.Properties.Appearance.Options.UseFont = true;
-            this.chkFlashcards.Properties.Caption = "Generate Flashcards";
+            this.chkFlashcards.Properties.Caption = "Flashcards";
             this.chkFlashcards.Size = new System.Drawing.Size(233, 24);
             this.chkFlashcards.TabIndex = 12;
             this.chkFlashcards.CheckedChanged += new System.EventHandler(this.chkFlashcards_CheckedChanged);
@@ -1012,7 +1012,7 @@
             this.chkMCQs.Name = "chkMCQs";
             this.chkMCQs.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkMCQs.Properties.Appearance.Options.UseFont = true;
-            this.chkMCQs.Properties.Caption = "Generate MCQs";
+            this.chkMCQs.Properties.Caption = "MCQs";
             this.chkMCQs.Size = new System.Drawing.Size(233, 24);
             this.chkMCQs.TabIndex = 11;
             this.chkMCQs.CheckedChanged += new System.EventHandler(this.chkMCQs_CheckedChanged);
@@ -1023,7 +1023,7 @@
             this.chkDefinitions.Name = "chkDefinitions";
             this.chkDefinitions.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkDefinitions.Properties.Appearance.Options.UseFont = true;
-            this.chkDefinitions.Properties.Caption = "Generate Definitions";
+            this.chkDefinitions.Properties.Caption = "Definitions";
             this.chkDefinitions.Size = new System.Drawing.Size(233, 24);
             this.chkDefinitions.TabIndex = 10;
             this.chkDefinitions.CheckedChanged += new System.EventHandler(this.chkDefinitions_CheckedChanged);
