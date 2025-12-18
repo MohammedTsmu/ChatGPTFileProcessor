@@ -12,8 +12,11 @@ using Xceed.Document.NET;
 using Xceed.Words.NET;
 using SDImage = System.Drawing.Image;
 using Task = System.Threading.Tasks.Task;
-using AnkiSharp;
-
+//using AnkiSharp;
+//using Python.Included;
+//using Python.Runtime;
+using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace ChatGPTFileProcessor
 {
@@ -40,7 +43,9 @@ namespace ChatGPTFileProcessor
         private string selectedReasoningEffort = "medium"; // default
 
 
-
+        private bool pythonInitialized = false;
+        private object pythonLock = new object();
+        private string pythonHome = null;
 
         public Form1()
         {
@@ -166,11 +171,237 @@ namespace ChatGPTFileProcessor
             else
                 radioPageBatchSize.EditValue = 1;
 
+            //Initialize Python for Anki export (runs in background)
+            Task.Run(() => InitializePythonEnvironment());
 
             //// ▼ Populate the “Delimiter” dropdown of the csv export feature
             //cmbDelimiter.Properties.Items.AddRange(new[] { "Tab (TSV)", "Comma (CSV)" });
             //cmbDelimiter.SelectedIndex = 0; // default to TSV
         }
+
+
+        private async Task InitializePythonEnvironment()
+        {
+            try
+            {
+                UpdateStatus("========================================");
+                UpdateStatus("▶ INITIALIZING PYTHON FOR ANKI EXPORT");
+                UpdateStatus("========================================");
+                UpdateStatus("");
+
+                // Try to find system Python
+                UpdateStatus("▶ Looking for Python installation...");
+
+                string[] possiblePaths = new string[]
+                {
+            @"C:\Python313\python.exe",
+            @"C:\Python312\python.exe",
+            @"C:\Python311\python.exe",
+            @"C:\Python310\python.exe",
+            @"C:\Python39\python.exe",
+            @"C:\Python38\python.exe",
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                         @"Programs\Python\Python313\python.exe"),
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                         @"Programs\Python\Python312\python.exe"),
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                         @"Programs\Python\Python311\python.exe"),
+                };
+
+                // Try to find Python in PATH
+                string pythonFromPath = FindPythonInPath();
+                if (!string.IsNullOrEmpty(pythonFromPath))
+                {
+                    pythonHome = Path.GetDirectoryName(pythonFromPath);
+                    UpdateStatus($"✅ Found Python in PATH: {pythonFromPath}");
+                }
+                else
+                {
+                    // Check known installation paths
+                    foreach (var path in possiblePaths)
+                    {
+                        if (File.Exists(path))
+                        {
+                            pythonHome = Path.GetDirectoryName(path);
+                            UpdateStatus($"✅ Found Python at: {path}");
+                            break;
+                        }
+                    }
+                }
+
+                if (string.IsNullOrEmpty(pythonHome))
+                {
+                    UpdateStatus("❌ Python not found on system");
+                    UpdateStatus("");
+                    UpdateStatus("SOLUTION: Install Python from python.org");
+                    UpdateStatus("1. Visit: https://www.python.org/downloads/");
+                    UpdateStatus("2. Download and run installer");
+                    UpdateStatus("3. ✅ CHECK 'Add Python to PATH' during installation");
+                    UpdateStatus("4. Restart this application");
+                    UpdateStatus("");
+
+                    var result = MessageBox.Show(
+                        "Python is not installed on your system.\n\n" +
+                        "To enable Anki .apkg export, please:\n" +
+                        "1. Visit https://www.python.org/downloads/\n" +
+                        "2. Download and install Python\n" +
+                        "3. ✅ CHECK 'Add Python to PATH' during installation\n" +
+                        "4. Restart this application\n\n" +
+                        "Click OK to open Python download page in browser.\n" +
+                        "Click Cancel to skip (other exports will still work).",
+                        "Python Installation Required",
+                        MessageBoxButtons.OKCancel,
+                        MessageBoxIcon.Information
+                    );
+
+                    if (result == DialogResult.OK)
+                    {
+                        System.Diagnostics.Process.Start("https://www.python.org/downloads/");
+                    }
+
+                    return;
+                }
+
+                // Verify Python works
+                string pythonExe = Path.Combine(pythonHome, "python.exe");
+                UpdateStatus("▶ Verifying Python installation...");
+
+                var verifyPsi = new ProcessStartInfo
+                {
+                    FileName = pythonExe,
+                    Arguments = "--version",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+
+                string pythonVersion = "";
+                using (var process = Process.Start(verifyPsi))
+                {
+                    pythonVersion = process.StandardOutput.ReadToEnd().Trim();
+                    process.WaitForExit();
+                }
+
+                UpdateStatus($"✅ Python version: {pythonVersion}");
+                UpdateStatus("");
+
+                // Install genanki
+                UpdateStatus("▶ Installing genanki library...");
+                UpdateStatus("(This may take 30-60 seconds on first run)");
+
+                var pipPsi = new ProcessStartInfo
+                {
+                    FileName = pythonExe,
+                    Arguments = "-m pip install genanki --quiet",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+
+                string pipOutput = "";
+                string pipError = "";
+                using (var process = Process.Start(pipPsi))
+                {
+                    pipOutput = process.StandardOutput.ReadToEnd();
+                    pipError = process.StandardError.ReadToEnd();
+                    process.WaitForExit();
+
+                    if (process.ExitCode != 0)
+                    {
+                        UpdateStatus($"⚠️ pip install had warnings: {pipError}");
+                    }
+                }
+
+                UpdateStatus("✅ genanki installation complete");
+                UpdateStatus("");
+
+                // Verify genanki actually works
+                UpdateStatus("▶ Verifying genanki...");
+
+                var testPsi = new ProcessStartInfo
+                {
+                    FileName = pythonExe,
+                    Arguments = "-c \"import genanki; print('genanki OK')\"",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+
+                string testOutput = "";
+                string testError = "";
+                using (var process = Process.Start(testPsi))
+                {
+                    testOutput = process.StandardOutput.ReadToEnd();
+                    testError = process.StandardError.ReadToEnd();
+                    process.WaitForExit();
+
+                    if (process.ExitCode == 0 && testOutput.Contains("genanki OK"))
+                    {
+                        UpdateStatus("✅ genanki verified successfully");
+                        pythonInitialized = true;
+                    }
+                    else
+                    {
+                        UpdateStatus($"❌ genanki verification failed: {testError}");
+                        return;
+                    }
+                }
+
+                UpdateStatus("");
+                UpdateStatus("========================================");
+                UpdateStatus("✅ ANKI EXPORT READY!");
+                UpdateStatus("========================================");
+                UpdateStatus(".apkg files will now be created automatically");
+                UpdateStatus("");
+            }
+            catch (Exception ex)
+            {
+                UpdateStatus("========================================");
+                UpdateStatus($"❌ PYTHON INITIALIZATION FAILED");
+                UpdateStatus("========================================");
+                UpdateStatus($"Error: {ex.Message}");
+                UpdateStatus("");
+            }
+        }
+
+        private string FindPythonInPath()
+        {
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "python",
+                    Arguments = "-c \"import sys; print(sys.executable)\"",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+
+                using (var process = Process.Start(psi))
+                {
+                    string output = process.StandardOutput.ReadToEnd().Trim();
+                    process.WaitForExit();
+
+                    if (process.ExitCode == 0 && File.Exists(output))
+                    {
+                        return output;
+                    }
+                }
+            }
+            catch
+            {
+                // Python not in PATH
+            }
+
+            return null;
+        }
+
+
+
 
         #region Helper Classes for Batch Processing
 
@@ -264,9 +495,24 @@ namespace ChatGPTFileProcessor
             }
         }
 
+        
         private void UpdateStatus(string message)
         {
-            textBoxStatus.AppendText(message + Environment.NewLine);
+            if (textBoxStatus.InvokeRequired)
+            {
+                textBoxStatus.Invoke(new Action(() =>
+                {
+                    textBoxStatus.AppendText(message + Environment.NewLine);
+                    textBoxStatus.SelectionStart = textBoxStatus.Text.Length;
+                    textBoxStatus.ScrollToCaret();
+                }));
+            }
+            else
+            {
+                textBoxStatus.AppendText(message + Environment.NewLine);
+                textBoxStatus.SelectionStart = textBoxStatus.Text.Length;
+                textBoxStatus.ScrollToCaret();
+            }
         }
 
         private string GetOutputFolder()
@@ -533,28 +779,25 @@ namespace ChatGPTFileProcessor
                 if (isMedical)
                 {
                     definitionsPrompt = targetArabic
-                        ? "اكتب تعريفات طبية موجزة بالعربية لكل مصطلح طبي مذكور في هذه الصفحات. لكل مصطلح اكتب بالضبط (بدون ترقيم):\n\n" +
-                          "- المصطلح: <العنوان>\n" +
-                          "- التعريف: <تعريف سريري من 1–2 جملة بالعربية، مع سياق/دلالة إن لزم>\n\n" +
-                          "استخدم مصطلحات دقيقة وافصل بين الإدخالات بسطر فارغ."
+                        ? "اكتب تعريفات طبية موجزة بالعربية لكل مصطلح طبي مذكور في هذه الصفحات. لكل مصطلح اكتب بالضبط:\n\n" +
+                          "<المصطلح> - Definition: <تعريف سريري من 1–2 جملة بالعربية>\n\n" +
+                          "مهم جداً: استخدم هذا الشكل بالضبط مع الشرطة والكلمة 'Definition'. افصل بين كل إدخال بسطر فارغ. لا تضف ترقيم أو نقاط أو أي تنسيق إضافي."
                         : $"In {generalLangName}, provide concise MEDICAL DEFINITIONS for each key medical term found on these page(s). " +
-                          $"For each term, output exactly (no numbering):\n\n" +
-                          $"- Term: <the term as a heading>\n" +
-                          $"- Definition: <a 1–2 sentence clinical definition in {generalLangName}, including brief context or indication if applicable>\n\n" +
-                          $"Use precise medical terminology and separate each entry with a blank line.";
+                          $"For each term, output EXACTLY in this format:\n\n" +
+                          $"<Term Name> - Definition: <a 1–2 sentence clinical definition in {generalLangName}>\n\n" +
+                          $"CRITICAL: Use this EXACT format with the dash and word 'Definition'. Separate each entry with ONE blank line. " +
+                          $"Do NOT add numbering, bullets, or any extra formatting.";
                 }
                 else
                 {
                     definitionsPrompt = targetArabic
-                        ? "اكتب تعريفات موجزة بالعربية لكل مصطلح مهم في هذه الصفحات. لكل مصطلح اكتب بالضبط (بدون ترقيم):\n\n" +
-                          "- المصطلح: <العنوان>\n" +
-                          "- التعريف: <تعريف من 1–2 جملة بالعربية>\n\n" +
-                          "افصل بين كل إدخال بسطر فارغ."
+                        ? "اكتب تعريفات موجزة بالعربية لكل مصطلح مهم في هذه الصفحات. لكل مصطلح اكتب بالضبط:\n\n" +
+                          "<المصطلح> - Definition: <تعريف من 1–2 جملة بالعربية>\n\n" +
+                          "مهم جداً: استخدم هذا الشكل بالضبط مع الشرطة والكلمة 'Definition'. افصل بين كل إدخال بسطر فارغ."
                         : $"In {generalLangName}, provide concise DEFINITIONS for each key term found on these page(s). " +
-                          $"For each term, output exactly (no numbering):\n\n" +
-                          $"- Term: <the term as a heading>\n" +
-                          $"- Definition: <a 1–2 sentence definition in {generalLangName}>\n\n" +
-                          $"Separate entries with a blank line.";
+                          $"For each term, output EXACTLY in this format:\n\n" +
+                          $"<Term Name> - Definition: <a 1–2 sentence definition in {generalLangName}>\n\n" +
+                          $"CRITICAL: Use this EXACT format with the dash and word 'Definition'. Separate entries with ONE blank line.";
                 }
 
                 // 3.2) MCQs
@@ -696,15 +939,17 @@ namespace ChatGPTFileProcessor
 
                 // 3.8) True/False
                 string trueFalsePrompt = targetArabic
-                    ? "أنشئ عبارات صح/خطأ بالعربية مبنية على هذه الصفحات. يتكوّن كل إدخال من سطرين:\n\n" +
-                      "العبارة: <جملة يمكن الحكم عليها بالصواب أو الخطأ>\n" +
-                      "الإجابة: <صحيح أو خطأ>\n\n" +
-                      "اترك سطرًا فارغًا بين كل زوج، ولا تكتب شروحًا."
-                    : $"Generate TRUE/FALSE statements (in {generalLangName}) based on these page(s).  " +
-                      $"Each block should be two lines:\n\n" +
+                    ? "أنشئ عبارات صح/خطأ بالعربية مبنية على هذه الصفحات. لكل إدخال اكتب بالضبط:\n\n" +
+                      "Statement: <جملة يمكن الحكم عليها بالصواب أو الخطأ>\n" +
+                      "Answer: <صحيح أو خطأ>\n\n" +
+                      "مهم جداً: استخدم الكلمتين 'Statement:' و 'Answer:' بالضبط. اترك سطرًا فارغًا بين كل زوج. لا تضف شروحًا أو تفسيرات."
+                    : $"Generate TRUE/FALSE statements (in {generalLangName}) based on these page(s). " +
+                      $"For each entry, output EXACTLY:\n\n" +
                       $"Statement: <write a true-or-false sentence>\n" +
                       $"Answer: <True or False>\n\n" +
-                      $"Leave exactly one blank line between each pair; do NOT provide explanations.";
+                      $"CRITICAL: Use the exact words 'Statement:' and 'Answer:'. " +
+                      $"Leave exactly ONE blank line between each pair. " +
+                      $"Do NOT provide explanations, justifications, or any extra text.";
 
                 // 3.9) Outline
                 string outlinePrompt;
@@ -834,58 +1079,49 @@ namespace ChatGPTFileProcessor
 
                 // Translated Sections (نبقيها عامة؛ التنسيق RTL/LTR سيتم ضبطه عند حفظ Word)
                 string translatedSectionsPrompt =
-                    $"Translate the following text from {generalLangName} into {vocabLangName}. " +
-                    $"Keep every sentence or paragraph exactly as it is in the original language. " +
-                    $"After each sentence or paragraph, provide the translation immediately below it. " +
-                    $"Do not remove or shorten any part of the original text. " +
-                    $"Do not add any introductions, explanations, notes, or extra formatting. " +
-                    $"Only output the text in the requested format.";
+                    $"Translate the text from {generalLangName} into {vocabLangName}. " +
+                    $"CRITICAL FORMAT REQUIREMENTS:\n" +
+                    $"1. Write ONLY the original sentence/paragraph\n" +
+                    $"2. Leave ONE blank line\n" +
+                    $"3. Write ONLY the translated sentence/paragraph\n" +
+                    $"4. Leave ONE blank line before the next original text\n\n" +
+                    $"Example format:\n" +
+                    $"Original sentence in {generalLangName}.\n\n" +
+                    $"Translated sentence in {vocabLangName}.\n\n" +
+                    $"Next original sentence.\n\n" +
+                    $"Next translation.\n\n" +
+                    $"Do NOT add labels like 'Original:' or 'Translation:'. " +
+                    $"Do NOT add bullet points, numbers, or any formatting. " +
+                    $"Do NOT add explanations or notes. " +
+                    $"ONLY output alternating original and translated paragraphs with blank lines between them.";
+
 
                 // Explain Terms (رقم + IPA + مقاطع + بلوك عربي اختياري)
                 string explainTermsPrompt;
-                string arabicBlock =
-                    includeArabicExplain
-                        ? "ArabicExplanation (Arabic): <2–3 sentences in clear Arabic>\n" +
-                          "ArabicAnalogy (Arabic): <a simple analogy/example in Arabic>\n"
-                        : "";
-
                 if (isMedical)
                 {
                     explainTermsPrompt = targetArabic
-                        ? "استخرج المصطلحات الطبية الأساسية التي قد لا يفهمها غير المتخصص. رقّم كل مصطلح تسلسليًا (1، 2، 3، ...). لكل مصطلح اكتب بالضبط:\n\n" +
-                          "<الرقم>. المصطلح: <كما هو مكتوب>\n" +
-                          "النطق: IPA = </International Phonetic Alphabet/>, المقاطع = <تقسيم مبسّط>\n" +
-                          "الشرح (العربية العامة): <2–3 جمل بلغة واضحة>\n" +
-                          (includeArabicExplain ? "ArabicExplanation (Arabic): <2–3 sentences in clear Arabic>\nArabicAnalogy (Arabic): <a simple analogy/example in Arabic>\n" : "") +
-                          "إذا كان المصطلح اختصارًا فافتحه أولًا.\n\n" +
-                          "افصل بين كل كتلة بمسطرة واحدة."
-                        : $"Identify KEY MEDICAL TERMS on these page(s) that a non-specialist may not understand. " +
-                          $"Number each term block sequentially (1, 2, 3, ...). For EACH term, output EXACTLY:\n\n" +
-                          $"<Number>. Term: <the term as written>\n" +
-                          $"Pronunciation: IPA = </International Phonetic Alphabet/>, Syllables = <break into simple syllables>\n" +
-                          $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
-                          arabicBlock +
-                          $"If the term is an abbreviation, first expand it.\n\n" +
-                          $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
+                        ? "استخرج المصطلحات الطبية الأساسية. لكل مصطلح اكتب بالضبط:\n\n" +
+                          "<المصطلح> - Definition: <شرح واضح من 2-3 جمل بالعربية>\n\n" +
+                          "مهم جداً: استخدم الشكل '<المصطلح> - Definition: <الشرح>' بالضبط. افصل بين كل مصطلح بسطر فارغ واحد. لا تضف ترقيم أو نطق أو أي تنسيق إضافي."
+                        : $"Identify KEY MEDICAL TERMS on these page(s). " +
+                          $"For EACH term, output EXACTLY:\n\n" +
+                          $"<Term> - Definition: <clear 2-3 sentence explanation in {generalLangName}>\n\n" +
+                          $"CRITICAL: Use the format '<Term> - Definition: <explanation>' EXACTLY. " +
+                          $"Separate each term with ONE blank line. " +
+                          $"Do NOT add numbering, pronunciation, IPA, syllables, or any extra formatting.";
                 }
                 else
                 {
                     explainTermsPrompt = targetArabic
-                        ? "استخرج المصطلحات التقنية الأساسية التي قد لا يفهمها غير المتخصص. رقّم كل مصطلح تسلسليًا (1، 2، 3، ...). لكل مصطلح اكتب بالضبط:\n\n" +
-                          "<الرقم>. المصطلح: <كما هو مكتوب>\n" +
-                          "النطق: IPA = </International Phonetic Alphabet/>, المقاطع = <تقسيم مبسّط>\n" +
-                          "الشرح (العربية العامة): <2–3 جمل بلغة واضحة>\n" +
-                          (includeArabicExplain ? "ArabicExplanation (Arabic): <2–3 sentences in clear Arabic>\nArabicAnalogy (Arabic): <a simple analogy/example in Arabic>\n" : "") +
-                          "إذا كان المصطلح اختصارًا فافتحه أولًا.\n\n" +
-                          "افصل بين كل كتلة بمسطرة واحدة."
-                        : $"Identify KEY TECHNICAL TERMS on these page(s) that a non-specialist may not understand. " +
-                          $"Number each term block sequentially (1, 2, 3, ...). For EACH term, output EXACTLY:\n\n" +
-                          $"<Number>. Term: <the term as written>\n" +
-                          $"Pronunciation: IPA = </International Phonetic Alphabet/>, Syllables = <break into simple syllables>\n" +
-                          $"Explanation ({generalLangName}): <2–3 sentences in clear plain language>\n" +
-                          arabicBlock +
-                          $"If the term is an abbreviation, first expand it.\n\n" +
-                          $"Separate each term block with ONE blank line. Do NOT add extra commentary.";
+                        ? "استخرج المصطلحات التقنية الأساسية. لكل مصطلح اكتب بالضبط:\n\n" +
+                          "<المصطلح> - Definition: <شرح واضح من 2-3 جمل بالعربية>\n\n" +
+                          "مهم جداً: استخدم الشكل '<المصطلح> - Definition: <الشرح>' بالضبط. افصل بين كل مصطلح بسطر فارغ واحد."
+                        : $"Identify KEY TECHNICAL TERMS on these page(s). " +
+                          $"For EACH term, output EXACTLY:\n\n" +
+                          $"<Term> - Definition: <clear 2-3 sentence explanation in {generalLangName}>\n\n" +
+                          $"CRITICAL: Use the format '<Term> - Definition: <explanation>' EXACTLY. " +
+                          $"Separate each term with ONE blank line.";
                 }
 
 
@@ -2832,192 +3068,8 @@ namespace ChatGPTFileProcessor
 
 
 
-        /// <summary>
-        /// Creates an Anki .apkg file from MCQ data with proper escaping
-        /// </summary>
-        private void SaveMcqsToApkg(List<McqItem> items, string outputPath, string deckName)
-        {
-            try
-            {
-                if (items == null || items.Count == 0)
-                {
-                    UpdateOverlayLog($"⚠️ No MCQs to export to Anki for {deckName}");
-                    return;
-                }
-
-                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
-                string folder = Path.GetDirectoryName(apkgPath);
-
-                Anki ankiDeck = new Anki(deckName);
-
-                // MCQ format: Question, Options, Answer
-                ankiDeck.SetFields("Question", "Options", "Answer");
-
-                // Format: Question on top, Options below with spacing, Answer on back
-                ankiDeck.SetFormat("{0}<br><br>{1}\\n<hr id=answer>\\n<b>Correct Answer: {2}</b>");
-
-                foreach (var mcq in items)
-                {
-                    if (!string.IsNullOrWhiteSpace(mcq.Question))
-                    {
-                        // ✨ Clean and escape special characters that break SQL
-                        string cleanQuestion = CleanTextForAnki(mcq.Question);
-                        string cleanOptionA = CleanTextForAnki(mcq.OptionA);
-                        string cleanOptionB = CleanTextForAnki(mcq.OptionB);
-                        string cleanOptionC = CleanTextForAnki(mcq.OptionC);
-                        string cleanOptionD = CleanTextForAnki(mcq.OptionD);
-                        string cleanAnswer = CleanTextForAnki(mcq.Answer);
-
-                        // Format options with HTML line breaks
-                        string options = $"A) {cleanOptionA}<br><br>B) {cleanOptionB}<br><br>C) {cleanOptionC}<br><br>D) {cleanOptionD}";
-
-                        ankiDeck.AddItem(cleanQuestion, options, cleanAnswer);
-                    }
-                }
-
-                ankiDeck.CreateApkgFile(folder + "\\");
-
-                string generatedFile = Path.Combine(folder, deckName + ".apkg");
-                if (File.Exists(generatedFile) && generatedFile != apkgPath)
-                {
-                    if (File.Exists(apkgPath))
-                        File.Delete(apkgPath);
-                    File.Move(generatedFile, apkgPath);
-                }
-
-                UpdateOverlayLog($"✅ Anki MCQ deck saved: {Path.GetFileName(apkgPath)}");
-            }
-            catch (Exception ex)
-            {
-                UpdateOverlayLog($"❌ Error creating MCQ Anki deck: {ex.Message}");
-            }
-        }
-
-        // ========================================
-        // NEW ANKI .APKG EXPORT FUNCTIONS
-        // Add these 5 methods to your Form1.cs class
-        // (Suggested location: after the existing SaveMcqsToApkg method)
-        // ========================================
-
-        /// <summary>
-        /// Creates an Anki .apkg file from Vocabulary data (Term → Translation)
-        /// </summary>
-        private void SaveVocabularyToApkg(List<Tuple<string, string>> records, string outputPath, string deckName)
-        {
-            try
-            {
-                if (records == null || records.Count == 0)
-                {
-                    UpdateOverlayLog($"⚠️ No vocabulary to export to Anki for {deckName}");
-                    return;
-                }
-
-                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
-                string folder = Path.GetDirectoryName(apkgPath);
-
-                Anki ankiDeck = new Anki(deckName);
-                ankiDeck.SetFields("Term", "Translation");
-                ankiDeck.SetFormat("{0}\\n<hr id=answer>\\n{1}");
-
-                foreach (var record in records)
-                {
-                    string term = CleanTextForAnki(record.Item1);
-                    string translation = CleanTextForAnki(record.Item2);
-
-                    if (!string.IsNullOrWhiteSpace(term) && !string.IsNullOrWhiteSpace(translation))
-                    {
-                        ankiDeck.AddItem(term, translation);
-                    }
-                }
-
-                ankiDeck.CreateApkgFile(folder + "\\");
-
-                string generatedFile = Path.Combine(folder, deckName + ".apkg");
-                if (File.Exists(generatedFile) && generatedFile != apkgPath)
-                {
-                    if (File.Exists(apkgPath))
-                        File.Delete(apkgPath);
-                    File.Move(generatedFile, apkgPath);
-                }
-
-                UpdateOverlayLog($"✅ Anki Vocabulary deck saved: {Path.GetFileName(apkgPath)}");
-            }
-            catch (Exception ex)
-            {
-                UpdateOverlayLog($"❌ Error creating Vocabulary Anki deck: {ex.Message}");
-            }
-        }
-
-        /// <summary>
-        /// Creates an Anki .apkg file from Definitions data
-        /// Format expects: "Term: Definition" blocks separated by blank lines
-        /// </summary>
-        private void SaveDefinitionsToApkg(string rawText, string outputPath, string deckName)
-        {
-            try
-            {
-                UpdateOverlayLog($"🔍 DEBUG: SaveDefinitionsToApkg called");
-
-                if (string.IsNullOrWhiteSpace(rawText))
-                {
-                    UpdateOverlayLog($"⚠️ No definitions text to export to Anki for {deckName}");
-                    return;
-                }
-
-                UpdateOverlayLog($"🔍 DEBUG: Raw text length: {rawText.Length}");
-
-                // Parse definitions from raw text
-                var definitions = ParseDefinitions(rawText);
-
-                UpdateOverlayLog($"🔍 DEBUG: Parsed {definitions.Count} definitions");
-
-                if (definitions.Count == 0)
-                {
-                    UpdateOverlayLog($"⚠️ No valid definitions found to export");
-                    return;
-                }
-
-                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
-                string folder = Path.GetDirectoryName(apkgPath);
-
-                Anki ankiDeck = new Anki(deckName);
-                ankiDeck.SetFields("Term", "Definition");
-                ankiDeck.SetFormat("{0}\\n<hr id=answer>\\n{1}");
-
-                int addedCount = 0;
-                foreach (var (termText, defText) in definitions)
-                {
-                    string cleanTerm = CleanTextForAnki(termText);
-                    string cleanDef = CleanTextForAnki(defText);
-
-                    if (!string.IsNullOrWhiteSpace(cleanTerm) && !string.IsNullOrWhiteSpace(cleanDef))
-                    {
-                        ankiDeck.AddItem(cleanTerm, cleanDef);
-                        addedCount++;
-                    }
-                }
-
-                UpdateOverlayLog($"🔍 DEBUG: Added {addedCount} cards to Anki deck");
-
-                ankiDeck.CreateApkgFile(folder + "\\");
-
-                string generatedFile = Path.Combine(folder, deckName + ".apkg");
-                if (File.Exists(generatedFile) && generatedFile != apkgPath)
-                {
-                    if (File.Exists(apkgPath))
-                        File.Delete(apkgPath);
-                    File.Move(generatedFile, apkgPath);
-                }
-
-                UpdateOverlayLog($"✅ Anki Definitions deck saved: {Path.GetFileName(apkgPath)}");
-            }
-            catch (Exception ex)
-            {
-                UpdateOverlayLog($"❌ Error creating Definitions Anki deck: {ex.Message}");
-                UpdateOverlayLog($"❌ Stack trace: {ex.StackTrace}");
-            }
-        }
-
+        
+        
         /// <summary>
         /// Helper to parse definitions from raw text
         /// Expects format: "Term: Definition" or blocks separated by blank lines
@@ -3101,122 +3153,7 @@ namespace ChatGPTFileProcessor
             return definitions;
         }
 
-        /// <summary>
-        /// Creates an Anki .apkg file from Explain Terms data
-        /// </summary>
-        private void SaveExplainTermsToApkg(string rawText, string outputPath, string deckName)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(rawText))
-                {
-                    UpdateOverlayLog($"⚠️ No terms to export to Anki for {deckName}");
-                    return;
-                }
-
-                // Parse explain terms (similar to definitions)
-                var terms = ParseDefinitions(rawText); // Reuse parser as format is similar
-
-                if (terms.Count == 0)
-                {
-                    UpdateOverlayLog($"⚠️ No valid terms found to export");
-                    return;
-                }
-
-                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
-                string folder = Path.GetDirectoryName(apkgPath);
-
-                Anki ankiDeck = new Anki(deckName);
-                ankiDeck.SetFields("Term", "Explanation");
-                ankiDeck.SetFormat("{0}\\n<hr id=answer>\\n{1}");
-
-                foreach (var (term, explanation) in terms)
-                {
-                    string cleanTerm = CleanTextForAnki(term);
-                    string cleanExpl = CleanTextForAnki(explanation);
-
-                    if (!string.IsNullOrWhiteSpace(cleanTerm) && !string.IsNullOrWhiteSpace(cleanExpl))
-                    {
-                        ankiDeck.AddItem(cleanTerm, cleanExpl);
-                    }
-                }
-
-                ankiDeck.CreateApkgFile(folder + "\\");
-
-                string generatedFile = Path.Combine(folder, deckName + ".apkg");
-                if (File.Exists(generatedFile) && generatedFile != apkgPath)
-                {
-                    if (File.Exists(apkgPath))
-                        File.Delete(apkgPath);
-                    File.Move(generatedFile, apkgPath);
-                }
-
-                UpdateOverlayLog($"✅ Anki Explain Terms deck saved: {Path.GetFileName(apkgPath)}");
-            }
-            catch (Exception ex)
-            {
-                UpdateOverlayLog($"❌ Error creating Explain Terms Anki deck: {ex.Message}");
-            }
-        }
-
-        /// <summary>
-        /// Creates an Anki .apkg file from True/False data
-        /// </summary>
-        private void SaveTrueFalseToApkg(string rawText, string outputPath, string deckName)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(rawText))
-                {
-                    UpdateOverlayLog($"⚠️ No True/False questions to export to Anki for {deckName}");
-                    return;
-                }
-
-                var questions = ParseTrueFalse(rawText);
-
-                if (questions.Count == 0)
-                {
-                    UpdateOverlayLog($"⚠️ No valid True/False questions found to export");
-                    return;
-                }
-
-                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
-                string folder = Path.GetDirectoryName(apkgPath);
-
-                Anki ankiDeck = new Anki(deckName);
-                ankiDeck.SetFields("Statement", "Answer", "Explanation");
-                ankiDeck.SetFormat("{0}\\n<hr id=answer>\\n<b>{1}</b><br><br>{2}");
-
-                foreach (var (statement, answer, explanation) in questions)
-                {
-                    string cleanStatement = CleanTextForAnki(statement);
-                    string cleanAnswer = CleanTextForAnki(answer);
-                    string cleanExplanation = CleanTextForAnki(explanation);
-
-                    if (!string.IsNullOrWhiteSpace(cleanStatement) && !string.IsNullOrWhiteSpace(cleanAnswer))
-                    {
-                        ankiDeck.AddItem(cleanStatement, cleanAnswer, cleanExplanation);
-                    }
-                }
-
-                ankiDeck.CreateApkgFile(folder + "\\");
-
-                string generatedFile = Path.Combine(folder, deckName + ".apkg");
-                if (File.Exists(generatedFile) && generatedFile != apkgPath)
-                {
-                    if (File.Exists(apkgPath))
-                        File.Delete(apkgPath);
-                    File.Move(generatedFile, apkgPath);
-                }
-
-                UpdateOverlayLog($"✅ Anki True/False deck saved: {Path.GetFileName(apkgPath)}");
-            }
-            catch (Exception ex)
-            {
-                UpdateOverlayLog($"❌ Error creating True/False Anki deck: {ex.Message}");
-            }
-        }
-
+        
         /// <summary>
         /// Helper to parse True/False questions
         /// Expects: Statement, Answer: True/False, Explanation (optional)
@@ -3224,19 +3161,23 @@ namespace ChatGPTFileProcessor
         private List<(string Statement, string Answer, string Explanation)> ParseTrueFalse(string rawText)
         {
             var questions = new List<(string, string, string)>();
+
+            // Split by blank lines
             var blocks = Regex.Split(rawText.Trim(), @"\r?\n\s*\r?\n");
 
             foreach (var block in blocks)
             {
+                if (string.IsNullOrWhiteSpace(block)) continue;
+
                 string statement = null;
                 string answer = null;
-                string explanation = "";
 
                 var lines = block.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (var line in lines)
                 {
                     var trimmed = line.Trim();
+                    if (string.IsNullOrWhiteSpace(trimmed)) continue;
 
                     if (trimmed.StartsWith("Statement:", StringComparison.OrdinalIgnoreCase))
                     {
@@ -3246,49 +3187,561 @@ namespace ChatGPTFileProcessor
                     {
                         answer = trimmed.Substring(7).Trim();
                     }
-                    else if (trimmed.StartsWith("Explanation:", StringComparison.OrdinalIgnoreCase))
-                    {
-                        explanation = trimmed.Substring(12).Trim();
-                    }
-                    // If no explicit labels, try to detect True/False
-                    else if ((trimmed.StartsWith("True", StringComparison.OrdinalIgnoreCase) ||
-                              trimmed.StartsWith("False", StringComparison.OrdinalIgnoreCase)) &&
-                             answer == null)
-                    {
-                        answer = trimmed;
-                    }
-                    // First line might be the statement if no label
-                    else if (statement == null && !string.IsNullOrWhiteSpace(trimmed))
-                    {
-                        statement = trimmed;
-                    }
-                    // Remaining text is explanation
-                    else if (!string.IsNullOrWhiteSpace(trimmed))
-                    {
-                        explanation += (string.IsNullOrEmpty(explanation) ? "" : " ") + trimmed;
-                    }
                 }
 
-                if (!string.IsNullOrWhiteSpace(statement) && !string.IsNullOrWhiteSpace(answer))
+                // Validate and add
+                if (!string.IsNullOrWhiteSpace(statement) &&
+                    !string.IsNullOrWhiteSpace(answer) &&
+                    statement.Length > 5 &&
+                    (answer.Equals("True", StringComparison.OrdinalIgnoreCase) ||
+                     answer.Equals("False", StringComparison.OrdinalIgnoreCase) ||
+                     answer.Equals("صحيح", StringComparison.OrdinalIgnoreCase) ||
+                     answer.Equals("خطأ", StringComparison.OrdinalIgnoreCase)))
                 {
-                    questions.Add((statement, answer, explanation));
+                    questions.Add((statement, answer, ""));  // No explanation in new format
                 }
             }
 
             return questions;
         }
 
+        
+
         /// <summary>
-        /// Creates an Anki .apkg file from Translated Sections
-        /// Front: Original text, Back: Translation
+        /// FIXED Parser for Translated Sections
+        /// Handles the format: English paragraph, then Arabic paragraph, separated by blank lines
         /// </summary>
+        private List<(string Original, string Translation)> ParseTranslatedSections(string rawText)
+        {
+            var sections = new List<(string, string)>();
+
+            // Remove any page markers
+            rawText = Regex.Replace(rawText, @"=+\s*Page\s+\d+\s*=+", "", RegexOptions.IgnoreCase);
+            rawText = Regex.Replace(rawText, @"Translated Sections", "", RegexOptions.IgnoreCase);
+
+            // Split by blank lines (double newlines)
+            var blocks = Regex.Split(rawText.Trim(), @"(?:\r?\n){2,}");
+
+            // Filter out empty and junk blocks
+            var cleanBlocks = new List<string>();
+            foreach (var block in blocks)
+            {
+                var trimmed = block.Trim();
+
+                // Skip if empty or too short
+                if (string.IsNullOrWhiteSpace(trimmed) || trimmed.Length < 10)
+                    continue;
+
+                // Skip common junk
+                if (trimmed == "•" || trimmed == "-" || trimmed == "*")
+                    continue;
+
+                cleanBlocks.Add(trimmed);
+            }
+
+            // Pair them: cleanBlocks[0]=original, cleanBlocks[1]=translation, etc.
+            for (int i = 0; i < cleanBlocks.Count - 1; i += 2)
+            {
+                string original = cleanBlocks[i];
+                string translation = cleanBlocks[i + 1];
+
+                // Validate both are substantial
+                if (!string.IsNullOrWhiteSpace(original) &&
+                    !string.IsNullOrWhiteSpace(translation) &&
+                    original.Length >= 10 &&
+                    translation.Length >= 10)
+                {
+                    sections.Add((original, translation));
+                }
+            }
+
+            return sections;
+        }
+
+
+        /// <summary>
+        /// Universal Anki deck creator using Python genanki
+        /// </summary>
+        private void CreateAnkiDeck(string deckName, List<Dictionary<string, string>> cards,
+                           List<string> fieldNames, string template, string outputPath)
+        {
+            if (!pythonInitialized)
+            {
+                UpdateOverlayLog("⚠️ Python not ready yet - skipping .apkg export");
+                return;
+            }
+
+            try
+            {
+                // Create temp files
+                string tempDir = Path.Combine(Path.GetTempPath(), "AnkiExport_" + Guid.NewGuid().ToString("N").Substring(0, 8));
+                Directory.CreateDirectory(tempDir);
+
+                string scriptPath = Path.Combine(tempDir, "create_deck.py");
+                string dataPath = Path.Combine(tempDir, "data.json");
+
+                // Prepare data
+                var data = new
+                {
+                    deckName = deckName,
+                    cards = cards,
+                    fields = fieldNames,
+                    template = template,
+                    outputPath = outputPath
+                };
+
+                // Write JSON data
+                File.WriteAllText(dataPath, JsonConvert.SerializeObject(data), new UTF8Encoding(false));
+
+                // Create Python script
+                string pythonScript = @"
+import genanki
+import json
+import random
+
+# Read data
+with open(r'" + dataPath.Replace("\\", "\\\\") + @"', 'r', encoding='utf-8') as f:
+    data = json.load(f)
+
+# Generate unique IDs
+model_id = random.randint(1000000000, 9999999999)
+deck_id = random.randint(1000000000, 9999999999)
+
+# Split template
+template_parts = data['template'].split('<hr id=""answer"">')
+qfmt = template_parts[0] if len(template_parts) > 0 else '{{' + data['fields'][0] + '}}'
+afmt = data['template']
+
+# Create model
+model = genanki.Model(
+    model_id,
+    data['deckName'] + ' Model',
+    fields=[{'name': f} for f in data['fields']],
+    templates=[{
+        'name': 'Card 1',
+        'qfmt': qfmt,
+        'afmt': afmt
+    }]
+)
+
+# Create deck
+deck = genanki.Deck(deck_id, data['deckName'])
+
+# Add notes
+for card in data['cards']:
+    values = [card.get(f, '') for f in data['fields']]
+    note = genanki.Note(model=model, fields=values)
+    deck.add_note(note)
+
+# Export
+genanki.Package(deck).write_to_file(data['outputPath'])
+print('SUCCESS')
+";
+
+                File.WriteAllText(scriptPath, pythonScript, Encoding.UTF8);
+
+                // Find python.exe
+                string pythonExe = Path.Combine(pythonHome, "python.exe");
+                if (!File.Exists(pythonExe))
+                {
+                    UpdateOverlayLog($"❌ Python executable not found at: {pythonExe}");
+                    return;
+                }
+
+                // Build PYTHONPATH - add all possible locations for site-packages
+                List<string> pythonPaths = new List<string>();
+
+                // 1. Main Lib and site-packages
+                string libPath = Path.Combine(pythonHome, "Lib");
+                string sitePackagesPath = Path.Combine(libPath, "site-packages");
+                if (Directory.Exists(libPath)) pythonPaths.Add(libPath);
+                if (Directory.Exists(sitePackagesPath)) pythonPaths.Add(sitePackagesPath);
+
+                // 2. Alternate location (some Python.Included versions use this)
+                string altSitePackages = Path.Combine(pythonHome, "site-packages");
+                if (Directory.Exists(altSitePackages)) pythonPaths.Add(altSitePackages);
+
+                // 3. AppData location (where pip might install packages)
+                string appDataPython = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "python-3.13.0-embed-amd64",
+                    "Lib",
+                    "site-packages"
+                );
+                if (Directory.Exists(appDataPython)) pythonPaths.Add(appDataPython);
+
+                // 4. Python home itself
+                pythonPaths.Add(pythonHome);
+
+                string pythonPathEnv = string.Join(";", pythonPaths.Distinct());
+
+                // Execute Python script with PYTHONPATH set
+                var psi = new ProcessStartInfo
+                {
+                    FileName = pythonExe,
+                    Arguments = $"\"{scriptPath}\"",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                    WorkingDirectory = pythonHome
+                };
+
+                // Set PYTHONPATH environment variable
+                psi.EnvironmentVariables["PYTHONPATH"] = pythonPathEnv;
+                psi.EnvironmentVariables["PYTHONHOME"] = pythonHome;
+
+                using (var process = Process.Start(psi))
+                {
+                    string output = process.StandardOutput.ReadToEnd();
+                    string error = process.StandardError.ReadToEnd();
+                    process.WaitForExit();
+
+                    if (process.ExitCode == 0 && output.Contains("SUCCESS"))
+                    {
+                        UpdateOverlayLog($"✅ Anki deck saved: {Path.GetFileName(outputPath)}");
+                    }
+                    else
+                    {
+                        UpdateOverlayLog($"❌ Python error: {error}");
+                        if (!string.IsNullOrWhiteSpace(output))
+                        {
+                            UpdateOverlayLog($"Output: {output}");
+                        }
+
+                        // Debug: Show where we looked for packages
+                        UpdateOverlayLog($"PYTHONPATH was set to: {pythonPathEnv}");
+                    }
+                }
+
+                // Cleanup temp directory
+                try
+                {
+                    Directory.Delete(tempDir, true);
+                }
+                catch
+                {
+                    // Ignore cleanup errors
+                }
+            }
+            catch (Exception ex)
+            {
+                UpdateOverlayLog($"❌ Error creating Anki deck: {ex.Message}");
+            }
+        }
+
+
+        private void VerifyGenankiInstallation()
+        {
+            try
+            {
+                string pythonExe = Path.Combine(pythonHome, "python.exe");
+
+                var psi = new ProcessStartInfo
+                {
+                    FileName = pythonExe,
+                    Arguments = "-c \"import sys; import genanki; print('genanki found at:', genanki.__file__); print('sys.path:', sys.path)\"",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+
+                using (var process = Process.Start(psi))
+                {
+                    string output = process.StandardOutput.ReadToEnd();
+                    string error = process.StandardError.ReadToEnd();
+                    process.WaitForExit();
+
+                    UpdateStatus("=== Genanki Installation Check ===");
+                    UpdateStatus(output);
+                    if (!string.IsNullOrWhiteSpace(error))
+                    {
+                        UpdateStatus("Error: " + error);
+                    }
+                    UpdateStatus("===================================");
+                }
+            }
+            catch (Exception ex)
+            {
+                UpdateStatus($"Verification failed: {ex.Message}");
+            }
+        }
+
+
+        // 1. FLASHCARDS
+        private void SaveFlashcardsToApkg(List<(string Front, string Back)> cards,
+                                          string outputPath, string deckName)
+        {
+            try
+            {
+                if (cards == null || cards.Count == 0)
+                {
+                    UpdateOverlayLog($"⚠️ No flashcards to export to Anki");
+                    return;
+                }
+
+                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
+
+                // Convert to dictionary format
+                var cardData = cards.Select(c => new Dictionary<string, string>
+        {
+            { "Front", CleanTextForAnki(c.Front) },
+            { "Back", CleanTextForAnki(c.Back) }
+        }).ToList();
+
+                // Define template
+                string template = "{{Front}}<hr id=\"answer\">{{Back}}";
+
+                // Create deck
+                CreateAnkiDeck(deckName, cardData, new List<string> { "Front", "Back" },
+                              template, apkgPath);
+            }
+            catch (Exception ex)
+            {
+                UpdateOverlayLog($"❌ Error creating Flashcards Anki deck: {ex.Message}");
+            }
+        }
+
+        // 2. MCQs
+        private void SaveMcqsToApkg(List<McqItem> items, string outputPath, string deckName)
+        {
+            try
+            {
+                if (items == null || items.Count == 0)
+                {
+                    UpdateOverlayLog($"⚠️ No MCQs to export to Anki");
+                    return;
+                }
+
+                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
+
+                // Convert to dictionary format
+                var cardData = items.Select(mcq => new Dictionary<string, string>
+        {
+            { "Question", CleanTextForAnki(mcq.Question) },
+            { "Options", CleanTextForAnki($"A) {mcq.OptionA}<br><br>B) {mcq.OptionB}<br><br>C) {mcq.OptionC}<br><br>D) {mcq.OptionD}") },
+            { "Answer", CleanTextForAnki(mcq.Answer) }
+        }).ToList();
+
+                // Define template
+                string template = "{{Question}}<br><br>{{Options}}<hr id=\"answer\"><b>Correct Answer: {{Answer}}</b>";
+
+                // Create deck
+                CreateAnkiDeck(deckName, cardData,
+                              new List<string> { "Question", "Options", "Answer" },
+                              template, apkgPath);
+            }
+            catch (Exception ex)
+            {
+                UpdateOverlayLog($"❌ Error creating MCQ Anki deck: {ex.Message}");
+            }
+        }
+
+        // 3. VOCABULARY
+        private void SaveVocabularyToApkg(List<Tuple<string, string>> records,
+                                          string outputPath, string deckName)
+        {
+            try
+            {
+                if (records == null || records.Count == 0)
+                {
+                    UpdateOverlayLog($"⚠️ No vocabulary to export to Anki");
+                    return;
+                }
+
+                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
+
+                // Convert to dictionary format
+                var cardData = records.Select(r => new Dictionary<string, string>
+        {
+            { "Term", CleanTextForAnki(r.Item1) },
+            { "Translation", CleanTextForAnki(r.Item2) }
+        }).ToList();
+
+                // Define template
+                string template = "{{Term}}<hr id=\"answer\">{{Translation}}";
+
+                // Create deck
+                CreateAnkiDeck(deckName, cardData,
+                              new List<string> { "Term", "Translation" },
+                              template, apkgPath);
+            }
+            catch (Exception ex)
+            {
+                UpdateOverlayLog($"❌ Error creating Vocabulary Anki deck: {ex.Message}");
+            }
+        }
+
+        // 4. DEFINITIONS
+        private void SaveDefinitionsToApkg(string rawText, string outputPath, string deckName)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(rawText))
+                {
+                    UpdateOverlayLog($"⚠️ No definitions to export to Anki");
+                    return;
+                }
+
+                var definitions = ParseDefinitions(rawText);
+
+                if (definitions.Count == 0)
+                {
+                    UpdateOverlayLog($"⚠️ No valid definitions found");
+                    return;
+                }
+
+                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
+
+                // Convert to dictionary format
+                var cardData = definitions.Select(d => new Dictionary<string, string>
+        {
+            { "Term", CleanTextForAnki(d.Term) },
+            { "Definition", CleanTextForAnki(d.Definition) }
+        }).ToList();
+
+                // Define template
+                string template = "{{Term}}<hr id=\"answer\">{{Definition}}";
+
+                // Create deck
+                CreateAnkiDeck(deckName, cardData,
+                              new List<string> { "Term", "Definition" },
+                              template, apkgPath);
+            }
+            catch (Exception ex)
+            {
+                UpdateOverlayLog($"❌ Error creating Definitions Anki deck: {ex.Message}");
+            }
+        }
+
+        // 5. EXPLAIN TERMS (reuses ParseDefinitions)
+        private void SaveExplainTermsToApkg(string rawText, string outputPath, string deckName)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(rawText))
+                {
+                    UpdateOverlayLog($"⚠️ No terms to export to Anki");
+                    return;
+                }
+
+                var terms = ParseDefinitions(rawText); // Reuse parser
+
+                if (terms.Count == 0)
+                {
+                    UpdateOverlayLog($"⚠️ No valid terms found");
+                    return;
+                }
+
+                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
+
+                // Convert to dictionary format
+                var cardData = terms.Select(t => new Dictionary<string, string>
+        {
+            { "Term", CleanTextForAnki(t.Term) },
+            { "Explanation", CleanTextForAnki(t.Definition) }
+        }).ToList();
+
+                // Define template
+                string template = "{{Term}}<hr id=\"answer\">{{Explanation}}";
+
+                // Create deck
+                CreateAnkiDeck(deckName, cardData,
+                              new List<string> { "Term", "Explanation" },
+                              template, apkgPath);
+            }
+            catch (Exception ex)
+            {
+                UpdateOverlayLog($"❌ Error creating Explain Terms Anki deck: {ex.Message}");
+            }
+        }
+
+        // 6. TRUE/FALSE
+        private void SaveTrueFalseToApkg(string rawText, string outputPath, string deckName)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(rawText))
+                {
+                    UpdateOverlayLog($"⚠️ No True/False questions to export to Anki");
+                    return;
+                }
+
+                var questions = ParseTrueFalse(rawText);
+
+                if (questions.Count == 0)
+                {
+                    UpdateOverlayLog($"⚠️ No valid True/False questions found");
+                    return;
+                }
+
+                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
+
+                // Convert to dictionary format
+                var cardData = questions.Select(q => new Dictionary<string, string>
+        {
+            { "Statement", CleanTextForAnki(q.Statement) },
+            { "Answer", CleanTextForAnki(q.Answer) }
+        }).ToList();
+
+                // Define template (no explanation field to keep it simple)
+                string template = "{{Statement}}<hr id=\"answer\"><b>{{Answer}}</b>";
+
+                // Create deck
+                CreateAnkiDeck(deckName, cardData,
+                              new List<string> { "Statement", "Answer" },
+                              template, apkgPath);
+            }
+            catch (Exception ex)
+            {
+                UpdateOverlayLog($"❌ Error creating True/False Anki deck: {ex.Message}");
+            }
+        }
+
+        // 7. CLOZE DELETIONS
+        private void SaveClozeToApkg(List<(string Sentence, string Answer)> items,
+                                     string outputPath, string deckName)
+        {
+            try
+            {
+                if (items == null || items.Count == 0)
+                {
+                    UpdateOverlayLog($"⚠️ No cloze items to export to Anki");
+                    return;
+                }
+
+                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
+
+                // Convert to dictionary format
+                var cardData = items.Select(c => new Dictionary<string, string>
+        {
+            { "Sentence", CleanTextForAnki(c.Sentence) },
+            { "Answer", CleanTextForAnki(c.Answer) }
+        }).ToList();
+
+                // Define template
+                string template = "{{Sentence}}<hr id=\"answer\"><b>{{Answer}}</b>";
+
+                // Create deck
+                CreateAnkiDeck(deckName, cardData,
+                              new List<string> { "Sentence", "Answer" },
+                              template, apkgPath);
+            }
+            catch (Exception ex)
+            {
+                UpdateOverlayLog($"❌ Error creating Cloze Anki deck: {ex.Message}");
+            }
+        }
+
+        // 8. TRANSLATED SECTIONS
         private void SaveTranslatedSectionsToApkg(string rawText, string outputPath, string deckName)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(rawText))
                 {
-                    UpdateOverlayLog($"⚠️ No translated sections to export to Anki for {deckName}");
+                    UpdateOverlayLog($"⚠️ No translated sections to export to Anki");
                     return;
                 }
 
@@ -3296,108 +3749,31 @@ namespace ChatGPTFileProcessor
 
                 if (sections.Count == 0)
                 {
-                    UpdateOverlayLog($"⚠️ No valid translated sections found to export");
+                    UpdateOverlayLog($"⚠️ No valid translated sections found");
                     return;
                 }
 
                 string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
-                string folder = Path.GetDirectoryName(apkgPath);
 
-                Anki ankiDeck = new Anki(deckName);
-                ankiDeck.SetFields("Original", "Translation");
-                ankiDeck.SetFormat("{0}\\n<hr id=answer>\\n{1}");
+                // Convert to dictionary format
+                var cardData = sections.Select(s => new Dictionary<string, string>
+        {
+            { "Original", CleanTextForAnki(s.Original) },
+            { "Translation", CleanTextForAnki(s.Translation) }
+        }).ToList();
 
-                foreach (var (original, translation) in sections)
-                {
-                    string cleanOriginal = CleanTextForAnki(original);
-                    string cleanTranslation = CleanTextForAnki(translation);
+                // Define template
+                string template = "{{Original}}<hr id=\"answer\">{{Translation}}";
 
-                    if (!string.IsNullOrWhiteSpace(cleanOriginal) && !string.IsNullOrWhiteSpace(cleanTranslation))
-                    {
-                        ankiDeck.AddItem(cleanOriginal, cleanTranslation);
-                    }
-                }
-
-                ankiDeck.CreateApkgFile(folder + "\\");
-
-                string generatedFile = Path.Combine(folder, deckName + ".apkg");
-                if (File.Exists(generatedFile) && generatedFile != apkgPath)
-                {
-                    if (File.Exists(apkgPath))
-                        File.Delete(apkgPath);
-                    File.Move(generatedFile, apkgPath);
-                }
-
-                UpdateOverlayLog($"✅ Anki Translated Sections deck saved: {Path.GetFileName(apkgPath)}");
+                // Create deck
+                CreateAnkiDeck(deckName, cardData,
+                              new List<string> { "Original", "Translation" },
+                              template, apkgPath);
             }
             catch (Exception ex)
             {
                 UpdateOverlayLog($"❌ Error creating Translated Sections Anki deck: {ex.Message}");
             }
-        }
-
-        /// <summary>
-        /// Helper to parse translated sections
-        /// Expects pairs of original and translated text
-        /// </summary>
-        private List<(string Original, string Translation)> ParseTranslatedSections(string rawText)
-        {
-            var sections = new List<(string, string)>();
-            var blocks = Regex.Split(rawText.Trim(), @"\r?\n\s*\r?\n");
-
-            for (int i = 0; i < blocks.Length; i++)
-            {
-                var block = blocks[i].Trim();
-                if (string.IsNullOrWhiteSpace(block)) continue;
-
-                // Look for "Original:" and "Translation:" labels
-                if (block.Contains("Original:") || block.Contains("Translation:"))
-                {
-                    string original = null;
-                    string translation = null;
-
-                    var lines = block.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-                    foreach (var line in lines)
-                    {
-                        var trimmed = line.Trim();
-                        if (trimmed.StartsWith("Original:", StringComparison.OrdinalIgnoreCase))
-                        {
-                            original = trimmed.Substring(9).Trim();
-                        }
-                        else if (trimmed.StartsWith("Translation:", StringComparison.OrdinalIgnoreCase))
-                        {
-                            translation = trimmed.Substring(12).Trim();
-                        }
-                        else if (original != null && translation == null)
-                        {
-                            original += " " + trimmed;
-                        }
-                        else if (translation != null)
-                        {
-                            translation += " " + trimmed;
-                        }
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(original) && !string.IsNullOrWhiteSpace(translation))
-                    {
-                        sections.Add((original, translation));
-                    }
-                }
-                // Otherwise, assume alternating blocks (original, then translation)
-                else if (i + 1 < blocks.Length)
-                {
-                    string original = blocks[i].Trim();
-                    string translation = blocks[i + 1].Trim();
-
-                    if (!string.IsNullOrWhiteSpace(original) && !string.IsNullOrWhiteSpace(translation))
-                    {
-                        sections.Add((original, translation));
-                        i++; // Skip next block as we've used it
-                    }
-                }
-            }
-
-            return sections;
         }
 
         /// <summary>
@@ -3418,100 +3794,7 @@ namespace ChatGPTFileProcessor
             return text.Trim();
         }
 
-        private void SaveClozeToApkg(List<(string Sentence, string Answer)> items, string outputPath, string deckName)
-        {
-            try
-            {
-                if (items == null || items.Count == 0)
-                {
-                    UpdateOverlayLog($"⚠️ No cloze items to export to Anki for {deckName}");
-                    return;
-                }
-
-                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
-                string folder = Path.GetDirectoryName(apkgPath);
-
-                Anki ankiDeck = new Anki(deckName);
-                ankiDeck.SetFields("Sentence", "Answer");
-                ankiDeck.SetFormat("{0}\\n<hr id=answer>\\n<b>{1}</b>");
-
-                foreach (var (sentence, answer) in items)
-                {
-                    if (!string.IsNullOrWhiteSpace(sentence) && !string.IsNullOrWhiteSpace(answer))
-                    {
-                        // ✨ Clean text to prevent SQL errors
-                        string cleanSentence = CleanTextForAnki(sentence);
-                        string cleanAnswer = CleanTextForAnki(answer);
-                        ankiDeck.AddItem(cleanSentence, cleanAnswer);
-                    }
-                }
-
-                ankiDeck.CreateApkgFile(folder + "\\");
-
-                string generatedFile = Path.Combine(folder, deckName + ".apkg");
-                if (File.Exists(generatedFile) && generatedFile != apkgPath)
-                {
-                    if (File.Exists(apkgPath))
-                        File.Delete(apkgPath);
-                    File.Move(generatedFile, apkgPath);
-                }
-
-                UpdateOverlayLog($"✅ Anki Cloze deck saved: {Path.GetFileName(apkgPath)}");
-            }
-            catch (Exception ex)
-            {
-                UpdateOverlayLog($"❌ Error creating Cloze Anki deck: {ex.Message}");
-            }
-        }
-
-
-        private void SaveFlashcardsToApkg(List<(string Front, string Back)> cards, string outputPath, string deckName)
-        {
-            try
-            {
-                if (cards == null || cards.Count == 0)
-                {
-                    UpdateOverlayLog($"⚠️ No flashcards to export to Anki for {deckName}");
-                    return;
-                }
-
-                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
-                string folder = Path.GetDirectoryName(apkgPath);
-
-                Anki ankiDeck = new Anki(deckName);
-                ankiDeck.SetFields("Front", "Back");
-                ankiDeck.SetFormat("{0}\\n<hr id=answer>\\n{1}");
-
-                foreach (var (front, back) in cards)
-                {
-                    if (!string.IsNullOrWhiteSpace(front) && !string.IsNullOrWhiteSpace(back))
-                    {
-                        // ✨ Clean text to prevent SQL errors
-                        string cleanFront = CleanTextForAnki(front);
-                        string cleanBack = CleanTextForAnki(back);
-                        ankiDeck.AddItem(cleanFront, cleanBack);
-                    }
-                }
-
-                ankiDeck.CreateApkgFile(folder + "\\");
-
-                string generatedFile = Path.Combine(folder, deckName + ".apkg");
-                if (File.Exists(generatedFile) && generatedFile != apkgPath)
-                {
-                    if (File.Exists(apkgPath))
-                        File.Delete(apkgPath);
-                    File.Move(generatedFile, apkgPath);
-                }
-
-                UpdateOverlayLog($"✅ Anki deck saved: {Path.GetFileName(apkgPath)}");
-            }
-            catch (Exception ex)
-            {
-                UpdateOverlayLog($"❌ Error creating Anki deck: {ex.Message}");
-            }
-        }
-
-
+        
 
 
         /// Represents one MCQ with 4 choices and a correct answer letter.
