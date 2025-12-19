@@ -3205,53 +3205,48 @@ namespace ChatGPTFileProcessor
             return questions;
         }
 
-        
+
 
         /// <summary>
         /// FIXED Parser for Translated Sections
         /// Handles the format: English paragraph, then Arabic paragraph, separated by blank lines
         /// </summary>
+
         private List<(string Original, string Translation)> ParseTranslatedSections(string rawText)
         {
             var sections = new List<(string, string)>();
 
-            // Remove any page markers
+            // Remove page markers
             rawText = Regex.Replace(rawText, @"=+\s*Page\s+\d+\s*=+", "", RegexOptions.IgnoreCase);
             rawText = Regex.Replace(rawText, @"Translated Sections", "", RegexOptions.IgnoreCase);
 
-            // Split by blank lines (double newlines)
+            // Split by blank lines
             var blocks = Regex.Split(rawText.Trim(), @"(?:\r?\n){2,}");
 
-            // Filter out empty and junk blocks
             var cleanBlocks = new List<string>();
+
             foreach (var block in blocks)
             {
                 var trimmed = block.Trim();
-
-                // Skip if empty or too short
-                if (string.IsNullOrWhiteSpace(trimmed) || trimmed.Length < 10)
-                    continue;
-
-                // Skip common junk
-                if (trimmed == "•" || trimmed == "-" || trimmed == "*")
+                if (string.IsNullOrWhiteSpace(trimmed) || trimmed.Length < 3)
                     continue;
 
                 cleanBlocks.Add(trimmed);
             }
 
-            // Pair them: cleanBlocks[0]=original, cleanBlocks[1]=translation, etc.
-            for (int i = 0; i < cleanBlocks.Count - 1; i += 2)
+            // Pair everything: English followed by Arabic
+            for (int i = 0; i < cleanBlocks.Count - 1; i++)
             {
-                string original = cleanBlocks[i];
-                string translation = cleanBlocks[i + 1];
+                string current = cleanBlocks[i];
+                string next = cleanBlocks[i + 1];
 
-                // Validate both are substantial
-                if (!string.IsNullOrWhiteSpace(original) &&
-                    !string.IsNullOrWhiteSpace(translation) &&
-                    original.Length >= 10 &&
-                    translation.Length >= 10)
+                bool currentIsEnglish = !Regex.IsMatch(current, @"[\u0600-\u06FF]");
+                bool nextIsArabic = Regex.IsMatch(next, @"[\u0600-\u06FF]");
+
+                if (currentIsEnglish && nextIsArabic)
                 {
-                    sections.Add((original, translation));
+                    sections.Add((current, next));
+                    i++; // Skip next block
                 }
             }
 
@@ -3280,20 +3275,26 @@ namespace ChatGPTFileProcessor
                 string scriptPath = Path.Combine(tempDir, "create_deck.py");
                 string dataPath = Path.Combine(tempDir, "data.json");
 
+                // FIXED: Split template properly into front and back
+                string[] templateParts = template.Split(new[] { "<hr id='answer'>" }, StringSplitOptions.None);
+                string qfmt = templateParts.Length > 0 ? templateParts[0] : template;
+                string afmt = template; // Full template for answer side
+
                 // Prepare data
                 var data = new
                 {
                     deckName = deckName,
                     cards = cards,
                     fields = fieldNames,
-                    template = template,
+                    qfmt = qfmt,
+                    afmt = afmt,
                     outputPath = outputPath
                 };
 
-                // Write JSON data
+                // Write JSON data (without BOM)
                 File.WriteAllText(dataPath, JsonConvert.SerializeObject(data), new UTF8Encoding(false));
 
-                // Create Python script
+                // Create Python script with FIXED template handling
                 string pythonScript = @"
 import genanki
 import json
@@ -3307,10 +3308,9 @@ with open(r'" + dataPath.Replace("\\", "\\\\") + @"', 'r', encoding='utf-8') as 
 model_id = random.randint(1000000000, 9999999999)
 deck_id = random.randint(1000000000, 9999999999)
 
-# Split template
-template_parts = data['template'].split('<hr id=""answer"">')
-qfmt = template_parts[0] if len(template_parts) > 0 else '{{' + data['fields'][0] + '}}'
-afmt = data['template']
+# Use the pre-split templates
+qfmt = data['qfmt']
+afmt = data['afmt']
 
 # Create model
 model = genanki.Model(
@@ -3338,7 +3338,7 @@ genanki.Package(deck).write_to_file(data['outputPath'])
 print('SUCCESS')
 ";
 
-                File.WriteAllText(scriptPath, pythonScript, Encoding.UTF8);
+                File.WriteAllText(scriptPath, pythonScript, new UTF8Encoding(false));
 
                 // Find python.exe
                 string pythonExe = Path.Combine(pythonHome, "python.exe");
@@ -3357,20 +3357,11 @@ print('SUCCESS')
                 if (Directory.Exists(libPath)) pythonPaths.Add(libPath);
                 if (Directory.Exists(sitePackagesPath)) pythonPaths.Add(sitePackagesPath);
 
-                // 2. Alternate location (some Python.Included versions use this)
+                // 2. Alternate location
                 string altSitePackages = Path.Combine(pythonHome, "site-packages");
                 if (Directory.Exists(altSitePackages)) pythonPaths.Add(altSitePackages);
 
-                // 3. AppData location (where pip might install packages)
-                string appDataPython = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "python-3.13.0-embed-amd64",
-                    "Lib",
-                    "site-packages"
-                );
-                if (Directory.Exists(appDataPython)) pythonPaths.Add(appDataPython);
-
-                // 4. Python home itself
+                // 3. Python home itself
                 pythonPaths.Add(pythonHome);
 
                 string pythonPathEnv = string.Join(";", pythonPaths.Distinct());
@@ -3408,9 +3399,6 @@ print('SUCCESS')
                         {
                             UpdateOverlayLog($"Output: {output}");
                         }
-
-                        // Debug: Show where we looked for packages
-                        UpdateOverlayLog($"PYTHONPATH was set to: {pythonPathEnv}");
                     }
                 }
 
@@ -3469,7 +3457,11 @@ print('SUCCESS')
         }
 
 
-        // 1. FLASHCARDS
+
+        // ========================================
+        // 1. SaveFlashcardsToApkg
+        // ========================================
+
         private void SaveFlashcardsToApkg(List<(string Front, string Back)> cards,
                                           string outputPath, string deckName)
         {
@@ -3490,8 +3482,48 @@ print('SUCCESS')
             { "Back", CleanTextForAnki(c.Back) }
         }).ToList();
 
-                // Define template
-                string template = "{{Front}}<hr id=\"answer\">{{Back}}";
+                // Define improved mobile-friendly template
+                string template = @"
+<style>
+.card {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    text-align: center;
+    color: black;
+    background-color: white;
+    padding: 20px;
+    line-height: 1.6;
+}
+.front {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.back {
+    font-size: 20px;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+}
+hr {
+    border: none;
+    border-top: 2px solid #4CAF50;
+    margin: 30px 0;
+}
+@media (max-width: 600px) {
+    .card { font-size: 18px; padding: 15px; }
+    .front { font-size: 22px; }
+    .back { font-size: 18px; }
+}
+</style>
+<div class='card'>
+    <div class='front'>{{Front}}</div>
+</div>
+<hr id='answer'>
+<div class='card'>
+    <div class='back'>{{Back}}</div>
+</div>";
 
                 // Create deck
                 CreateAnkiDeck(deckName, cardData, new List<string> { "Front", "Back" },
@@ -3503,7 +3535,10 @@ print('SUCCESS')
             }
         }
 
-        // 2. MCQs
+        // ========================================
+        // 2. SaveMcqsToApkg
+        // ========================================
+
         private void SaveMcqsToApkg(List<McqItem> items, string outputPath, string deckName)
         {
             try
@@ -3524,8 +3559,59 @@ print('SUCCESS')
             { "Answer", CleanTextForAnki(mcq.Answer) }
         }).ToList();
 
-                // Define template
-                string template = "{{Question}}<br><br>{{Options}}<hr id=\"answer\"><b>Correct Answer: {{Answer}}</b>";
+                // Define improved mobile-friendly template
+                string template = @"
+<style>
+.card {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    text-align: left;
+    color: black;
+    background-color: white;
+    padding: 20px;
+    line-height: 1.6;
+}
+.question {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #2C3E50;
+}
+.options {
+    font-size: 18px;
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-left: 4px solid #3498db;
+}
+.answer {
+    font-size: 20px;
+    font-weight: bold;
+    color: #27AE60;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #E8F8F5;
+    border-radius: 8px;
+}
+hr {
+    border: none;
+    border-top: 2px solid #3498db;
+    margin: 30px 0;
+}
+@media (max-width: 600px) {
+    .card { font-size: 16px; padding: 15px; }
+    .question { font-size: 18px; }
+    .options { font-size: 16px; }
+}
+</style>
+<div class='card'>
+    <div class='question'>{{Question}}</div>
+    <div class='options'>{{Options}}</div>
+</div>
+<hr id='answer'>
+<div class='card'>
+    <div class='answer'>✓ Correct Answer: {{Answer}}</div>
+</div>";
 
                 // Create deck
                 CreateAnkiDeck(deckName, cardData,
@@ -3538,7 +3624,10 @@ print('SUCCESS')
             }
         }
 
-        // 3. VOCABULARY
+        // ========================================
+        // 3. SaveVocabularyToApkg
+        // ========================================
+
         private void SaveVocabularyToApkg(List<Tuple<string, string>> records,
                                           string outputPath, string deckName)
         {
@@ -3559,8 +3648,49 @@ print('SUCCESS')
             { "Translation", CleanTextForAnki(r.Item2) }
         }).ToList();
 
-                // Define template
-                string template = "{{Term}}<hr id=\"answer\">{{Translation}}";
+                // Define improved mobile-friendly template
+                string template = @"
+<style>
+.card {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    text-align: center;
+    color: black;
+    background-color: white;
+    padding: 20px;
+    line-height: 1.6;
+}
+.term {
+    font-size: 28px;
+    font-weight: bold;
+    color: #8E44AD;
+    margin: 20px 0;
+}
+.translation {
+    font-size: 24px;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #F4ECF7;
+    border-radius: 8px;
+    border: 2px solid #8E44AD;
+}
+hr {
+    border: none;
+    border-top: 2px solid #8E44AD;
+    margin: 30px 0;
+}
+@media (max-width: 600px) {
+    .term { font-size: 24px; }
+    .translation { font-size: 20px; padding: 15px; }
+}
+</style>
+<div class='card'>
+    <div class='term'>{{Term}}</div>
+</div>
+<hr id='answer'>
+<div class='card'>
+    <div class='translation'>{{Translation}}</div>
+</div>";
 
                 // Create deck
                 CreateAnkiDeck(deckName, cardData,
@@ -3573,7 +3703,10 @@ print('SUCCESS')
             }
         }
 
-        // 4. DEFINITIONS
+        // ========================================
+        // 4. SaveDefinitionsToApkg
+        // ========================================
+
         private void SaveDefinitionsToApkg(string rawText, string outputPath, string deckName)
         {
             try
@@ -3601,8 +3734,52 @@ print('SUCCESS')
             { "Definition", CleanTextForAnki(d.Definition) }
         }).ToList();
 
-                // Define template
-                string template = "{{Term}}<hr id=\"answer\">{{Definition}}";
+                // Define improved mobile-friendly template
+                string template = @"
+<style>
+.card {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    text-align: left;
+    color: black;
+    background-color: white;
+    padding: 20px;
+    line-height: 1.7;
+}
+.term {
+    font-size: 26px;
+    font-weight: bold;
+    color: #16A085;
+    margin-bottom: 10px;
+    text-align: center;
+}
+.definition {
+    font-size: 19px;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #E8F6F3;
+    border-radius: 8px;
+    border-left: 5px solid #16A085;
+    text-align: left;
+}
+hr {
+    border: none;
+    border-top: 2px solid #16A085;
+    margin: 30px 0;
+}
+@media (max-width: 600px) {
+    .card { font-size: 16px; padding: 15px; }
+    .term { font-size: 22px; }
+    .definition { font-size: 17px; padding: 15px; }
+}
+</style>
+<div class='card'>
+    <div class='term'>{{Term}}</div>
+</div>
+<hr id='answer'>
+<div class='card'>
+    <div class='definition'>{{Definition}}</div>
+</div>";
 
                 // Create deck
                 CreateAnkiDeck(deckName, cardData,
@@ -3615,7 +3792,10 @@ print('SUCCESS')
             }
         }
 
-        // 5. EXPLAIN TERMS (reuses ParseDefinitions)
+        // ========================================
+        // 5. SaveExplainTermsToApkg
+        // ========================================
+
         private void SaveExplainTermsToApkg(string rawText, string outputPath, string deckName)
         {
             try
@@ -3643,8 +3823,52 @@ print('SUCCESS')
             { "Explanation", CleanTextForAnki(t.Definition) }
         }).ToList();
 
-                // Define template
-                string template = "{{Term}}<hr id=\"answer\">{{Explanation}}";
+                // Define improved mobile-friendly template
+                string template = @"
+<style>
+.card {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    text-align: left;
+    color: black;
+    background-color: white;
+    padding: 20px;
+    line-height: 1.7;
+}
+.term {
+    font-size: 26px;
+    font-weight: bold;
+    color: #D35400;
+    margin-bottom: 10px;
+    text-align: center;
+}
+.explanation {
+    font-size: 19px;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #FEF5E7;
+    border-radius: 8px;
+    border-left: 5px solid #D35400;
+    text-align: left;
+}
+hr {
+    border: none;
+    border-top: 2px solid #D35400;
+    margin: 30px 0;
+}
+@media (max-width: 600px) {
+    .card { font-size: 16px; padding: 15px; }
+    .term { font-size: 22px; }
+    .explanation { font-size: 17px; padding: 15px; }
+}
+</style>
+<div class='card'>
+    <div class='term'>{{Term}}</div>
+</div>
+<hr id='answer'>
+<div class='card'>
+    <div class='explanation'>{{Explanation}}</div>
+</div>";
 
                 // Create deck
                 CreateAnkiDeck(deckName, cardData,
@@ -3657,7 +3881,10 @@ print('SUCCESS')
             }
         }
 
-        // 6. TRUE/FALSE
+        // ========================================
+        // 6. SaveTrueFalseToApkg
+        // ========================================
+
         private void SaveTrueFalseToApkg(string rawText, string outputPath, string deckName)
         {
             try
@@ -3685,8 +3912,54 @@ print('SUCCESS')
             { "Answer", CleanTextForAnki(q.Answer) }
         }).ToList();
 
-                // Define template (no explanation field to keep it simple)
-                string template = "{{Statement}}<hr id=\"answer\"><b>{{Answer}}</b>";
+                // Define improved mobile-friendly template
+                string template = @"
+<style>
+.card {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 19px;
+    text-align: center;
+    color: black;
+    background-color: white;
+    padding: 20px;
+    line-height: 1.7;
+}
+.statement {
+    font-size: 21px;
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #EBF5FB;
+    border-radius: 8px;
+    border: 2px solid #2980B9;
+    text-align: left;
+}
+.answer {
+    font-size: 26px;
+    font-weight: bold;
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    color: #27AE60;
+    background-color: #E8F8F5;
+    border: 2px solid #27AE60;
+}
+hr {
+    border: none;
+    border-top: 2px solid #2980B9;
+    margin: 30px 0;
+}
+@media (max-width: 600px) {
+    .statement { font-size: 18px; padding: 15px; }
+    .answer { font-size: 22px; padding: 15px; }
+}
+</style>
+<div class='card'>
+    <div class='statement'>{{Statement}}</div>
+</div>
+<hr id='answer'>
+<div class='card'>
+    <div class='answer'>{{Answer}}</div>
+</div>";
 
                 // Create deck
                 CreateAnkiDeck(deckName, cardData,
@@ -3699,7 +3972,10 @@ print('SUCCESS')
             }
         }
 
-        // 7. CLOZE DELETIONS
+        // ========================================
+        // 7. SaveClozeToApkg
+        // ========================================
+
         private void SaveClozeToApkg(List<(string Sentence, string Answer)> items,
                                      string outputPath, string deckName)
         {
@@ -3720,8 +3996,52 @@ print('SUCCESS')
             { "Answer", CleanTextForAnki(c.Answer) }
         }).ToList();
 
-                // Define template
-                string template = "{{Sentence}}<hr id=\"answer\"><b>{{Answer}}</b>";
+                // Define improved mobile-friendly template
+                string template = @"
+<style>
+.card {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    text-align: center;
+    color: black;
+    background-color: white;
+    padding: 20px;
+    line-height: 1.8;
+}
+.sentence {
+    font-size: 22px;
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #FFF9E6;
+    border-radius: 8px;
+    border: 2px solid #FFD700;
+}
+.answer {
+    font-size: 24px;
+    font-weight: bold;
+    color: #E74C3C;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #FADBD8;
+    border-radius: 8px;
+}
+hr {
+    border: none;
+    border-top: 2px solid #FFD700;
+    margin: 30px 0;
+}
+@media (max-width: 600px) {
+    .sentence { font-size: 18px; padding: 15px; }
+    .answer { font-size: 20px; }
+}
+</style>
+<div class='card'>
+    <div class='sentence'>{{Sentence}}</div>
+</div>
+<hr id='answer'>
+<div class='card'>
+    <div class='answer'>{{Answer}}</div>
+</div>";
 
                 // Create deck
                 CreateAnkiDeck(deckName, cardData,
@@ -3734,7 +4054,10 @@ print('SUCCESS')
             }
         }
 
-        // 8. TRANSLATED SECTIONS
+        // ========================================
+        // 8. SaveTranslatedSectionsToApkg
+        // ========================================
+
         private void SaveTranslatedSectionsToApkg(string rawText, string outputPath, string deckName)
         {
             try
@@ -3762,8 +4085,60 @@ print('SUCCESS')
             { "Translation", CleanTextForAnki(s.Translation) }
         }).ToList();
 
-                // Define template
-                string template = "{{Original}}<hr id=\"answer\">{{Translation}}";
+                // Define improved mobile-friendly template
+                string template = @"
+<style>
+.card {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    text-align: left;
+    color: black;
+    background-color: white;
+    padding: 20px;
+    line-height: 1.7;
+}
+.label {
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #7F8C8D;
+    margin-bottom: 10px;
+}
+.original {
+    font-size: 20px;
+    padding: 20px;
+    background-color: #E8F4F8;
+    border-radius: 8px;
+    border-left: 5px solid #2980B9;
+    margin-bottom: 20px;
+}
+.translation {
+    font-size: 20px;
+    padding: 20px;
+    background-color: #FEF5E7;
+    border-radius: 8px;
+    border-left: 5px solid #D68910;
+    direction: rtl;
+    text-align: right;
+}
+hr {
+    border: none;
+    border-top: 2px solid #2980B9;
+    margin: 30px 0;
+}
+@media (max-width: 600px) {
+    .original, .translation { font-size: 17px; padding: 15px; }
+}
+</style>
+<div class='card'>
+    <div class='label'>Original</div>
+    <div class='original'>{{Original}}</div>
+</div>
+<hr id='answer'>
+<div class='card'>
+    <div class='label'>Translation</div>
+    <div class='translation'>{{Translation}}</div>
+</div>";
 
                 // Create deck
                 CreateAnkiDeck(deckName, cardData,
@@ -3775,6 +4150,9 @@ print('SUCCESS')
                 UpdateOverlayLog($"❌ Error creating Translated Sections Anki deck: {ex.Message}");
             }
         }
+
+
+
 
         /// <summary>
         /// Helper method to clean text for Anki export - removes/escapes problematic characters
