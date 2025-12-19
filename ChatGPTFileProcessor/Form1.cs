@@ -1382,7 +1382,11 @@ namespace ChatGPTFileProcessor
                     SaveContentToFile(allConceptMap.ToString(), conceptMapFilePath, "Concept Relationships");
 
                 if (chkTableExtract.Checked)
+                {
                     SaveMarkdownTablesToWord(allTableExtract.ToString(), tableFilePath, "Table Extractions");
+                    SaveTableExtractToApkg(allTableExtract.ToString(), tableFilePath, "Tables");
+                }
+
 
                 if (chkSimplified.Checked)
                     SaveContentToFile(allSimplified.ToString(), simplifiedFilePath, "Simplified Explanation");
@@ -4151,6 +4155,246 @@ hr {
             }
         }
 
+
+        // ========================================
+        // 9. SaveTableExtractToApkg
+        // ========================================
+        private void SaveTableExtractToApkg(string rawText, string outputPath, string deckName)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(rawText))
+                {
+                    UpdateOverlayLog($"⚠️ No tables to export to Anki");
+                    return;
+                }
+
+                var tables = ParseMarkdownTables(rawText);
+
+                if (tables.Count == 0)
+                {
+                    UpdateOverlayLog($"⚠️ No valid tables found");
+                    return;
+                }
+
+                string apkgPath = Path.ChangeExtension(outputPath, ".apkg");
+
+                // Convert to dictionary format
+                var cardData = tables.Select(t => new Dictionary<string, string>
+        {
+            { "Title", CleanTextForAnki(t.Title) },
+            { "Table", t.HtmlTable } // Already HTML, no need to clean
+        }).ToList();
+
+                // Define improved mobile-friendly template
+                string template = @"
+<style>
+.card {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    color: black;
+    background-color: white;
+    padding: 15px;
+    line-height: 1.5;
+}
+.title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #2874A6;
+    margin-bottom: 15px;
+    text-align: center;
+}
+.table-container {
+    overflow-x: auto;
+    margin-top: 15px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    margin: 0 auto;
+}
+th {
+    background-color: #2874A6;
+    color: white;
+    padding: 12px 8px;
+    text-align: left;
+    font-weight: bold;
+}
+td {
+    padding: 10px 8px;
+    border: 1px solid #ddd;
+    background-color: white;
+}
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+tr:hover {
+    background-color: #e8f4f8;
+}
+hr {
+    border: none;
+    border-top: 2px solid #2874A6;
+    margin: 20px 0;
+}
+@media (max-width: 600px) {
+    .card { font-size: 14px; padding: 10px; }
+    .title { font-size: 18px; }
+    table { font-size: 13px; }
+    th, td { padding: 8px 5px; }
+}
+</style>
+<div class='card'>
+    <div class='title'>{{Title}}</div>
+</div>
+<hr id='answer'>
+<div class='card'>
+    <div class='table-container'>
+        {{Table}}
+    </div>
+</div>";
+
+                // Create deck
+                CreateAnkiDeck(deckName, cardData,
+                              new List<string> { "Title", "Table" },
+                              template, apkgPath);
+            }
+            catch (Exception ex)
+            {
+                UpdateOverlayLog($"❌ Error creating Table Extract Anki deck: {ex.Message}");
+            }
+        }
+
+        /// Represents one parsed table with title and HTML content
+        private class TableData
+        {
+            public string Title { get; set; }
+            public string HtmlTable { get; set; }
+        }
+
+        /// Parse markdown tables from raw text into a list of TableData
+        private List<TableData> ParseMarkdownTables(string rawText)
+        {
+            var tables = new List<TableData>();
+
+            if (string.IsNullOrWhiteSpace(rawText))
+                return tables;
+
+            var lines = rawText.Replace("\r\n", "\n").Split('\n');
+            var alignRow = new Regex(@"^\|\s*:?-+\s*(\|\s*:?-+\s*)+\|$");
+
+            int i = 0;
+            int tableNumber = 1;
+
+            while (i < lines.Length)
+            {
+                string line = lines[i].Trim();
+
+                // Look for table title (lines that start with "Table:" or "جدول:")
+                string tableTitle = null;
+                if (line.StartsWith("Table:", StringComparison.OrdinalIgnoreCase) ||
+                    line.StartsWith("جدول:", StringComparison.OrdinalIgnoreCase))
+                {
+                    tableTitle = line.Substring(line.IndexOf(':') + 1).Trim();
+                    i++;
+                    if (i >= lines.Length) break;
+                    line = lines[i].Trim();
+                }
+
+                // Check if this line starts a table
+                if (!line.StartsWith("|"))
+                {
+                    i++;
+                    continue;
+                }
+
+                // Collect all consecutive table lines
+                var tableLines = new List<string>();
+                while (i < lines.Length && lines[i].Trim().StartsWith("|"))
+                {
+                    tableLines.Add(lines[i].Trim());
+                    i++;
+                }
+
+                if (tableLines.Count == 0)
+                    continue;
+
+                // Parse table into rows
+                var rows = new List<string[]>();
+                bool firstRow = true;
+
+                foreach (var tl in tableLines)
+                {
+                    // Skip alignment row (--- | --- | ---)
+                    if (alignRow.IsMatch(tl))
+                        continue;
+
+                    // Parse cells
+                    var inner = tl.Trim('|');
+                    var cells = inner.Split('|').Select(c => c.Trim()).ToArray();
+
+                    // First row is header
+                    if (firstRow)
+                    {
+                        rows.Add(cells);
+                        firstRow = false;
+                    }
+                    else
+                    {
+                        rows.Add(cells);
+                    }
+                }
+
+                if (rows.Count == 0)
+                    continue;
+
+                // Convert to HTML
+                var htmlTable = new StringBuilder();
+                htmlTable.AppendLine("<table>");
+
+                // Header row
+                if (rows.Count > 0)
+                {
+                    htmlTable.AppendLine("<thead><tr>");
+                    foreach (var cell in rows[0])
+                    {
+                        htmlTable.AppendLine($"<th>{CleanTextForAnki(cell)}</th>");
+                    }
+                    htmlTable.AppendLine("</tr></thead>");
+                }
+
+                // Data rows
+                if (rows.Count > 1)
+                {
+                    htmlTable.AppendLine("<tbody>");
+                    for (int r = 1; r < rows.Count; r++)
+                    {
+                        htmlTable.AppendLine("<tr>");
+                        foreach (var cell in rows[r])
+                        {
+                            htmlTable.AppendLine($"<td>{CleanTextForAnki(cell)}</td>");
+                        }
+                        htmlTable.AppendLine("</tr>");
+                    }
+                    htmlTable.AppendLine("</tbody>");
+                }
+
+                htmlTable.AppendLine("</table>");
+
+                // Create table data
+                tables.Add(new TableData
+                {
+                    Title = string.IsNullOrWhiteSpace(tableTitle)
+                        ? $"Table {tableNumber}"
+                        : tableTitle,
+                    HtmlTable = htmlTable.ToString()
+                });
+
+                tableNumber++;
+            }
+
+            return tables;
+        }
 
 
 
