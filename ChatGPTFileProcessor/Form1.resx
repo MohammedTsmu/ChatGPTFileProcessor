@@ -121,7 +121,7 @@
     <value>• 1 page: Send exactly 1 PDF page in each request. GPT processes pages one by one.
 • 2 pages: Send 2 PDF pages together in a single request. GPT can read both pages at once.
 • 3 pages: Send 3 PDF pages together so GPT sees more context.
-• 4 pages: Send 4 PDF pages together for maximum context.</value>
+• 4 pages: Send 4 PDF pages together for max context.</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

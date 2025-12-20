@@ -1,5 +1,12 @@
-﻿using System;
+﻿using DevExpress.XtraSpellChecker.Parser;
+using DevExpress.XtraTab;
+//using AnkiSharp;
+//using Python.Included;
+//using Python.Runtime;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -10,14 +17,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Xceed.Document.NET;
 using Xceed.Words.NET;
+using static DevExpress.XtraEditors.XtraInputBox;
 using SDImage = System.Drawing.Image;
 using Task = System.Threading.Tasks.Task;
-//using AnkiSharp;
-//using Python.Included;
-//using Python.Runtime;
-using Newtonsoft.Json;
-using System.Diagnostics;
-using DevExpress.XtraTab;
 
 namespace ChatGPTFileProcessor
 {
@@ -175,62 +177,144 @@ namespace ChatGPTFileProcessor
             //Initialize Python for Anki export (runs in background)
             Task.Run(() => InitializePythonEnvironment());
 
-            // Position navigation buttons dynamically
+            //// Position navigation buttons dynamically
+            //PositionNavigationButtons();
+
+            //// Re-position on resize
+            //this.Resize += (s, ev) => PositionNavigationButtons();
+
+            // Position buttons initially
             PositionNavigationButtons();
 
-            // Re-position on resize
+            // Re-position on window resize
             this.Resize += (s, ev) => PositionNavigationButtons();
+
+            // Re-position when switching tabs
+            xtraTabControl.SelectedPageChanged += (s, ev) => PositionNavigationButtons();
         }
 
+        //private void PositionNavigationButtons()
+        //{
+        //    int margin = 40;
+        //    int buttonHeight = 45;
+        //    int bottomY = xtraTabControl.Height - buttonHeight - margin;
+
+        //    // File tab
+        //    if (btnNextToOutput != null)
+        //    {
+        //        btnNextToOutput.Location = new System.Drawing.Point(
+        //            xtraTabControl.Width - btnNextToOutput.Width - margin,
+        //            bottomY
+        //        );
+        //    }
+
+        //    // Output tab
+        //    if (btnBackToFile != null)
+        //        btnBackToFile.Location = new System.Drawing.Point(margin, bottomY);
+
+        //    if (btnNextToLanguage != null)
+        //    {
+        //        btnNextToLanguage.Location = new System.Drawing.Point(
+        //            xtraTabControl.Width - btnNextToLanguage.Width - margin,
+        //            bottomY
+        //        );
+        //    }
+
+        //    // Language tab
+        //    if (btnBackToOutput != null)
+        //        btnBackToOutput.Location = new System.Drawing.Point(margin, bottomY);
+
+        //    if (btnNextToModel != null)
+        //    {
+        //        btnNextToModel.Location = new System.Drawing.Point(
+        //            xtraTabControl.Width - btnNextToModel.Width - margin,
+        //            bottomY
+        //        );
+        //    }
+
+        //    // Model tab
+        //    if (btnBackToLanguage != null)
+        //        btnBackToLanguage.Location = new System.Drawing.Point(margin, bottomY);
+
+        //    if (buttonProcessFile != null)
+        //    {
+        //        buttonProcessFile.Location = new System.Drawing.Point(
+        //            xtraTabControl.Width - buttonProcessFile.Width - margin,
+        //            bottomY
+        //        );
+        //    }
+        //}
         private void PositionNavigationButtons()
         {
+            // Don't run if controls aren't initialized yet
+            if (xtraTabControl == null || xtraTabControl.SelectedTabPage == null)
+                return;
+
             int margin = 40;
-            int buttonHeight = 45;
-            int bottomY = xtraTabControl.Height - buttonHeight - margin;
+            int buttonWidth = 200;  // Approximate button width
+            int buttonHeight = 50;  // Approximate button height
 
-            // File tab
-            if (btnNextToOutput != null)
+            // Get the actual size of the current tab page
+            var currentTab = xtraTabControl.SelectedTabPage;
+            int tabWidth = currentTab.ClientSize.Width;
+            int tabHeight = currentTab.ClientSize.Height;
+
+            // Calculate positions
+            int bottomY = tabHeight - buttonHeight - margin;
+            int rightX = tabWidth - buttonWidth - margin;
+            int leftX = margin;
+
+            // Position buttons based on which tab is active
+            try
             {
-                btnNextToOutput.Location = new System.Drawing.Point(
-                    xtraTabControl.Width - btnNextToOutput.Width - margin,
-                    bottomY
-                );
+                if (currentTab == tabPageFile && btnNextToOutput != null)
+                {
+                    btnNextToOutput.Location = new System.Drawing.Point(rightX, bottomY);
+                    btnNextToOutput.BringToFront();
+                }
+                else if (currentTab == tabPageOutput)
+                {
+                    if (btnBackToFile != null)
+                    {
+                        btnBackToFile.Location = new System.Drawing.Point(leftX, bottomY);
+                        btnBackToFile.BringToFront();
+                    }
+                    if (btnNextToLanguage != null)
+                    {
+                        btnNextToLanguage.Location = new System.Drawing.Point(rightX, bottomY);
+                        btnNextToLanguage.BringToFront();
+                    }
+                }
+                else if (currentTab == tabPageLanguage)
+                {
+                    if (btnBackToOutput != null)
+                    {
+                        btnBackToOutput.Location = new System.Drawing.Point(leftX, bottomY);
+                        btnBackToOutput.BringToFront();
+                    }
+                    if (btnNextToModel != null)
+                    {
+                        btnNextToModel.Location = new System.Drawing.Point(rightX, bottomY);
+                        btnNextToModel.BringToFront();
+                    }
+                }
+                else if (currentTab == tabPageModel)
+                {
+                    if (btnBackToLanguage != null)
+                    {
+                        btnBackToLanguage.Location = new System.Drawing.Point(leftX, bottomY);
+                        btnBackToLanguage.BringToFront();
+                    }
+                    if (buttonProcessFile != null)
+                    {
+                        buttonProcessFile.Location = new System.Drawing.Point(rightX - 50, bottomY);
+                        buttonProcessFile.BringToFront();
+                    }
+                }
             }
-
-            // Output tab
-            if (btnBackToFile != null)
-                btnBackToFile.Location = new System.Drawing.Point(margin, bottomY);
-
-            if (btnNextToLanguage != null)
+            catch
             {
-                btnNextToLanguage.Location = new System.Drawing.Point(
-                    xtraTabControl.Width - btnNextToLanguage.Width - margin,
-                    bottomY
-                );
-            }
-
-            // Language tab
-            if (btnBackToOutput != null)
-                btnBackToOutput.Location = new System.Drawing.Point(margin, bottomY);
-
-            if (btnNextToModel != null)
-            {
-                btnNextToModel.Location = new System.Drawing.Point(
-                    xtraTabControl.Width - btnNextToModel.Width - margin,
-                    bottomY
-                );
-            }
-
-            // Model tab
-            if (btnBackToLanguage != null)
-                btnBackToLanguage.Location = new System.Drawing.Point(margin, bottomY);
-
-            if (buttonProcessFile != null)
-            {
-                buttonProcessFile.Location = new System.Drawing.Point(
-                    xtraTabControl.Width - buttonProcessFile.Width - margin,
-                    bottomY
-                );
+                // Ignore errors during initialization
             }
         }
 

@@ -35,7 +35,6 @@
             this.panelMain = new DevExpress.XtraEditors.PanelControl();
             this.xtraTabControl = new DevExpress.XtraTab.XtraTabControl();
             this.tabPageFile = new DevExpress.XtraTab.XtraTabPage();
-            this.btnNextToOutput = new DevExpress.XtraEditors.SimpleButton();
             this.labelFileTitle = new DevExpress.XtraEditors.LabelControl();
             this.labelSelectFile = new DevExpress.XtraEditors.LabelControl();
             this.labelFileName = new DevExpress.XtraEditors.LabelControl();
@@ -48,9 +47,8 @@
             this.chkUseSessionFolder = new DevExpress.XtraEditors.CheckEdit();
             this.chkSaveBesidePdf = new DevExpress.XtraEditors.CheckEdit();
             this.chkOrganizeByType = new DevExpress.XtraEditors.CheckEdit();
+            this.btnNextToOutput = new DevExpress.XtraEditors.SimpleButton();
             this.tabPageOutput = new DevExpress.XtraTab.XtraTabPage();
-            this.btnNextToLanguage = new DevExpress.XtraEditors.SimpleButton();
-            this.btnBackToFile = new DevExpress.XtraEditors.SimpleButton();
             this.labelOutputTitle = new DevExpress.XtraEditors.LabelControl();
             this.panelStudyMaterials = new DevExpress.XtraEditors.GroupControl();
             this.chkMCQs = new DevExpress.XtraEditors.CheckEdit();
@@ -73,17 +71,17 @@
             this.chkExplainTerms = new DevExpress.XtraEditors.CheckEdit();
             this.chkArabicExplainTerms = new DevExpress.XtraEditors.CheckEdit();
             this.chkMedicalMaterial = new DevExpress.XtraEditors.CheckEdit();
+            this.btnBackToFile = new DevExpress.XtraEditors.SimpleButton();
+            this.btnNextToLanguage = new DevExpress.XtraEditors.SimpleButton();
             this.tabPageLanguage = new DevExpress.XtraTab.XtraTabPage();
-            this.btnNextToModel = new DevExpress.XtraEditors.SimpleButton();
-            this.btnBackToOutput = new DevExpress.XtraEditors.SimpleButton();
             this.labelLanguageTitle = new DevExpress.XtraEditors.LabelControl();
             this.labelGeneralLang = new DevExpress.XtraEditors.LabelControl();
             this.cmbGeneralLang = new DevExpress.XtraEditors.ComboBoxEdit();
             this.labelVocabLang = new DevExpress.XtraEditors.LabelControl();
             this.cmbVocabLang = new DevExpress.XtraEditors.ComboBoxEdit();
+            this.btnBackToOutput = new DevExpress.XtraEditors.SimpleButton();
+            this.btnNextToModel = new DevExpress.XtraEditors.SimpleButton();
             this.tabPageModel = new DevExpress.XtraTab.XtraTabPage();
-            this.buttonProcessFile = new DevExpress.XtraEditors.SimpleButton();
-            this.btnBackToLanguage = new DevExpress.XtraEditors.SimpleButton();
             this.labelModelTitle = new DevExpress.XtraEditors.LabelControl();
             this.labelChooseModel = new DevExpress.XtraEditors.LabelControl();
             this.comboBoxEditModel = new DevExpress.XtraEditors.ComboBoxEdit();
@@ -92,6 +90,8 @@
             this.labelBatchMode = new DevExpress.XtraEditors.LabelControl();
             this.radioPageBatchSize = new DevExpress.XtraEditors.RadioGroup();
             this.lblBatchHelp = new DevExpress.XtraEditors.LabelControl();
+            this.buttonProcessFile = new DevExpress.XtraEditors.SimpleButton();
+            this.btnBackToLanguage = new DevExpress.XtraEditors.SimpleButton();
             this.tabPageAdvanced = new DevExpress.XtraTab.XtraTabPage();
             this.labelAdvancedTitle = new DevExpress.XtraEditors.LabelControl();
             this.groupApiKey = new DevExpress.XtraEditors.GroupControl();
@@ -233,35 +233,16 @@
             this.tabPageFile.Appearance.Header.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.tabPageFile.Appearance.Header.Options.UseFont = true;
             this.tabPageFile.AutoScroll = true;
-            this.tabPageFile.Controls.Add(this.btnNextToOutput);
             this.tabPageFile.Controls.Add(this.labelFileTitle);
             this.tabPageFile.Controls.Add(this.labelSelectFile);
             this.tabPageFile.Controls.Add(this.labelFileName);
             this.tabPageFile.Controls.Add(this.buttonBrowseFile);
             this.tabPageFile.Controls.Add(this.groupOutputLocation);
+            this.tabPageFile.Controls.Add(this.btnNextToOutput);
             this.tabPageFile.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageFile.Name = "tabPageFile";
-            //this.tabPageFile.Size = new System.Drawing.Size(1865, 711);
-            this.tabPageFile.Size = new System.Drawing.Size(1398, 621);
+            this.tabPageFile.Size = new System.Drawing.Size(1865, 711);
             this.tabPageFile.Text = "📄 File";
-            this.tabPageFile.AutoScroll = true;
-            // 
-            // btnNextToOutput
-            // 
-            this.btnNextToOutput.Appearance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
-            this.btnNextToOutput.Appearance.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.btnNextToOutput.Appearance.ForeColor = System.Drawing.Color.White;
-            this.btnNextToOutput.Appearance.Options.UseBackColor = true;
-            this.btnNextToOutput.Appearance.Options.UseFont = true;
-            this.btnNextToOutput.Appearance.Options.UseForeColor = true;
-            //this.btnNextToOutput.Location = new System.Drawing.Point(1336, 618);
-            this.btnNextToOutput.Location = new System.Drawing.Point(1100, 550);
-            this.btnNextToOutput.Margin = new System.Windows.Forms.Padding(4);
-            this.btnNextToOutput.Name = "btnNextToOutput";
-            this.btnNextToOutput.Size = new System.Drawing.Size(241, 45);
-            this.btnNextToOutput.TabIndex = 5;
-            this.btnNextToOutput.Text = "Next: Output Options →";
-            this.btnNextToOutput.Click += new System.EventHandler(this.btnNextToOutput_Click);
             // 
             // labelFileTitle
             // 
@@ -419,51 +400,37 @@
             this.chkOrganizeByType.TabIndex = 6;
             this.chkOrganizeByType.CheckedChanged += new System.EventHandler(this.chkOrganizeByType_CheckedChanged);
             // 
+            // btnNextToOutput
+            // 
+            this.btnNextToOutput.Appearance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
+            this.btnNextToOutput.Appearance.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.btnNextToOutput.Appearance.ForeColor = System.Drawing.Color.White;
+            this.btnNextToOutput.Appearance.Options.UseBackColor = true;
+            this.btnNextToOutput.Appearance.Options.UseFont = true;
+            this.btnNextToOutput.Appearance.Options.UseForeColor = true;
+            this.btnNextToOutput.Location = new System.Drawing.Point(1100, 550);
+            this.btnNextToOutput.Margin = new System.Windows.Forms.Padding(4);
+            this.btnNextToOutput.Name = "btnNextToOutput";
+            this.btnNextToOutput.Size = new System.Drawing.Size(241, 45);
+            this.btnNextToOutput.TabIndex = 5;
+            this.btnNextToOutput.Text = "Next: Output Options →";
+            this.btnNextToOutput.Click += new System.EventHandler(this.btnNextToOutput_Click);
+            // 
             // tabPageOutput
             // 
             this.tabPageOutput.Appearance.Header.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.tabPageOutput.Appearance.Header.Options.UseFont = true;
             this.tabPageOutput.AutoScroll = true;
-            this.tabPageOutput.Controls.Add(this.btnNextToLanguage);
-            this.tabPageOutput.Controls.Add(this.btnBackToFile);
             this.tabPageOutput.Controls.Add(this.labelOutputTitle);
             this.tabPageOutput.Controls.Add(this.panelStudyMaterials);
             this.tabPageOutput.Controls.Add(this.panelAnalysisTools);
             this.tabPageOutput.Controls.Add(this.panelSpecialFeatures);
+            this.tabPageOutput.Controls.Add(this.btnBackToFile);
+            this.tabPageOutput.Controls.Add(this.btnNextToLanguage);
             this.tabPageOutput.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageOutput.Name = "tabPageOutput";
-            //this.tabPageOutput.Size = new System.Drawing.Size(1865, 711);
-            this.tabPageOutput.Size = new System.Drawing.Size(1398, 621);
+            this.tabPageOutput.Size = new System.Drawing.Size(1865, 711);
             this.tabPageOutput.Text = "🎯 Output Options";
-            // 
-            // btnNextToLanguage
-            // 
-            this.btnNextToLanguage.Appearance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
-            this.btnNextToLanguage.Appearance.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.btnNextToLanguage.Appearance.ForeColor = System.Drawing.Color.White;
-            this.btnNextToLanguage.Appearance.Options.UseBackColor = true;
-            this.btnNextToLanguage.Appearance.Options.UseFont = true;
-            this.btnNextToLanguage.Appearance.Options.UseForeColor = true;
-            //this.btnNextToLanguage.Location = new System.Drawing.Point(1557, 618);
-            this.btnNextToLanguage.Location = new System.Drawing.Point(1100, 550);
-            this.btnNextToLanguage.Margin = new System.Windows.Forms.Padding(4);
-            this.btnNextToLanguage.Name = "btnNextToLanguage";
-            this.btnNextToLanguage.Size = new System.Drawing.Size(253, 55);
-            this.btnNextToLanguage.TabIndex = 5;
-            this.btnNextToLanguage.Text = "Next: Language →";
-            this.btnNextToLanguage.Click += new System.EventHandler(this.btnNextToLanguage_Click);
-            // 
-            // btnBackToFile
-            // 
-            this.btnBackToFile.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnBackToFile.Appearance.Options.UseFont = true;
-            this.btnBackToFile.Location = new System.Drawing.Point(40, 618);
-            this.btnBackToFile.Margin = new System.Windows.Forms.Padding(4);
-            this.btnBackToFile.Name = "btnBackToFile";
-            this.btnBackToFile.Size = new System.Drawing.Size(200, 55);
-            this.btnBackToFile.TabIndex = 4;
-            this.btnBackToFile.Text = "← Back";
-            this.btnBackToFile.Click += new System.EventHandler(this.btnBackToFile_Click);
             // 
             // labelOutputTitle
             // 
@@ -757,52 +724,50 @@
             this.chkMedicalMaterial.TabIndex = 5;
             this.chkMedicalMaterial.CheckedChanged += new System.EventHandler(this.chkMedicalMaterial_CheckedChanged);
             // 
+            // btnBackToFile
+            // 
+            this.btnBackToFile.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnBackToFile.Appearance.Options.UseFont = true;
+            this.btnBackToFile.Location = new System.Drawing.Point(40, 618);
+            this.btnBackToFile.Margin = new System.Windows.Forms.Padding(4);
+            this.btnBackToFile.Name = "btnBackToFile";
+            this.btnBackToFile.Size = new System.Drawing.Size(200, 55);
+            this.btnBackToFile.TabIndex = 4;
+            this.btnBackToFile.Text = "← Back";
+            this.btnBackToFile.Click += new System.EventHandler(this.btnBackToFile_Click);
+            // 
+            // btnNextToLanguage
+            // 
+            this.btnNextToLanguage.Appearance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
+            this.btnNextToLanguage.Appearance.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.btnNextToLanguage.Appearance.ForeColor = System.Drawing.Color.White;
+            this.btnNextToLanguage.Appearance.Options.UseBackColor = true;
+            this.btnNextToLanguage.Appearance.Options.UseFont = true;
+            this.btnNextToLanguage.Appearance.Options.UseForeColor = true;
+            this.btnNextToLanguage.Location = new System.Drawing.Point(1100, 550);
+            this.btnNextToLanguage.Margin = new System.Windows.Forms.Padding(4);
+            this.btnNextToLanguage.Name = "btnNextToLanguage";
+            this.btnNextToLanguage.Size = new System.Drawing.Size(253, 55);
+            this.btnNextToLanguage.TabIndex = 5;
+            this.btnNextToLanguage.Text = "Next: Language →";
+            this.btnNextToLanguage.Click += new System.EventHandler(this.btnNextToLanguage_Click);
+            // 
             // tabPageLanguage
             // 
             this.tabPageLanguage.Appearance.Header.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.tabPageLanguage.Appearance.Header.Options.UseFont = true;
             this.tabPageLanguage.AutoScroll = true;
-            this.tabPageLanguage.Controls.Add(this.btnNextToModel);
-            this.tabPageLanguage.Controls.Add(this.btnBackToOutput);
             this.tabPageLanguage.Controls.Add(this.labelLanguageTitle);
             this.tabPageLanguage.Controls.Add(this.labelGeneralLang);
             this.tabPageLanguage.Controls.Add(this.cmbGeneralLang);
             this.tabPageLanguage.Controls.Add(this.labelVocabLang);
             this.tabPageLanguage.Controls.Add(this.cmbVocabLang);
+            this.tabPageLanguage.Controls.Add(this.btnBackToOutput);
+            this.tabPageLanguage.Controls.Add(this.btnNextToModel);
             this.tabPageLanguage.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageLanguage.Name = "tabPageLanguage";
-            //this.tabPageLanguage.Size = new System.Drawing.Size(1865, 711);
-            this.tabPageLanguage.Size = new System.Drawing.Size(1398, 621);
+            this.tabPageLanguage.Size = new System.Drawing.Size(1865, 711);
             this.tabPageLanguage.Text = "🌍 Language";
-            // 
-            // btnNextToModel
-            // 
-            this.btnNextToModel.Appearance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
-            this.btnNextToModel.Appearance.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.btnNextToModel.Appearance.ForeColor = System.Drawing.Color.White;
-            this.btnNextToModel.Appearance.Options.UseBackColor = true;
-            this.btnNextToModel.Appearance.Options.UseFont = true;
-            this.btnNextToModel.Appearance.Options.UseForeColor = true;
-            //this.btnNextToModel.Location = new System.Drawing.Point(1557, 618);
-            this.btnNextToModel.Location = new System.Drawing.Point(1100, 550);
-            this.btnNextToModel.Margin = new System.Windows.Forms.Padding(4);
-            this.btnNextToModel.Name = "btnNextToModel";
-            this.btnNextToModel.Size = new System.Drawing.Size(253, 55);
-            this.btnNextToModel.TabIndex = 6;
-            this.btnNextToModel.Text = "Next: AI Model →";
-            this.btnNextToModel.Click += new System.EventHandler(this.btnNextToModel_Click);
-            // 
-            // btnBackToOutput
-            // 
-            this.btnBackToOutput.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnBackToOutput.Appearance.Options.UseFont = true;
-            this.btnBackToOutput.Location = new System.Drawing.Point(40, 618);
-            this.btnBackToOutput.Margin = new System.Windows.Forms.Padding(4);
-            this.btnBackToOutput.Name = "btnBackToOutput";
-            this.btnBackToOutput.Size = new System.Drawing.Size(200, 55);
-            this.btnBackToOutput.TabIndex = 5;
-            this.btnBackToOutput.Text = "← Back";
-            this.btnBackToOutput.Click += new System.EventHandler(this.btnBackToOutput_Click);
             // 
             // labelLanguageTitle
             // 
@@ -895,13 +860,39 @@
             this.cmbVocabLang.TabIndex = 4;
             this.cmbVocabLang.SelectedIndexChanged += new System.EventHandler(this.cmbVocabLang_SelectedIndexChanged);
             // 
+            // btnBackToOutput
+            // 
+            this.btnBackToOutput.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnBackToOutput.Appearance.Options.UseFont = true;
+            this.btnBackToOutput.Location = new System.Drawing.Point(40, 618);
+            this.btnBackToOutput.Margin = new System.Windows.Forms.Padding(4);
+            this.btnBackToOutput.Name = "btnBackToOutput";
+            this.btnBackToOutput.Size = new System.Drawing.Size(200, 55);
+            this.btnBackToOutput.TabIndex = 5;
+            this.btnBackToOutput.Text = "← Back";
+            this.btnBackToOutput.Click += new System.EventHandler(this.btnBackToOutput_Click);
+            // 
+            // btnNextToModel
+            // 
+            this.btnNextToModel.Appearance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
+            this.btnNextToModel.Appearance.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.btnNextToModel.Appearance.ForeColor = System.Drawing.Color.White;
+            this.btnNextToModel.Appearance.Options.UseBackColor = true;
+            this.btnNextToModel.Appearance.Options.UseFont = true;
+            this.btnNextToModel.Appearance.Options.UseForeColor = true;
+            this.btnNextToModel.Location = new System.Drawing.Point(1100, 550);
+            this.btnNextToModel.Margin = new System.Windows.Forms.Padding(4);
+            this.btnNextToModel.Name = "btnNextToModel";
+            this.btnNextToModel.Size = new System.Drawing.Size(253, 55);
+            this.btnNextToModel.TabIndex = 6;
+            this.btnNextToModel.Text = "Next: AI Model →";
+            this.btnNextToModel.Click += new System.EventHandler(this.btnNextToModel_Click);
+            // 
             // tabPageModel
             // 
             this.tabPageModel.Appearance.Header.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.tabPageModel.Appearance.Header.Options.UseFont = true;
             this.tabPageModel.AutoScroll = true;
-            this.tabPageModel.Controls.Add(this.buttonProcessFile);
-            this.tabPageModel.Controls.Add(this.btnBackToLanguage);
             this.tabPageModel.Controls.Add(this.labelModelTitle);
             this.tabPageModel.Controls.Add(this.labelChooseModel);
             this.tabPageModel.Controls.Add(this.comboBoxEditModel);
@@ -910,40 +901,12 @@
             this.tabPageModel.Controls.Add(this.labelBatchMode);
             this.tabPageModel.Controls.Add(this.radioPageBatchSize);
             this.tabPageModel.Controls.Add(this.lblBatchHelp);
+            this.tabPageModel.Controls.Add(this.buttonProcessFile);
+            this.tabPageModel.Controls.Add(this.btnBackToLanguage);
             this.tabPageModel.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageModel.Name = "tabPageModel";
-            //this.tabPageModel.Size = new System.Drawing.Size(1865, 711);
-            this.tabPageModel.Size = new System.Drawing.Size(1398, 621);
+            this.tabPageModel.Size = new System.Drawing.Size(1865, 711);
             this.tabPageModel.Text = "🤖 AI Model";
-            // 
-            // buttonProcessFile
-            // 
-            this.buttonProcessFile.Appearance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(139)))), ((int)(((byte)(34)))));
-            this.buttonProcessFile.Appearance.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.buttonProcessFile.Appearance.ForeColor = System.Drawing.Color.White;
-            this.buttonProcessFile.Appearance.Options.UseBackColor = true;
-            this.buttonProcessFile.Appearance.Options.UseFont = true;
-            this.buttonProcessFile.Appearance.Options.UseForeColor = true;
-            //this.buttonProcessFile.Location = new System.Drawing.Point(1537, 618);
-            this.buttonProcessFile.Location = new System.Drawing.Point(1080, 550);
-            this.buttonProcessFile.Margin = new System.Windows.Forms.Padding(4);
-            this.buttonProcessFile.Name = "buttonProcessFile";
-            this.buttonProcessFile.Size = new System.Drawing.Size(280, 62);
-            this.buttonProcessFile.TabIndex = 9;
-            this.buttonProcessFile.Text = "✓ Process File";
-            this.buttonProcessFile.Click += new System.EventHandler(this.buttonProcessFile_Click);
-            // 
-            // btnBackToLanguage
-            // 
-            this.btnBackToLanguage.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnBackToLanguage.Appearance.Options.UseFont = true;
-            this.btnBackToLanguage.Location = new System.Drawing.Point(40, 618);
-            this.btnBackToLanguage.Margin = new System.Windows.Forms.Padding(4);
-            this.btnBackToLanguage.Name = "btnBackToLanguage";
-            this.btnBackToLanguage.Size = new System.Drawing.Size(200, 55);
-            this.btnBackToLanguage.TabIndex = 8;
-            this.btnBackToLanguage.Text = "← Back";
-            this.btnBackToLanguage.Click += new System.EventHandler(this.btnBackToLanguage_Click);
             // 
             // labelModelTitle
             // 
@@ -962,7 +925,7 @@
             // 
             this.labelChooseModel.Appearance.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.labelChooseModel.Appearance.Options.UseFont = true;
-            this.labelChooseModel.Location = new System.Drawing.Point(53, 123);
+            this.labelChooseModel.Location = new System.Drawing.Point(53, 109);
             this.labelChooseModel.Margin = new System.Windows.Forms.Padding(4);
             this.labelChooseModel.Name = "labelChooseModel";
             this.labelChooseModel.Size = new System.Drawing.Size(116, 25);
@@ -971,7 +934,7 @@
             // 
             // comboBoxEditModel
             // 
-            this.comboBoxEditModel.Location = new System.Drawing.Point(53, 166);
+            this.comboBoxEditModel.Location = new System.Drawing.Point(53, 152);
             this.comboBoxEditModel.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxEditModel.Name = "comboBoxEditModel";
             this.comboBoxEditModel.Properties.Appearance.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -1001,7 +964,7 @@
             // 
             this.labelReasoningEffort.Appearance.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.labelReasoningEffort.Appearance.Options.UseFont = true;
-            this.labelReasoningEffort.Location = new System.Drawing.Point(53, 246);
+            this.labelReasoningEffort.Location = new System.Drawing.Point(53, 232);
             this.labelReasoningEffort.Margin = new System.Windows.Forms.Padding(4);
             this.labelReasoningEffort.Name = "labelReasoningEffort";
             this.labelReasoningEffort.Size = new System.Drawing.Size(132, 25);
@@ -1010,7 +973,7 @@
             // 
             // comboBoxReasoningEffort
             // 
-            this.comboBoxReasoningEffort.Location = new System.Drawing.Point(53, 289);
+            this.comboBoxReasoningEffort.Location = new System.Drawing.Point(53, 275);
             this.comboBoxReasoningEffort.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxReasoningEffort.Name = "comboBoxReasoningEffort";
             this.comboBoxReasoningEffort.Properties.Appearance.Font = new System.Drawing.Font("Segoe UI", 10.8F);
@@ -1040,7 +1003,7 @@
             // 
             this.labelBatchMode.Appearance.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.labelBatchMode.Appearance.Options.UseFont = true;
-            this.labelBatchMode.Location = new System.Drawing.Point(53, 369);
+            this.labelBatchMode.Location = new System.Drawing.Point(747, 109);
             this.labelBatchMode.Margin = new System.Windows.Forms.Padding(4);
             this.labelBatchMode.Name = "labelBatchMode";
             this.labelBatchMode.Size = new System.Drawing.Size(139, 25);
@@ -1049,7 +1012,7 @@
             // 
             // radioPageBatchSize
             // 
-            this.radioPageBatchSize.Location = new System.Drawing.Point(53, 412);
+            this.radioPageBatchSize.Location = new System.Drawing.Point(747, 155);
             this.radioPageBatchSize.Margin = new System.Windows.Forms.Padding(4);
             this.radioPageBatchSize.Name = "radioPageBatchSize";
             this.radioPageBatchSize.Properties.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F);
@@ -1070,12 +1033,40 @@
             this.lblBatchHelp.Appearance.Options.UseFont = true;
             this.lblBatchHelp.Appearance.Options.UseForeColor = true;
             this.lblBatchHelp.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
-            this.lblBatchHelp.Location = new System.Drawing.Point(747, 412);
+            this.lblBatchHelp.Location = new System.Drawing.Point(747, 311);
             this.lblBatchHelp.Margin = new System.Windows.Forms.Padding(4);
             this.lblBatchHelp.Name = "lblBatchHelp";
             this.lblBatchHelp.Size = new System.Drawing.Size(933, 80);
             this.lblBatchHelp.TabIndex = 7;
             this.lblBatchHelp.Text = resources.GetString("lblBatchHelp.Text");
+            // 
+            // buttonProcessFile
+            // 
+            this.buttonProcessFile.Appearance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(139)))), ((int)(((byte)(34)))));
+            this.buttonProcessFile.Appearance.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.buttonProcessFile.Appearance.ForeColor = System.Drawing.Color.White;
+            this.buttonProcessFile.Appearance.Options.UseBackColor = true;
+            this.buttonProcessFile.Appearance.Options.UseFont = true;
+            this.buttonProcessFile.Appearance.Options.UseForeColor = true;
+            this.buttonProcessFile.Location = new System.Drawing.Point(1080, 550);
+            this.buttonProcessFile.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonProcessFile.Name = "buttonProcessFile";
+            this.buttonProcessFile.Size = new System.Drawing.Size(280, 62);
+            this.buttonProcessFile.TabIndex = 9;
+            this.buttonProcessFile.Text = "✓ Process File";
+            this.buttonProcessFile.Click += new System.EventHandler(this.buttonProcessFile_Click);
+            // 
+            // btnBackToLanguage
+            // 
+            this.btnBackToLanguage.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnBackToLanguage.Appearance.Options.UseFont = true;
+            this.btnBackToLanguage.Location = new System.Drawing.Point(40, 618);
+            this.btnBackToLanguage.Margin = new System.Windows.Forms.Padding(4);
+            this.btnBackToLanguage.Name = "btnBackToLanguage";
+            this.btnBackToLanguage.Size = new System.Drawing.Size(200, 55);
+            this.btnBackToLanguage.TabIndex = 8;
+            this.btnBackToLanguage.Text = "← Back";
+            this.btnBackToLanguage.Click += new System.EventHandler(this.btnBackToLanguage_Click);
             // 
             // tabPageAdvanced
             // 
@@ -1086,7 +1077,7 @@
             this.tabPageAdvanced.Controls.Add(this.groupApiKey);
             this.tabPageAdvanced.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageAdvanced.Name = "tabPageAdvanced";
-            this.tabPageAdvanced.Size = new System.Drawing.Size(1398, 613);
+            this.tabPageAdvanced.Size = new System.Drawing.Size(1865, 711);
             this.tabPageAdvanced.Text = "⚙️ Advanced";
             // 
             // labelAdvancedTitle
