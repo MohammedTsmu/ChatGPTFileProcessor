@@ -173,10 +173,6 @@ namespace ChatGPTFileProcessor
 
             //Initialize Python for Anki export (runs in background)
             Task.Run(() => InitializePythonEnvironment());
-
-            //// ▼ Populate the “Delimiter” dropdown of the csv export feature
-            //cmbDelimiter.Properties.Items.AddRange(new[] { "Tab (TSV)", "Comma (CSV)" });
-            //cmbDelimiter.SelectedIndex = 0; // default to TSV
         }
 
 
@@ -1226,10 +1222,6 @@ namespace ChatGPTFileProcessor
 
                     // 2) now parse & save out a .csv/.tsv
                     var parsed = ParseMcqs(mcqsRaw);
-                    bool useComma = chkUseCommaDelimiter.Checked;
-                    var delPath = Path.ChangeExtension(mcqsFilePath, useComma ? ".csv" : ".tsv");
-
-                    SaveMcqsToDelimitedFile(parsed, delPath, useComma);
 
                     // 3) ✨ NEW: Create .apkg file for direct Anki import
                     SaveMcqsToApkg(parsed, mcqsFilePath, "MCQs");
@@ -1245,12 +1237,6 @@ namespace ChatGPTFileProcessor
                     // 2) Parse into (Front,Back) pairs
                     var parsed = ParseFlashcards(flashcardsRaw);
 
-                    // 3) Build the CSV/TSV path
-                    var flashCsvPath = Path.ChangeExtension(flashcardsFilePath,
-                        chkUseCommaDelimiter.Checked ? ".csv" : ".tsv");
-
-                    // 4) Write CSV/TSV
-                    SaveFlashcardsToDelimitedFile(parsed, flashCsvPath, chkUseCommaDelimiter.Checked);
 
                     // 5) ✨ NEW: Create .apkg file for direct Anki import
                     SaveFlashcardsToApkg(parsed, flashcardsFilePath, "Flashcards");
@@ -1264,47 +1250,20 @@ namespace ChatGPTFileProcessor
                     string vocabularyText = FormatVocabulary(allVocabulary.ToString());
                     SaveContentToFile(vocabularyText, vocabularyFilePath, "Vocabulary");
 
-                    // 2) Build .csv or .tsv path from the .docx
-                    bool useComma = chkUseCommaDelimiter.Checked;
-                    string ext = useComma ? ".csv" : ".tsv";
-                    string vocabDelimitedPath = Path.ChangeExtension(vocabularyFilePath, ext);
-
-                    // 3) Parse each line "Term - Translation" into a record
+                    // Parse vocabulary for Anki export
                     var records = vocabularyText
                         .Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
                         .Select(line =>
                         {
                             var parts = line.Split(new[] { " - " }, 2, StringSplitOptions.None);
-                            var term = parts[0].Trim();
-                            var translation = parts.Length > 1
-                                ? parts[1].Trim()
-                                : "[Translation Needed]";
-                            return Tuple.Create(term, translation);
-                        })
-                        .ToList();  // List<Tuple<string,string>>
-
-                    // 4) Write out the delimited file for Anki
-                    using (var sw = new StreamWriter(vocabDelimitedPath, false, Encoding.UTF8))
-                    {
-                        // Optional header (Anki doesn't strictly need it, but can help)
-                        sw.WriteLine(useComma
-                            ? "\"Term\",\"Translation\""
-                            : "Term\tTranslation");
-
-                        char sep = useComma ? ',' : '\t';
-                        foreach (var rec in records)
-                        {
-                            string t = rec.Item1.Replace("\"", "\"\"");   // escape quotes
-                            string tr = rec.Item2.Replace("\"", "\"\""); // escape quotes
-
-                            if (useComma)
-                                sw.WriteLine($"\"{t}\"{sep}\"{tr}\"");
+                            if (parts.Length >= 2)
+                                return Tuple.Create(parts[0].Trim(), parts[1].Trim());
                             else
-                                sw.WriteLine($"{t}{sep}{tr}");
-                        }
-                    }
+                                return Tuple.Create(line.Trim(), string.Empty);
+                        })
+                        .Where(t => !string.IsNullOrWhiteSpace(t.Item1))
+                        .ToList();
 
-                    UpdateStatus($"Vocabulary export saved: {Path.GetFileName(vocabDelimitedPath)}");
                     SaveVocabularyToApkg(records, vocabularyFilePath, "Vocabulary");
                 }
 
@@ -1323,8 +1282,6 @@ namespace ChatGPTFileProcessor
 
                 //    // 2) Delimited export for Anki
                 //    var parsed = ParseCloze(clozeRaw);                     // your (sentence,answer) pairs
-                //    bool useComma = chkUseCommaDelimiter.Checked;             // true ⇒ CSV, false ⇒ TSV
-                //    string ext = useComma ? ".csv" : ".tsv";
                 //    string outPath = Path.ChangeExtension(clozeFilePath, ext);
 
                 //    using (var sw = new StreamWriter(outPath, false, Encoding.UTF8))
@@ -1352,18 +1309,9 @@ namespace ChatGPTFileProcessor
                     string clozeRaw = allCloze.ToString();
                     SaveContentToFile(clozeRaw, clozeFilePath, "Cloze Deletions");
 
-                    // now also export to CSV/TSV
+                    // Export to Anki
                     var parsed = ParseCloze(clozeRaw);
-                    bool useComma = chkUseCommaDelimiter.Checked;
-                    string ext = useComma ? ".csv" : ".tsv";
-                    string outPath = Path.ChangeExtension(clozeFilePath, ext);
-
-                    SaveClozeToDelimitedFile(parsed, outPath, useComma);
-
-                    // ✨ NEW: Create .apkg file for direct Anki import
                     SaveClozeToApkg(parsed, clozeFilePath, "Cloze");
-
-                    UpdateStatus($"✅ Cloze exports saved: {Path.GetFileName(clozeFilePath)} and {Path.GetFileName(outPath)}");
                 }
 
                 if (chkTrueFalse.Checked)
@@ -2678,7 +2626,6 @@ namespace ChatGPTFileProcessor
             chkSimplified.Checked = Properties.Settings.Default.GenerateSimplified;
             chkCaseStudy.Checked = Properties.Settings.Default.GenerateCaseStudy;
             chkKeywords.Checked = Properties.Settings.Default.GenerateKeywords;
-            chkUseCommaDelimiter.Checked = Properties.Settings.Default.useCommaDelimiter;
             chkTranslatedSections.Checked = Properties.Settings.Default.GenerateTranslatedSections;
             chkExplainTerms.Checked = Properties.Settings.Default.GenerateExplainTerms;
             chkArabicExplainTerms.Checked = Properties.Settings.Default.ArabicExplainTerms;
@@ -2865,20 +2812,6 @@ namespace ChatGPTFileProcessor
             UpdateStatus($"Organize By Type…{(chkOrganizeByType.Checked ? "▶ Activated" : "▶ Deactivated")}");
         }
 
-        private void chkUseCommaDelimiter_CheckedChanged(object sender, EventArgs e)
-        {
-            if (chkUseCommaDelimiter.Checked)
-            {
-                UpdateStatus("▶ Using Comma Delimiter for CSV files");
-            }
-            else
-            {
-                UpdateStatus("▶ Using Tab Delimiter for TSV files");
-            }
-            // store the UseCommaDelimiter setting
-            Properties.Settings.Default.useCommaDelimiter = chkUseCommaDelimiter.Checked;
-            Properties.Settings.Default.Save();
-        }
 
         private void chkMedicalMaterial_CheckedChanged(object sender, EventArgs e)
         {
@@ -3036,41 +2969,11 @@ namespace ChatGPTFileProcessor
         }
 
 
-        /// Writes out a Front/Back list to a comma‐ or tab‐delimited file.
-        private void SaveFlashcardsToDelimitedFile(List<(string Front, string Back)> cards,
-                                                   string path,
-                                                   bool commaDelimiter)
-        {
-            using (var w = new StreamWriter(path, false, Encoding.UTF8))
-            {
-                char sep = commaDelimiter ? ',' : '\t';
-                // header (optional)
-                w.WriteLine($"Front{sep}Back");
-                foreach (var (front, back) in cards)
-                {
-                    // escape quotes if using CSV
-                    if (commaDelimiter)
-                    {
-                        var f = front.Replace("\"", "\"\"");
-                        var b = back.Replace("\"", "\"\"");
-                        w.WriteLine($"\"{f}\"{sep}\"{b}\"");
-                    }
-                    else
-                    {
-                        // TSV: less chance of needing escapes
-                        w.WriteLine($"{front}{sep}{back}");
-                    }
-                }
-            }
-        }
+        
 
         /// <summary>
         /// Creates an Anki .apkg file from flashcard data
         /// </summary>
-
-
-
-
 
         
         
@@ -4472,42 +4375,7 @@ hr {
         }
 
 
-        /// Write a list of MCQs out to CSV or TSV.
-        private void SaveMcqsToDelimitedFile(
-                List<McqItem> items,
-                string path,
-                bool useCommaDelimiter
-            )
-        {
-            var delim = useCommaDelimiter ? "," : "\t";
-
-            using (var sw = new StreamWriter(path, false, Encoding.UTF8))
-            {
-                // header row must match your Anki field names
-                sw.WriteLine($"Question{delim}Options{delim}Correct Answer");
-
-                string Escape(string field)
-                {
-                    // wrap in quotes if it contains delim or newline
-                    if (field.Contains(delim) || field.Contains("\"") || field.Contains("\n"))
-                    {
-                        // double up any existing quotes
-                        var escaped = field.Replace("\"", "\"\"");
-                        return $"\"{escaped}\"";
-                    }
-                    return field;
-                }
-
-                foreach (var mcq in items)
-                {
-                    var q = Escape(mcq.Question);
-                    var opt = Escape(mcq.OptionsCell);
-                    var a = Escape(mcq.Answer);
-                    sw.WriteLine($"{q}{delim}{opt}{delim}{a}");
-                }
-            }
-        }
-
+        
 
         /// Parse raw cloze blocks into (Sentence,Answer) pairs.
         /// Expects blocks like:
@@ -4536,35 +4404,6 @@ hr {
         }
 
 
-
-        /// Write out cloze pairs to CSV or TSV:
-        /// columns: Sentence [with blank], Answer
-        private void SaveClozeToDelimitedFile(List<(string Sentence, string Answer)> items,
-                                               string path,
-                                               bool useCommaDelimiter)
-        {
-            char sep = useCommaDelimiter ? ',' : '\t';
-            using (var w = new StreamWriter(path, false, Encoding.UTF8))
-            {
-                // optional header
-                w.WriteLine(useCommaDelimiter
-                    ? "\"Sentence\",\"Answer\""
-                    : "Sentence\tAnswer");
-                foreach (var (sent, ans) in items)
-                {
-                    string Escape(string f)
-                    {
-                        if (f.Contains(sep) || f.Contains("\"") || f.Contains("\n"))
-                        {
-                            var esc = f.Replace("\"", "\"\"");
-                            return $"\"{esc}\"";
-                        }
-                        return f;
-                    }
-                    w.WriteLine($"{Escape(sent)}{sep}{Escape(ans)}");
-                }
-            }
-        }
 
         private void buttonShowApi_Click(object sender, EventArgs e)
         {
