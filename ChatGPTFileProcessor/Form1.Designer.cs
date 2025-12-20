@@ -126,7 +126,6 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.comboBoxReasoningEffort = new DevExpress.XtraEditors.ComboBoxEdit();
             this.labelControl8 = new DevExpress.XtraEditors.LabelControl();
-            this.cmbDelimiter = new DevExpress.XtraEditors.ComboBoxEdit();
             this.svgImageBoxAbout = new DevExpress.XtraEditors.SvgImageBox();
             this.comboBoxEditModel = new DevExpress.XtraEditors.ComboBoxEdit();
             this.labelControl4 = new DevExpress.XtraEditors.LabelControl();
@@ -171,7 +170,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.chkDefinitions.Properties)).BeginInit();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.comboBoxReasoningEffort.Properties)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.cmbDelimiter.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.svgImageBoxAbout)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.comboBoxEditModel.Properties)).BeginInit();
             this.groupBox5.SuspendLayout();
@@ -1035,7 +1033,6 @@
             this.groupBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.groupBox4.Controls.Add(this.comboBoxReasoningEffort);
             this.groupBox4.Controls.Add(this.labelControl8);
-            this.groupBox4.Controls.Add(this.cmbDelimiter);
             this.groupBox4.Controls.Add(this.svgImageBoxAbout);
             this.groupBox4.Controls.Add(this.comboBoxEditModel);
             this.groupBox4.Controls.Add(this.labelControl4);
@@ -1087,33 +1084,6 @@
             this.labelControl8.Size = new System.Drawing.Size(130, 20);
             this.labelControl8.TabIndex = 27;
             this.labelControl8.Text = "Reasoning Effort:";
-            // 
-            // cmbDelimiter
-            // 
-            this.cmbDelimiter.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cmbDelimiter.Location = new System.Drawing.Point(2, 146);
-            this.cmbDelimiter.Name = "cmbDelimiter";
-            this.cmbDelimiter.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
-            this.cmbDelimiter.Properties.Appearance.Options.UseFont = true;
-            this.cmbDelimiter.Properties.AppearanceDisabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
-            this.cmbDelimiter.Properties.AppearanceDisabled.Options.UseFont = true;
-            this.cmbDelimiter.Properties.AppearanceDropDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
-            this.cmbDelimiter.Properties.AppearanceDropDown.Options.UseFont = true;
-            this.cmbDelimiter.Properties.AppearanceFocused.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
-            this.cmbDelimiter.Properties.AppearanceFocused.Options.UseFont = true;
-            this.cmbDelimiter.Properties.AppearanceItemDisabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
-            this.cmbDelimiter.Properties.AppearanceItemDisabled.Options.UseFont = true;
-            this.cmbDelimiter.Properties.AppearanceItemHighlight.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
-            this.cmbDelimiter.Properties.AppearanceItemHighlight.Options.UseFont = true;
-            this.cmbDelimiter.Properties.AppearanceItemSelected.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
-            this.cmbDelimiter.Properties.AppearanceItemSelected.Options.UseFont = true;
-            this.cmbDelimiter.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
-            this.cmbDelimiter.Properties.AppearanceReadOnly.Options.UseFont = true;
-            this.cmbDelimiter.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-            this.cmbDelimiter.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
-            this.cmbDelimiter.Size = new System.Drawing.Size(429, 26);
-            this.cmbDelimiter.TabIndex = 25;
             // 
             // svgImageBoxAbout
             // 
@@ -1297,7 +1267,6 @@
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.comboBoxReasoningEffort.Properties)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.cmbDelimiter.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.svgImageBoxAbout)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.comboBoxEditModel.Properties)).EndInit();
             this.groupBox5.ResumeLayout(false);
@@ -1360,7 +1329,6 @@
         private DevExpress.XtraEditors.CheckEdit chkCloze;
         private DevExpress.XtraEditors.CheckEdit chkTakeaways;
         private DevExpress.XtraEditors.CheckEdit chkSummary;
-        private DevExpress.XtraEditors.ComboBoxEdit cmbDelimiter;
         private DevExpress.XtraEditors.SimpleButton buttonShowApi;
         private DevExpress.XtraEditors.SimpleButton buttonLockApiKey;
         private DevExpress.XtraEditors.CheckEdit chkTranslatedSections;
