@@ -59,9 +59,6 @@
     <Setting Name="GenerateKeywords" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="useCommaDelimiter" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="GenerateTranslatedSections" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>

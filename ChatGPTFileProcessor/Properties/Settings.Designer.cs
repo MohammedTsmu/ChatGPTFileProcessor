@@ -254,18 +254,6 @@ namespace ChatGPTFileProcessor.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool useCommaDelimiter {
-            get {
-                return ((bool)(this["useCommaDelimiter"]));
-            }
-            set {
-                this["useCommaDelimiter"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool GenerateTranslatedSections {
             get {
                 return ((bool)(this["GenerateTranslatedSections"]));

@@ -98,7 +98,6 @@
             this.chkCaseStudy = new DevExpress.XtraEditors.CheckEdit();
             this.chkSimplified = new DevExpress.XtraEditors.CheckEdit();
             this.chkTableExtract = new DevExpress.XtraEditors.CheckEdit();
-            this.chkUseCommaDelimiter = new DevExpress.XtraEditors.CheckEdit();
             this.chkConceptMap = new DevExpress.XtraEditors.CheckEdit();
             this.chkOutline = new DevExpress.XtraEditors.CheckEdit();
             this.chkTrueFalse = new DevExpress.XtraEditors.CheckEdit();
@@ -155,7 +154,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.chkCaseStudy.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkSimplified.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkTableExtract.Properties)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chkUseCommaDelimiter.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkConceptMap.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkOutline.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkTrueFalse.Properties)).BeginInit();
@@ -403,7 +401,6 @@
             this.groupBox2.Controls.Add(this.chkCaseStudy);
             this.groupBox2.Controls.Add(this.chkSimplified);
             this.groupBox2.Controls.Add(this.chkTableExtract);
-            this.groupBox2.Controls.Add(this.chkUseCommaDelimiter);
             this.groupBox2.Controls.Add(this.chkConceptMap);
             this.groupBox2.Controls.Add(this.chkOutline);
             this.groupBox2.Controls.Add(this.chkTrueFalse);
@@ -585,17 +582,6 @@
             this.chkTableExtract.SuperTip = superToolTip13;
             this.chkTableExtract.TabIndex = 35;
             this.chkTableExtract.CheckedChanged += new System.EventHandler(this.chkTableExtract_CheckedChanged);
-            // 
-            // chkUseCommaDelimiter
-            // 
-            this.chkUseCommaDelimiter.Location = new System.Drawing.Point(483, 31);
-            this.chkUseCommaDelimiter.Name = "chkUseCommaDelimiter";
-            this.chkUseCommaDelimiter.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkUseCommaDelimiter.Properties.Appearance.Options.UseFont = true;
-            this.chkUseCommaDelimiter.Properties.Caption = "Anki Export as / Use comma-delimited (CSV) instead of tab (TSV)";
-            this.chkUseCommaDelimiter.Size = new System.Drawing.Size(875, 24);
-            this.chkUseCommaDelimiter.TabIndex = 29;
-            this.chkUseCommaDelimiter.CheckedChanged += new System.EventHandler(this.chkUseCommaDelimiter_CheckedChanged);
             // 
             // chkConceptMap
             // 
@@ -1293,7 +1279,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.chkCaseStudy.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkSimplified.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkTableExtract.Properties)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chkUseCommaDelimiter.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkConceptMap.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkOutline.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkTrueFalse.Properties)).EndInit();
@@ -1376,7 +1361,6 @@
         private DevExpress.XtraEditors.CheckEdit chkTakeaways;
         private DevExpress.XtraEditors.CheckEdit chkSummary;
         private DevExpress.XtraEditors.ComboBoxEdit cmbDelimiter;
-        private DevExpress.XtraEditors.CheckEdit chkUseCommaDelimiter;
         private DevExpress.XtraEditors.SimpleButton buttonShowApi;
         private DevExpress.XtraEditors.SimpleButton buttonLockApiKey;
         private DevExpress.XtraEditors.CheckEdit chkTranslatedSections;
