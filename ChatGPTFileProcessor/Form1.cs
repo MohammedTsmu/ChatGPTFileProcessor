@@ -17,6 +17,7 @@ using Task = System.Threading.Tasks.Task;
 //using Python.Runtime;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using DevExpress.XtraTab;
 
 namespace ChatGPTFileProcessor
 {
@@ -173,8 +174,97 @@ namespace ChatGPTFileProcessor
 
             //Initialize Python for Anki export (runs in background)
             Task.Run(() => InitializePythonEnvironment());
+
+            // Position navigation buttons dynamically
+            PositionNavigationButtons();
+
+            // Re-position on resize
+            this.Resize += (s, ev) => PositionNavigationButtons();
         }
 
+        private void PositionNavigationButtons()
+        {
+            int margin = 40;
+            int buttonHeight = 45;
+            int bottomY = xtraTabControl.Height - buttonHeight - margin;
+
+            // File tab
+            if (btnNextToOutput != null)
+            {
+                btnNextToOutput.Location = new System.Drawing.Point(
+                    xtraTabControl.Width - btnNextToOutput.Width - margin,
+                    bottomY
+                );
+            }
+
+            // Output tab
+            if (btnBackToFile != null)
+                btnBackToFile.Location = new System.Drawing.Point(margin, bottomY);
+
+            if (btnNextToLanguage != null)
+            {
+                btnNextToLanguage.Location = new System.Drawing.Point(
+                    xtraTabControl.Width - btnNextToLanguage.Width - margin,
+                    bottomY
+                );
+            }
+
+            // Language tab
+            if (btnBackToOutput != null)
+                btnBackToOutput.Location = new System.Drawing.Point(margin, bottomY);
+
+            if (btnNextToModel != null)
+            {
+                btnNextToModel.Location = new System.Drawing.Point(
+                    xtraTabControl.Width - btnNextToModel.Width - margin,
+                    bottomY
+                );
+            }
+
+            // Model tab
+            if (btnBackToLanguage != null)
+                btnBackToLanguage.Location = new System.Drawing.Point(margin, bottomY);
+
+            if (buttonProcessFile != null)
+            {
+                buttonProcessFile.Location = new System.Drawing.Point(
+                    xtraTabControl.Width - buttonProcessFile.Width - margin,
+                    bottomY
+                );
+            }
+        }
+
+        #region Navigation Button Handlers
+        private void btnNextToOutput_Click(object sender, EventArgs e)
+        {
+            xtraTabControl.SelectedTabPage = tabPageOutput;
+        }
+
+        private void btnBackToFile_Click(object sender, EventArgs e)
+        {
+            xtraTabControl.SelectedTabPage = tabPageFile;
+        }
+
+        private void btnNextToLanguage_Click(object sender, EventArgs e)
+        {
+            xtraTabControl.SelectedTabPage = tabPageLanguage;
+        }
+
+        private void btnBackToOutput_Click(object sender, EventArgs e)
+        {
+            xtraTabControl.SelectedTabPage = tabPageOutput;
+        }
+
+        private void btnNextToModel_Click(object sender, EventArgs e)
+        {
+            xtraTabControl.SelectedTabPage = tabPageModel;
+        }
+
+        private void btnBackToLanguage_Click(object sender, EventArgs e)
+        {
+            xtraTabControl.SelectedTabPage = tabPageLanguage;
+        }
+        #endregion
 
         private async Task InitializePythonEnvironment()
         {
@@ -4403,18 +4493,23 @@ hr {
             return list;
         }
 
-
-
         private void buttonShowApi_Click(object sender, EventArgs e)
         {
+            // Disable system password char to use custom char
+            textEditAPIKey.Properties.UseSystemPasswordChar = false;
+
+            // Toggle password visibility
             if (textEditAPIKey.Properties.PasswordChar == '*')
             {
-                textEditAPIKey.Properties.PasswordChar = '\0';
+                textEditAPIKey.Properties.PasswordChar = '\0';  // Show
             }
             else
             {
-                textEditAPIKey.Properties.PasswordChar = '*';
+                textEditAPIKey.Properties.PasswordChar = '*';  // Hide
             }
+
+            // Force refresh
+            textEditAPIKey.Refresh();
         }
 
         private void buttonLockApiKey_Click(object sender, EventArgs e)
