@@ -462,7 +462,7 @@
             this.panelStudyMaterials.Location = new System.Drawing.Point(30, 90);
             this.panelStudyMaterials.Margin = new System.Windows.Forms.Padding(4);
             this.panelStudyMaterials.Name = "panelStudyMaterials";
-            this.panelStudyMaterials.Size = new System.Drawing.Size(360, 300);
+            this.panelStudyMaterials.Size = new System.Drawing.Size(360, 340);
             this.panelStudyMaterials.TabIndex = 1;
             this.panelStudyMaterials.Text = "📚 Study Materials";
             // 
@@ -555,7 +555,7 @@
             this.panelAnalysisTools.Location = new System.Drawing.Point(410, 90);
             this.panelAnalysisTools.Margin = new System.Windows.Forms.Padding(4);
             this.panelAnalysisTools.Name = "panelAnalysisTools";
-            this.panelAnalysisTools.Size = new System.Drawing.Size(360, 300);
+            this.panelAnalysisTools.Size = new System.Drawing.Size(360, 340);
             this.panelAnalysisTools.TabIndex = 2;
             this.panelAnalysisTools.Text = "🔍 Analysis Tools";
             // 
@@ -648,7 +648,7 @@
             this.panelSpecialFeatures.Location = new System.Drawing.Point(790, 90);
             this.panelSpecialFeatures.Margin = new System.Windows.Forms.Padding(4);
             this.panelSpecialFeatures.Name = "panelSpecialFeatures";
-            this.panelSpecialFeatures.Size = new System.Drawing.Size(360, 300);
+            this.panelSpecialFeatures.Size = new System.Drawing.Size(360, 340);
             this.panelSpecialFeatures.TabIndex = 3;
             this.panelSpecialFeatures.Text = "⭐ Special Features";
             // 
