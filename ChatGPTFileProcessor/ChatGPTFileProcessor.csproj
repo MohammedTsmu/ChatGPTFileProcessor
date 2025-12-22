@@ -286,8 +286,14 @@
       <DependentUpon>PageSelectionForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
+    <Compile Include="ProgressForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\PdfProcessingService.cs" />
+    <Compile Include="ZoomPreviewForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>

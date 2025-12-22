@@ -2,15 +2,8 @@
 {
     partial class PageSelectionForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -22,261 +15,307 @@
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
-            DevExpress.Utils.SuperToolTip superToolTip1 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipItem toolTipItem1 = new DevExpress.Utils.ToolTipItem();
-            DevExpress.Utils.SuperToolTip superToolTip2 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipItem toolTipItem2 = new DevExpress.Utils.ToolTipItem();
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PageSelectionForm));
+
             this.galleryControl1 = new DevExpress.XtraBars.Ribbon.GalleryControl();
             this.galleryControlClient1 = new DevExpress.XtraBars.Ribbon.GalleryControlClient();
-            this.galleryControlClient2 = new DevExpress.XtraBars.Ribbon.GalleryControlClient();
+            this.panelTop = new DevExpress.XtraEditors.PanelControl();
+            this.lblTitle = new DevExpress.XtraEditors.LabelControl();
+            this.lblFileInfo = new DevExpress.XtraEditors.LabelControl();
+            this.panelBottom = new DevExpress.XtraEditors.PanelControl();
+            this.groupRange = new DevExpress.XtraEditors.GroupControl();
+            this.labelFrom = new DevExpress.XtraEditors.LabelControl();
             this.spinFrom = new DevExpress.XtraEditors.SpinEdit();
+            this.labelTo = new DevExpress.XtraEditors.LabelControl();
             this.spinTo = new DevExpress.XtraEditors.SpinEdit();
-            this.simpleButton1 = new DevExpress.XtraEditors.SimpleButton();
-            this.panelBottom = new System.Windows.Forms.Panel();
-            this.labelControl2 = new DevExpress.XtraEditors.LabelControl();
-            this.labelControl1 = new DevExpress.XtraEditors.LabelControl();
-            this.panelMiddle = new System.Windows.Forms.Panel();
-            this.labelControl3 = new DevExpress.XtraEditors.LabelControl();
-            this.panelTop = new System.Windows.Forms.Panel();
+            this.btnSelectAll = new DevExpress.XtraEditors.SimpleButton();
+            this.btnClear = new DevExpress.XtraEditors.SimpleButton();
+            this.btnOK = new DevExpress.XtraEditors.SimpleButton();
+            this.btnCancel = new DevExpress.XtraEditors.SimpleButton();
+            this.labelHelp = new DevExpress.XtraEditors.LabelControl();
+
             ((System.ComponentModel.ISupportInitialize)(this.galleryControl1)).BeginInit();
             this.galleryControl1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.panelTop)).BeginInit();
+            this.panelTop.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.panelBottom)).BeginInit();
+            this.panelBottom.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.groupRange)).BeginInit();
+            this.groupRange.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spinFrom.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.spinTo.Properties)).BeginInit();
-            this.panelBottom.SuspendLayout();
-            this.panelMiddle.SuspendLayout();
-            this.panelTop.SuspendLayout();
             this.SuspendLayout();
+
             // 
             // galleryControl1
             // 
             this.galleryControl1.Controls.Add(this.galleryControlClient1);
             this.galleryControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.galleryControl1.Location = new System.Drawing.Point(0, 0);
+            this.galleryControl1.Location = new System.Drawing.Point(0, 80);
             this.galleryControl1.Name = "galleryControl1";
-            this.galleryControl1.Padding = new System.Windows.Forms.Padding(5);
-            this.galleryControl1.Size = new System.Drawing.Size(1062, 544);
+            this.galleryControl1.Size = new System.Drawing.Size(1000, 550);
             this.galleryControl1.TabIndex = 0;
-            this.galleryControl1.Text = "galleryControl1";
+
             // 
             // galleryControlClient1
             // 
             this.galleryControlClient1.GalleryControl = this.galleryControl1;
-            this.galleryControlClient1.Location = new System.Drawing.Point(6, 6);
-            this.galleryControlClient1.Size = new System.Drawing.Size(1029, 532);
-            // 
-            // galleryControlClient2
-            // 
-            this.galleryControlClient2.GalleryControl = null;
-            this.galleryControlClient2.Location = new System.Drawing.Point(0, 0);
-            this.galleryControlClient2.Size = new System.Drawing.Size(0, 0);
-            // 
-            // spinFrom
-            // 
-            this.spinFrom.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.spinFrom.EditValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.spinFrom.Location = new System.Drawing.Point(312, 10);
-            this.spinFrom.Name = "spinFrom";
-            this.spinFrom.Properties.Appearance.Font = new System.Drawing.Font("LBC", 12F);
-            this.spinFrom.Properties.Appearance.Options.UseFont = true;
-            this.spinFrom.Properties.Appearance.Options.UseTextOptions = true;
-            this.spinFrom.Properties.Appearance.TextOptions.VAlignment = DevExpress.Utils.VertAlignment.Center;
-            this.spinFrom.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 12F);
-            this.spinFrom.Properties.AppearanceDisabled.Options.UseFont = true;
-            this.spinFrom.Properties.AppearanceDisabled.Options.UseTextOptions = true;
-            this.spinFrom.Properties.AppearanceDisabled.TextOptions.VAlignment = DevExpress.Utils.VertAlignment.Center;
-            this.spinFrom.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 12F);
-            this.spinFrom.Properties.AppearanceFocused.Options.UseFont = true;
-            this.spinFrom.Properties.AppearanceFocused.Options.UseTextOptions = true;
-            this.spinFrom.Properties.AppearanceFocused.TextOptions.VAlignment = DevExpress.Utils.VertAlignment.Center;
-            this.spinFrom.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 12F);
-            this.spinFrom.Properties.AppearanceReadOnly.Options.UseFont = true;
-            this.spinFrom.Properties.AppearanceReadOnly.Options.UseTextOptions = true;
-            this.spinFrom.Properties.AppearanceReadOnly.TextOptions.VAlignment = DevExpress.Utils.VertAlignment.Center;
-            this.spinFrom.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-            this.spinFrom.Properties.MaskSettings.Set("mask", "d");
-            this.spinFrom.Size = new System.Drawing.Size(125, 32);
-            toolTipItem1.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem1.Appearance.Options.UseFont = true;
-            toolTipItem1.Text = "Enter PDF start Page That AI Will Start Generating Content From";
-            superToolTip1.Items.Add(toolTipItem1);
-            this.spinFrom.SuperTip = superToolTip1;
-            this.spinFrom.TabIndex = 1;
-            // 
-            // spinTo
-            // 
-            this.spinTo.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.spinTo.EditValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.spinTo.Location = new System.Drawing.Point(312, 48);
-            this.spinTo.Name = "spinTo";
-            this.spinTo.Properties.Appearance.Font = new System.Drawing.Font("LBC", 12F);
-            this.spinTo.Properties.Appearance.Options.UseFont = true;
-            this.spinTo.Properties.Appearance.Options.UseTextOptions = true;
-            this.spinTo.Properties.Appearance.TextOptions.VAlignment = DevExpress.Utils.VertAlignment.Center;
-            this.spinTo.Properties.AppearanceDisabled.Font = new System.Drawing.Font("LBC", 12F);
-            this.spinTo.Properties.AppearanceDisabled.Options.UseFont = true;
-            this.spinTo.Properties.AppearanceFocused.Font = new System.Drawing.Font("LBC", 12F);
-            this.spinTo.Properties.AppearanceFocused.Options.UseFont = true;
-            this.spinTo.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("LBC", 12F);
-            this.spinTo.Properties.AppearanceReadOnly.Options.UseFont = true;
-            this.spinTo.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-            this.spinTo.Properties.MaskSettings.Set("mask", "d");
-            this.spinTo.Size = new System.Drawing.Size(125, 32);
-            toolTipItem2.Appearance.Font = new System.Drawing.Font("LBC", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            toolTipItem2.Appearance.Options.UseFont = true;
-            toolTipItem2.Text = "Enter PDF End Page That AI Will End Generating Content To";
-            superToolTip2.Items.Add(toolTipItem2);
-            this.spinTo.SuperTip = superToolTip2;
-            this.spinTo.TabIndex = 2;
-            // 
-            // simpleButton1
-            // 
-            this.simpleButton1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.simpleButton1.Appearance.Font = new System.Drawing.Font("LBC", 12F);
-            this.simpleButton1.Appearance.Options.UseFont = true;
-            this.simpleButton1.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.simpleButton1.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("simpleButton1.ImageOptions.SvgImage")));
-            this.simpleButton1.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
-            this.simpleButton1.Location = new System.Drawing.Point(669, 23);
-            this.simpleButton1.Name = "simpleButton1";
-            this.simpleButton1.Size = new System.Drawing.Size(184, 44);
-            this.simpleButton1.TabIndex = 3;
-            this.simpleButton1.Text = "OK";
-            // 
-            // panelBottom
-            // 
-            this.panelBottom.BackColor = System.Drawing.Color.SteelBlue;
-            this.panelBottom.Controls.Add(this.labelControl2);
-            this.panelBottom.Controls.Add(this.labelControl1);
-            this.panelBottom.Controls.Add(this.spinFrom);
-            this.panelBottom.Controls.Add(this.simpleButton1);
-            this.panelBottom.Controls.Add(this.spinTo);
-            this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(0, 583);
-            this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(1062, 90);
-            this.panelBottom.TabIndex = 4;
-            // 
-            // labelControl2
-            // 
-            this.labelControl2.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.labelControl2.Appearance.Font = new System.Drawing.Font("LBC", 12F);
-            this.labelControl2.Appearance.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.labelControl2.Appearance.Options.UseFont = true;
-            this.labelControl2.Appearance.Options.UseForeColor = true;
-            this.labelControl2.Location = new System.Drawing.Point(220, 51);
-            this.labelControl2.Name = "labelControl2";
-            this.labelControl2.Size = new System.Drawing.Size(86, 26);
-            this.labelControl2.TabIndex = 5;
-            this.labelControl2.Text = "End Page";
-            // 
-            // labelControl1
-            // 
-            this.labelControl1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.labelControl1.Appearance.Font = new System.Drawing.Font("LBC", 12F);
-            this.labelControl1.Appearance.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.labelControl1.Appearance.Options.UseFont = true;
-            this.labelControl1.Appearance.Options.UseForeColor = true;
-            this.labelControl1.Location = new System.Drawing.Point(210, 13);
-            this.labelControl1.Name = "labelControl1";
-            this.labelControl1.Size = new System.Drawing.Size(96, 26);
-            this.labelControl1.TabIndex = 4;
-            this.labelControl1.Text = "Start Page";
-            // 
-            // panelMiddle
-            // 
-            this.panelMiddle.Controls.Add(this.galleryControl1);
-            this.panelMiddle.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelMiddle.Location = new System.Drawing.Point(0, 39);
-            this.panelMiddle.Name = "panelMiddle";
-            this.panelMiddle.Size = new System.Drawing.Size(1062, 544);
-            this.panelMiddle.TabIndex = 5;
-            // 
-            // labelControl3
-            // 
-            this.labelControl3.Appearance.BackColor = System.Drawing.Color.SteelBlue;
-            this.labelControl3.Appearance.Font = new System.Drawing.Font("LBC", 12F);
-            this.labelControl3.Appearance.ForeColor = System.Drawing.Color.White;
-            this.labelControl3.Appearance.Options.UseBackColor = true;
-            this.labelControl3.Appearance.Options.UseFont = true;
-            this.labelControl3.Appearance.Options.UseForeColor = true;
-            this.labelControl3.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
-            this.labelControl3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelControl3.Location = new System.Drawing.Point(0, 0);
-            this.labelControl3.Name = "labelControl3";
-            this.labelControl3.Padding = new System.Windows.Forms.Padding(5);
-            this.labelControl3.Size = new System.Drawing.Size(1062, 36);
-            this.labelControl3.TabIndex = 1;
-            this.labelControl3.Text = "Please Select The (Start Page) And The (End Page) To Be the Source Of the Generte" +
-    "d Content";
+            this.galleryControlClient1.Location = new System.Drawing.Point(2, 2);
+            this.galleryControlClient1.Size = new System.Drawing.Size(996, 546);
+
             // 
             // panelTop
             // 
-            this.panelTop.BackColor = System.Drawing.Color.SteelBlue;
-            this.panelTop.Controls.Add(this.labelControl3);
+            this.panelTop.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder;
+            this.panelTop.Controls.Add(this.lblTitle);
+            this.panelTop.Controls.Add(this.lblFileInfo);
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(1062, 39);
-            this.panelTop.TabIndex = 6;
+            this.panelTop.Size = new System.Drawing.Size(1000, 80);
+            this.panelTop.TabIndex = 1;
+
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.Appearance.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.Appearance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
+            this.lblTitle.Appearance.Options.UseFont = true;
+            this.lblTitle.Appearance.Options.UseForeColor = true;
+            this.lblTitle.Location = new System.Drawing.Point(20, 15);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(200, 30);
+            this.lblTitle.TabIndex = 0;
+            this.lblTitle.Text = "Select Page Range";
+
+            // 
+            // lblFileInfo
+            // 
+            this.lblFileInfo.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.lblFileInfo.Appearance.ForeColor = System.Drawing.Color.Gray;
+            this.lblFileInfo.Appearance.Options.UseFont = true;
+            this.lblFileInfo.Appearance.Options.UseForeColor = true;
+            this.lblFileInfo.Location = new System.Drawing.Point(20, 50);
+            this.lblFileInfo.Name = "lblFileInfo";
+            this.lblFileInfo.Size = new System.Drawing.Size(150, 19);
+            this.lblFileInfo.TabIndex = 1;
+            this.lblFileInfo.Text = "No file loaded";
+
+            // 
+            // panelBottom
+            // 
+            this.panelBottom.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder;
+            this.panelBottom.Controls.Add(this.groupRange);
+            this.panelBottom.Controls.Add(this.btnSelectAll);
+            this.panelBottom.Controls.Add(this.btnClear);
+            this.panelBottom.Controls.Add(this.btnOK);
+            this.panelBottom.Controls.Add(this.btnCancel);
+            this.panelBottom.Controls.Add(this.labelHelp);
+            this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panelBottom.Location = new System.Drawing.Point(0, 630);
+            this.panelBottom.Name = "panelBottom";
+            this.panelBottom.Size = new System.Drawing.Size(1000, 120);
+            this.panelBottom.TabIndex = 2;
+
+            // 
+            // groupRange
+            // 
+            this.groupRange.AppearanceCaption.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.groupRange.AppearanceCaption.Options.UseFont = true;
+            this.groupRange.Controls.Add(this.labelFrom);
+            this.groupRange.Controls.Add(this.spinFrom);
+            this.groupRange.Controls.Add(this.labelTo);
+            this.groupRange.Controls.Add(this.spinTo);
+            this.groupRange.Location = new System.Drawing.Point(20, 10);
+            this.groupRange.Name = "groupRange";
+            this.groupRange.Size = new System.Drawing.Size(350, 100);
+            this.groupRange.TabIndex = 0;
+            this.groupRange.Text = "Page Range";
+
+            // 
+            // labelFrom
+            // 
+            this.labelFrom.Appearance.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.labelFrom.Appearance.Options.UseFont = true;
+            this.labelFrom.Location = new System.Drawing.Point(15, 40);
+            this.labelFrom.Name = "labelFrom";
+            this.labelFrom.Size = new System.Drawing.Size(30, 15);
+            this.labelFrom.TabIndex = 0;
+            this.labelFrom.Text = "From:";
+
+            // 
+            // spinFrom
+            // 
+            this.spinFrom.EditValue = new decimal(new int[] { 1, 0, 0, 0 });
+            this.spinFrom.Location = new System.Drawing.Point(55, 37);
+            this.spinFrom.Name = "spinFrom";
+            this.spinFrom.Properties.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.spinFrom.Properties.Appearance.Options.UseFont = true;
+            this.spinFrom.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+            this.spinFrom.Properties.IsFloatValue = false;
+            this.spinFrom.Properties.Mask.EditMask = "N00";
+            this.spinFrom.Properties.MaxValue = new decimal(new int[] { 9999, 0, 0, 0 });
+            this.spinFrom.Properties.MinValue = new decimal(new int[] { 1, 0, 0, 0 });
+            this.spinFrom.Size = new System.Drawing.Size(100, 24);
+            this.spinFrom.TabIndex = 1;
+
+            // 
+            // labelTo
+            // 
+            this.labelTo.Appearance.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.labelTo.Appearance.Options.UseFont = true;
+            this.labelTo.Location = new System.Drawing.Point(180, 40);
+            this.labelTo.Name = "labelTo";
+            this.labelTo.Size = new System.Drawing.Size(16, 15);
+            this.labelTo.TabIndex = 2;
+            this.labelTo.Text = "To:";
+
+            // 
+            // spinTo
+            // 
+            this.spinTo.EditValue = new decimal(new int[] { 1, 0, 0, 0 });
+            this.spinTo.Location = new System.Drawing.Point(210, 37);
+            this.spinTo.Name = "spinTo";
+            this.spinTo.Properties.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.spinTo.Properties.Appearance.Options.UseFont = true;
+            this.spinTo.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+            this.spinTo.Properties.IsFloatValue = false;
+            this.spinTo.Properties.Mask.EditMask = "N00";
+            this.spinTo.Properties.MaxValue = new decimal(new int[] { 9999, 0, 0, 0 });
+            this.spinTo.Properties.MinValue = new decimal(new int[] { 1, 0, 0, 0 });
+            this.spinTo.Size = new System.Drawing.Size(100, 24);
+            this.spinTo.TabIndex = 3;
+
+            // 
+            // btnSelectAll
+            // 
+            this.btnSelectAll.Appearance.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnSelectAll.Appearance.Options.UseFont = true;
+            this.btnSelectAll.Location = new System.Drawing.Point(390, 30);
+            this.btnSelectAll.Name = "btnSelectAll";
+            this.btnSelectAll.Size = new System.Drawing.Size(120, 35);
+            this.btnSelectAll.TabIndex = 1;
+            this.btnSelectAll.Text = "Select All (Ctrl+A)";
+            this.btnSelectAll.Click += new System.EventHandler(this.BtnSelectAll_Click);
+
+            // 
+            // btnClear
+            // 
+            this.btnClear.Appearance.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnClear.Appearance.Options.UseFont = true;
+            this.btnClear.Location = new System.Drawing.Point(520, 30);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(120, 35);
+            this.btnClear.TabIndex = 2;
+            this.btnClear.Text = "Clear (Esc)";
+            this.btnClear.Click += new System.EventHandler(this.BtnClear_Click);
+
+            // 
+            // btnOK
+            // 
+            this.btnOK.Appearance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
+            this.btnOK.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnOK.Appearance.ForeColor = System.Drawing.Color.White;
+            this.btnOK.Appearance.Options.UseBackColor = true;
+            this.btnOK.Appearance.Options.UseFont = true;
+            this.btnOK.Appearance.Options.UseForeColor = true;
+            this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnOK.Location = new System.Drawing.Point(780, 30);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(100, 40);
+            this.btnOK.TabIndex = 3;
+            this.btnOK.Text = "OK";
+
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Appearance.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnCancel.Appearance.Options.UseFont = true;
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(890, 30);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(100, 40);
+            this.btnCancel.TabIndex = 4;
+            this.btnCancel.Text = "Cancel";
+
+            // 
+            // labelHelp
+            // 
+            this.labelHelp.Appearance.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Italic);
+            this.labelHelp.Appearance.ForeColor = System.Drawing.Color.Gray;
+            this.labelHelp.Appearance.Options.UseFont = true;
+            this.labelHelp.Appearance.Options.UseForeColor = true;
+            this.labelHelp.Location = new System.Drawing.Point(20, 85);
+            this.labelHelp.Name = "labelHelp";
+            this.labelHelp.Size = new System.Drawing.Size(600, 13);
+            this.labelHelp.TabIndex = 5;
+            this.labelHelp.Text = "💡 Tip: Click thumbnails to set range, Double-click to preview, Use arrow keys to navigate, Press Enter to zoom";
+
             // 
             // PageSelectionForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 26F);
+            this.AcceptButton = this.btnOK;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1062, 673);
-            this.Controls.Add(this.panelMiddle);
+            this.CancelButton = this.btnCancel;
+            this.ClientSize = new System.Drawing.Size(1000, 750);
+            this.Controls.Add(this.galleryControl1);
             this.Controls.Add(this.panelTop);
             this.Controls.Add(this.panelBottom);
-            this.Font = new System.Drawing.Font("LBC", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "PageSelectionForm";
-            this.ShowIcon = false;
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Pages Selection";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Select Pages";
+
             ((System.ComponentModel.ISupportInitialize)(this.galleryControl1)).EndInit();
             this.galleryControl1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.spinFrom.Properties)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.spinTo.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.panelTop)).EndInit();
+            this.panelTop.ResumeLayout(false);
+            this.panelTop.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.panelBottom)).EndInit();
             this.panelBottom.ResumeLayout(false);
             this.panelBottom.PerformLayout();
-            this.panelMiddle.ResumeLayout(false);
-            this.panelTop.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.groupRange)).EndInit();
+            this.groupRange.ResumeLayout(false);
+            this.groupRange.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.spinFrom.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.spinTo.Properties)).EndInit();
             this.ResumeLayout(false);
-
         }
 
         #endregion
 
         private DevExpress.XtraBars.Ribbon.GalleryControl galleryControl1;
         private DevExpress.XtraBars.Ribbon.GalleryControlClient galleryControlClient1;
+        private DevExpress.XtraEditors.PanelControl panelTop;
+        private DevExpress.XtraEditors.LabelControl lblTitle;
+        private DevExpress.XtraEditors.LabelControl lblFileInfo;
+        private DevExpress.XtraEditors.PanelControl panelBottom;
+        private DevExpress.XtraEditors.GroupControl groupRange;
+        private DevExpress.XtraEditors.LabelControl labelFrom;
         private DevExpress.XtraEditors.SpinEdit spinFrom;
+        private DevExpress.XtraEditors.LabelControl labelTo;
         private DevExpress.XtraEditors.SpinEdit spinTo;
-        private DevExpress.XtraEditors.SimpleButton simpleButton1;
-        private System.Windows.Forms.Panel panelBottom;
-        private DevExpress.XtraEditors.LabelControl labelControl2;
-        private DevExpress.XtraEditors.LabelControl labelControl1;
-        private System.Windows.Forms.Panel panelMiddle;
-        private DevExpress.XtraEditors.LabelControl labelControl3;
-        private System.Windows.Forms.Panel panelTop;
-        private DevExpress.XtraBars.Ribbon.GalleryControlClient galleryControlClient2;
+        private DevExpress.XtraEditors.SimpleButton btnSelectAll;
+        private DevExpress.XtraEditors.SimpleButton btnClear;
+        private DevExpress.XtraEditors.SimpleButton btnOK;
+        private DevExpress.XtraEditors.SimpleButton btnCancel;
+        private DevExpress.XtraEditors.LabelControl labelHelp;
+
+        // Button click handlers
+        private void BtnSelectAll_Click(object sender, System.EventArgs e)
+        {
+            SelectAllPages();
+        }
+
+        private void BtnClear_Click(object sender, System.EventArgs e)
+        {
+            ClearSelection();
+        }
     }
 }

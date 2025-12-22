@@ -742,29 +742,67 @@ namespace ChatGPTFileProcessor
         }
 
 
-        private void buttonBrowseFile_Click(object sender, EventArgs e)
+        //private void buttonBrowseFile_Click(object sender, EventArgs e)
+        //{
+        //    using (OpenFileDialog openFileDialog = new OpenFileDialog())
+        //    {
+        //        openFileDialog.Filter = "PDF Files (*.pdf)|*.pdf";
+        //        if (openFileDialog.ShowDialog() == DialogResult.OK)
+        //        {
+        //            selectedPdfPath = openFileDialog.FileName;
+        //            _lastSelectedPdfPath = openFileDialog.FileName;
+
+        //            using (var pageForm = new PageSelectionForm())
+        //            {
+        //                pageForm.PendingPdfPath = selectedPdfPath;
+
+        //                if (pageForm.ShowDialog(this) == DialogResult.OK)
+        //                {
+        //                    selectedFromPage = pageForm.FromPage;
+        //                    selectedToPage = pageForm.ToPage;
+        //                    labelFileName.Text = selectedPdfPath;
+        //                }
+        //            }
+
+        //        }
+        //    }
+        //}
+        private async void buttonBrowseFile_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.Filter = "PDF Files (*.pdf)|*.pdf";
+
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     selectedPdfPath = openFileDialog.FileName;
-                    _lastSelectedPdfPath = openFileDialog.FileName; // أو المتغير الذي تحمل به المسار
+                    _lastSelectedPdfPath = openFileDialog.FileName;
 
+                    // Create and show page selection form
                     using (var pageForm = new PageSelectionForm())
                     {
-                        // لا تستدعِ LoadPdfPreview هنا
-                        pageForm.PendingPdfPath = selectedPdfPath;     // مرّر المسار فقط
-
-                        if (pageForm.ShowDialog(this) == DialogResult.OK)
+                        try
                         {
-                            selectedFromPage = pageForm.FromPage;
-                            selectedToPage = pageForm.ToPage;
-                            labelFileName.Text = selectedPdfPath;
+                            // Load PDF asynchronously
+                            await pageForm.LoadPdfPreviewAsync(selectedPdfPath);
+
+                            // Show dialog to user
+                            if (pageForm.ShowDialog(this) == DialogResult.OK)
+                            {
+                                selectedFromPage = pageForm.FromPage;
+                                selectedToPage = pageForm.ToPage;
+                                labelFileName.Text = selectedPdfPath;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(this,
+                                $"Failed to load PDF:\n\n{ex.Message}",
+                                "Error",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
                         }
                     }
-
                 }
             }
         }
