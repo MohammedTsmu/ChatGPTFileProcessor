@@ -57,7 +57,8 @@ namespace ChatGPTFileProcessor
             this.pictureBox.Location = new Point(0, 0);
             this.pictureBox.Name = "pictureBox";
             this.pictureBox.Size = new Size(800, 600);
-            this.pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+            //this.pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+            this.pictureBox.SizeMode = PictureBoxSizeMode.Normal;
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
 
@@ -184,7 +185,7 @@ namespace ChatGPTFileProcessor
             }
 
             _currentImage = image;
-            pictureBox.Image = image;
+            //pictureBox.Image = image;
 
             lblPageInfo.Text = $"Page {pageNumber}";
 
@@ -268,10 +269,20 @@ namespace ChatGPTFileProcessor
 
         private void PictureBox_Paint(object sender, PaintEventArgs e)
         {
+            var g = e.Graphics;
+
+            // Clear background first (removes ghost!)
+            g.Clear(pictureBox.BackColor);
+
             if (_currentImage == null) return;
 
-            var g = e.Graphics;
             g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            //private void PictureBox_Paint(object sender, PaintEventArgs e)
+            //{
+            //    if (_currentImage == null) return;
+
+            //    var g = e.Graphics;
+            //    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 
             int newWidth = (int)(_currentImage.Width * _zoomLevel);
             int newHeight = (int)(_currentImage.Height * _zoomLevel);
