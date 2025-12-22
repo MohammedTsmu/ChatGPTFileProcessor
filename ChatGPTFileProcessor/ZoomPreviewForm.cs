@@ -271,18 +271,12 @@ namespace ChatGPTFileProcessor
         {
             var g = e.Graphics;
 
-            // Clear background first (removes ghost!)
+            // Clear background (important!)
             g.Clear(pictureBox.BackColor);
 
             if (_currentImage == null) return;
 
             g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            //private void PictureBox_Paint(object sender, PaintEventArgs e)
-            //{
-            //    if (_currentImage == null) return;
-
-            //    var g = e.Graphics;
-            //    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 
             int newWidth = (int)(_currentImage.Width * _zoomLevel);
             int newHeight = (int)(_currentImage.Height * _zoomLevel);
