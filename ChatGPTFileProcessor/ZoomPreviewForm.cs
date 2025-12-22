@@ -1,11 +1,7 @@
-// ========================================
-// ZoomPreviewForm.cs
-// Full-page preview with zoom and pan capability
-// ========================================
-
 using DevExpress.XtraEditors;
 using System;
 using System.Drawing;
+using System.Net.NetworkInformation;
 using System.Windows.Forms;
 
 namespace ChatGPTFileProcessor
@@ -26,6 +22,8 @@ namespace ChatGPTFileProcessor
         private Point _panOffset = Point.Empty;
         private Point _lastMousePos;
         private bool _isPanning;
+
+        private bool _autoFit = true;
 
         public ZoomPreviewForm()
         {
@@ -163,18 +161,44 @@ namespace ChatGPTFileProcessor
 
         private void InitializeEvents()
         {
+            // Zoom buttons
             btnZoomIn.Click += (s, e) => Zoom(1.25f);
             btnZoomOut.Click += (s, e) => Zoom(0.8f);
             btnZoomFit.Click += (s, e) => ZoomToFit();
             btnZoom100.Click += (s, e) => ZoomTo100();
 
+            // Mouse events
             pictureBox.MouseWheel += PictureBox_MouseWheel;
             pictureBox.MouseDown += PictureBox_MouseDown;
             pictureBox.MouseMove += PictureBox_MouseMove;
             pictureBox.MouseUp += PictureBox_MouseUp;
             pictureBox.Paint += PictureBox_Paint;
 
+            // Keyboard events
             this.KeyDown += ZoomPreviewForm_KeyDown;
+
+            // Handle window resize/maximize
+            this.Resize += ZoomPreviewForm_Resize;
+            this.SizeChanged += ZoomPreviewForm_SizeChanged;
+        }
+
+        private void ZoomPreviewForm_Resize(object sender, EventArgs e)
+        {
+            // If we're in "fit" mode (not manually zoomed), recalculate fit
+            // We can track this with a flag
+            if (_autoFit && _currentImage != null)
+            {
+                ZoomToFit();
+            }
+        }
+
+        private void ZoomPreviewForm_SizeChanged(object sender, EventArgs e)
+        {
+            // Force repaint when size changes
+            if (pictureBox != null)
+            {
+                pictureBox.Invalidate();
+            }
         }
 
         public void ShowPreview(Image image, int pageNumber)
@@ -185,17 +209,19 @@ namespace ChatGPTFileProcessor
             }
 
             _currentImage = image;
-            //pictureBox.Image = image;
-
             lblPageInfo.Text = $"Page {pageNumber}";
 
+            _autoFit = true;  // Reset to auto-fit for new image
             ZoomToFit();
         }
+
 
         private void Zoom(float factor)
         {
             _zoomLevel *= factor;
             _zoomLevel = Math.Max(0.1f, Math.Min(_zoomLevel, 5.0f));
+
+            _autoFit = false;  // User manually zoomed, disable auto-fit
 
             ApplyZoom();
         }
@@ -204,11 +230,18 @@ namespace ChatGPTFileProcessor
         {
             if (_currentImage == null) return;
 
-            float widthRatio = (float)pictureBox.ClientSize.Width / _currentImage.Width;
-            float heightRatio = (float)pictureBox.ClientSize.Height / _currentImage.Height;
+            // Get actual available space (excluding toolbar)
+            int availableWidth = pictureBox.ClientSize.Width;
+            int availableHeight = pictureBox.ClientSize.Height;
 
-            _zoomLevel = Math.Min(widthRatio, heightRatio);
+            // Calculate zoom to fit
+            float widthRatio = (float)availableWidth / _currentImage.Width;
+            float heightRatio = (float)availableHeight / _currentImage.Height;
+
+            _zoomLevel = Math.Min(widthRatio, heightRatio) * 0.95f; // 95% to add small margin
             _panOffset = Point.Empty;
+
+            _autoFit = true;  // We're in auto-fit mode
 
             ApplyZoom();
         }
@@ -217,6 +250,8 @@ namespace ChatGPTFileProcessor
         {
             _zoomLevel = 1.0f;
             _panOffset = Point.Empty;
+
+            _autoFit = false;  // User set specific zoom
 
             ApplyZoom();
         }
@@ -271,20 +306,26 @@ namespace ChatGPTFileProcessor
         {
             var g = e.Graphics;
 
-            // Clear background (important!)
+            // Clear entire background
             g.Clear(pictureBox.BackColor);
 
             if (_currentImage == null) return;
 
+            // High-quality rendering
             g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
 
-            int newWidth = (int)(_currentImage.Width * _zoomLevel);
-            int newHeight = (int)(_currentImage.Height * _zoomLevel);
+            // Calculate zoomed dimensions
+            int zoomedWidth = (int)(_currentImage.Width * _zoomLevel);
+            int zoomedHeight = (int)(_currentImage.Height * _zoomLevel);
 
-            int x = (pictureBox.Width - newWidth) / 2 + _panOffset.X;
-            int y = (pictureBox.Height - newHeight) / 2 + _panOffset.Y;
+            // Center the image in available space
+            int x = (pictureBox.ClientSize.Width - zoomedWidth) / 2 + _panOffset.X;
+            int y = (pictureBox.ClientSize.Height - zoomedHeight) / 2 + _panOffset.Y;
 
-            g.DrawImage(_currentImage, x, y, newWidth, newHeight);
+            // Draw the image
+            g.DrawImage(_currentImage, x, y, zoomedWidth, zoomedHeight);
         }
 
         private void ZoomPreviewForm_KeyDown(object sender, KeyEventArgs e)
