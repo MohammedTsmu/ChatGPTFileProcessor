@@ -50,6 +50,8 @@ namespace ChatGPTFileProcessor
         private object pythonLock = new object();
         private string pythonHome = null;
 
+        private Label progressLabel;
+
         public Form1()
         {
             InitializeComponent();
@@ -2727,61 +2729,202 @@ namespace ChatGPTFileProcessor
 
 
         // Overlay panel and its controls
+        //private void InitializeOverlay()
+        //{
+        //    overlayPanel = new Panel
+        //    {
+        //        Size = this.ClientSize,
+        //        BackColor = Color.FromArgb(150, Color.Black),
+        //        Visible = false,
+        //        Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
+        //    };
+
+        //    int centerX = overlayPanel.Width / 2;
+
+        //    loadingIcon = new PictureBox
+        //    {
+        //        //Size = new Size(120, 120),
+        //        Size = new Size(800, 320),
+        //        SizeMode = PictureBoxSizeMode.StretchImage,
+        //        Image = Properties.Resources.loading_gif,
+        //        //Location = new System.Drawing.Point(centerX - 60, overlayPanel.Height / 2 - 150)
+        //        Location = new System.Drawing.Point(centerX - 400, overlayPanel.Height / 2 - 300)
+        //    };
+
+        //    statusLabel = new Label
+        //    {
+        //        AutoSize = false,
+        //        //Size = new Size(400, 40),
+
+        //        Size = new Size(800, 40),
+        //        TextAlign = ContentAlignment.MiddleCenter,
+        //        ForeColor = Color.White,
+        //        Font = new System.Drawing.Font("Segoe UI", 12, FontStyle.Bold),
+        //        //Location = new System.Drawing.Point(centerX - 200, loadingIcon.Bottom + 10),
+        //        Location = new System.Drawing.Point(centerX - 400, loadingIcon.Bottom + 10),
+        //        Text = "⏳ Processing, please wait...",
+        //        //Anchor = AnchorStyles.None
+        //    };
+
+        //    logTextBox = new TextBox
+        //    {
+        //        Size = new Size(800, 250),
+        //        Multiline = true,
+        //        ReadOnly = true,
+        //        ScrollBars = ScrollBars.Vertical,
+        //        BackColor = Color.DarkSlateBlue,
+        //        ForeColor = Color.White,
+        //        //Font = new System.Drawing.Font("Consolas", 10),
+        //        Font = new System.Drawing.Font("Arial", 11),
+        //        //Location = new System.Drawing.Point(centerX - 300, statusLabel.Bottom + 10)
+        //        Location = new System.Drawing.Point(centerX - 400, statusLabel.Bottom + 10)
+        //    };
+
+        //    overlayPanel.Controls.Add(loadingIcon);
+        //    overlayPanel.Controls.Add(statusLabel);
+        //    overlayPanel.Controls.Add(logTextBox);
+        //    this.Controls.Add(overlayPanel);
+        //}
+
         private void InitializeOverlay()
         {
+            // Semi-transparent modern overlay
             overlayPanel = new Panel
             {
                 Size = this.ClientSize,
-                BackColor = Color.FromArgb(150, Color.Black),
+                BackColor = Color.FromArgb(220, 15, 20, 35), // Darker, more opaque
                 Visible = false,
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
             };
 
+            // Center card panel
             int centerX = overlayPanel.Width / 2;
+            int centerY = overlayPanel.Height / 2;
 
+            // Modern card with gradient (drawn manually)
+            var cardPanel = new Panel
+            {
+                Size = new Size(900, 500),
+                Location = new Point(centerX - 450, centerY - 250),
+                BackColor = Color.FromArgb(33, 47, 90), // Navy blue
+                Anchor = AnchorStyles.None
+            };
+
+            // Draw border
+            cardPanel.Paint += (s, e) =>
+            {
+                var g = e.Graphics;
+                var rect = cardPanel.ClientRectangle;
+
+                // Gradient background
+                using (var brush = new System.Drawing.Drawing2D.LinearGradientBrush(
+                    rect,
+                    Color.FromArgb(30, 40, 100),
+                    Color.FromArgb(80, 40, 120),
+                    System.Drawing.Drawing2D.LinearGradientMode.Vertical))
+                {
+                    g.FillRectangle(brush, rect);
+                }
+
+                // Glow border
+                using (var pen = new Pen(Color.FromArgb(150, 100, 150, 255), 3))
+                {
+                    g.DrawRectangle(pen, 1, 1, rect.Width - 3, rect.Height - 3);
+                }
+            };
+
+            // Title with glow effect
+            var titleLabel = new Label
+            {
+                Text = "🔄 PROCESSING",
+                Location = new Point(0, 40),
+                Size = new Size(900, 50),
+                Font = new Font("Segoe UI", 24, FontStyle.Bold),
+                ForeColor = Color.White,
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.Transparent
+            };
+
+            // Animated loading (your existing GIF)
             loadingIcon = new PictureBox
             {
-                //Size = new Size(120, 120),
-                Size = new Size(800, 320),
-                SizeMode = PictureBoxSizeMode.StretchImage,
+                Size = new Size(180, 180),
+                SizeMode = PictureBoxSizeMode.Zoom,
                 Image = Properties.Resources.loading_gif,
-                //Location = new System.Drawing.Point(centerX - 60, overlayPanel.Height / 2 - 150)
-                Location = new System.Drawing.Point(centerX - 400, overlayPanel.Height / 2 - 300)
+                Location = new Point(360, 110),
+                BackColor = Color.Transparent
             };
 
+            // Status message
             statusLabel = new Label
             {
-                AutoSize = false,
-                //Size = new Size(400, 40),
-
-                Size = new Size(800, 40),
+                Text = "⏳ Processing your document...",
+                Location = new Point(50, 310),
+                Size = new Size(800, 30),
+                Font = new Font("Segoe UI", 12),
+                ForeColor = Color.FromArgb(200, 220, 255),
                 TextAlign = ContentAlignment.MiddleCenter,
-                ForeColor = Color.White,
-                Font = new System.Drawing.Font("Segoe UI", 12, FontStyle.Bold),
-                //Location = new System.Drawing.Point(centerX - 200, loadingIcon.Bottom + 10),
-                Location = new System.Drawing.Point(centerX - 400, loadingIcon.Bottom + 10),
-                Text = "⏳ Processing, please wait...",
-                //Anchor = AnchorStyles.None
+                BackColor = Color.Transparent
             };
 
+            progressLabel = new Label
+            {
+                Text = "0%",
+                Location = new Point(400, 290),
+                Size = new Size(100, 30),
+                Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                ForeColor = Color.FromArgb(100, 255, 100), // Green
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.Transparent
+            };
+            cardPanel.Controls.Add(progressLabel);
+
+            // Modern log box
             logTextBox = new TextBox
             {
-                Size = new Size(800, 250),
+                Location = new Point(50, 350),
+                Size = new Size(800, 120),
                 Multiline = true,
                 ReadOnly = true,
                 ScrollBars = ScrollBars.Vertical,
-                BackColor = Color.DarkSlateBlue,
-                ForeColor = Color.White,
-                //Font = new System.Drawing.Font("Consolas", 10),
-                Font = new System.Drawing.Font("Arial", 11),
-                //Location = new System.Drawing.Point(centerX - 300, statusLabel.Bottom + 10)
-                Location = new System.Drawing.Point(centerX - 400, statusLabel.Bottom + 10)
+                BackColor = Color.FromArgb(20, 25, 50),
+                ForeColor = Color.FromArgb(100, 255, 218),
+                Font = new Font("Consolas", 9),
+                BorderStyle = BorderStyle.FixedSingle
             };
 
-            overlayPanel.Controls.Add(loadingIcon);
-            overlayPanel.Controls.Add(statusLabel);
-            overlayPanel.Controls.Add(logTextBox);
+            // Add to card
+            cardPanel.Controls.Add(titleLabel);
+            cardPanel.Controls.Add(loadingIcon);
+            cardPanel.Controls.Add(statusLabel);
+            cardPanel.Controls.Add(logTextBox);
+
+            // Add to overlay
+            overlayPanel.Controls.Add(cardPanel);
             this.Controls.Add(overlayPanel);
+
+            // Keep centered on resize
+            this.Resize += (s, e) =>
+            {
+                if (cardPanel != null)
+                {
+                    int cx = overlayPanel.Width / 2;
+                    int cy = overlayPanel.Height / 2;
+                    cardPanel.Location = new Point(cx - 450, cy - 250);
+                }
+            };
+        }
+
+        private void UpdateProgress(int percentage)
+        {
+            if (progressLabel != null && progressLabel.InvokeRequired)
+            {
+                progressLabel.Invoke(new Action(() => progressLabel.Text = $"{percentage}%"));
+            }
+            else if (progressLabel != null)
+            {
+                progressLabel.Text = $"{percentage}%";
+            }
         }
 
         private void UpdateOverlayLog(string message)
