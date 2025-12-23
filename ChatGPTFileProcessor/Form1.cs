@@ -34,7 +34,6 @@ namespace ChatGPTFileProcessor
 
         private Panel overlayPanel;
         private Label statusLabel;
-        private PictureBox loadingIcon;
         private TextBox logTextBox;
 
         // يُسجّل آخر مجلد إخراج فعلي تم استخدامه أثناء آخر تشغيل
@@ -2713,14 +2712,35 @@ namespace ChatGPTFileProcessor
                 BackColor = Color.Transparent
             };
 
-            // Animated loading
-            loadingIcon = new PictureBox
+
+            //Loading Animation Options to select from: 3 nice options available below
+
+            //// OPTION 1: Google-style spinning circles
+            //var loadingAnimation = new SmoothLoadingAnimation
+            //{
+            //    Size = new Size(180, 180),
+            //    Location = new Point(360, 110)
+            //};
+
+            //// OR OPTION 2: Windows-style circular spinner
+            //var loadingAnimation = new CircularSpinner
+            //{
+            //    Size = new Size(180, 180),
+            //    Location = new Point(360, 110)
+            //};
+
+            //// OR OPTION 3: Pulsing dots
+            //var loadingAnimation = new PulsingDots
+            //{
+            //    Size = new Size(180, 60),
+            //    Location = new Point(360, 170) // Adjusted Y for smaller height
+            //};
+
+            // OR OPTION 4: Gradient ring
+            var loadingAnimation = new GradientRing
             {
                 Size = new Size(180, 180),
-                SizeMode = PictureBoxSizeMode.Zoom,
-                Image = Properties.Resources.loading_gif,
-                Location = new Point(360, 110),
-                BackColor = Color.Transparent
+                Location = new Point(360, 110)
             };
 
             // Status message
@@ -2751,7 +2771,7 @@ namespace ChatGPTFileProcessor
 
             // Add to card
             cardPanel.Controls.Add(titleLabel);
-            cardPanel.Controls.Add(loadingIcon);
+            cardPanel.Controls.Add(loadingAnimation);
             cardPanel.Controls.Add(statusLabel);
             cardPanel.Controls.Add(logTextBox);
 
@@ -2771,17 +2791,6 @@ namespace ChatGPTFileProcessor
             };
         }
 
-        private void UpdateProgress(int percentage)
-        {
-            if (progressLabel != null && progressLabel.InvokeRequired)
-            {
-                progressLabel.Invoke(new Action(() => progressLabel.Text = $"{percentage}%"));
-            }
-            else if (progressLabel != null)
-            {
-                progressLabel.Text = $"{percentage}%";
-            }
-        }
 
         private void UpdateOverlayLog(string message)
         {
@@ -4738,6 +4747,363 @@ hr {
             {
                 UpdateStatus($"▶ This setting will be used with {currentModel}");
             }
+        }
+    }
+
+
+
+
+
+
+
+
+    //A N I M A T I O N S: Available Loading Spinners (3)
+    // ========================================
+    // OPTION 1: GOOGLE-STYLE SPINNING CIRCLES
+    // ========================================
+
+    public class SmoothLoadingAnimation : Control
+    {
+        private Timer _timer;
+        private float _angle = 0f;
+        private readonly Color[] _colors = new[]
+        {
+        Color.FromArgb(66, 133, 244),   // Google Blue
+        Color.FromArgb(234, 67, 53),    // Google Red
+        Color.FromArgb(251, 188, 5),    // Google Yellow
+        Color.FromArgb(52, 168, 83)     // Google Green
+    };
+
+        public SmoothLoadingAnimation()
+        {
+            this.SetStyle(
+                ControlStyles.SupportsTransparentBackColor |  // IMPORTANT!
+                ControlStyles.AllPaintingInWmPaint |
+                ControlStyles.OptimizedDoubleBuffer |
+                ControlStyles.UserPaint,
+                true);
+
+            this.BackColor = Color.Transparent;  // Now this works!
+            this.Size = new Size(180, 180);
+
+            _timer = new Timer { Interval = 16 }; // ~60 FPS
+            _timer.Tick += (s, e) =>
+            {
+                _angle += 8f;
+                if (_angle >= 360f) _angle = 0f;
+                this.Invalidate();
+            };
+            _timer.Start();
+        }
+
+        protected override void OnPaintBackground(PaintEventArgs e)
+        {
+            // Don't call base - we handle transparency ourselves
+            if (this.Parent != null)
+            {
+                e.Graphics.Clear(this.Parent.BackColor);
+            }
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            var g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+            int centerX = this.Width / 2;
+            int centerY = this.Height / 2;
+            int radius = Math.Min(this.Width, this.Height) / 3;
+            int ballSize = 16;
+
+            // Draw 4 spinning balls
+            for (int i = 0; i < 4; i++)
+            {
+                float angle = _angle + (i * 90f);
+                float radian = angle * (float)Math.PI / 180f;
+
+                int x = centerX + (int)(Math.Cos(radian) * radius) - ballSize / 2;
+                int y = centerY + (int)(Math.Sin(radian) * radius) - ballSize / 2;
+
+                using (var brush = new SolidBrush(_colors[i]))
+                {
+                    g.FillEllipse(brush, x, y, ballSize, ballSize);
+                }
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _timer?.Stop();
+                _timer?.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+    }
+
+
+    // ========================================
+    // OPTION 2: CIRCULAR SPINNER (WINDOWS STYLE)
+    // ========================================
+
+    public class CircularSpinner : Control
+    {
+        private Timer _timer;
+        private float _angle = 0f;
+        private readonly float[] _segmentOpacity = new float[12];
+
+        public CircularSpinner()
+        {
+            this.SetStyle(
+                ControlStyles.SupportsTransparentBackColor |  // IMPORTANT!
+                ControlStyles.AllPaintingInWmPaint |
+                ControlStyles.OptimizedDoubleBuffer |
+                ControlStyles.UserPaint,
+                true);
+
+            this.BackColor = Color.Transparent;
+            this.Size = new Size(180, 180);
+
+            // Initialize segment opacity
+            for (int i = 0; i < _segmentOpacity.Length; i++)
+            {
+                _segmentOpacity[i] = (i + 1) / (float)_segmentOpacity.Length;
+            }
+
+            _timer = new Timer { Interval = 80 };
+            _timer.Tick += (s, e) =>
+            {
+                _angle += 30f;
+                if (_angle >= 360f) _angle = 0f;
+                this.Invalidate();
+            };
+            _timer.Start();
+        }
+
+        protected override void OnPaintBackground(PaintEventArgs e)
+        {
+            // Handle transparency properly
+            if (this.Parent != null)
+            {
+                e.Graphics.Clear(this.Parent.BackColor);
+            }
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            var g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+            int centerX = this.Width / 2;
+            int centerY = this.Height / 2;
+            int outerRadius = Math.Min(this.Width, this.Height) / 2 - 10;
+            int innerRadius = outerRadius - 15;
+
+            // Draw 12 segments
+            for (int i = 0; i < 12; i++)
+            {
+                float segmentAngle = _angle + (i * 30f);
+                float opacity = _segmentOpacity[(12 - i) % 12];
+
+                using (var pen = new Pen(Color.FromArgb((int)(opacity * 255), 100, 150, 255), 4)
+                {
+                    StartCap = System.Drawing.Drawing2D.LineCap.Round,
+                    EndCap = System.Drawing.Drawing2D.LineCap.Round
+                })
+                {
+                    float radian = segmentAngle * (float)Math.PI / 180f;
+
+                    int x1 = centerX + (int)(Math.Cos(radian) * innerRadius);
+                    int y1 = centerY + (int)(Math.Sin(radian) * innerRadius);
+                    int x2 = centerX + (int)(Math.Cos(radian) * outerRadius);
+                    int y2 = centerY + (int)(Math.Sin(radian) * outerRadius);
+
+                    g.DrawLine(pen, x1, y1, x2, y2);
+                }
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _timer?.Stop();
+                _timer?.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+    }
+
+
+    // ========================================
+    // OPTION 3: PULSING DOTS
+    // ========================================
+
+    public class PulsingDots : Control
+    {
+        private Timer _timer;
+        private float _phase = 0f;
+
+        public PulsingDots()
+        {
+            this.SetStyle(
+                ControlStyles.SupportsTransparentBackColor |  // IMPORTANT!
+                ControlStyles.AllPaintingInWmPaint |
+                ControlStyles.OptimizedDoubleBuffer |
+                ControlStyles.UserPaint,
+                true);
+
+            this.BackColor = Color.Transparent;
+            this.Size = new Size(180, 60);
+
+            _timer = new Timer { Interval = 50 };
+            _timer.Tick += (s, e) =>
+            {
+                _phase += 0.15f;
+                if (_phase >= Math.PI * 2) _phase = 0f;
+                this.Invalidate();
+            };
+            _timer.Start();
+        }
+
+        protected override void OnPaintBackground(PaintEventArgs e)
+        {
+            // Handle transparency
+            if (this.Parent != null)
+            {
+                e.Graphics.Clear(this.Parent.BackColor);
+            }
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            var g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+            int centerY = this.Height / 2;
+            int spacing = 40;
+            int baseSize = 20;
+
+            // Draw 3 pulsing dots
+            for (int i = 0; i < 3; i++)
+            {
+                float dotPhase = _phase + (i * (float)Math.PI / 2f);
+                float scale = 0.5f + (float)Math.Sin(dotPhase) * 0.5f;
+                int size = (int)(baseSize * scale);
+
+                int x = (this.Width / 2 - spacing) + (i * spacing) - size / 2;
+                int y = centerY - size / 2;
+
+                Color dotColor = Color.FromArgb(
+                    (int)(100 + scale * 155),
+                    100, 150, 255
+                );
+
+                using (var brush = new SolidBrush(dotColor))
+                {
+                    g.FillEllipse(brush, x, y, size, size);
+                }
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _timer?.Stop();
+                _timer?.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+    }
+
+
+    // ========================================
+    // BONUS: EVEN SMOOTHER GRADIENT RING
+    // ========================================
+
+    public class GradientRing : Control
+    {
+        private Timer _timer;
+        private float _rotation = 0f;
+
+        public GradientRing()
+        {
+            this.SetStyle(
+                ControlStyles.SupportsTransparentBackColor |
+                ControlStyles.AllPaintingInWmPaint |
+                ControlStyles.OptimizedDoubleBuffer |
+                ControlStyles.UserPaint,
+                true);
+
+            this.BackColor = Color.Transparent;
+            this.Size = new Size(180, 180);
+
+            _timer = new Timer { Interval = 16 }; // 60 FPS
+            _timer.Tick += (s, e) =>
+            {
+                _rotation += 3f;
+                if (_rotation >= 360f) _rotation = 0f;
+                this.Invalidate();
+            };
+            _timer.Start();
+        }
+
+        protected override void OnPaintBackground(PaintEventArgs e)
+        {
+            if (this.Parent != null)
+            {
+                e.Graphics.Clear(this.Parent.BackColor);
+            }
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            var g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+            int centerX = this.Width / 2;
+            int centerY = this.Height / 2;
+            int radius = Math.Min(this.Width, this.Height) / 2 - 15;
+
+            // Draw gradient arc
+            using (var pen = new Pen(Color.White, 8))
+            {
+                pen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+                pen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
+
+                // Draw multiple arcs with decreasing opacity for gradient effect
+                for (int i = 0; i < 270; i += 3)
+                {
+                    float opacity = 1.0f - (i / 270f);
+                    pen.Color = Color.FromArgb((int)(opacity * 255), 100, 150, 255);
+
+                    float startAngle = _rotation + i;
+                    g.DrawArc(pen,
+                        centerX - radius, centerY - radius,
+                        radius * 2, radius * 2,
+                        startAngle, 3);
+                }
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _timer?.Stop();
+                _timer?.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }
