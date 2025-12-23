@@ -1912,56 +1912,6 @@ namespace ChatGPTFileProcessor
             SaveApiKeyAndModel();
         }
 
-        //private void comboBoxEditModel_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    string modelName = comboBoxEditModel.SelectedItem?.ToString() ?? "";
-        //    string modelType = GetReasoningModelType(modelName);
-
-        //    UpdateStatus("▶ Model changed, saving selection...");
-        //    SaveApiKeyAndModel();
-
-        //    // Update reasoning effort dropdown based on model
-        //    if (modelType == "none")
-        //    {
-        //        // Non-reasoning model selected
-        //        comboBoxReasoningEffort.Enabled = false;
-        //        comboBoxReasoningEffort.Properties.Appearance.ForeColor = System.Drawing.Color.Gray;
-        //        UpdateStatus($"▶ {modelName} selected (does not support reasoning effort)");
-        //    }
-        //    else if (modelType == "o-series-pro")
-        //    {
-        //        // O3-pro only supports high
-        //        comboBoxReasoningEffort.Enabled = false;
-        //        comboBoxReasoningEffort.Properties.Appearance.ForeColor = System.Drawing.Color.Orange;
-        //        UpdateStatus($"▶ 🧠 {modelName} always uses HIGH reasoning (cannot be changed)");
-        //    }
-        //    else
-        //    {
-        //        // Reasoning model selected - enable dropdown
-        //        comboBoxReasoningEffort.Enabled = true;
-        //        comboBoxReasoningEffort.Properties.Appearance.ForeColor = System.Drawing.Color.Blue;
-        //        UpdateStatus($"▶ 🧠 {modelName} supports advanced reasoning!");
-        //        UpdateStatus($"▶ Current reasoning effort: {comboBoxReasoningEffort.Text}");
-
-        //        // Show info about supported values
-        //        switch (modelType)
-        //        {
-        //            case "o-series":
-        //                UpdateStatus($"▶ Supported: Low, Medium, High");
-        //                break;
-        //            case "gpt5":
-        //                UpdateStatus($"▶ Supported: Low, Medium, High (minimal not recommended)");
-        //                break;
-        //            case "gpt5-codex":
-        //                UpdateStatus($"▶ Supported: Low, Medium, High");
-        //                break;
-        //            case "gpt5-codex-max":
-        //                UpdateStatus($"▶ Supported: Low, Medium, High + XHigh!");
-        //                break;
-        //        }
-        //    }
-        //}
-
         private void comboBoxEditModel_SelectedIndexChanged(object sender, EventArgs e)
         {
             string modelName = comboBoxEditModel.SelectedItem?.ToString() ?? "";
@@ -2492,30 +2442,6 @@ namespace ChatGPTFileProcessor
         /// </summary>
         /// 
 
-
-        //private string GetReasoningEffort(string modelName)
-        //{
-        //    string modelType = GetReasoningModelType(modelName);
-
-        //    // Model doesn't support reasoning
-        //    if (modelType == "none")
-        //        return null;
-
-        //    // O3-pro only supports "high"
-        //    if (modelType == "o-series-pro")
-        //        return "high";
-
-        //    // If user selected "Auto", decide based on the model type
-        //    if (selectedReasoningEffort == "auto")
-        //    {
-        //        // Default to medium for all reasoning models
-        //        return "medium";
-        //    }
-
-        //    // Return the user's selection
-        //    return selectedReasoningEffort;
-        //}
-
         private string GetReasoningEffort(string modelName)
         {
             // Only return reasoning effort for reasoning models
@@ -2729,88 +2655,30 @@ namespace ChatGPTFileProcessor
 
 
         // Overlay panel and its controls
-        //private void InitializeOverlay()
-        //{
-        //    overlayPanel = new Panel
-        //    {
-        //        Size = this.ClientSize,
-        //        BackColor = Color.FromArgb(150, Color.Black),
-        //        Visible = false,
-        //        Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
-        //    };
-
-        //    int centerX = overlayPanel.Width / 2;
-
-        //    loadingIcon = new PictureBox
-        //    {
-        //        //Size = new Size(120, 120),
-        //        Size = new Size(800, 320),
-        //        SizeMode = PictureBoxSizeMode.StretchImage,
-        //        Image = Properties.Resources.loading_gif,
-        //        //Location = new System.Drawing.Point(centerX - 60, overlayPanel.Height / 2 - 150)
-        //        Location = new System.Drawing.Point(centerX - 400, overlayPanel.Height / 2 - 300)
-        //    };
-
-        //    statusLabel = new Label
-        //    {
-        //        AutoSize = false,
-        //        //Size = new Size(400, 40),
-
-        //        Size = new Size(800, 40),
-        //        TextAlign = ContentAlignment.MiddleCenter,
-        //        ForeColor = Color.White,
-        //        Font = new System.Drawing.Font("Segoe UI", 12, FontStyle.Bold),
-        //        //Location = new System.Drawing.Point(centerX - 200, loadingIcon.Bottom + 10),
-        //        Location = new System.Drawing.Point(centerX - 400, loadingIcon.Bottom + 10),
-        //        Text = "⏳ Processing, please wait...",
-        //        //Anchor = AnchorStyles.None
-        //    };
-
-        //    logTextBox = new TextBox
-        //    {
-        //        Size = new Size(800, 250),
-        //        Multiline = true,
-        //        ReadOnly = true,
-        //        ScrollBars = ScrollBars.Vertical,
-        //        BackColor = Color.DarkSlateBlue,
-        //        ForeColor = Color.White,
-        //        //Font = new System.Drawing.Font("Consolas", 10),
-        //        Font = new System.Drawing.Font("Arial", 11),
-        //        //Location = new System.Drawing.Point(centerX - 300, statusLabel.Bottom + 10)
-        //        Location = new System.Drawing.Point(centerX - 400, statusLabel.Bottom + 10)
-        //    };
-
-        //    overlayPanel.Controls.Add(loadingIcon);
-        //    overlayPanel.Controls.Add(statusLabel);
-        //    overlayPanel.Controls.Add(logTextBox);
-        //    this.Controls.Add(overlayPanel);
-        //}
-
         private void InitializeOverlay()
         {
             // Semi-transparent modern overlay
             overlayPanel = new Panel
             {
                 Size = this.ClientSize,
-                BackColor = Color.FromArgb(220, 15, 20, 35), // Darker, more opaque
+                BackColor = Color.FromArgb(220, 15, 20, 35),
                 Visible = false,
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
             };
 
-            // Center card panel
             int centerX = overlayPanel.Width / 2;
             int centerY = overlayPanel.Height / 2;
 
-            // Modern card with gradient (drawn manually)
+            // Modern card with gradient
             var cardPanel = new Panel
             {
                 Size = new Size(900, 500),
                 Location = new Point(centerX - 450, centerY - 250),
-                BackColor = Color.FromArgb(33, 47, 90), // Navy blue
+                BackColor = Color.FromArgb(33, 47, 90),
                 Anchor = AnchorStyles.None
             };
 
-            // Draw border
+            // Draw gradient and border
             cardPanel.Paint += (s, e) =>
             {
                 var g = e.Graphics;
@@ -2839,13 +2707,13 @@ namespace ChatGPTFileProcessor
                 Text = "🔄 PROCESSING",
                 Location = new Point(0, 40),
                 Size = new Size(900, 50),
-                Font = new Font("Segoe UI", 24, FontStyle.Bold),
+                Font = new System.Drawing.Font("Segoe UI", 24, System.Drawing.FontStyle.Bold),  // ← FIXED
                 ForeColor = Color.White,
                 TextAlign = ContentAlignment.MiddleCenter,
                 BackColor = Color.Transparent
             };
 
-            // Animated loading (your existing GIF)
+            // Animated loading
             loadingIcon = new PictureBox
             {
                 Size = new Size(180, 180),
@@ -2861,23 +2729,11 @@ namespace ChatGPTFileProcessor
                 Text = "⏳ Processing your document...",
                 Location = new Point(50, 310),
                 Size = new Size(800, 30),
-                Font = new Font("Segoe UI", 12),
+                Font = new System.Drawing.Font("Segoe UI", 12),  // ← FIXED
                 ForeColor = Color.FromArgb(200, 220, 255),
                 TextAlign = ContentAlignment.MiddleCenter,
                 BackColor = Color.Transparent
             };
-
-            progressLabel = new Label
-            {
-                Text = "0%",
-                Location = new Point(400, 290),
-                Size = new Size(100, 30),
-                Font = new Font("Segoe UI", 16, FontStyle.Bold),
-                ForeColor = Color.FromArgb(100, 255, 100), // Green
-                TextAlign = ContentAlignment.MiddleCenter,
-                BackColor = Color.Transparent
-            };
-            cardPanel.Controls.Add(progressLabel);
 
             // Modern log box
             logTextBox = new TextBox
@@ -2889,8 +2745,8 @@ namespace ChatGPTFileProcessor
                 ScrollBars = ScrollBars.Vertical,
                 BackColor = Color.FromArgb(20, 25, 50),
                 ForeColor = Color.FromArgb(100, 255, 218),
-                Font = new Font("Consolas", 9),
-                BorderStyle = BorderStyle.FixedSingle
+                Font = new System.Drawing.Font("Consolas", 9),  // ← FIXED
+                BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle  // ← FIXED
             };
 
             // Add to card
