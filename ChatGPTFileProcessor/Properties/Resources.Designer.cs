@@ -131,16 +131,6 @@ namespace ChatGPTFileProcessor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap loading_gif {
-            get {
-                object obj = ResourceManager.GetObject("loading_gif", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] Notebook_Book_Read_ICNS {
@@ -325,76 +315,6 @@ namespace ChatGPTFileProcessor.Properties {
         internal static System.Drawing.Bitmap Notebook_Book_Read_PNG_96 {
             get {
                 object obj = ResourceManager.GetObject("Notebook_Book_Read_PNG_96", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap png_128px {
-            get {
-                object obj = ResourceManager.GetObject("png_128px", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap png_256px {
-            get {
-                object obj = ResourceManager.GetObject("png_256px", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap png_32px {
-            get {
-                object obj = ResourceManager.GetObject("png_32px", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap png_48px {
-            get {
-                object obj = ResourceManager.GetObject("png_48px", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap png_64px {
-            get {
-                object obj = ResourceManager.GetObject("png_64px", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap png_72px {
-            get {
-                object obj = ResourceManager.GetObject("png_72px", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap png_96px {
-            get {
-                object obj = ResourceManager.GetObject("png_96px", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -51,6 +51,8 @@ namespace ChatGPTFileProcessor
 
         private Label progressLabel;
 
+
+        private SimpleRotatingSpinner _instantSpinner;
         public Form1()
         {
             InitializeComponent();
@@ -768,6 +770,48 @@ namespace ChatGPTFileProcessor
         //        }
         //    }
         //}
+
+
+        //private async void buttonBrowseFile_Click(object sender, EventArgs e)
+        //{
+        //    using (OpenFileDialog openFileDialog = new OpenFileDialog())
+        //    {
+        //        openFileDialog.Filter = "PDF Files (*.pdf)|*.pdf";
+
+        //        if (openFileDialog.ShowDialog() == DialogResult.OK)
+        //        {
+        //            selectedPdfPath = openFileDialog.FileName;
+        //            _lastSelectedPdfPath = openFileDialog.FileName;
+
+        //            // Create and show page selection form
+        //            using (var pageForm = new PageSelectionForm())
+        //            {
+        //                try
+        //                {
+        //                    // Load PDF asynchronously
+        //                    await pageForm.LoadPdfPreviewAsync(selectedPdfPath);
+
+        //                    // Show dialog to user
+        //                    if (pageForm.ShowDialog(this) == DialogResult.OK)
+        //                    {
+        //                        selectedFromPage = pageForm.FromPage;
+        //                        selectedToPage = pageForm.ToPage;
+        //                        labelFileName.Text = selectedPdfPath;
+        //                    }
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    MessageBox.Show(this,
+        //                        $"Failed to load PDF:\n\n{ex.Message}",
+        //                        "Error",
+        //                        MessageBoxButtons.OK,
+        //                        MessageBoxIcon.Error);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+
         private async void buttonBrowseFile_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
@@ -779,15 +823,18 @@ namespace ChatGPTFileProcessor
                     selectedPdfPath = openFileDialog.FileName;
                     _lastSelectedPdfPath = openFileDialog.FileName;
 
-                    // Create and show page selection form
+                    // SHOW INSTANT SPINNER
+                    ShowInstantSpinner("Loading PDF...");
+
                     using (var pageForm = new PageSelectionForm())
                     {
                         try
                         {
-                            // Load PDF asynchronously
                             await pageForm.LoadPdfPreviewAsync(selectedPdfPath);
 
-                            // Show dialog to user
+                            // HIDE SPINNER BEFORE SHOWING DIALOG
+                            HideInstantSpinner();
+
                             if (pageForm.ShowDialog(this) == DialogResult.OK)
                             {
                                 selectedFromPage = pageForm.FromPage;
@@ -797,6 +844,8 @@ namespace ChatGPTFileProcessor
                         }
                         catch (Exception ex)
                         {
+                            HideInstantSpinner(); // Hide on error too
+
                             MessageBox.Show(this,
                                 $"Failed to load PDF:\n\n{ex.Message}",
                                 "Error",
@@ -827,7 +876,6 @@ namespace ChatGPTFileProcessor
                 MessageBox.Show("Please select a valid PDF file.", "File Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
 
             // سيُستخدم في finally، لذا لازم يكون معرّف هنا
             string outputFolder = GetOutputFolder();
@@ -897,6 +945,9 @@ namespace ChatGPTFileProcessor
                 // منع النقرات المتكررة أثناء المعالجة
                 buttonProcessFile.Enabled = false;
                 buttonBrowseFile.Enabled = false;
+
+                // ✨ SHOW INSTANT SPINNER
+                ShowInstantSpinner("🔄 Preparing...");
                 // Disable the maximize and minimize of the processing form
                 this.MaximizeBox = false; // Disable maximize button
                 this.MinimizeBox = false; // Disable minimize button
@@ -908,8 +959,15 @@ namespace ChatGPTFileProcessor
                 //string timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 string timeStamp = DateTime.Now.ToString("yyyy_MM_dd___HH_mmss");
 
-                UpdateOverlayLog("                                   ");
-                UpdateOverlayLog("                                   ");
+                //await Task.Delay(50); //(ensures spinner renders)
+                await Task.Run(() =>
+                {
+                    // Give spinner time to render
+                    System.Threading.Thread.Sleep(100);
+                });
+                // ✨ HIDE INSTANT SPINNER
+                HideInstantSpinner();
+
                 ShowOverlay("▶▶▶ 🔄 Processing, please wait...");
                 UpdateOverlayLog("▰▰▰▰▰ S T A R T   G E N E R A T I N G ▰▰▰▰▰");
                 UpdateOverlayLog("▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△");
@@ -1589,6 +1647,8 @@ namespace ChatGPTFileProcessor
             }
             finally
             {
+                HideInstantSpinner();
+
                 // نبني المستند الموحد من المخرجات المختارة
                 allExtractedTexts.Clear();
 
@@ -2568,6 +2628,41 @@ namespace ChatGPTFileProcessor
             await ProcessSectionAsync(builders.ExplainTerms, prompts.ExplainTerms, "Explain Terms");
         }
 
+        private void ShowInstantSpinner(string message = "Please wait...")
+        {
+            if (_instantSpinner != null) return;
+
+            _instantSpinner = new SimpleRotatingSpinner(message);
+            this.Controls.Add(_instantSpinner);
+            this.Controls.SetChildIndex(_instantSpinner, 0);
+            _instantSpinner.BringToFront();
+
+            // Force immediate display
+            _instantSpinner.Visible = true;
+            _instantSpinner.Refresh();
+            _instantSpinner.Update();
+            this.Refresh();
+
+            // Force UI to process
+            for (int i = 0; i < 5; i++)
+            {
+                Application.DoEvents();
+                System.Threading.Thread.Sleep(20);
+            }
+
+            _instantSpinner.Invalidate();
+            Application.DoEvents();
+        }
+
+        private void HideInstantSpinner()
+        {
+            if (_instantSpinner != null)
+            {
+                this.Controls.Remove(_instantSpinner);
+                _instantSpinner.Dispose();
+                _instantSpinner = null;
+            }
+        }
         #endregion
 
         // HttpClient مُشترك للتطبيق كله (أفضل ممارسة + نتفادى مشاكل المنافذ/المهلات)
@@ -5101,6 +5196,104 @@ hr {
             if (disposing)
             {
                 _timer?.Stop();
+                _timer?.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+    }
+
+
+    //// ========================================
+    //// Lightweight: Simple Rotating Spinner WITH MESSAGE
+    public class SimpleRotatingSpinner : Control
+    {
+        private System.Threading.Timer _timer;
+        private int _rotation = 0;
+        private string _message = "Please wait...";
+
+        public SimpleRotatingSpinner(string message = "Please wait...")
+        {
+            _message = message;
+
+            this.SetStyle(
+                ControlStyles.SupportsTransparentBackColor |
+                ControlStyles.AllPaintingInWmPaint |
+                ControlStyles.OptimizedDoubleBuffer |
+                ControlStyles.UserPaint,
+                true);
+
+            this.BackColor = Color.FromArgb(180, 30, 30, 50);
+            this.Dock = DockStyle.Fill;
+
+            // Threading timer guaranteed to fire
+            _timer = new System.Threading.Timer(_ =>
+            {
+                _rotation = (_rotation + 30) % 360;
+                try
+                {
+                    if (!IsDisposed && IsHandleCreated)
+                    {
+                        BeginInvoke(new Action(() => Invalidate()));
+                    }
+                }
+                catch { }
+            }, null, 0, 50);
+        }
+
+        protected override void OnPaintBackground(PaintEventArgs e)
+        {
+            using (var brush = new SolidBrush(this.BackColor))
+            {
+                e.Graphics.FillRectangle(brush, this.ClientRectangle);
+            }
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            var g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+            int centerX = Width / 2;
+            int centerY = Height / 2;
+
+            // Draw 8 lines in circle
+            for (int i = 0; i < 8; i++)
+            {
+                float angle = _rotation + (i * 45);
+                float alpha = 1.0f - (i / 8.0f);
+
+                using (var pen = new Pen(Color.FromArgb((int)(alpha * 255), Color.White), 4))
+                {
+                    pen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+                    pen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
+
+                    float rad = angle * (float)Math.PI / 180f;
+                    int x1 = centerX + (int)(Math.Cos(rad) * 25);
+                    int y1 = centerY + (int)(Math.Sin(rad) * 25) - 30;
+                    int x2 = centerX + (int)(Math.Cos(rad) * 40);
+                    int y2 = centerY + (int)(Math.Sin(rad) * 40) - 30;
+
+                    g.DrawLine(pen, x1, y1, x2, y2);
+                }
+            }
+
+            // Message
+            using (var brush = new SolidBrush(Color.White))
+            using (var font = new System.Drawing.Font("Segoe UI", 14, System.Drawing.FontStyle.Bold))
+            {
+                var size = g.MeasureString(_message, font);
+                g.DrawString(_message, font, brush,
+                    centerX - size.Width / 2,
+                    centerY + 30);
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
                 _timer?.Dispose();
             }
             base.Dispose(disposing);
