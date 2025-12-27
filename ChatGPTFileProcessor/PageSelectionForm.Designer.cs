@@ -50,7 +50,7 @@
             this.galleryControl1.Controls.Add(this.galleryControlClient1);
             this.galleryControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.galleryControl1.Location = new System.Drawing.Point(0, 98);
-            this.galleryControl1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.galleryControl1.Margin = new System.Windows.Forms.Padding(4);
             this.galleryControl1.Name = "galleryControl1";
             this.galleryControl1.Size = new System.Drawing.Size(1167, 677);
             this.galleryControl1.TabIndex = 0;
@@ -59,7 +59,7 @@
             // 
             this.galleryControlClient1.GalleryControl = this.galleryControl1;
             this.galleryControlClient1.Location = new System.Drawing.Point(2, 2);
-            this.galleryControlClient1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.galleryControlClient1.Margin = new System.Windows.Forms.Padding(4);
             this.galleryControlClient1.Size = new System.Drawing.Size(1142, 673);
             // 
             // panelTop
@@ -69,7 +69,7 @@
             this.panelTop.Controls.Add(this.lblFileInfo);
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 0);
-            this.panelTop.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panelTop.Margin = new System.Windows.Forms.Padding(4);
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(1167, 98);
             this.panelTop.TabIndex = 1;
@@ -81,7 +81,7 @@
             this.lblTitle.Appearance.Options.UseFont = true;
             this.lblTitle.Appearance.Options.UseForeColor = true;
             this.lblTitle.Location = new System.Drawing.Point(23, 18);
-            this.lblTitle.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lblTitle.Margin = new System.Windows.Forms.Padding(4);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(236, 37);
             this.lblTitle.TabIndex = 0;
@@ -94,7 +94,7 @@
             this.lblFileInfo.Appearance.Options.UseFont = true;
             this.lblFileInfo.Appearance.Options.UseForeColor = true;
             this.lblFileInfo.Location = new System.Drawing.Point(23, 62);
-            this.lblFileInfo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lblFileInfo.Margin = new System.Windows.Forms.Padding(4);
             this.lblFileInfo.Name = "lblFileInfo";
             this.lblFileInfo.Size = new System.Drawing.Size(107, 23);
             this.lblFileInfo.TabIndex = 1;
@@ -111,7 +111,7 @@
             this.panelBottom.Controls.Add(this.labelHelp);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panelBottom.Location = new System.Drawing.Point(0, 775);
-            this.panelBottom.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panelBottom.Margin = new System.Windows.Forms.Padding(4);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(1167, 148);
             this.panelBottom.TabIndex = 2;
@@ -125,7 +125,7 @@
             this.groupRange.Controls.Add(this.labelTo);
             this.groupRange.Controls.Add(this.spinTo);
             this.groupRange.Location = new System.Drawing.Point(23, 12);
-            this.groupRange.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupRange.Margin = new System.Windows.Forms.Padding(4);
             this.groupRange.Name = "groupRange";
             this.groupRange.Size = new System.Drawing.Size(408, 123);
             this.groupRange.TabIndex = 0;
@@ -136,7 +136,7 @@
             this.labelFrom.Appearance.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.labelFrom.Appearance.Options.UseFont = true;
             this.labelFrom.Location = new System.Drawing.Point(18, 49);
-            this.labelFrom.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.labelFrom.Margin = new System.Windows.Forms.Padding(4);
             this.labelFrom.Name = "labelFrom";
             this.labelFrom.Size = new System.Drawing.Size(37, 20);
             this.labelFrom.TabIndex = 0;
@@ -150,7 +150,7 @@
             0,
             0});
             this.spinFrom.Location = new System.Drawing.Point(64, 46);
-            this.spinFrom.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.spinFrom.Margin = new System.Windows.Forms.Padding(4);
             this.spinFrom.Name = "spinFrom";
             this.spinFrom.Properties.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.spinFrom.Properties.Appearance.Options.UseFont = true;
@@ -176,7 +176,7 @@
             this.labelTo.Appearance.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.labelTo.Appearance.Options.UseFont = true;
             this.labelTo.Location = new System.Drawing.Point(210, 49);
-            this.labelTo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.labelTo.Margin = new System.Windows.Forms.Padding(4);
             this.labelTo.Name = "labelTo";
             this.labelTo.Size = new System.Drawing.Size(20, 20);
             this.labelTo.TabIndex = 2;
@@ -190,7 +190,7 @@
             0,
             0});
             this.spinTo.Location = new System.Drawing.Point(245, 46);
-            this.spinTo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.spinTo.Margin = new System.Windows.Forms.Padding(4);
             this.spinTo.Name = "spinTo";
             this.spinTo.Properties.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.spinTo.Properties.Appearance.Options.UseFont = true;
@@ -216,7 +216,7 @@
             this.btnSelectAll.Appearance.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.btnSelectAll.Appearance.Options.UseFont = true;
             this.btnSelectAll.Location = new System.Drawing.Point(455, 37);
-            this.btnSelectAll.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnSelectAll.Margin = new System.Windows.Forms.Padding(4);
             this.btnSelectAll.Name = "btnSelectAll";
             this.btnSelectAll.Size = new System.Drawing.Size(140, 43);
             this.btnSelectAll.TabIndex = 1;
@@ -228,7 +228,7 @@
             this.btnClear.Appearance.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.btnClear.Appearance.Options.UseFont = true;
             this.btnClear.Location = new System.Drawing.Point(607, 37);
-            this.btnClear.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnClear.Margin = new System.Windows.Forms.Padding(4);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(140, 43);
             this.btnClear.TabIndex = 2;
@@ -245,7 +245,7 @@
             this.btnOK.Appearance.Options.UseForeColor = true;
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.Location = new System.Drawing.Point(910, 37);
-            this.btnOK.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnOK.Margin = new System.Windows.Forms.Padding(4);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(117, 49);
             this.btnOK.TabIndex = 3;
@@ -257,7 +257,7 @@
             this.btnCancel.Appearance.Options.UseFont = true;
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.Location = new System.Drawing.Point(1038, 37);
-            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(4);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(117, 49);
             this.btnCancel.TabIndex = 4;
@@ -269,8 +269,8 @@
             this.labelHelp.Appearance.ForeColor = System.Drawing.Color.Gray;
             this.labelHelp.Appearance.Options.UseFont = true;
             this.labelHelp.Appearance.Options.UseForeColor = true;
-            this.labelHelp.Location = new System.Drawing.Point(23, 105);
-            this.labelHelp.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.labelHelp.Location = new System.Drawing.Point(450, 94);
+            this.labelHelp.Margin = new System.Windows.Forms.Padding(4);
             this.labelHelp.Name = "labelHelp";
             this.labelHelp.Size = new System.Drawing.Size(694, 19);
             this.labelHelp.TabIndex = 5;
@@ -287,7 +287,7 @@
             this.Controls.Add(this.galleryControl1);
             this.Controls.Add(this.panelTop);
             this.Controls.Add(this.panelBottom);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "PageSelectionForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
