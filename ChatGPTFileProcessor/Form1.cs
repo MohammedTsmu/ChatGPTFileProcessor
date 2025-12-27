@@ -50,13 +50,11 @@ namespace ChatGPTFileProcessor
         private object pythonLock = new object();
         private string pythonHome = null;
 
-        private Label progressLabel;
 
 
         private SimpleRotatingSpinner _instantSpinner;
 
         private bool _isTabSwitching = false;
-        private Dictionary<XtraTabPage, Dictionary<Control, Point>> _buttonPositions;
 
 
         public Form1()
@@ -1659,7 +1657,7 @@ namespace ChatGPTFileProcessor
                     SaveExplainTermsToApkg(explainTermsText, explainTermsFilePath, "Explain Terms");
                 }
 
-                //UpdateOverlayLog("✅ All selected exports finished successfully.");
+                
                 // 8) إظهار رسالة انتهاء المعالجة
                 LogSuccess("All exports completed successfully!");
                 LogSuccess("Files saved to selected output location");
@@ -1726,7 +1724,6 @@ namespace ChatGPTFileProcessor
 
                 // (ج) تحديث اللوج على UI thread
                 if (this.InvokeRequired)
-                    //this.BeginInvoke(new Action(() => UpdateOverlayLog("▰▰▰ 📝 Generating Word file...")));
                     this.BeginInvoke(new Action(() => LogProgress("Generating final Word document...")));
                 else
                     LogProgress("Generating final Word document...");
@@ -1736,11 +1733,9 @@ namespace ChatGPTFileProcessor
 
                 // (هـ) نجاح
                 if (this.InvokeRequired)
-                    //this.BeginInvoke(new Action(() => UpdateOverlayLog("▰▰▰ ✅ Word file generated: " + docxPath)));
                     this.BeginInvoke(new Action(() => LogSuccess($"Document created: {Path.GetFileName(docxPath)}")));
                 else
-                    //UpdateOverlayLog("▰▰▰✅ Word file generated: " + docxPath);
-                    LogProgress($"Final document created: {docxPath}");
+                    LogSuccess($"Document created: {Path.GetFileName(docxPath)}");
 
 
 
