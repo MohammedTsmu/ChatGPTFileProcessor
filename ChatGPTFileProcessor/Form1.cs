@@ -1513,8 +1513,9 @@ namespace ChatGPTFileProcessor
                 {
                     string definitionsText = allDefinitions.ToString();
                     SaveContentToFile(FormatDefinitions(definitionsText), definitionsFilePath, "Definitions");
+                    LogFile($"Saved: {Path.GetFileName(definitionsFilePath)}");
 
-                    // ✨ This line should be here
+                    // 3) ✨ NEW: Create .apkg file for direct Anki import
                     SaveDefinitionsToApkg(definitionsText, definitionsFilePath, "Definitions");
                 }
 
@@ -1524,6 +1525,7 @@ namespace ChatGPTFileProcessor
                     string mcqsRaw = allMCQs.ToString();
                     // 1) still save the Word version:
                     SaveContentToFile(mcqsRaw, mcqsFilePath, "MCQs");
+                    LogFile($"Saved: {Path.GetFileName(mcqsFilePath)}");
 
                     // 2) now parse & save out a .csv/.tsv
                     var parsed = ParseMcqs(mcqsRaw);
@@ -1538,6 +1540,7 @@ namespace ChatGPTFileProcessor
                     // 1) Word export stays as-is
                     string flashcardsRaw = allFlashcards.ToString();
                     SaveContentToFile(flashcardsRaw, flashcardsFilePath, "Flashcards");
+                    LogFile($"Saved: {Path.GetFileName(flashcardsFilePath)}");
 
                     // 2) Parse into (Front,Back) pairs
                     var parsed = ParseFlashcards(flashcardsRaw);
@@ -1554,6 +1557,7 @@ namespace ChatGPTFileProcessor
                     // 1) Word export stays the same
                     string vocabularyText = FormatVocabulary(allVocabulary.ToString());
                     SaveContentToFile(vocabularyText, vocabularyFilePath, "Vocabulary");
+                    LogFile($"Saved: {Path.GetFileName(vocabularyFilePath)}");
 
                     // Parse vocabulary for Anki export
                     var records = vocabularyText
@@ -1574,10 +1578,17 @@ namespace ChatGPTFileProcessor
 
 
                 if (chkSummary.Checked)
+                {
                     SaveContentToFile(allSummary.ToString(), summaryFilePath, "Page Summaries");
+                    LogFile($"Saved: {Path.GetFileName(summaryFilePath)}");
+                }
+
 
                 if (chkTakeaways.Checked)
+                {
                     SaveContentToFile(allTakeaways.ToString(), takeawaysFilePath, "Key Takeaways");
+                    LogFile($"Saved: {Path.GetFileName(takeawaysFilePath)}");
+                }
 
                 //if (chkCloze.Checked)
                 //{
@@ -1613,6 +1624,7 @@ namespace ChatGPTFileProcessor
                 {
                     string clozeRaw = allCloze.ToString();
                     SaveContentToFile(clozeRaw, clozeFilePath, "Cloze Deletions");
+                    LogFile($"Saved: {Path.GetFileName(clozeFilePath)}");
 
                     // Export to Anki
                     var parsed = ParseCloze(clozeRaw);
@@ -1623,16 +1635,23 @@ namespace ChatGPTFileProcessor
                 {
                     string trueFalseText = allTrueFalse.ToString();
                     SaveContentToFile(trueFalseText, tfFilePath, "True/False Questions");
+                    LogFile($"Saved: {Path.GetFileName(tfFilePath)}");
 
                     // ✨ NEW: Create .apkg file
                     SaveTrueFalseToApkg(trueFalseText, tfFilePath, "TrueFalse");
                 }
 
                 if (chkOutline.Checked)
+                {
                     SaveContentToFile(allOutline.ToString(), outlineFilePath, "Outline");
+                    LogFile($"Saved: {Path.GetFileName(outlineFilePath)}");
+                }
 
                 if (chkConceptMap.Checked)
+                {
                     SaveContentToFile(allConceptMap.ToString(), conceptMapFilePath, "Concept Relationships");
+                    LogFile($"Saved: {Path.GetFileName(conceptMapFilePath)}");
+                }
 
                 if (chkTableExtract.Checked)
                 {
@@ -1642,18 +1661,28 @@ namespace ChatGPTFileProcessor
 
 
                 if (chkSimplified.Checked)
+                {
                     SaveContentToFile(allSimplified.ToString(), simplifiedFilePath, "Simplified Explanation");
+                    LogFile($"Saved: {Path.GetFileName(simplifiedFilePath)}");
+                }
 
                 if (chkCaseStudy.Checked)
+                {
                     SaveContentToFile(allCaseStudy.ToString(), caseStudyFilePath, "Case Study Scenario");
+                    LogFile($"Saved: {Path.GetFileName(caseStudyFilePath)}");
+                }
 
                 if (chkKeywords.Checked)
+                {
                     SaveContentToFile(allKeywords.ToString(), keywordsFilePath, "High-Yield Keywords");
+                    LogFile($"Saved: {Path.GetFileName(keywordsFilePath)}");
+                }
 
                 if (chkTranslatedSections.Checked)
                 {
                     string translatedText = allTranslatedSections.ToString();
                     SaveContentToFile(translatedText, translatedSectionsFilePath, "Translated Sections");
+                    LogFile($"Saved: {Path.GetFileName(translatedSectionsFilePath)}");
 
                     // ✨ NEW: Create .apkg file
                     SaveTranslatedSectionsToApkg(translatedText, translatedSectionsFilePath, "Translated Sections");
@@ -1663,6 +1692,7 @@ namespace ChatGPTFileProcessor
                 {
                     string explainTermsText = allExplainTerms.ToString();
                     SaveContentToFile(explainTermsText, explainTermsFilePath, "Explain Terms");
+                    LogFile($"Saved: {Path.GetFileName(explainTermsFilePath)}");
 
                     // ✨ NEW: Create .apkg file
                     SaveExplainTermsToApkg(explainTermsText, explainTermsFilePath, "Explain Terms");
