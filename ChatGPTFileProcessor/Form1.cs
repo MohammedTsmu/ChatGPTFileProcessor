@@ -57,6 +57,8 @@ namespace ChatGPTFileProcessor
         private bool _isTabSwitching = false;
 
 
+
+
         public Form1()
         {
             InitializeComponent();
@@ -907,7 +909,9 @@ namespace ChatGPTFileProcessor
             var allExtractedTexts = new List<string>(); // using System.Collections.Generic;
 
             // 4) استخراج صور كل الصفحات المحددة في الواجهة
+            LogProgress($"Loading PDF pages {selectedFromPage}-{selectedToPage}...");
             var allPages = ConvertPdfToImages(filePath);
+            LogSuccess($"Loaded {allPages.Count} pages from PDF");
 
             // 5) إنشاء StringBuilder لكل قسم من الأقسام الأربع
             // 5) Prepare StringBuilders for whichever sections are checked
@@ -964,6 +968,8 @@ namespace ChatGPTFileProcessor
 
             try
             {
+                var startTime = DateTime.Now;
+
                 // منع النقرات المتكررة أثناء المعالجة
                 buttonProcessFile.Enabled = false;
                 buttonBrowseFile.Enabled = false;
@@ -993,6 +999,7 @@ namespace ChatGPTFileProcessor
                 ShowOverlay("▶▶▶ 🔄 Processing, please wait...");
                 LogHeader("Processing Started");
                 LogProgress($"Using model: {modelName}");
+                LogInfo($"Processing pages {selectedFromPage} to {selectedToPage} ({selectedToPage - selectedFromPage + 1} total)");
 
                 Directory.CreateDirectory(outputFolder);
 
@@ -1006,6 +1013,10 @@ namespace ChatGPTFileProcessor
                 LogInfo($"SaveBesidePdf: {Properties.Settings.Default.SaveBesidePdf}");
                 LogInfo($"SessionFolder: {Properties.Settings.Default.UseSessionFolder}");
                 LogInfo($"OrganizeByType: {Properties.Settings.Default.OrganizeByType}");
+
+                // Show batch processing mode
+                int batchMode = radioPageBatchSize.EditValue != null ? Convert.ToInt32(radioPageBatchSize.EditValue) : 1;
+                LogInfo($"Batch mode: {batchMode} page{(batchMode > 1 ? "s" : "")} at a time");
 
 
 
@@ -1661,6 +1672,9 @@ namespace ChatGPTFileProcessor
                 // 8) إظهار رسالة انتهاء المعالجة
                 LogSuccess("All exports completed successfully!");
                 LogSuccess("Files saved to selected output location");
+
+                var totalTime = DateTime.Now - startTime;
+                LogInfo($"Total processing time: {totalTime.ToString(@"mm\:ss")} minutes");
                 LogHeader("Processing Complete");
             }
             finally
@@ -2137,8 +2151,12 @@ namespace ChatGPTFileProcessor
                 }
                 catch (TaskCanceledException)
                 {
-                    // Check if cancellation was requested (timeout) vs network issue
                     if (cts.IsCancellationRequested || attempt == maxRetries) throw;
+
+                    // Log timeout and retry
+                    if (this.InvokeRequired)
+                        this.BeginInvoke(new Action(() => LogWarning($"Request timeout, retrying (attempt {attempt + 1}/{maxRetries})...")));
+
                     await Task.Delay(delayMs);
                     delayMs *= 2;
                 }
