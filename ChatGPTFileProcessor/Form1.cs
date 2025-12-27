@@ -1,4 +1,5 @@
-﻿using DevExpress.XtraSpellChecker.Parser;
+﻿using DevExpress.Drawing.TextFormatter.Internal;
+using DevExpress.XtraSpellChecker.Parser;
 using DevExpress.XtraTab;
 //using AnkiSharp;
 //using Python.Included;
@@ -992,9 +993,8 @@ namespace ChatGPTFileProcessor
                 HideInstantSpinner();
 
                 ShowOverlay("▶▶▶ 🔄 Processing, please wait...");
-                UpdateOverlayLog("▰▰▰▰▰ S T A R T   G E N E R A T I N G ▰▰▰▰▰");
-                UpdateOverlayLog("▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△▲△");
-                UpdateOverlayLog($"▶▶▶ Starting {modelName} multimodal processing...");
+                LogHeader("Processing Started");
+                LogProgress($"Using model: {modelName}");
 
                 Directory.CreateDirectory(outputFolder);
 
@@ -1003,11 +1003,13 @@ namespace ChatGPTFileProcessor
                 string outputRoot = ResolveBaseOutputFolder(filePath, timeStamp, modelName);
                 _lastOutputRoot = outputRoot; // سجّل آخر مجلد فعلي استخدمته
 
-                // 💾 أعلن أين سنحفظ
-                UpdateOverlayLog($"▶▶▶ 💾 Saving outputs to: {outputRoot}");
-                UpdateOverlayLog($"▰▰▰ Options → SaveBesidePdf={Properties.Settings.Default.SaveBesidePdf}, " +
-                                 $"▰▰▰ SessionFolder={Properties.Settings.Default.UseSessionFolder}, " +
-                                 $"▰▰▰ OrganizeByType ={Properties.Settings.Default.OrganizeByType}");
+                //// 💾 أعلن أين سنحفظ
+                LogFolder($"Output folder: {Path.GetFileName(outputRoot)}");
+                LogInfo($"SaveBesidePdf: {Properties.Settings.Default.SaveBesidePdf}");
+                LogInfo($"SessionFolder: {Properties.Settings.Default.UseSessionFolder}");
+                LogInfo($"OrganizeByType: {Properties.Settings.Default.OrganizeByType}");
+
+
 
                 // بناء أسماء الملفات
                 string defName = $"Definitions_{modelName}_{timeStamp}.docx";
@@ -1475,7 +1477,7 @@ namespace ChatGPTFileProcessor
 
 
 
-                UpdateOverlayLog("▶▶▶🗂️ Selected exports (paths):");
+                LogHeader("Selected Exports");
                 LogIfSelected("▶Definitions", chkDefinitions.Checked, definitionsFilePath);
                 LogIfSelected("▶MCQs (.docx)", chkMCQs.Checked, mcqsFilePath);
                 LogIfSelected("▶Flashcards (.docx)", chkFlashcards.Checked, flashcardsFilePath);
@@ -1657,16 +1659,11 @@ namespace ChatGPTFileProcessor
                     SaveExplainTermsToApkg(explainTermsText, explainTermsFilePath, "Explain Terms");
                 }
 
-                UpdateOverlayLog("✅ All selected exports finished successfully.");
-
-
-                //// 8) إظهار رسالة انتهاء المعالجة
-                UpdateOverlayLog("✅ Processing complete. Files saved to Desktop as selected outputs.");
-                UpdateOverlayLog("▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽▼▽");
-                UpdateOverlayLog("▰▰▰▰▰ E N D   G E N E R A T I N G ▰▰▰▰▰");
-                UpdateOverlayLog("------------------------------------------------------");
-                UpdateOverlayLog("                                                     ");
-                UpdateOverlayLog("                                                     ");
+                //UpdateOverlayLog("✅ All selected exports finished successfully.");
+                // 8) إظهار رسالة انتهاء المعالجة
+                LogSuccess("All exports completed successfully!");
+                LogSuccess("Files saved to selected output location");
+                LogHeader("Processing Complete");
             }
             finally
             {
@@ -1729,18 +1726,21 @@ namespace ChatGPTFileProcessor
 
                 // (ج) تحديث اللوج على UI thread
                 if (this.InvokeRequired)
-                    this.BeginInvoke(new Action(() => UpdateOverlayLog("▰▰▰ 📝 Generating Word file...")));
+                    //this.BeginInvoke(new Action(() => UpdateOverlayLog("▰▰▰ 📝 Generating Word file...")));
+                    this.BeginInvoke(new Action(() => LogProgress("Generating final Word document...")));
                 else
-                    UpdateOverlayLog("▰▰▰📝 Generating Word file...");
+                    LogProgress("Generating final Word document...");
 
                 // 🔧 Do the heavy work off the UI thread
                 await Task.Run(() => ExportToWord_DocX(docxPath, allExtractedTexts));
 
                 // (هـ) نجاح
                 if (this.InvokeRequired)
-                    this.BeginInvoke(new Action(() => UpdateOverlayLog("▰▰▰ ✅ Word file generated: " + docxPath)));
+                    //this.BeginInvoke(new Action(() => UpdateOverlayLog("▰▰▰ ✅ Word file generated: " + docxPath)));
+                    this.BeginInvoke(new Action(() => LogSuccess($"Document created: {Path.GetFileName(docxPath)}")));
                 else
-                    UpdateOverlayLog("▰▰▰✅ Word file generated: " + docxPath);
+                    //UpdateOverlayLog("▰▰▰✅ Word file generated: " + docxPath);
+                    LogProgress($"Final document created: {docxPath}");
 
 
 
@@ -1752,7 +1752,7 @@ namespace ChatGPTFileProcessor
                 this.Text = "ChatGPT File Processor";
 
                 UpdateStatus("▰▰▰ Processing finished ▰▰▰");
-                UpdateOverlayLog("▰▰▰ Processing finished ▰▰▰");
+                LogSuccess("Processing finished!");
                 HideOverlay();
     
                 // Dispose all images to prevent memory leaks
@@ -2283,19 +2283,19 @@ namespace ChatGPTFileProcessor
                 catch (Exception ex)
                 {
                     // Log the full error for debugging
-                    UpdateOverlayLog($"❌ API Error: {ex.Message}");
+                    LogError($"API Error: {ex.Message}");
 
                     // Check if it's a reasoning_effort error
                     if (ex.Message.Contains("reasoning_effort") && ex.Message.Contains("Unsupported"))
                     {
-                        UpdateOverlayLog("❌ ERROR: Invalid reasoning_effort for this model!");
-                        UpdateOverlayLog("▶ Tip: This model doesn't support the selected reasoning level.");
-                        UpdateOverlayLog($"▶ Model type: {GetReasoningModelType(modelName)}");
+                        LogError("Invalid reasoning_effort for this model!");
+                        LogInfo("This model doesn't support the selected reasoning level.");
+                        LogInfo($"Model type: {GetReasoningModelType(modelName)}");
 
                         // Suggest fix
                         if (ex.Message.Contains("minimal"))
                         {
-                            UpdateOverlayLog("▶ Fix: Remove 'minimal' - use Low, Medium, or High instead");
+                            LogInfo("Fix: Remove 'minimal' - use Low, Medium, or High instead");
                         }
                     }
 
@@ -2303,15 +2303,15 @@ namespace ChatGPTFileProcessor
                     if (ex.Message.Contains("image_url") &&
                         (ex.Message.Contains("not supported") || ex.Message.Contains("only supported by certain")))
                     {
-                        UpdateOverlayLog("❌ ERROR: This model does NOT support images!");
-                        UpdateOverlayLog($"▶ You selected: {modelName}");
-                        UpdateOverlayLog("▶ This model cannot process PDF images via API.");
+                        LogError("This model does not support images!");
+                        LogInfo($"You selected: {modelName}");
+                        LogInfo("This model cannot process PDF images via API.");
                         UpdateOverlayLog("");
-                        UpdateOverlayLog("💡 SOLUTION: Select a vision-capable model:");
-                        UpdateOverlayLog("  • gpt-5.2 (recommended)");
-                        UpdateOverlayLog("  • o3 (best reasoning with vision)");
-                        UpdateOverlayLog("  • o4-mini (fast reasoning with vision)");
-                        UpdateOverlayLog("  • gpt-4o (reliable, no reasoning)");
+                        LogInfo("💡 SOLUTION: Select a vision-capable model:");
+                        LogInfo("  • gpt-5.2 (recommended)");
+                        LogInfo("  • o3 (best reasoning with vision)");
+                        LogInfo("  • o4-mini (fast reasoning with vision)");
+                        LogInfo("  • gpt-4o (reliable, no reasoning)");
                     }
 
                     // Re-throw the exception
@@ -2582,7 +2582,7 @@ namespace ChatGPTFileProcessor
                 string completionMsg = (startPage == endPage)
                     ? $"Page {startPage}"
                     : $"Pages {startPage}–{endPage}";
-                UpdateOverlayLog($"▶▶▶ ✅ {completionMsg} done.");
+                LogSuccess($"{completionMsg} completed");
             }
         }
 
@@ -2611,7 +2611,7 @@ namespace ChatGPTFileProcessor
                 string pageLabel = (startPage == endPage)
                     ? $"page {startPage}"
                     : $"pages {startPage}–{endPage}";
-                UpdateOverlayLog($"▶▶▶ Sending {pageLabel} to GPT ({sectionName})...");
+                LogProgress($"Processing {pageLabel} - {sectionName}");
 
                 // Call the appropriate API method based on batch size
                 string result;
@@ -2873,7 +2873,7 @@ namespace ChatGPTFileProcessor
                 BackColor = Color.Transparent
             };
 
-            // Modern log box
+            //// Modern log box
             logTextBox = new TextBox
             {
                 Location = new Point(50, 350),
@@ -2881,10 +2881,11 @@ namespace ChatGPTFileProcessor
                 Multiline = true,
                 ReadOnly = true,
                 ScrollBars = ScrollBars.Vertical,
-                BackColor = Color.FromArgb(20, 25, 50),
-                ForeColor = Color.FromArgb(100, 255, 218),
-                Font = new System.Drawing.Font("Consolas", 9),  // ← FIXED
-                BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle  // ← FIXED
+                BackColor = Color.FromArgb(25, 30, 60),        // Slightly lighter background
+                ForeColor = Color.FromArgb(220, 230, 255),     // Brighter, easier to read
+                Font = new System.Drawing.Font("Segoe UI", 10), // Larger, modern font
+                BorderStyle = System.Windows.Forms.BorderStyle.None,
+                Padding = new Padding(10)                       // Add padding inside
             };
 
             // Add to card
@@ -2909,20 +2910,92 @@ namespace ChatGPTFileProcessor
             };
         }
 
-
+        
         private void UpdateOverlayLog(string message)
         {
-            var textBox = logTextBox; // Create local copy for thread safety
-            if (textBox == null) return; // prevent error if not initialized
+            var textBox = logTextBox;
+            if (textBox == null) return;
 
             if (textBox.InvokeRequired)
             {
-                textBox.Invoke(new System.Action(() => textBox.AppendText(message + Environment.NewLine)));
+                textBox.Invoke(new Action(() => UpdateOverlayLogSafe(message)));
             }
             else
             {
-                textBox.AppendText(message + Environment.NewLine);
+                UpdateOverlayLogSafe(message);
             }
+        }
+        private void UpdateOverlayLogSafe(string message)
+        {
+            if (logTextBox == null) return;
+
+            // Add timestamp
+            string timestamp = DateTime.Now.ToString("HH:mm:ss");
+            string formattedMessage = $"[{timestamp}] {message}";
+
+            // Append message
+            logTextBox.AppendText(formattedMessage + Environment.NewLine);
+
+            // Auto-scroll to bottom
+            logTextBox.SelectionStart = logTextBox.Text.Length;
+            logTextBox.ScrollToCaret();
+
+            // Keep only last 100 lines (prevent memory issues)
+            if (logTextBox.Lines.Length > 100)
+            {
+                var lines = logTextBox.Lines;
+                var newLines = lines.Skip(lines.Length - 100).ToArray();
+                logTextBox.Lines = newLines;
+            }
+        }
+
+
+        // Log message types with consistent formatting
+        private void LogInfo(string message)
+        {
+            UpdateOverlayLog($"ℹ️  {message}");
+        }
+
+        private void LogSuccess(string message)
+        {
+            UpdateOverlayLog($"✅ {message}");
+        }
+
+        private void LogError(string message)
+        {
+            UpdateOverlayLog($"❌ {message}");
+        }
+
+        private void LogProgress(string message)
+        {
+            UpdateOverlayLog($"⏳ {message}");
+        }
+
+        private void LogFile(string message)
+        {
+            UpdateOverlayLog($"📄 {message}");
+        }
+
+        private void LogFolder(string message)
+        {
+            UpdateOverlayLog($"📁 {message}");
+        }
+
+        private void LogWarning(string message)
+        {
+            UpdateOverlayLog($"⚠️  {message}");
+        }
+
+        private void LogSeparator()
+        {
+            UpdateOverlayLog("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        }
+
+        private void LogHeader(string message)
+        {
+            UpdateOverlayLog("");
+            UpdateOverlayLog($"▸ {message.ToUpper()}");
+            LogSeparator();
         }
 
 
@@ -3507,7 +3580,7 @@ namespace ChatGPTFileProcessor
         {
             if (!pythonInitialized)
             {
-                UpdateOverlayLog("⚠️ Python not ready yet - skipping .apkg export");
+                LogWarning("Python not ready yet - skipping .apkg export");
                 return;
             }
 
@@ -3589,7 +3662,7 @@ print('SUCCESS')
                 string pythonExe = Path.Combine(pythonHome, "python.exe");
                 if (!File.Exists(pythonExe))
                 {
-                    UpdateOverlayLog($"❌ Python executable not found at: {pythonExe}");
+                    LogError($"Python executable not found at: {pythonExe}");
                     return;
                 }
 
@@ -3635,14 +3708,14 @@ print('SUCCESS')
 
                     if (process.ExitCode == 0 && output.Contains("SUCCESS"))
                     {
-                        UpdateOverlayLog($"✅ Anki deck saved: {Path.GetFileName(outputPath)}");
+                        LogSuccess($"Anki deck saved: {Path.GetFileName(outputPath)}");
                     }
                     else
                     {
-                        UpdateOverlayLog($"❌ Python error: {error}");
+                        LogError($"Python error: {error}");
                         if (!string.IsNullOrWhiteSpace(output))
                         {
-                            UpdateOverlayLog($"Output: {output}");
+                            LogInfo($"Output: {output}");
                         }
                     }
                 }
@@ -3659,7 +3732,7 @@ print('SUCCESS')
             }
             catch (Exception ex)
             {
-                UpdateOverlayLog($"❌ Error creating Anki deck: {ex.Message}");
+                LogError($"Error creating Anki deck: {ex.Message}");
             }
         }
 
@@ -3714,7 +3787,7 @@ print('SUCCESS')
             {
                 if (cards == null || cards.Count == 0)
                 {
-                    UpdateOverlayLog($"⚠️ No flashcards to export to Anki");
+                    LogWarning("No flashcards to export to Anki");
                     return;
                 }
 
@@ -3776,7 +3849,7 @@ hr {
             }
             catch (Exception ex)
             {
-                UpdateOverlayLog($"❌ Error creating Flashcards Anki deck: {ex.Message}");
+                LogError($"Error creating Flashcards Anki deck: {ex.Message}");
             }
         }
 
@@ -3790,7 +3863,7 @@ hr {
             {
                 if (items == null || items.Count == 0)
                 {
-                    UpdateOverlayLog($"⚠️ No MCQs to export to Anki");
+                    LogWarning("No MCQs to export to Anki");
                     return;
                 }
 
@@ -3865,7 +3938,7 @@ hr {
             }
             catch (Exception ex)
             {
-                UpdateOverlayLog($"❌ Error creating MCQ Anki deck: {ex.Message}");
+                LogError($"Error creating MCQ Anki deck: {ex.Message}");
             }
         }
 
@@ -3880,7 +3953,7 @@ hr {
             {
                 if (records == null || records.Count == 0)
                 {
-                    UpdateOverlayLog($"⚠️ No vocabulary to export to Anki");
+                    LogWarning("No vocabulary to export to Anki");
                     return;
                 }
 
@@ -3944,7 +4017,7 @@ hr {
             }
             catch (Exception ex)
             {
-                UpdateOverlayLog($"❌ Error creating Vocabulary Anki deck: {ex.Message}");
+                LogError($"Error creating Vocabulary Anki deck: {ex.Message}");
             }
         }
 
@@ -3958,7 +4031,7 @@ hr {
             {
                 if (string.IsNullOrWhiteSpace(rawText))
                 {
-                    UpdateOverlayLog($"⚠️ No definitions to export to Anki");
+                    LogWarning("No definitions to export to Anki");
                     return;
                 }
 
@@ -3966,7 +4039,7 @@ hr {
 
                 if (definitions.Count == 0)
                 {
-                    UpdateOverlayLog($"⚠️ No valid definitions found");
+                    LogWarning("No valid definitions found");
                     return;
                 }
 
@@ -4033,7 +4106,7 @@ hr {
             }
             catch (Exception ex)
             {
-                UpdateOverlayLog($"❌ Error creating Definitions Anki deck: {ex.Message}");
+                LogError($"Error creating Definitions Anki deck: {ex.Message}");
             }
         }
 
@@ -4047,7 +4120,7 @@ hr {
             {
                 if (string.IsNullOrWhiteSpace(rawText))
                 {
-                    UpdateOverlayLog($"⚠️ No terms to export to Anki");
+                    LogWarning("No terms to export to Anki");
                     return;
                 }
 
@@ -4055,7 +4128,7 @@ hr {
 
                 if (terms.Count == 0)
                 {
-                    UpdateOverlayLog($"⚠️ No valid terms found");
+                    LogWarning("No valid terms found");
                     return;
                 }
 
@@ -4122,7 +4195,7 @@ hr {
             }
             catch (Exception ex)
             {
-                UpdateOverlayLog($"❌ Error creating Explain Terms Anki deck: {ex.Message}");
+                LogError($"Error creating Explain Terms Anki deck: {ex.Message}");
             }
         }
 
@@ -4136,7 +4209,7 @@ hr {
             {
                 if (string.IsNullOrWhiteSpace(rawText))
                 {
-                    UpdateOverlayLog($"⚠️ No True/False questions to export to Anki");
+                    LogWarning("No True/False questions to export to Anki");
                     return;
                 }
 
@@ -4144,7 +4217,7 @@ hr {
 
                 if (questions.Count == 0)
                 {
-                    UpdateOverlayLog($"⚠️ No valid True/False questions found");
+                    LogWarning("No valid True/False questions found");
                     return;
                 }
 
@@ -4213,7 +4286,7 @@ hr {
             }
             catch (Exception ex)
             {
-                UpdateOverlayLog($"❌ Error creating True/False Anki deck: {ex.Message}");
+                LogError($"Error creating True/False Anki deck: {ex.Message}");
             }
         }
 
@@ -4228,7 +4301,7 @@ hr {
             {
                 if (items == null || items.Count == 0)
                 {
-                    UpdateOverlayLog($"⚠️ No cloze items to export to Anki");
+                    LogWarning("No cloze items to export to Anki");
                     return;
                 }
 
@@ -4295,7 +4368,7 @@ hr {
             }
             catch (Exception ex)
             {
-                UpdateOverlayLog($"❌ Error creating Cloze Anki deck: {ex.Message}");
+                LogError($"Error creating Cloze Anki deck: {ex.Message}");
             }
         }
 
@@ -4309,7 +4382,7 @@ hr {
             {
                 if (string.IsNullOrWhiteSpace(rawText))
                 {
-                    UpdateOverlayLog($"⚠️ No translated sections to export to Anki");
+                    LogWarning("No translated sections to export to Anki");
                     return;
                 }
 
@@ -4317,7 +4390,7 @@ hr {
 
                 if (sections.Count == 0)
                 {
-                    UpdateOverlayLog($"⚠️ No valid translated sections found");
+                    LogWarning("No valid translated sections found");
                     return;
                 }
 
@@ -4392,7 +4465,7 @@ hr {
             }
             catch (Exception ex)
             {
-                UpdateOverlayLog($"❌ Error creating Translated Sections Anki deck: {ex.Message}");
+                LogError($"Error creating Translated Sections Anki deck: {ex.Message}");
             }
         }
 
@@ -4406,7 +4479,7 @@ hr {
             {
                 if (string.IsNullOrWhiteSpace(rawText))
                 {
-                    UpdateOverlayLog($"⚠️ No tables to export to Anki");
+                    LogWarning("No tables to export to Anki");
                     return;
                 }
 
@@ -4414,7 +4487,7 @@ hr {
 
                 if (tables.Count == 0)
                 {
-                    UpdateOverlayLog($"⚠️ No valid tables found");
+                    LogWarning("No valid tables found");
                     return;
                 }
 
@@ -4502,7 +4575,7 @@ hr {
             }
             catch (Exception ex)
             {
-                UpdateOverlayLog($"❌ Error creating Table Extract Anki deck: {ex.Message}");
+                LogError($"Error creating Table Extract Anki deck: {ex.Message}");
             }
         }
 
