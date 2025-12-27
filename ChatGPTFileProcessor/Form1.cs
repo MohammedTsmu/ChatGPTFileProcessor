@@ -375,7 +375,8 @@ namespace ChatGPTFileProcessor
         }
         #endregion
 
-        private async Task InitializePythonEnvironment()
+        //private async Task InitializePythonEnvironment()
+        private void InitializePythonEnvironment()
         {
             try
             {
