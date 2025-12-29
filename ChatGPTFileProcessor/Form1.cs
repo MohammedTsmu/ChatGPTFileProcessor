@@ -3399,38 +3399,57 @@ namespace ChatGPTFileProcessor
         ///    Front: X
         ///    Back:  Y
         /// separated by blank lines.
-        private List<(string Front, string Back)> ParseFlashcards(string raw)
+        private List<(string Front, string Back, string PageInfo)> ParseFlashcards(string raw)
         {
-            var cards = new List<(string, string)>();
-            // split on *exactly* two newlines (blank‐line separator)
-            var entries = raw.Split(new[] { "\r\n\r\n", "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var entry in entries)
+            var cards = new List<(string, string, string)>();
+            string currentPageInfo = "Unknown";
+
+            var lines = raw.Split(new[] { '\r', '\n' }, StringSplitOptions.None);
+            string front = null, back = null;
+
+            foreach (var line in lines)
             {
-                string front = null, back = null;
-                foreach (var line in entry.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                var trimmed = line.Trim();
+
+                if (string.IsNullOrWhiteSpace(trimmed))
                 {
-                    var t = line.Trim();
-                    if (t.StartsWith("Front:", StringComparison.OrdinalIgnoreCase))
-                        front = t.Substring("Front:".Length).Trim();
-                    else if (t.StartsWith("Back:", StringComparison.OrdinalIgnoreCase))
-                        back = t.Substring("Back:".Length).Trim();
+                    if (!string.IsNullOrEmpty(front) && !string.IsNullOrEmpty(back))
+                    {
+                        cards.Add((front, back, currentPageInfo));
+                        front = null;
+                        back = null;
+                    }
+                    continue;
                 }
-                // only add if we got at least a question and answer
-                if (!string.IsNullOrEmpty(front) && !string.IsNullOrEmpty(back))
-                    cards.Add((front, back));
+
+                // Extract page info from headers like "===== Page 15 ====="
+                if (trimmed.StartsWith("=====") && trimmed.Contains("Page"))
+                {
+                    currentPageInfo = trimmed.Replace("=====", "").Trim();
+                    continue;
+                }
+
+                if (trimmed.StartsWith("Front:", StringComparison.OrdinalIgnoreCase))
+                    front = trimmed.Substring("Front:".Length).Trim();
+                else if (trimmed.StartsWith("Back:", StringComparison.OrdinalIgnoreCase))
+                    back = trimmed.Substring("Back:".Length).Trim();
             }
+
+            if (!string.IsNullOrEmpty(front) && !string.IsNullOrEmpty(back))
+                cards.Add((front, back, currentPageInfo));
+
             return cards;
         }
 
 
-        
+
 
         /// <summary>
         /// Creates an Anki .apkg file from flashcard data
         /// </summary>
 
-        
-        
+
+
         /// <summary>
         /// Helper to parse definitions from raw text
         /// Expects format: "Term: Definition" or blocks separated by blank lines
@@ -3823,7 +3842,7 @@ print('SUCCESS')
         // 1. SaveFlashcardsToApkg
         // ========================================
 
-        private void SaveFlashcardsToApkg(List<(string Front, string Back)> cards,
+        private void SaveFlashcardsToApkg(List<(string Front, string Back, string PageInfo)> cards,
                                           string outputPath, string deckName)
         {
             try
@@ -3838,56 +3857,70 @@ print('SUCCESS')
 
                 // Convert to dictionary format
                 var cardData = cards.Select(c => new Dictionary<string, string>
-        {
-            { "Front", CleanTextForAnki(c.Front) },
-            { "Back", CleanTextForAnki(c.Back) }
-        }).ToList();
+                {
+                    { "Front", CleanTextForAnki(c.Front) },
+                    { "Back", CleanTextForAnki(c.Back) },
+                    { "PageInfo", c.PageInfo }
+                }).ToList();
 
                 // Define improved mobile-friendly template
                 string template = @"
-<style>
-.card {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 20px;
-    text-align: center;
-    color: black;
-    background-color: white;
-    padding: 20px;
-    line-height: 1.6;
-}
-.front {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-.back {
-    font-size: 20px;
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #f0f0f0;
-    border-radius: 8px;
-}
-hr {
-    border: none;
-    border-top: 2px solid #4CAF50;
-    margin: 30px 0;
-}
-@media (max-width: 600px) {
-    .card { font-size: 18px; padding: 15px; }
-    .front { font-size: 22px; }
-    .back { font-size: 18px; }
-}
-</style>
-<div class='card'>
-    <div class='front'>{{Front}}</div>
-</div>
-<hr id='answer'>
-<div class='card'>
-    <div class='back'>{{Back}}</div>
-</div>";
+                    <style>
+                    .card {
+                        font-family: Arial, Helvetica, sans-serif;
+                        font-size: 20px;
+                        text-align: center;
+                        //color: black;
+                        //background-color: white;
+                        padding: 20px;
+                        line-height: 1.6;
+                    }
+                    .front {
+                        font-size: 24px;
+                        font-weight: bold;
+                        margin-bottom: 20px;
+                    }
+                    .back {
+                        font-size: 20px;
+                        margin-top: 20px;
+                        padding: 15px;
+                        //background-color: #f0f0f0;
+                        border-radius: 8px;
+                        border: 2px dashed gray;
+                    }
+                    .page-info {
+                        font-size: 14px;
+                        //color: #666;
+                        margin-top: 15px;
+                        font-style: italic;
+                        //text-align: right;
+                        text-align: center;
+                        opacity: 0.5;
+                    }
+                    hr {
+                        border: none;
+                        border-top: 2px solid #4CAF50;
+                        //border-top: 2px solid;
+                        margin: 30px 0;
+                    }
+                    @media (max-width: 600px) {
+                        .card { font-size: 18px; padding: 15px; }
+                        .front { font-size: 22px; }
+                        .back { font-size: 18px; }
+                    }
+                    </style>
+                    <div class='card'>
+                        <div class='front'>{{Front}}</div>
+                        <div class='page-info'>📄 {{PageInfo}}</div>
+                    </div>
+                    <hr id='answer'>
+                    <div class='card'>
+                        <div class='back'>{{Back}}</div>
+                    </div>";
 
                 // Create deck
-                CreateAnkiDeck(deckName, cardData, new List<string> { "Front", "Back" },
+                CreateAnkiDeck(deckName, cardData, new List<string> { "Front", "Back", "PageInfo" },
+
                               template, apkgPath);
             }
             catch (Exception ex)
