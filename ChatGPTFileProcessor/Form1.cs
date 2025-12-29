@@ -3987,7 +3987,7 @@ print('SUCCESS')
                     margin-top: 20px;
                     padding: 15px;
                     //background-color: #E8F8F5;
-                    border: 2px dashed gray;
+                    border: 2px dashed green;
                     border-radius: 8px;
                 }
                 .page-info {
