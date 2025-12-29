@@ -3947,69 +3947,82 @@ print('SUCCESS')
 
                 // Convert to dictionary format
                 var cardData = items.Select(mcq => new Dictionary<string, string>
-        {
-            { "Question", CleanTextForAnki(mcq.Question) },
-            { "Options", CleanTextForAnki($"A) {mcq.OptionA}<br><br>B) {mcq.OptionB}<br><br>C) {mcq.OptionC}<br><br>D) {mcq.OptionD}") },
-            { "Answer", CleanTextForAnki(mcq.Answer) }
-        }).ToList();
+                {
+                    { "Question", CleanTextForAnki(mcq.Question) },
+                    { "Options", CleanTextForAnki($"A) {mcq.OptionA}<br><br>B) {mcq.OptionB}<br><br>C) {mcq.OptionC}<br><br>D) {mcq.OptionD}") },
+                    { "Answer", CleanTextForAnki(mcq.Answer) },
+                    { "PageInfo", mcq.PageInfo }  // ← ADD THIS
+                }).ToList();
 
                 // Define improved mobile-friendly template
                 string template = @"
-<style>
-.card {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 18px;
-    text-align: left;
-    color: black;
-    background-color: white;
-    padding: 20px;
-    line-height: 1.6;
-}
-.question {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #2C3E50;
-}
-.options {
-    font-size: 18px;
-    margin: 15px 0;
-    padding: 10px;
-    background-color: #f9f9f9;
-    border-left: 4px solid #3498db;
-}
-.answer {
-    font-size: 20px;
-    font-weight: bold;
-    color: #27AE60;
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #E8F8F5;
-    border-radius: 8px;
-}
-hr {
-    border: none;
-    border-top: 2px solid #3498db;
-    margin: 30px 0;
-}
-@media (max-width: 600px) {
-    .card { font-size: 16px; padding: 15px; }
-    .question { font-size: 18px; }
-    .options { font-size: 16px; }
-}
-</style>
-<div class='card'>
-    <div class='question'>{{Question}}</div>
-    <div class='options'>{{Options}}</div>
-</div>
-<hr id='answer'>
-<div class='card'>
-    <div class='answer'>✓ Correct Answer: {{Answer}}</div>
-</div>";
+                <style>
+                .card {
+                    font-family: Arial, Helvetica, sans-serif;
+                    font-size: 18px;
+                    text-align: left;
+                    //color: black;
+                    //background-color: white;
+                    padding: 20px;
+                    line-height: 1.6;
+                }
+                .question {
+                    font-size: 20px;
+                    font-weight: bold;
+                    margin-bottom: 20px;
+                    //color: #2C3E50;
+                }
+                .options {
+                    font-size: 18px;
+                    margin: 15px 0;
+                    padding: 10px;
+                    //background-color: #f9f9f9;
+                    border-left: 4px solid gray;
+                    border-radius: 4px;
+                }
+                .answer {
+                    font-size: 20px;
+                    font-weight: bold;
+                    //color: #27AE60;
+                    margin-top: 20px;
+                    padding: 15px;
+                    //background-color: #E8F8F5;
+                    border: 2px dashed gray;
+                    border-radius: 8px;
+                }
+                .page-info {
+                    font-size: 14px;
+                    //color: #666;
+                    margin-top: 15px;
+                    font-style: italic;
+                    text-align: center;
+                    opacity: 0.5;
+                }
+                hr {
+                    border: none;
+                    border-top: 2px solid gray;
+                    margin: 30px 0;
+                }
+                @media (max-width: 600px) {
+                    .card { font-size: 16px; padding: 15px; }
+                    .question { font-size: 18px; }
+                    .options { font-size: 16px; }
+                    .page-info { font-size: 12px; }
+                }
+                </style>
+                <div class='card'>
+                    <div class='question'>{{Question}}</div>
+                    <div class='options'>{{Options}}</div>
+                    <div class='page-info'>📄 {{PageInfo}}</div>
+                </div>
+                <hr id='answer'>
+                <div class='card'>
+                    <div class='answer'>✓ Correct Answer: {{Answer}}</div>
+                </div>";
 
                 // Create deck
                 CreateAnkiDeck(deckName, cardData,
-                              new List<string> { "Question", "Options", "Answer" },
+                            new List<string> { "Question", "Options", "Answer", "PageInfo" },
                               template, apkgPath);
             }
             catch (Exception ex)
@@ -4806,7 +4819,7 @@ hr {
             return text.Trim();
         }
 
-        
+
 
 
         /// Represents one MCQ with 4 choices and a correct answer letter.
@@ -4818,9 +4831,8 @@ hr {
             public string OptionC { get; set; }
             public string OptionD { get; set; }
             public string Answer { get; set; }
+            public string PageInfo { get; set; }  // ← ADD THIS
 
-            /// combine the four options into a single “Options” cell,
-            /// with line-breaks between them
             public string OptionsCell =>
                 $"A) {OptionA}\nB) {OptionB}\nC) {OptionC}\nD) {OptionD}";
         }
@@ -4831,15 +4843,24 @@ hr {
         private List<McqItem> ParseMcqs(string raw)
         {
             var items = new List<McqItem>();
-            // split on blank‐line blocks
+            string currentPageInfo = "Unknown";
             var blocks = Regex.Split(raw.Trim(), @"\r?\n\s*\r?\n");
 
             foreach (var block in blocks)
             {
                 var mcq = new McqItem();
+
                 foreach (var line in block.Split('\n'))
                 {
                     var t = line.Trim();
+
+                    // Extract page info from headers like "===== Page 15 ====="
+                    if (t.StartsWith("=====") && t.Contains("Page"))
+                    {
+                        currentPageInfo = t.Replace("=====", "").Trim();
+                        continue;
+                    }
+
                     if (t.StartsWith("Question:", StringComparison.OrdinalIgnoreCase))
                         mcq.Question = t.Substring(9).Trim();
                     else if (t.StartsWith("A)", StringComparison.OrdinalIgnoreCase))
@@ -4853,16 +4874,19 @@ hr {
                     else if (t.StartsWith("Answer:", StringComparison.OrdinalIgnoreCase))
                         mcq.Answer = t.Substring(7).Trim();
                 }
-                // only add if we got at least a question and answer
+
                 if (!string.IsNullOrEmpty(mcq.Question) && !string.IsNullOrEmpty(mcq.Answer))
+                {
+                    mcq.PageInfo = currentPageInfo;  // ← ADD PAGE INFO
                     items.Add(mcq);
+                }
             }
 
             return items;
         }
 
 
-        
+
 
         /// Parse raw cloze blocks into (Sentence,Answer) pairs.
         /// Expects blocks like:
