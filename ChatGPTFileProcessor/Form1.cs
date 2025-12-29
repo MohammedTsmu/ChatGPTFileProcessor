@@ -3425,7 +3425,11 @@ namespace ChatGPTFileProcessor
                 // Extract page info from headers like "===== Page 15 ====="
                 if (trimmed.StartsWith("=====") && trimmed.Contains("Page"))
                 {
-                    currentPageInfo = trimmed.Replace("=====", "").Trim();
+                    var pageMatch = Regex.Match(trimmed, @"Page[s]?\s+\d+(?:-\d+)?");
+                    if (pageMatch.Success)
+                    {
+                        currentPageInfo = pageMatch.Value;
+                    }
                     continue;
                 }
 
@@ -3454,9 +3458,10 @@ namespace ChatGPTFileProcessor
         /// Helper to parse definitions from raw text
         /// Expects format: "Term: Definition" or blocks separated by blank lines
         /// </summary>
-        private List<(string Term, string Definition)> ParseDefinitions(string rawText)
+        private List<(string Term, string Definition, string PageInfo)> ParseDefinitions(string rawText)
         {
-            var definitions = new List<(string, string)>();
+            var definitions = new List<(string, string, string)>();
+            string currentPageInfo = "Unknown";
 
             // Split by blank lines (definition blocks)
             var blocks = Regex.Split(rawText.Trim(), @"\r?\n\s*\r?\n");
@@ -3467,8 +3472,18 @@ namespace ChatGPTFileProcessor
 
                 var trimmed = block.Trim();
 
-                // ✨ Handle format "Term - Definition: explanation"
-                // Example: "Hepatic lobule - Definition: The microscopic structural unit..."
+                // Extract page info from headers like "===== Page 15 ====="
+                if (trimmed.StartsWith("=====") && trimmed.Contains("Page"))
+                {
+                    var pageMatch = Regex.Match(trimmed, @"Page[s]?\s+\d+(?:-\d+)?");
+                    if (pageMatch.Success)
+                    {
+                        currentPageInfo = pageMatch.Value;
+                    }
+                    continue;
+                }
+
+                // Handle format "Term - Definition: explanation"
                 var match = Regex.Match(trimmed, @"^(.+?)\s*-\s*Definition:\s*(.+)$", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 if (match.Success)
                 {
@@ -3477,7 +3492,7 @@ namespace ChatGPTFileProcessor
 
                     if (!string.IsNullOrWhiteSpace(termText) && !string.IsNullOrWhiteSpace(defText))
                     {
-                        definitions.Add((termText, defText));
+                        definitions.Add((termText, defText, currentPageInfo));
                         continue;
                     }
                 }
@@ -3493,24 +3508,20 @@ namespace ChatGPTFileProcessor
                 {
                     var lineTrimmed = line.Trim();
 
-                    // Pattern: "Term: xxx"
                     if (lineTrimmed.StartsWith("Term:", StringComparison.OrdinalIgnoreCase))
                     {
                         currentTerm = lineTrimmed.Substring(5).Trim();
                     }
-                    // Pattern: "Definition: xxx"
                     else if (lineTrimmed.StartsWith("Definition:", StringComparison.OrdinalIgnoreCase))
                     {
                         currentDefinition = lineTrimmed.Substring(11).Trim();
                     }
-                    // Pattern: "xxx: yyy" (first colon splits term and definition)
                     else if (lineTrimmed.Contains(":") && currentTerm == null)
                     {
                         var colonIndex = lineTrimmed.IndexOf(':');
                         currentTerm = lineTrimmed.Substring(0, colonIndex).Trim();
                         currentDefinition = lineTrimmed.Substring(colonIndex + 1).Trim();
                     }
-                    // Multi-line: append to definition
                     else if (!string.IsNullOrWhiteSpace(lineTrimmed))
                     {
                         if (currentDefinition != null)
@@ -3526,14 +3537,14 @@ namespace ChatGPTFileProcessor
 
                 if (!string.IsNullOrWhiteSpace(currentTerm) && !string.IsNullOrWhiteSpace(currentDefinition))
                 {
-                    definitions.Add((currentTerm, currentDefinition));
+                    definitions.Add((currentTerm, currentDefinition, currentPageInfo));
                 }
             }
 
             return definitions;
         }
 
-        
+
         /// <summary>
         /// Helper to parse True/False questions
         /// Expects: Statement, Answer: True/False, Explanation (optional)
@@ -4136,62 +4147,73 @@ hr {
 
                 // Convert to dictionary format
                 var cardData = definitions.Select(d => new Dictionary<string, string>
-        {
-            { "Term", CleanTextForAnki(d.Term) },
-            { "Definition", CleanTextForAnki(d.Definition) }
-        }).ToList();
+                {
+                    { "Term", CleanTextForAnki(d.Term) },
+                    { "Definition", CleanTextForAnki(d.Definition) },
+                    { "PageInfo", d.PageInfo }
+                }).ToList();
 
                 // Define improved mobile-friendly template
                 string template = @"
-<style>
-.card {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 18px;
-    text-align: left;
-    color: black;
-    background-color: white;
-    padding: 20px;
-    line-height: 1.7;
-}
-.term {
-    font-size: 26px;
-    font-weight: bold;
-    color: #16A085;
-    margin-bottom: 10px;
-    text-align: center;
-}
-.definition {
-    font-size: 19px;
-    margin-top: 20px;
-    padding: 20px;
-    background-color: #E8F6F3;
-    border-radius: 8px;
-    border-left: 5px solid #16A085;
-    text-align: left;
-}
-hr {
-    border: none;
-    border-top: 2px solid #16A085;
-    margin: 30px 0;
-}
-@media (max-width: 600px) {
-    .card { font-size: 16px; padding: 15px; }
-    .term { font-size: 22px; }
-    .definition { font-size: 17px; padding: 15px; }
-}
-</style>
-<div class='card'>
-    <div class='term'>{{Term}}</div>
-</div>
-<hr id='answer'>
-<div class='card'>
-    <div class='definition'>{{Definition}}</div>
-</div>";
+                <style>
+                .card {
+                    font-family: Arial, Helvetica, sans-serif;
+                    font-size: 18px;
+                    text-align: left;
+                    //color: black;
+                    //background-color: white;
+                    padding: 20px;
+                    line-height: 1.7;
+                }
+                .term {
+                    font-size: 26px;
+                    font-weight: bold;
+                    //color: #16A085;
+                    margin-bottom: 10px;
+                    text-align: center;
+                }
+                .definition {
+                    font-size: 19px;
+                    margin-top: 20px;
+                    padding: 20px;
+                    //background-color: #E8F6F3;
+                    border-radius: 8px;
+                    border-left: 5px solid green;
+                    text-align: left;
+                }
+                .page-info {
+                    font-size: 14px;
+                    //color: #666;
+                    margin-top: 15px;
+                    font-style: italic;
+                    text-align: center;
+                    opacity: 0.5;
+                }
+                hr {
+                    border: none;
+                    border-top: 2px solid gray;
+                    margin: 30px 0;
+                }
+                @media (max-width: 600px) {
+                    .card { font-size: 16px; padding: 15px; }
+                    .term { font-size: 22px; }
+                    .definition { font-size: 17px; padding: 15px; }
+                    .page-info { font-size: 12px; }
+                }
+                </style>
+                <div class='card'>
+                    <div class='term'>{{Term}}</div>
+                    <div class='page-info'>📄 {{PageInfo}}</div>
+                </div>
+                <hr id='answer'>
+                <div class='card'>
+                    <div class='definition'>{{Definition}}</div>
+                </div>";
 
                 // Create deck
                 CreateAnkiDeck(deckName, cardData,
-                              new List<string> { "Term", "Definition" },
-                              template, apkgPath);
+                            new List<string> { "Term", "Definition", "PageInfo" },
+                            template, apkgPath);
             }
             catch (Exception ex)
             {
@@ -4857,7 +4879,11 @@ hr {
                     // Extract page info from headers like "===== Page 15 ====="
                     if (t.StartsWith("=====") && t.Contains("Page"))
                     {
-                        currentPageInfo = t.Replace("=====", "").Trim();
+                        var pageMatch = Regex.Match(t, @"Page[s]?\s+\d+(?:-\d+)?");
+                        if (pageMatch.Success)
+                        {
+                            currentPageInfo = pageMatch.Value;
+                        }
                         continue;
                     }
 
