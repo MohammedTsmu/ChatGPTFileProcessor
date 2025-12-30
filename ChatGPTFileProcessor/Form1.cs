@@ -4679,82 +4679,97 @@ hr {
 
                 // Convert to dictionary format
                 var cardData = tables.Select(t => new Dictionary<string, string>
-        {
-            { "Title", CleanTextForAnki(t.Title) },
-            { "Table", t.HtmlTable } // Already HTML, no need to clean
-        }).ToList();
+                {
+                    { "Title", CleanTextForAnki(t.Title) },
+                    { "Table", t.HtmlTable },
+                    { "PageInfo", t.PageInfo }
+                }).ToList();
 
                 // Define improved mobile-friendly template
                 string template = @"
-<style>
-.card {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 16px;
-    color: black;
-    background-color: white;
-    padding: 15px;
-    line-height: 1.5;
-}
-.title {
-    font-size: 22px;
-    font-weight: bold;
-    color: #2874A6;
-    margin-bottom: 15px;
-    text-align: center;
-}
-.table-container {
-    overflow-x: auto;
-    margin-top: 15px;
-}
-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 15px;
-    margin: 0 auto;
-}
-th {
-    background-color: #2874A6;
-    color: white;
-    padding: 12px 8px;
-    text-align: left;
-    font-weight: bold;
-}
-td {
-    padding: 10px 8px;
-    border: 1px solid #ddd;
-    background-color: white;
-}
-tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-tr:hover {
-    background-color: #e8f4f8;
-}
-hr {
-    border: none;
-    border-top: 2px solid #2874A6;
-    margin: 20px 0;
-}
-@media (max-width: 600px) {
-    .card { font-size: 14px; padding: 10px; }
-    .title { font-size: 18px; }
-    table { font-size: 13px; }
-    th, td { padding: 8px 5px; }
-}
-</style>
-<div class='card'>
-    <div class='title'>{{Title}}</div>
-</div>
-<hr id='answer'>
-<div class='card'>
-    <div class='table-container'>
-        {{Table}}
-    </div>
-</div>";
+                <style>
+                .card {
+                    font-family: Arial, Helvetica, sans-serif;
+                    font-size: 16px;
+                    //color: black;
+                    //background-color: white;
+                    padding: 15px;
+                    line-height: 1.5;
+                }
+                .title {
+                    font-size: 22px;
+                    font-weight: bold;
+                    //color: #2874A6;
+                    margin-bottom: 15px;
+                    text-align: center;
+                }
+                .table-container {
+                    overflow-x: auto;
+                    margin-top: 15px;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: 15px;
+                    margin: 0 auto;
+                }
+                th {
+                    background-color: #2874A6;
+                    color: white;
+                    //background-color: rgba(128, 128, 128, 0.2);
+                    padding: 12px 8px;
+                    text-align: left;
+                    font-weight: bold;
+                    border: 1px solid gray;
+                }
+                td {
+                    padding: 10px 8px;
+                    border: 1px solid gray;
+                    //background-color: white;
+                }
+                tr:nth-child(even) {
+                    //background-color: #f2f2f2;
+                    background-color: rgba(128, 128, 128, 0.05);
+                }
+                tr:hover {
+                    //background-color: #e8f4f8;
+                    background-color: rgba(128, 128, 128, 0.1);
+                }
+                .page-info {
+                    font-size: 14px;
+                    color: #666;
+                    margin-top: 15px;
+                    font-style: italic;
+                    text-align: center;
+                    opacity: 0.5;
+                }
+                hr {
+                    border: none;
+                    border-top: 2px solid gray;
+                    margin: 20px 0;
+                }
+                @media (max-width: 600px) {
+                    .card { font-size: 14px; padding: 10px; }
+                    .title { font-size: 18px; }
+                    table { font-size: 13px; }
+                    th, td { padding: 8px 5px; }
+                    .page-info { font-size: 12px; }
+                }
+                </style>
+                <div class='card'>
+                    <div class='title'>{{Title}}</div>
+                    <div class='page-info'>📄 {{PageInfo}}</div>
+                </div>
+                <hr id='answer'>
+                <div class='card'>
+                    <div class='table-container'>
+                        {{Table}}
+                    </div>
+                </div>";
 
                 // Create deck
                 CreateAnkiDeck(deckName, cardData,
-                              new List<string> { "Title", "Table" },
+                              new List<string> { "Title", "Table", "PageInfo" },
                               template, apkgPath);
             }
             catch (Exception ex)
@@ -4768,6 +4783,7 @@ hr {
         {
             public string Title { get; set; }
             public string HtmlTable { get; set; }
+            public string PageInfo { get; set; }
         }
 
         /// Parse markdown tables from raw text into a list of TableData
@@ -4783,10 +4799,23 @@ hr {
 
             int i = 0;
             int tableNumber = 1;
+            string currentPageInfo = "Unknown";  // ← ADD THIS
 
             while (i < lines.Length)
             {
                 string line = lines[i].Trim();
+
+                // ← ADD THIS BLOCK - Extract page info from headers
+                if (line.StartsWith("=====") && line.Contains("Page"))
+                {
+                    var pageMatch = Regex.Match(line, @"Page[s]?\s+\d+(?:-\d+)?");
+                    if (pageMatch.Success)
+                    {
+                        currentPageInfo = pageMatch.Value;
+                    }
+                    i++;
+                    continue;
+                }
 
                 // Look for table title (lines that start with "Table:" or "جدول:")
                 string tableTitle = null;
@@ -4885,7 +4914,8 @@ hr {
                     Title = string.IsNullOrWhiteSpace(tableTitle)
                         ? $"Table {tableNumber}"
                         : tableTitle,
-                    HtmlTable = htmlTable.ToString()
+                    HtmlTable = htmlTable.ToString(),
+                    PageInfo = currentPageInfo  // ← ADD THIS
                 });
 
                 tableNumber++;
