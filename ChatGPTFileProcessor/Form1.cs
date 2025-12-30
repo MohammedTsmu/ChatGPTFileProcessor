@@ -3549,9 +3549,10 @@ namespace ChatGPTFileProcessor
         /// Helper to parse True/False questions
         /// Expects: Statement, Answer: True/False, Explanation (optional)
         /// </summary>
-        private List<(string Statement, string Answer, string Explanation)> ParseTrueFalse(string rawText)
+        private List<(string Statement, string Answer, string Explanation, string PageInfo)> ParseTrueFalse(string rawText)
         {
-            var questions = new List<(string, string, string)>();
+            var questions = new List<(string, string, string, string)>();
+            string currentPageInfo = "Unknown";
 
             // Split by blank lines
             var blocks = Regex.Split(rawText.Trim(), @"\r?\n\s*\r?\n");
@@ -3560,6 +3561,19 @@ namespace ChatGPTFileProcessor
             {
                 if (string.IsNullOrWhiteSpace(block)) continue;
 
+                var trimmed = block.Trim();
+
+                // Extract page info from headers
+                if (trimmed.StartsWith("=====") && trimmed.Contains("Page"))
+                {
+                    var pageMatch = Regex.Match(trimmed, @"Page[s]?\s+\d+(?:-\d+)?");
+                    if (pageMatch.Success)
+                    {
+                        currentPageInfo = pageMatch.Value;
+                    }
+                    continue;
+                }
+
                 string statement = null;
                 string answer = null;
 
@@ -3567,16 +3581,16 @@ namespace ChatGPTFileProcessor
 
                 foreach (var line in lines)
                 {
-                    var trimmed = line.Trim();
-                    if (string.IsNullOrWhiteSpace(trimmed)) continue;
+                    var lineTrimmed = line.Trim();
+                    if (string.IsNullOrWhiteSpace(lineTrimmed)) continue;
 
-                    if (trimmed.StartsWith("Statement:", StringComparison.OrdinalIgnoreCase))
+                    if (lineTrimmed.StartsWith("Statement:", StringComparison.OrdinalIgnoreCase))
                     {
-                        statement = trimmed.Substring(10).Trim();
+                        statement = lineTrimmed.Substring(10).Trim();
                     }
-                    else if (trimmed.StartsWith("Answer:", StringComparison.OrdinalIgnoreCase))
+                    else if (lineTrimmed.StartsWith("Answer:", StringComparison.OrdinalIgnoreCase))
                     {
-                        answer = trimmed.Substring(7).Trim();
+                        answer = lineTrimmed.Substring(7).Trim();
                     }
                 }
 
@@ -3589,7 +3603,7 @@ namespace ChatGPTFileProcessor
                      answer.Equals("صحيح", StringComparison.OrdinalIgnoreCase) ||
                      answer.Equals("خطأ", StringComparison.OrdinalIgnoreCase)))
                 {
-                    questions.Add((statement, answer, ""));  // No explanation in new format
+                    questions.Add((statement, answer, "", currentPageInfo));
                 }
             }
 
@@ -4336,63 +4350,74 @@ hr {
 
                 // Convert to dictionary format
                 var cardData = questions.Select(q => new Dictionary<string, string>
-        {
-            { "Statement", CleanTextForAnki(q.Statement) },
-            { "Answer", CleanTextForAnki(q.Answer) }
-        }).ToList();
+                {
+                    { "Statement", CleanTextForAnki(q.Statement) },
+                    { "Answer", CleanTextForAnki(q.Answer) },
+                    { "PageInfo", q.PageInfo }
+                }).ToList();
 
                 // Define improved mobile-friendly template
                 string template = @"
-<style>
-.card {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 19px;
-    text-align: center;
-    color: black;
-    background-color: white;
-    padding: 20px;
-    line-height: 1.7;
-}
-.statement {
-    font-size: 21px;
-    margin: 20px 0;
-    padding: 20px;
-    background-color: #EBF5FB;
-    border-radius: 8px;
-    border: 2px solid #2980B9;
-    text-align: left;
-}
-.answer {
-    font-size: 26px;
-    font-weight: bold;
-    margin-top: 20px;
-    padding: 20px;
-    border-radius: 8px;
-    color: #27AE60;
-    background-color: #E8F8F5;
-    border: 2px solid #27AE60;
-}
-hr {
-    border: none;
-    border-top: 2px solid #2980B9;
-    margin: 30px 0;
-}
-@media (max-width: 600px) {
-    .statement { font-size: 18px; padding: 15px; }
-    .answer { font-size: 22px; padding: 15px; }
-}
-</style>
-<div class='card'>
-    <div class='statement'>{{Statement}}</div>
-</div>
-<hr id='answer'>
-<div class='card'>
-    <div class='answer'>{{Answer}}</div>
-</div>";
+                <style>
+                .card {
+                    font-family: Arial, Helvetica, sans-serif;
+                    font-size: 19px;
+                    text-align: center;
+                    //color: black;
+                    //background-color: white;
+                    padding: 20px;
+                    line-height: 1.7;
+                }
+                .statement {
+                    font-size: 21px;
+                    margin: 20px 0;
+                    padding: 20px;
+                    //background-color: #EBF5FB;
+                    //border-radius: 8px;
+                    //border: 2px solid gray;
+                    text-align: left;
+                }
+                .answer {
+                    font-size: 26px;
+                    font-weight: bold;
+                    margin-top: 20px;
+                    padding: 20px;
+                    border-radius: 8px;
+                    //color: #27AE60;
+                    //background-color: #E8F8F5;
+                    border-left: 5px dashed gray;
+                }
+                .page-info {
+                    font-size: 14px;
+                    //color: #666;
+                    margin-top: 15px;
+                    font-style: italic;
+                    text-align: center;
+                    opacity: 0.5;
+                }
+                hr {
+                    border: none;
+                    border-top: 2px solid gray;
+                    margin: 30px 0;
+                }
+                @media (max-width: 600px) {
+                    .statement { font-size: 18px; padding: 15px; }
+                    .answer { font-size: 22px; padding: 15px; }
+                    .page-info { font-size: 12px; }
+                }
+                </style>
+                <div class='card'>
+                    <div class='statement'>{{Statement}}</div>
+                    <div class='page-info'>📄 {{PageInfo}}</div>
+                </div>
+                <hr id='answer'>
+                <div class='card'>
+                    <div class='answer'>{{Answer}}</div>
+                </div>";
 
                 // Create deck
                 CreateAnkiDeck(deckName, cardData,
-                              new List<string> { "Statement", "Answer" },
+                              new List<string> { "Statement", "Answer", "PageInfo" },
                               template, apkgPath);
             }
             catch (Exception ex)
