@@ -1560,18 +1560,7 @@ namespace ChatGPTFileProcessor
                     LogFile($"Saved: {Path.GetFileName(vocabularyFilePath)}");
 
                     // Parse vocabulary for Anki export
-                    var records = vocabularyText
-                        .Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                        .Select(line =>
-                        {
-                            var parts = line.Split(new[] { " - " }, 2, StringSplitOptions.None);
-                            if (parts.Length >= 2)
-                                return Tuple.Create(parts[0].Trim(), parts[1].Trim());
-                            else
-                                return Tuple.Create(line.Trim(), string.Empty);
-                        })
-                        .Where(t => !string.IsNullOrWhiteSpace(t.Item1))
-                        .ToList();
+                    var records = ParseVocabulary(vocabularyText);
 
                     SaveVocabularyToApkg(records, vocabularyFilePath, "Vocabulary");
                 }
@@ -4073,7 +4062,7 @@ print('SUCCESS')
         // 3. SaveVocabularyToApkg
         // ========================================
 
-        private void SaveVocabularyToApkg(List<Tuple<string, string>> records,
+        private void SaveVocabularyToApkg(List<(string Term, string Translation, string PageInfo)> records,
                                           string outputPath, string deckName)
         {
             try
@@ -4088,58 +4077,69 @@ print('SUCCESS')
 
                 // Convert to dictionary format
                 var cardData = records.Select(r => new Dictionary<string, string>
-        {
-            { "Term", CleanTextForAnki(r.Item1) },
-            { "Translation", CleanTextForAnki(r.Item2) }
-        }).ToList();
+                {
+                    { "Term", CleanTextForAnki(r.Term) },
+                    { "Translation", CleanTextForAnki(r.Translation) },
+                    { "PageInfo", r.PageInfo }
+                }).ToList();
 
                 // Define improved mobile-friendly template
                 string template = @"
-<style>
-.card {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 20px;
-    text-align: center;
-    color: black;
-    background-color: white;
-    padding: 20px;
-    line-height: 1.6;
-}
-.term {
-    font-size: 28px;
-    font-weight: bold;
-    color: #8E44AD;
-    margin: 20px 0;
-}
-.translation {
-    font-size: 24px;
-    margin-top: 20px;
-    padding: 20px;
-    background-color: #F4ECF7;
-    border-radius: 8px;
-    border: 2px solid #8E44AD;
-}
-hr {
-    border: none;
-    border-top: 2px solid #8E44AD;
-    margin: 30px 0;
-}
-@media (max-width: 600px) {
-    .term { font-size: 24px; }
-    .translation { font-size: 20px; padding: 15px; }
-}
-</style>
-<div class='card'>
-    <div class='term'>{{Term}}</div>
-</div>
-<hr id='answer'>
-<div class='card'>
-    <div class='translation'>{{Translation}}</div>
-</div>";
+                <style>
+                .card {
+                    font-family: Arial, Helvetica, sans-serif;
+                    font-size: 20px;
+                    text-align: center;
+                    //color: black;
+                    //background-color: white;
+                    padding: 20px;
+                    line-height: 1.6;
+                }
+                .term {
+                    font-size: 28px;
+                    font-weight: bold;
+                    //color: #8E44AD;
+                    margin: 20px 0;
+                }
+                .translation {
+                    font-size: 24px;
+                    margin-top: 20px;
+                    padding: 20px;
+                    //background-color: #F4ECF7;
+                    border-radius: 8px;
+                    border-left: 5px solid green;
+                }
+                .page-info {
+                    font-size: 14px;
+                    //color: #666;
+                    margin-top: 15px;
+                    font-style: italic;
+                    text-align: center;
+                    opacity: 0.5;
+                }
+                hr {
+                    border: none;
+                    border-top: 2px solid gray;
+                    margin: 30px 0;
+                }
+                @media (max-width: 600px) {
+                    .term { font-size: 24px; }
+                    .translation { font-size: 20px; padding: 15px; }
+                    .page-info { font-size: 12px; }
+                }
+                </style>
+                <div class='card'>
+                    <div class='term'>{{Term}}</div>
+                    <div class='page-info'>📄 {{PageInfo}}</div>
+                </div>
+                <hr id='answer'>
+                <div class='card'>
+                    <div class='translation'>{{Translation}}</div>
+                </div>";
 
                 // Create deck
                 CreateAnkiDeck(deckName, cardData,
-                              new List<string> { "Term", "Translation" },
+                              new List<string> { "Term", "Translation", "PageInfo" },
                               template, apkgPath);
             }
             catch (Exception ex)
@@ -5055,6 +5055,59 @@ hr {
                     list.Add((sent, ans, currentPageInfo));
             }
             return list;
+        }
+
+
+        /// <summary>
+        /// Parse vocabulary with page info extraction
+        /// Format: "English Term - Arabic Translation"
+        /// </summary>
+        private List<(string Term, string Translation, string PageInfo)> ParseVocabulary(string rawText)
+        {
+            var vocabulary = new List<(string, string, string)>();
+            string currentPageInfo = "Unknown";
+
+            if (string.IsNullOrWhiteSpace(rawText))
+                return vocabulary;
+
+            var lines = rawText.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var line in lines)
+            {
+                var trimmed = line.Trim();
+
+                // Extract page info from headers
+                if (trimmed.StartsWith("=====") && trimmed.Contains("Page"))
+                {
+                    var pageMatch = Regex.Match(trimmed, @"Page[s]?\s+\d+(?:-\d+)?");
+                    if (pageMatch.Success)
+                    {
+                        currentPageInfo = pageMatch.Value;
+                    }
+                    continue;
+                }
+
+                // Parse vocabulary line: "Term - Translation"
+                var parts = trimmed.Split(new[] { " - " }, 2, StringSplitOptions.None);
+
+                if (parts.Length >= 2)
+                {
+                    string term = parts[0].Trim();
+                    string translation = parts[1].Trim();
+
+                    if (!string.IsNullOrWhiteSpace(term))
+                    {
+                        vocabulary.Add((term, translation, currentPageInfo));
+                    }
+                }
+                else if (!string.IsNullOrWhiteSpace(trimmed))
+                {
+                    // Line without separator - add with empty translation
+                    vocabulary.Add((trimmed, string.Empty, currentPageInfo));
+                }
+            }
+
+            return vocabulary;
         }
 
         private void buttonShowApi_Click(object sender, EventArgs e)
