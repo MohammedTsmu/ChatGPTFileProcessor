@@ -3617,18 +3617,19 @@ namespace ChatGPTFileProcessor
         /// Handles the format: English paragraph, then Arabic paragraph, separated by blank lines
         /// </summary>
 
-        private List<(string Original, string Translation)> ParseTranslatedSections(string rawText)
+        private List<(string Original, string Translation, string PageInfo)> ParseTranslatedSections(string rawText)
         {
-            var sections = new List<(string, string)>();
+            var sections = new List<(string, string, string)>();
+            string currentPageInfo = "Unknown";
 
-            // Remove page markers
-            rawText = Regex.Replace(rawText, @"=+\s*Page\s+\d+\s*=+", "", RegexOptions.IgnoreCase);
+            // DON'T remove page markers - we need them!
+            // Remove only the "Translated Sections" header
             rawText = Regex.Replace(rawText, @"Translated Sections", "", RegexOptions.IgnoreCase);
 
             // Split by blank lines
             var blocks = Regex.Split(rawText.Trim(), @"(?:\r?\n){2,}");
 
-            var cleanBlocks = new List<string>();
+            var cleanBlocks = new List<(string text, string pageInfo)>();
 
             foreach (var block in blocks)
             {
@@ -3636,21 +3637,33 @@ namespace ChatGPTFileProcessor
                 if (string.IsNullOrWhiteSpace(trimmed) || trimmed.Length < 3)
                     continue;
 
-                cleanBlocks.Add(trimmed);
+                // Check if this is a page marker
+                if (trimmed.StartsWith("=====") && trimmed.Contains("Page"))
+                {
+                    var pageMatch = Regex.Match(trimmed, @"Page[s]?\s+\d+(?:-\d+)?");
+                    if (pageMatch.Success)
+                    {
+                        currentPageInfo = pageMatch.Value;
+                    }
+                    continue; // Don't add page markers to cleanBlocks
+                }
+
+                cleanBlocks.Add((trimmed, currentPageInfo));
             }
 
             // Pair everything: English followed by Arabic
             for (int i = 0; i < cleanBlocks.Count - 1; i++)
             {
-                string current = cleanBlocks[i];
-                string next = cleanBlocks[i + 1];
+                var current = cleanBlocks[i];
+                var next = cleanBlocks[i + 1];
 
-                bool currentIsEnglish = !Regex.IsMatch(current, @"[\u0600-\u06FF]");
-                bool nextIsArabic = Regex.IsMatch(next, @"[\u0600-\u06FF]");
+                bool currentIsEnglish = !Regex.IsMatch(current.text, @"[\u0600-\u06FF]");
+                bool nextIsArabic = Regex.IsMatch(next.text, @"[\u0600-\u06FF]");
 
                 if (currentIsEnglish && nextIsArabic)
                 {
-                    sections.Add((current, next));
+                    // Use the page info from the first element (English)
+                    sections.Add((current.text, next.text, current.pageInfo));
                     i++; // Skip next block
                 }
             }
@@ -4557,69 +4570,81 @@ hr {
 
                 // Convert to dictionary format
                 var cardData = sections.Select(s => new Dictionary<string, string>
-        {
-            { "Original", CleanTextForAnki(s.Original) },
-            { "Translation", CleanTextForAnki(s.Translation) }
-        }).ToList();
+                {
+                    { "Original", CleanTextForAnki(s.Original) },
+                    { "Translation", CleanTextForAnki(s.Translation) },
+                    { "PageInfo", s.PageInfo }
+                }).ToList();
 
                 // Define improved mobile-friendly template
                 string template = @"
-<style>
-.card {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 18px;
-    text-align: left;
-    color: black;
-    background-color: white;
-    padding: 20px;
-    line-height: 1.7;
-}
-.label {
-    font-size: 14px;
-    font-weight: bold;
-    text-transform: uppercase;
-    color: #7F8C8D;
-    margin-bottom: 10px;
-}
-.original {
-    font-size: 20px;
-    padding: 20px;
-    background-color: #E8F4F8;
-    border-radius: 8px;
-    border-left: 5px solid #2980B9;
-    margin-bottom: 20px;
-}
-.translation {
-    font-size: 20px;
-    padding: 20px;
-    background-color: #FEF5E7;
-    border-radius: 8px;
-    border-left: 5px solid #D68910;
-    direction: rtl;
-    text-align: right;
-}
-hr {
-    border: none;
-    border-top: 2px solid #2980B9;
-    margin: 30px 0;
-}
-@media (max-width: 600px) {
-    .original, .translation { font-size: 17px; padding: 15px; }
-}
-</style>
-<div class='card'>
-    <div class='label'>Original</div>
-    <div class='original'>{{Original}}</div>
-</div>
-<hr id='answer'>
-<div class='card'>
-    <div class='label'>Translation</div>
-    <div class='translation'>{{Translation}}</div>
-</div>";
+                <style>
+                .card {
+                    font-family: Arial, Helvetica, sans-serif;
+                    font-size: 18px;
+                    text-align: left;
+                    //color: black;
+                    //background-color: white;
+                    padding: 20px;
+                    line-height: 1.7;
+                }
+                .label {
+                    font-size: 14px;
+                    font-weight: bold;
+                    text-transform: uppercase;
+                    //color: #7F8C8D;
+                    opacity: 0.6;
+                    margin-bottom: 10px;
+                }
+                .original {
+                    font-size: 20px;
+                    padding: 20px;
+                    //background-color: #E8F4F8;
+                    border-radius: 8px;
+                    border-left: 5px solid gray;
+                    margin-bottom: 20px;
+                }
+                .translation {
+                    font-size: 20px;
+                    padding: 20px;
+                    //background-color: #FEF5E7;
+                    border-radius: 8px;
+                    border-left: 5px solid green;
+                    direction: rtl;
+                    text-align: right;
+                }
+                .page-info {
+                    font-size: 14px;
+                    //color: #666;
+                    margin-top: 15px;
+                    font-style: italic;
+                    text-align: center;
+                    opacity: 0.5;
+                }
+                hr {
+                    border: none;
+                    border-top: 2px solid gray;
+                    margin: 30px 0;
+                }
+                @media (max-width: 600px) {
+                    .original, .translation { font-size: 17px; padding: 15px; }
+                    .page-info { font-size: 12px; }
+                }
+                </style>
+                <div class='card'>
+                    <div class='label'>Original</div>
+                    <div class='original'>{{Original}}</div>
+                    <div class='page-info'>📄 {{PageInfo}}</div>
+                </div>
+                <hr id='answer'>
+                <div class='card'>
+                    <div class='label'>Translation</div>
+                    <div class='translation'>{{Translation}}</div>
+                </div>";
 
                 // Create deck
                 CreateAnkiDeck(deckName, cardData,
-                              new List<string> { "Original", "Translation" },
+                              new List<string> { "Original", "Translation", "PageInfo" },
                               template, apkgPath);
             }
             catch (Exception ex)
