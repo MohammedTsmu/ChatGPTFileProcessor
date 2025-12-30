@@ -4405,7 +4405,7 @@ hr {
         // 7. SaveClozeToApkg
         // ========================================
 
-        private void SaveClozeToApkg(List<(string Sentence, string Answer)> items,
+        private void SaveClozeToApkg(List<(string Sentence, string Answer, string PageInfo)> items,
                                      string outputPath, string deckName)
         {
             try
@@ -4420,61 +4420,73 @@ hr {
 
                 // Convert to dictionary format
                 var cardData = items.Select(c => new Dictionary<string, string>
-        {
-            { "Sentence", CleanTextForAnki(c.Sentence) },
-            { "Answer", CleanTextForAnki(c.Answer) }
-        }).ToList();
+                {
+                    { "Sentence", CleanTextForAnki(c.Sentence) },
+                    { "Answer", CleanTextForAnki(c.Answer) },
+                    { "PageInfo", c.PageInfo }
+                }).ToList();
 
                 // Define improved mobile-friendly template
                 string template = @"
-<style>
-.card {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 20px;
-    text-align: center;
-    color: black;
-    background-color: white;
-    padding: 20px;
-    line-height: 1.8;
-}
-.sentence {
-    font-size: 22px;
-    margin: 20px 0;
-    padding: 20px;
-    background-color: #FFF9E6;
-    border-radius: 8px;
-    border: 2px solid #FFD700;
-}
-.answer {
-    font-size: 24px;
-    font-weight: bold;
-    color: #E74C3C;
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #FADBD8;
-    border-radius: 8px;
-}
-hr {
-    border: none;
-    border-top: 2px solid #FFD700;
-    margin: 30px 0;
-}
-@media (max-width: 600px) {
-    .sentence { font-size: 18px; padding: 15px; }
-    .answer { font-size: 20px; }
-}
-</style>
-<div class='card'>
-    <div class='sentence'>{{Sentence}}</div>
-</div>
-<hr id='answer'>
-<div class='card'>
-    <div class='answer'>{{Answer}}</div>
-</div>";
+                <style>
+                .card {
+                    font-family: Arial, Helvetica, sans-serif;
+                    font-size: 20px;
+                    text-align: center;
+                    //color: black;
+                    //background-color: white;
+                    padding: 20px;
+                    line-height: 1.8;
+                }
+                .sentence {
+                    font-size: 22px;
+                    margin: 20px 0;
+                    padding: 20px;
+                    //background-color: #FFF9E6;    ← COMMENTED OUT
+                    border-radius: 8px;
+                    border: 2px dashed gray;        ← DASHED for blank!
+                }
+                .answer {
+                    font-size: 24px;
+                    font-weight: bold;
+                    //color: #E74C3C;               ← COMMENTED OUT
+                    margin-top: 20px;
+                    padding: 15px;
+                    //background-color: #FADBD8;    ← COMMENTED OUT
+                    border: 2px solid gray;         ← SOLID for answer!
+                    border-radius: 8px;
+                }
+                .page-info {
+                    font-size: 14px;
+                    //color: #666;
+                    margin-top: 15px;
+                    font-style: italic;
+                    text-align: center;
+                    opacity: 0.5;
+                }
+                hr {
+                    border: none;
+                    border-top: 2px solid gray;     ← CHANGED FROM GOLD
+                    margin: 30px 0;
+                }
+                @media (max-width: 600px) {
+                    .sentence { font-size: 18px; padding: 15px; }
+                    .answer { font-size: 20px; }
+                    .page-info { font-size: 12px; }
+                }
+                </style>
+                <div class='card'>
+                    <div class='page-info'>📄 {{PageInfo}}</div>
+                    <div class='sentence'>{{Sentence}}</div>
+                </div>
+                <hr id='answer'>
+                <div class='card'>
+                    <div class='answer'>{{Answer}}</div>
+                </div>";
 
                 // Create deck
                 CreateAnkiDeck(deckName, cardData,
-                              new List<string> { "Sentence", "Answer" },
+                                  new List<string> { "Sentence", "Answer", "PageInfo" },
                               template, apkgPath);
             }
             catch (Exception ex)
@@ -4919,12 +4931,25 @@ hr {
         ///   Sentence: "_______________ is a miotic drug."
         ///   Answer: Pilocarpine
         /// separated by blank lines.
-        private List<(string Sentence, string Answer)> ParseCloze(string raw)
+        private List<(string Sentence, string Answer, string PageInfo)> ParseCloze(string raw)
         {
-            var list = new List<(string, string)>();
+            var list = new List<(string, string, string)>();
+            string currentPageInfo = "Unknown";
             var blocks = Regex.Split(raw.Trim(), @"\r?\n\s*\r?\n");
+
             foreach (var block in blocks)
             {
+                // Extract page info from headers
+                if (block.Trim().StartsWith("=====") && block.Contains("Page"))
+                {
+                    var pageMatch = Regex.Match(block, @"Page[s]?\s+\d+(?:-\d+)?");
+                    if (pageMatch.Success)
+                    {
+                        currentPageInfo = pageMatch.Value;
+                    }
+                    continue;
+                }
+
                 string sent = null, ans = null;
                 foreach (var line in block.Split('\n'))
                 {
@@ -4934,8 +4959,9 @@ hr {
                     else if (t.StartsWith("Answer:", StringComparison.OrdinalIgnoreCase))
                         ans = t.Substring("Answer:".Length).Trim();
                 }
+
                 if (!string.IsNullOrEmpty(sent) && !string.IsNullOrEmpty(ans))
-                    list.Add((sent, ans));
+                    list.Add((sent, ans, currentPageInfo));
             }
             return list;
         }
