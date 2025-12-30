@@ -4261,61 +4261,72 @@ hr {
 
                 // Convert to dictionary format
                 var cardData = terms.Select(t => new Dictionary<string, string>
-        {
-            { "Term", CleanTextForAnki(t.Term) },
-            { "Explanation", CleanTextForAnki(t.Definition) }
-        }).ToList();
+                {
+                    { "Term", CleanTextForAnki(t.Term) },
+                    { "Explanation", CleanTextForAnki(t.Definition) },
+                    { "PageInfo", t.PageInfo }
+                }).ToList();
 
                 // Define improved mobile-friendly template
                 string template = @"
-<style>
-.card {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 18px;
-    text-align: left;
-    color: black;
-    background-color: white;
-    padding: 20px;
-    line-height: 1.7;
-}
-.term {
-    font-size: 26px;
-    font-weight: bold;
-    color: #D35400;
-    margin-bottom: 10px;
-    text-align: center;
-}
-.explanation {
-    font-size: 19px;
-    margin-top: 20px;
-    padding: 20px;
-    background-color: #FEF5E7;
-    border-radius: 8px;
-    border-left: 5px solid #D35400;
-    text-align: left;
-}
-hr {
-    border: none;
-    border-top: 2px solid #D35400;
-    margin: 30px 0;
-}
-@media (max-width: 600px) {
-    .card { font-size: 16px; padding: 15px; }
-    .term { font-size: 22px; }
-    .explanation { font-size: 17px; padding: 15px; }
-}
-</style>
-<div class='card'>
-    <div class='term'>{{Term}}</div>
-</div>
-<hr id='answer'>
-<div class='card'>
-    <div class='explanation'>{{Explanation}}</div>
-</div>";
+                <style>
+                .card {
+                    font-family: Arial, Helvetica, sans-serif;
+                    font-size: 18px;
+                    text-align: left;
+                    //color: black;
+                    //background-color: white;
+                    padding: 20px;
+                    line-height: 1.7;
+                }
+                .term {
+                    font-size: 26px;
+                    font-weight: bold;
+                    //color: #D35400;
+                    margin-bottom: 10px;
+                    text-align: center;
+                }
+                .explanation {
+                    font-size: 19px;
+                    margin-top: 20px;
+                    padding: 20px;
+                    //background-color: #FEF5E7;
+                    border-radius: 8px;
+                    border-left: 5px solid gray;
+                    text-align: left;
+                }
+                .page-info {
+                    font-size: 14px;
+                    //color: #666;
+                    margin-top: 15px;
+                    font-style: italic;
+                    text-align: center;
+                    opacity: 0.5;
+                }
+                hr {
+                    border: none;
+                    border-top: 2px solid gray;
+                    margin: 30px 0;
+                }
+                @media (max-width: 600px) {
+                    .card { font-size: 16px; padding: 15px; }
+                    .term { font-size: 22px; }
+                    .explanation { font-size: 17px; padding: 15px; }
+                    .page-info { font-size: 12px; }
+                }
+                </style>
+                <div class='card'>
+                    <div class='term'>{{Term}}</div>
+                    <div class='page-info'>📄 {{PageInfo}}</div>
+                </div>
+                <hr id='answer'>
+                <div class='card'>
+                    <div class='explanation'>{{Explanation}}</div>
+                </div>";
 
                 // Create deck
                 CreateAnkiDeck(deckName, cardData,
-                              new List<string> { "Term", "Explanation" },
+                                new List<string> { "Term", "Explanation", "PageInfo" },
                               template, apkgPath);
             }
             catch (Exception ex)
