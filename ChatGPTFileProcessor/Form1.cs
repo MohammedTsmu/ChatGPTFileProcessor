@@ -3897,8 +3897,6 @@ print('SUCCESS')
                         font-family: Arial, Helvetica, sans-serif;
                         font-size: 20px;
                         text-align: center;
-                        //color: black;
-                        //background-color: white;
                         padding: 20px;
                         line-height: 1.6;
                     }
@@ -3911,13 +3909,12 @@ print('SUCCESS')
                         font-size: 20px;
                         margin-top: 20px;
                         padding: 15px;
-                        //background-color: #f0f0f0;
+                        color: #2E8B57;
+                        border-left: 5px solid #2E8B57;
                         border-radius: 8px;
-                        border: 2px dashed gray;
                     }
                     .page-info {
                         font-size: 14px;
-                        //color: #666;
                         margin-top: 15px;
                         font-style: italic;
                         //text-align: right;
@@ -3988,8 +3985,6 @@ print('SUCCESS')
                     font-family: Arial, Helvetica, sans-serif;
                     font-size: 18px;
                     text-align: left;
-                    //color: black;
-                    //background-color: white;
                     padding: 20px;
                     line-height: 1.6;
                 }
@@ -3997,29 +3992,25 @@ print('SUCCESS')
                     font-size: 20px;
                     font-weight: bold;
                     margin-bottom: 20px;
-                    //color: #2C3E50;
                 }
                 .options {
                     font-size: 18px;
                     margin: 15px 0;
                     padding: 10px;
-                    //background-color: #f9f9f9;
-                    border-left: 4px solid gray;
+                    border-left: 4px solid #2874A6;
                     border-radius: 4px;
                 }
                 .answer {
                     font-size: 20px;
                     font-weight: bold;
-                    //color: #27AE60;
+                    color: #2E8B57;
                     margin-top: 20px;
                     padding: 15px;
-                    //background-color: #E8F8F5;
-                    border: 2px dashed green;
+                    border-left: 5px solid #2E8B57;
                     border-radius: 8px;
                 }
                 .page-info {
                     font-size: 14px;
-                    //color: #666;
                     margin-top: 15px;
                     font-style: italic;
                     text-align: center;
@@ -4090,8 +4081,6 @@ print('SUCCESS')
                     font-family: Arial, Helvetica, sans-serif;
                     font-size: 20px;
                     text-align: center;
-                    //color: black;
-                    //background-color: white;
                     padding: 20px;
                     line-height: 1.6;
                 }
@@ -4105,13 +4094,12 @@ print('SUCCESS')
                     font-size: 24px;
                     margin-top: 20px;
                     padding: 20px;
-                    //background-color: #F4ECF7;
+                    color: #2E8B57;
+                    border-left: 5px solid #2E8B57;
                     border-radius: 8px;
-                    border-left: 5px solid green;
                 }
                 .page-info {
                     font-size: 14px;
-                    //color: #666;
                     margin-top: 15px;
                     font-style: italic;
                     text-align: center;
@@ -4187,8 +4175,6 @@ print('SUCCESS')
                     font-family: Arial, Helvetica, sans-serif;
                     font-size: 18px;
                     text-align: left;
-                    //color: black;
-                    //background-color: white;
                     padding: 20px;
                     line-height: 1.7;
                 }
@@ -4203,14 +4189,13 @@ print('SUCCESS')
                     font-size: 19px;
                     margin-top: 20px;
                     padding: 20px;
-                    //background-color: #E8F6F3;
+                    color: #2E8B57;
+                    border-left: 5px solid #2E8B57;
                     border-radius: 8px;
-                    border-left: 5px solid green;
                     text-align: left;
                 }
                 .page-info {
                     font-size: 14px;
-                    //color: #666;
                     margin-top: 15px;
                     font-style: italic;
                     text-align: center;
@@ -4287,8 +4272,6 @@ print('SUCCESS')
                     font-family: Arial, Helvetica, sans-serif;
                     font-size: 18px;
                     text-align: left;
-                    //color: black;
-                    //background-color: white;
                     padding: 20px;
                     line-height: 1.7;
                 }
@@ -4303,14 +4286,13 @@ print('SUCCESS')
                     font-size: 19px;
                     margin-top: 20px;
                     padding: 20px;
-                    //background-color: #FEF5E7;
+                    color: #2E8B57;
+                    border-left: 5px solid #2E8B57;
                     border-radius: 8px;
-                    border-left: 5px solid gray;
                     text-align: left;
                 }
                 .page-info {
                     font-size: 14px;
-                    //color: #666;
                     margin-top: 15px;
                     font-style: italic;
                     text-align: center;
@@ -4387,8 +4369,6 @@ print('SUCCESS')
                     font-family: Arial, Helvetica, sans-serif;
                     font-size: 19px;
                     text-align: center;
-                    //color: black;
-                    //background-color: white;
                     padding: 20px;
                     line-height: 1.7;
                 }
@@ -4396,9 +4376,6 @@ print('SUCCESS')
                     font-size: 21px;
                     margin: 20px 0;
                     padding: 20px;
-                    //background-color: #EBF5FB;
-                    //border-radius: 8px;
-                    //border: 2px solid gray;
                     text-align: left;
                 }
                 .answer {
@@ -4406,14 +4383,12 @@ print('SUCCESS')
                     font-weight: bold;
                     margin-top: 20px;
                     padding: 20px;
+                    color: #2E8B57;
+                    border-left: 5px solid #2E8B57;
                     border-radius: 8px;
-                    //color: #27AE60;
-                    //background-color: #E8F8F5;
-                    border-left: 5px dashed gray;
                 }
                 .page-info {
                     font-size: 14px;
-                    //color: #666;
                     margin-top: 15px;
                     font-style: italic;
                     text-align: center;
@@ -4482,8 +4457,6 @@ print('SUCCESS')
                     font-family: Arial, Helvetica, sans-serif;
                     font-size: 20px;
                     text-align: center;
-                    //color: black;
-                    //background-color: white;
                     padding: 20px;
                     line-height: 1.8;
                 }
@@ -4491,23 +4464,19 @@ print('SUCCESS')
                     font-size: 22px;
                     margin: 20px 0;
                     padding: 20px;
-                    //background-color: #FFF9E6;    ← COMMENTED OUT
-                    border-radius: 8px;
-                    border: 2px dashed gray;        ← DASHED for blank!
                 }
                 .answer {
                     font-size: 24px;
                     font-weight: bold;
-                    //color: #E74C3C;               ← COMMENTED OUT
+                    //color: #E74C3C;
+                    color: #2E8B57;
                     margin-top: 20px;
                     padding: 15px;
-                    //background-color: #FADBD8;    ← COMMENTED OUT
-                    border: 2px solid gray;         ← SOLID for answer!
+                    border-left: 5px solid #2E8B57;
                     border-radius: 8px;
                 }
                 .page-info {
                     font-size: 14px;
-                    //color: #666;
                     margin-top: 15px;
                     font-style: italic;
                     text-align: center;
@@ -4515,7 +4484,7 @@ print('SUCCESS')
                 }
                 hr {
                     border: none;
-                    border-top: 2px solid gray;     ← CHANGED FROM GOLD
+                    border-top: 2px solid gray;
                     margin: 30px 0;
                 }
                 @media (max-width: 600px) {
@@ -4525,8 +4494,8 @@ print('SUCCESS')
                 }
                 </style>
                 <div class='card'>
-                    <div class='page-info'>📄 {{PageInfo}}</div>
                     <div class='sentence'>{{Sentence}}</div>
+                    <div class='page-info'>📄 {{PageInfo}}</div>
                 </div>
                 <hr id='answer'>
                 <div class='card'>
@@ -4583,8 +4552,6 @@ print('SUCCESS')
                     font-family: Arial, Helvetica, sans-serif;
                     font-size: 18px;
                     text-align: left;
-                    //color: black;
-                    //background-color: white;
                     padding: 20px;
                     line-height: 1.7;
                 }
@@ -4599,23 +4566,21 @@ print('SUCCESS')
                 .original {
                     font-size: 20px;
                     padding: 20px;
-                    //background-color: #E8F4F8;
+                    border-left: 5px solid #2874A6;
                     border-radius: 8px;
-                    border-left: 5px solid gray;
                     margin-bottom: 20px;
                 }
                 .translation {
                     font-size: 20px;
                     padding: 20px;
-                    //background-color: #FEF5E7;
+                    color: #2E8B57;
+                    border-left: 5px solid #2E8B57;
                     border-radius: 8px;
-                    border-left: 5px solid green;
                     direction: rtl;
                     text-align: right;
                 }
                 .page-info {
                     font-size: 14px;
-                    //color: #666;
                     margin-top: 15px;
                     font-style: italic;
                     text-align: center;
@@ -4691,8 +4656,6 @@ print('SUCCESS')
                 .card {
                     font-family: Arial, Helvetica, sans-serif;
                     font-size: 16px;
-                    //color: black;
-                    //background-color: white;
                     padding: 15px;
                     line-height: 1.5;
                 }
@@ -4720,24 +4683,23 @@ print('SUCCESS')
                     padding: 12px 8px;
                     text-align: left;
                     font-weight: bold;
-                    border: 1px solid gray;
+                    //border: 1px solid gray;
+                    border: 1px solid #2874A6;
                 }
                 td {
                     padding: 10px 8px;
-                    border: 1px solid gray;
-                    //background-color: white;
+                    //border: 1px solid gray;
+                    border: 1px solid #2874A6;
                 }
                 tr:nth-child(even) {
-                    //background-color: #f2f2f2;
                     background-color: rgba(128, 128, 128, 0.05);
                 }
                 tr:hover {
-                    //background-color: #e8f4f8;
                     background-color: rgba(128, 128, 128, 0.1);
                 }
                 .page-info {
                     font-size: 14px;
-                    color: #666;
+                    //color: #666;
                     margin-top: 15px;
                     font-style: italic;
                     text-align: center;
