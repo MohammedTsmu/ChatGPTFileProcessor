@@ -3706,13 +3706,16 @@ namespace ChatGPTFileProcessor
 import genanki
 import json
 import random
+import hashlib
 
 # Read data
 with open(r'" + dataPath.Replace("\\", "\\\\") + @"', 'r', encoding='utf-8') as f:
     data = json.load(f)
 
 # Generate unique IDs
-model_id = random.randint(1000000000, 9999999999)
+# Generate consistent IDs based on deck name (to avoid duplicates in Anki)
+deck_name_hash = int(hashlib.md5(data['deckName'].encode()).hexdigest()[:8], 16)
+model_id = 1000000000 + (deck_name_hash % 8999999999)
 deck_id = random.randint(1000000000, 9999999999)
 
 # Use the pre-split templates
