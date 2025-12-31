@@ -56,7 +56,7 @@ namespace ChatGPTFileProcessor
 
         private bool _isTabSwitching = false;
 
-
+        const string BRAND = "ChatGPT File Processor";
 
 
         public Form1()
@@ -1516,7 +1516,7 @@ namespace ChatGPTFileProcessor
                     LogFile($"Saved: {Path.GetFileName(definitionsFilePath)}");
 
                     // 3) ✨ NEW: Create .apkg file for direct Anki import
-                    SaveDefinitionsToApkg(definitionsText, definitionsFilePath, "Definitions");
+                    SaveDefinitionsToApkg(definitionsText, definitionsFilePath, $"{BRAND} - Definitions");
                 }
 
                 //// 7.2) ملف MCQs (يمكن تكييف تنسيق MCQs إذا أردتم تنسيقًا أضبط)
@@ -1531,7 +1531,7 @@ namespace ChatGPTFileProcessor
                     var parsed = ParseMcqs(mcqsRaw);
 
                     // 3) ✨ NEW: Create .apkg file for direct Anki import
-                    SaveMcqsToApkg(parsed, mcqsFilePath, "MCQs");
+                    SaveMcqsToApkg(parsed, mcqsFilePath, $"{BRAND} - Multiple Choice");
                 }
 
 
@@ -1547,7 +1547,7 @@ namespace ChatGPTFileProcessor
 
 
                     // 5) ✨ NEW: Create .apkg file for direct Anki import
-                    SaveFlashcardsToApkg(parsed, flashcardsFilePath, "Flashcards");
+                    SaveFlashcardsToApkg(parsed, flashcardsFilePath, $"{BRAND} - Flashcards");
                 }
 
 
@@ -1562,7 +1562,7 @@ namespace ChatGPTFileProcessor
                     // Parse vocabulary for Anki export
                     var records = ParseVocabulary(vocabularyText);
 
-                    SaveVocabularyToApkg(records, vocabularyFilePath, "Vocabulary");
+                    SaveVocabularyToApkg(records, vocabularyFilePath, $"{BRAND} - Vocabulary");
                 }
 
 
@@ -1617,7 +1617,7 @@ namespace ChatGPTFileProcessor
 
                     // Export to Anki
                     var parsed = ParseCloze(clozeRaw);
-                    SaveClozeToApkg(parsed, clozeFilePath, "Cloze");
+                    SaveClozeToApkg(parsed, clozeFilePath, $"{BRAND} - Cloze");
                 }
 
                 if (chkTrueFalse.Checked)
@@ -1627,7 +1627,7 @@ namespace ChatGPTFileProcessor
                     LogFile($"Saved: {Path.GetFileName(tfFilePath)}");
 
                     // ✨ NEW: Create .apkg file
-                    SaveTrueFalseToApkg(trueFalseText, tfFilePath, "TrueFalse");
+                    SaveTrueFalseToApkg(trueFalseText, tfFilePath, $"{BRAND} - True/False");
                 }
 
                 if (chkOutline.Checked)
@@ -1645,7 +1645,7 @@ namespace ChatGPTFileProcessor
                 if (chkTableExtract.Checked)
                 {
                     SaveMarkdownTablesToWord(allTableExtract.ToString(), tableFilePath, "Table Extractions");
-                    SaveTableExtractToApkg(allTableExtract.ToString(), tableFilePath, "Tables");
+                    SaveTableExtractToApkg(allTableExtract.ToString(), tableFilePath, $"{BRAND} - Tables");
                 }
 
 
@@ -1674,7 +1674,7 @@ namespace ChatGPTFileProcessor
                     LogFile($"Saved: {Path.GetFileName(translatedSectionsFilePath)}");
 
                     // ✨ NEW: Create .apkg file
-                    SaveTranslatedSectionsToApkg(translatedText, translatedSectionsFilePath, "Translated Sections");
+                    SaveTranslatedSectionsToApkg(translatedText, translatedSectionsFilePath, $"{BRAND} - Translation");
                 }
 
                 if (chkExplainTerms.Checked)
@@ -1684,10 +1684,10 @@ namespace ChatGPTFileProcessor
                     LogFile($"Saved: {Path.GetFileName(explainTermsFilePath)}");
 
                     // ✨ NEW: Create .apkg file
-                    SaveExplainTermsToApkg(explainTermsText, explainTermsFilePath, "Explain Terms");
+                    SaveExplainTermsToApkg(explainTermsText, explainTermsFilePath, $"{BRAND} - Explanations");
                 }
 
-                
+
                 // 8) إظهار رسالة انتهاء المعالجة
                 LogSuccess("All exports completed successfully!");
                 LogSuccess("Files saved to selected output location");
