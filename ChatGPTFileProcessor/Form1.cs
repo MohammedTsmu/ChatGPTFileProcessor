@@ -22,6 +22,7 @@ using static DevExpress.XtraEditors.XtraInputBox;
 using SDImage = System.Drawing.Image;
 using Task = System.Threading.Tasks.Task;
 
+
 namespace ChatGPTFileProcessor
 {
 
@@ -2333,31 +2334,27 @@ namespace ChatGPTFileProcessor
                         LogError("SOLUTIONS:");
                         LogError("  1️⃣ Check your OpenAI billing:");
                         LogError("     → https://platform.openai.com/account/billing");
-                        LogError("");
                         LogError("  2️⃣ Add payment method if you haven't");
-                        LogError("");
                         LogError("  3️⃣ Check if you have available credits");
-                        LogError("");
                         LogError("  4️⃣ Try a different API key");
                         LogError("");
                         LogError("════════════════════════════════════════════════");
                         LogError("Processing STOPPED - Fix your API billing first!");
                         LogError("════════════════════════════════════════════════");
 
-                        // Show persistent message box
-                        MessageBox.Show(
+                        // Show error with clickable link
+                        ShowErrorWithLink(
+                            "API Quota Exceeded",
                             "❌ OpenAI API Quota Exceeded!\n\n" +
                             "Your API key has run out of credits or quota.\n\n" +
                             "SOLUTIONS:\n" +
-                            "• Check your OpenAI account billing:\n" +
-                            "  https://platform.openai.com/account/billing\n\n" +
+                            "• Check your OpenAI account billing (click link below)\n" +
                             "• Add a payment method if not set\n" +
                             "• Check if you have available credits\n" +
                             "• Try using a different API key\n\n" +
                             "Processing has been stopped.",
-                            "API Quota Exceeded",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error
+                            "🔗 Click here: https://platform.openai.com/account/billing",
+                            "https://platform.openai.com/account/billing"
                         );
 
                         UpdateOverlayLog("");
@@ -2384,18 +2381,17 @@ namespace ChatGPTFileProcessor
                         LogError("");
                         LogError("════════════════════════════════════════════════");
 
-                        MessageBox.Show(
+                        ShowErrorWithLink(
+                            "Invalid API Key",
                             "❌ Invalid API Key!\n\n" +
                             "The API key you provided is incorrect or invalid.\n\n" +
                             "SOLUTIONS:\n" +
                             "• Check your API key in Settings\n" +
-                            "• Get a valid key from:\n" +
-                            "  https://platform.openai.com/api-keys\n" +
+                            "• Get a valid key from the link below\n" +
                             "• Make sure you copied the full key\n\n" +
                             "Processing has been stopped.",
-                            "Invalid API Key",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error
+                            "🔗 Get API key: https://platform.openai.com/api-keys",
+                            "https://platform.openai.com/api-keys"
                         );
 
                         UpdateOverlayLog("");
@@ -2572,7 +2568,8 @@ namespace ChatGPTFileProcessor
                     LogError("");
                     LogError("════════════════════════════════════════════════");
 
-                    MessageBox.Show(
+                    ShowErrorWithLink(
+                        "API Error",
                         "❌ OpenAI API Error!\n\n" +
                         "An unexpected error occurred:\n\n" +
                         $"{ex.Message}\n\n" +
@@ -2580,17 +2577,15 @@ namespace ChatGPTFileProcessor
                         "• Check your internet connection\n" +
                         "• Verify your API key is valid\n" +
                         "• Try again in a few minutes\n" +
-                        "• Check: https://status.openai.com\n\n" +
+                        "• Check OpenAI status (click link below)\n\n" +
                         "Processing has been stopped.",
-                        "API Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error
+                        "🔗 Check status: https://status.openai.com",
+                        "https://status.openai.com"
                     );
 
                     UpdateOverlayLog("");
-
-                    // DON'T THROW! Return gracefully instead
                     return $"API Error: {ex.Message}";
+
                 }
                 finally
                 {
@@ -2815,6 +2810,95 @@ namespace ChatGPTFileProcessor
 
 
         #region Batch Processing Helper Methods
+
+
+        /// <summary>
+        /// Shows an error dialog with a clickable link
+        /// </summary>
+        private void ShowErrorWithLink(string title, string message, string linkText, string linkUrl)
+        {
+            // Create custom form
+            Form errorForm = new Form
+            {
+                Text = title,
+                Width = 500,
+                Height = 350,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                StartPosition = FormStartPosition.CenterParent,
+                MaximizeBox = false,
+                MinimizeBox = false,
+                ShowIcon = true,
+                Icon = this.Icon  // Use your app's icon
+            };
+
+            // Add icon (error symbol)
+            PictureBox iconBox = new PictureBox
+            {
+                Location = new Point(20, 20),
+                Size = new Size(48, 48),
+                Image = SystemIcons.Error.ToBitmap()
+            };
+            errorForm.Controls.Add(iconBox);
+
+            // Add message label
+            Label messageLabel = new Label
+            {
+                Location = new Point(80, 20),
+                Size = new Size(390, 170),
+                Text = message,
+                AutoSize = false,
+                Font = new System.Drawing.Font("Segoe UI", 9.5f)
+            };
+            errorForm.Controls.Add(messageLabel);
+
+            // Add clickable link
+            LinkLabel linkLabel = new LinkLabel
+            {
+                Location = new Point(80, 200),
+                Size = new Size(390, 25),
+                Text = linkText,
+                Font = new System.Drawing.Font("Segoe UI", 9f),
+                LinkColor = Color.Blue,
+                VisitedLinkColor = Color.Purple,
+                AutoSize = false
+            };
+
+            // Handle link click
+            linkLabel.LinkClicked += (s, e) =>
+            {
+                try
+                {
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = linkUrl,
+                        UseShellExecute = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Could not open link: {ex.Message}", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            };
+            errorForm.Controls.Add(linkLabel);
+
+            // Add OK button
+            Button okButton = new Button
+            {
+                Text = "OK",
+                Location = new Point(350, 270),
+                Size = new Size(100, 35),
+                DialogResult = DialogResult.OK,
+                Font = new System.Drawing.Font("Segoe UI", 9.5f)
+            };
+
+            errorForm.Controls.Add(okButton);
+            errorForm.AcceptButton = okButton;
+
+            // Show dialog
+            errorForm.ShowDialog(this);
+            errorForm.Dispose();
+        }
 
         /// <summary>
         /// Processes all pages in batches of the specified size.
