@@ -2315,39 +2315,282 @@ namespace ChatGPTFileProcessor
                 catch (Exception ex)
                 {
                     // Log the full error for debugging
-                    LogError($"API Error: {ex.Message}");
+                    LogError($"❌ API Error: {ex.Message}");
+                    LogError(""); // Empty line for readability
+
+                    // Check for API quota/billing errors (MOST COMMON!)
+                    if (ex.Message.Contains("insufficient_quota") ||
+                        ex.Message.Contains("exceeded your current quota") ||
+                        ex.Message.Contains("billing") ||
+                        ex.Message.Contains("quota"))
+                    {
+                        LogError("╔════════════════════════════════════════════════╗");
+                        LogError("║   ❌ OPENAI API QUOTA EXCEEDED                 ║");
+                        LogError("╚════════════════════════════════════════════════╝");
+                        LogError("");
+                        LogError("PROBLEM: Your API key has run out of credits.");
+                        LogError("");
+                        LogError("SOLUTIONS:");
+                        LogError("  1️⃣ Check your OpenAI billing:");
+                        LogError("     → https://platform.openai.com/account/billing");
+                        LogError("");
+                        LogError("  2️⃣ Add payment method if you haven't");
+                        LogError("");
+                        LogError("  3️⃣ Check if you have available credits");
+                        LogError("");
+                        LogError("  4️⃣ Try a different API key");
+                        LogError("");
+                        LogError("════════════════════════════════════════════════");
+                        LogError("Processing STOPPED - Fix your API billing first!");
+                        LogError("════════════════════════════════════════════════");
+
+                        // Show persistent message box
+                        MessageBox.Show(
+                            "❌ OpenAI API Quota Exceeded!\n\n" +
+                            "Your API key has run out of credits or quota.\n\n" +
+                            "SOLUTIONS:\n" +
+                            "• Check your OpenAI account billing:\n" +
+                            "  https://platform.openai.com/account/billing\n\n" +
+                            "• Add a payment method if not set\n" +
+                            "• Check if you have available credits\n" +
+                            "• Try using a different API key\n\n" +
+                            "Processing has been stopped.",
+                            "API Quota Exceeded",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+
+                        UpdateOverlayLog("");
+                        return "API quota exceeded. Please check your OpenAI billing.";
+                    }
+
+                    // Check for invalid API key
+                    if (ex.Message.Contains("Incorrect API key") ||
+                        ex.Message.Contains("invalid_api_key") ||
+                        ex.Message.Contains("authentication") ||
+                        ex.Message.Contains("401"))
+                    {
+                        LogError("╔════════════════════════════════════════════════╗");
+                        LogError("║   ❌ INVALID API KEY                           ║");
+                        LogError("╚════════════════════════════════════════════════╝");
+                        LogError("");
+                        LogError("PROBLEM: The API key is incorrect or invalid.");
+                        LogError("");
+                        LogError("SOLUTIONS:");
+                        LogError("  1️⃣ Check your API key in Settings");
+                        LogError("  2️⃣ Get a valid key from:");
+                        LogError("     → https://platform.openai.com/api-keys");
+                        LogError("  3️⃣ Make sure you copied the full key");
+                        LogError("");
+                        LogError("════════════════════════════════════════════════");
+
+                        MessageBox.Show(
+                            "❌ Invalid API Key!\n\n" +
+                            "The API key you provided is incorrect or invalid.\n\n" +
+                            "SOLUTIONS:\n" +
+                            "• Check your API key in Settings\n" +
+                            "• Get a valid key from:\n" +
+                            "  https://platform.openai.com/api-keys\n" +
+                            "• Make sure you copied the full key\n\n" +
+                            "Processing has been stopped.",
+                            "Invalid API Key",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+
+                        UpdateOverlayLog("");
+                        return "Invalid API key. Please check your settings.";
+                    }
+
+                    // Check for rate limit errors
+                    if (ex.Message.Contains("rate_limit") ||
+                        ex.Message.Contains("Rate limit") ||
+                        ex.Message.Contains("too many requests") ||
+                        ex.Message.Contains("429"))
+                    {
+                        LogWarning("╔════════════════════════════════════════════════╗");
+                        LogWarning("║   ⚠️ RATE LIMIT REACHED                        ║");
+                        LogWarning("╚════════════════════════════════════════════════╝");
+                        LogWarning("");
+                        LogWarning("PROBLEM: Too many requests sent too quickly.");
+                        LogWarning("");
+                        LogWarning("SOLUTIONS:");
+                        LogWarning("  1️⃣ Wait 30-60 seconds and try again");
+                        LogWarning("  2️⃣ Process fewer pages at once");
+                        LogWarning("  3️⃣ Upgrade your OpenAI plan for higher limits");
+                        LogWarning("");
+                        LogWarning("════════════════════════════════════════════════");
+
+                        MessageBox.Show(
+                            "⚠️ Rate Limit Reached!\n\n" +
+                            "You're sending requests too quickly.\n\n" +
+                            "SOLUTIONS:\n" +
+                            "• Wait 30-60 seconds and try again\n" +
+                            "• Process fewer pages at once\n" +
+                            "• Upgrade your OpenAI plan\n\n" +
+                            "Processing will continue after delay.",
+                            "Rate Limit",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning
+                        );
+
+                        UpdateOverlayLog("");
+                        return "Rate limit reached. Please wait and retry.";
+                    }
 
                     // Check if it's a reasoning_effort error
                     if (ex.Message.Contains("reasoning_effort") && ex.Message.Contains("Unsupported"))
                     {
-                        LogError("Invalid reasoning_effort for this model!");
-                        LogInfo("This model doesn't support the selected reasoning level.");
-                        LogInfo($"Model type: {GetReasoningModelType(modelName)}");
+                        LogError("╔════════════════════════════════════════════════╗");
+                        LogError("║   ❌ INVALID REASONING LEVEL                   ║");
+                        LogError("╚════════════════════════════════════════════════╝");
+                        LogError("");
+                        LogError("PROBLEM: This model doesn't support the selected reasoning level.");
+                        LogError($"Model type: {GetReasoningModelType(modelName)}");
+                        LogError("");
 
                         // Suggest fix
                         if (ex.Message.Contains("minimal"))
                         {
-                            LogInfo("Fix: Remove 'minimal' - use Low, Medium, or High instead");
+                            LogError("FIX: Remove 'minimal' - use Low, Medium, or High instead");
+
+                            MessageBox.Show(
+                                "❌ Invalid Reasoning Level!\n\n" +
+                                "This model doesn't support 'minimal' reasoning.\n\n" +
+                                "SOLUTION:\n" +
+                                "• In Settings → Reasoning Level:\n" +
+                                "• Use: Low, Medium, or High\n" +
+                                "• Remove: 'minimal'\n\n" +
+                                "Processing has been stopped.",
+                                "Invalid Reasoning Level",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error
+                            );
                         }
+                        else
+                        {
+                            MessageBox.Show(
+                                "❌ Invalid Reasoning Level!\n\n" +
+                                "The selected reasoning level is not supported by this model.\n\n" +
+                                "SOLUTION:\n" +
+                                "• Check your Settings → Reasoning Level\n" +
+                                "• Use: Low, Medium, or High\n\n" +
+                                "Processing has been stopped.",
+                                "Invalid Reasoning Level",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error
+                            );
+                        }
+
+                        UpdateOverlayLog("");
+                        return "Invalid reasoning level for this model.";
                     }
 
-                    // Check if it's a vision/image error (THE NEW ERROR YOU'RE GETTING!)
+                    // Check if it's a vision/image error
                     if (ex.Message.Contains("image_url") &&
                         (ex.Message.Contains("not supported") || ex.Message.Contains("only supported by certain")))
                     {
-                        LogError("This model does not support images!");
-                        LogInfo($"You selected: {modelName}");
-                        LogInfo("This model cannot process PDF images via API.");
+                        LogError("╔════════════════════════════════════════════════╗");
+                        LogError("║   ❌ MODEL DOESN'T SUPPORT IMAGES              ║");
+                        LogError("╚════════════════════════════════════════════════╝");
+                        LogError("");
+                        LogError($"PROBLEM: You selected '{modelName}'");
+                        LogError("This model cannot process PDF images via API.");
+                        LogError("");
+                        LogError("SOLUTIONS - Use a vision-capable model:");
+                        LogError("  ✓ gpt-5.2 (recommended)");
+                        LogError("  ✓ o3 (best reasoning with vision)");
+                        LogError("  ✓ o4-mini (fast reasoning with vision)");
+                        LogError("  ✓ gpt-4o (reliable, no reasoning)");
+                        LogError("");
+                        LogError("════════════════════════════════════════════════");
+
+                        MessageBox.Show(
+                            "❌ Model Doesn't Support Images!\n\n" +
+                            $"You selected: {modelName}\n" +
+                            "This model cannot process PDF images.\n\n" +
+                            "SOLUTIONS - Use a vision-capable model:\n" +
+                            "• gpt-5.2 (recommended)\n" +
+                            "• o3 (best reasoning with vision)\n" +
+                            "• o4-mini (fast reasoning with vision)\n" +
+                            "• gpt-4o (reliable, no reasoning)\n\n" +
+                            "Processing has been stopped.",
+                            "Model Not Supported",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+
                         UpdateOverlayLog("");
-                        LogInfo("💡 SOLUTION: Select a vision-capable model:");
-                        LogInfo("  • gpt-5.2 (recommended)");
-                        LogInfo("  • o3 (best reasoning with vision)");
-                        LogInfo("  • o4-mini (fast reasoning with vision)");
-                        LogInfo("  • gpt-4o (reliable, no reasoning)");
+                        return "Selected model doesn't support vision.";
                     }
 
-                    // Re-throw the exception
-                    throw;
+                    // Check for model not found
+                    if (ex.Message.Contains("model") &&
+                        (ex.Message.Contains("does not exist") || ex.Message.Contains("not found")))
+                    {
+                        LogError("╔════════════════════════════════════════════════╗");
+                        LogError("║   ❌ MODEL NOT FOUND                           ║");
+                        LogError("╚════════════════════════════════════════════════╝");
+                        LogError("");
+                        LogError($"PROBLEM: Model '{modelName}' doesn't exist or is not available.");
+                        LogError("");
+                        LogError("SOLUTIONS:");
+                        LogError("  1️⃣ Select a different model from Settings");
+                        LogError("  2️⃣ Use: gpt-5.2, o3, o4-mini, or gpt-4o");
+                        LogError("");
+                        LogError("════════════════════════════════════════════════");
+
+                        MessageBox.Show(
+                            "❌ Model Not Found!\n\n" +
+                            $"Model '{modelName}' doesn't exist or is unavailable.\n\n" +
+                            "SOLUTIONS:\n" +
+                            "• Select a different model from Settings\n" +
+                            "• Use: gpt-5.2, o3, o4-mini, or gpt-4o\n\n" +
+                            "Processing has been stopped.",
+                            "Model Not Found",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+
+                        UpdateOverlayLog("");
+                        return "Selected model not available.";
+                    }
+
+                    // Generic API error (catch-all)
+                    LogError("╔════════════════════════════════════════════════╗");
+                    LogError("║   ❌ OPENAI API ERROR                          ║");
+                    LogError("╚════════════════════════════════════════════════╝");
+                    LogError("");
+                    LogError("An unexpected API error occurred.");
+                    LogError($"Error: {ex.Message}");
+                    LogError("");
+                    LogError("SOLUTIONS:");
+                    LogError("  1️⃣ Check your internet connection");
+                    LogError("  2️⃣ Verify your API key is valid");
+                    LogError("  3️⃣ Try again in a few minutes");
+                    LogError("  4️⃣ Check OpenAI status: https://status.openai.com");
+                    LogError("");
+                    LogError("════════════════════════════════════════════════");
+
+                    MessageBox.Show(
+                        "❌ OpenAI API Error!\n\n" +
+                        "An unexpected error occurred:\n\n" +
+                        $"{ex.Message}\n\n" +
+                        "SOLUTIONS:\n" +
+                        "• Check your internet connection\n" +
+                        "• Verify your API key is valid\n" +
+                        "• Try again in a few minutes\n" +
+                        "• Check: https://status.openai.com\n\n" +
+                        "Processing has been stopped.",
+                        "API Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+
+                    UpdateOverlayLog("");
+
+                    // DON'T THROW! Return gracefully instead
+                    return $"API Error: {ex.Message}";
                 }
                 finally
                 {
