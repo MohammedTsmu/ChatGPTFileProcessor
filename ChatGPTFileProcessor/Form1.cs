@@ -865,6 +865,9 @@ namespace ChatGPTFileProcessor
                                 selectedFromPage = pageForm.FromPage;
                                 selectedToPage = pageForm.ToPage;
                                 labelFileName.Text = selectedPdfPath;
+
+                                // Enable reselect button
+                                btnReselectPages.Enabled = true;
                             }
                         }
                         catch (Exception ex)
@@ -878,6 +881,57 @@ namespace ChatGPTFileProcessor
                                 MessageBoxIcon.Error);
                         }
                     }
+                }
+            }
+        }
+
+        // إعادة اختيار الصفحات بعد تحميل ملف PDF
+        private async void btnReselectPages_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(selectedPdfPath) || !File.Exists(selectedPdfPath))
+            {
+                MessageBox.Show("No PDF file loaded!", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            ShowInstantSpinner("Loading PDF...");
+
+            using (var pageForm = new PageSelectionForm())
+            {
+                try
+                {
+                    // Pass previous selection to pre-fill the form
+                    await pageForm.LoadPdfPreviewAsync(selectedPdfPath, selectedFromPage, selectedToPage);
+
+                    HideInstantSpinner();
+
+                    if (pageForm.ShowDialog(this) == DialogResult.OK)
+                    {
+                        selectedFromPage = pageForm.FromPage;
+                        selectedToPage = pageForm.ToPage;
+
+                        LogInfo($"✓ Pages updated: {selectedFromPage} to {selectedToPage}");
+
+                        // Optional: Show confirmation
+                        MessageBox.Show(
+                            $"Page selection updated!\n\n" +
+                            $"From: Page {selectedFromPage}\n" +
+                            $"To: Page {selectedToPage}",
+                            "Success",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information
+                        );
+                    }
+                }
+                catch (Exception ex)
+                {
+                    HideInstantSpinner();
+                    MessageBox.Show(this,
+                        $"Failed to load PDF:\n\n{ex.Message}",
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
                 }
             }
         }

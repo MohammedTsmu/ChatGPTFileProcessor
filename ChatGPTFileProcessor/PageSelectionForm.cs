@@ -278,16 +278,33 @@ namespace ChatGPTFileProcessor
             }
             catch (Exception ex)
             {
-                HideOverlay();
-                XtraMessageBox.Show(this,
-                    $"Failed to load PDF preview:\n\n{ex.Message}",
-                    "PDF Load Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-
                 CleanupPreviousData();
-                throw;
+                HideOverlay();
+                throw new Exception($"Failed to load PDF preview: {ex.Message}", ex);
             }
+        }
+
+        /// <summary>
+        /// Loads PDF with previous selection pre-filled (OVERLOAD)
+        /// </summary>
+        public async Task LoadPdfPreviewAsync(string filePath, int previousFrom, int previousTo)
+        {
+            // Load the PDF first using the original method
+            await LoadPdfPreviewAsync(filePath);
+
+            // Then set the previous values if they're valid
+            if (previousFrom >= 1 && previousFrom <= spinFrom.Properties.MaxValue)
+            {
+                spinFrom.Value = previousFrom;
+            }
+
+            if (previousTo >= 1 && previousTo <= spinTo.Properties.MaxValue)
+            {
+                spinTo.Value = previousTo;
+            }
+
+            // Update visuals to show the selection
+            await UpdateRangeVisualsAsync();
         }
 
         private List<Image> RenderThumbnails(

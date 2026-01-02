@@ -35,6 +35,7 @@
             this.panelMain = new DevExpress.XtraEditors.PanelControl();
             this.xtraTabControl = new DevExpress.XtraTab.XtraTabControl();
             this.tabPageFile = new DevExpress.XtraTab.XtraTabPage();
+            this.btnReselectPages = new DevExpress.XtraEditors.SimpleButton();
             this.labelFileTitle = new DevExpress.XtraEditors.LabelControl();
             this.labelSelectFile = new DevExpress.XtraEditors.LabelControl();
             this.labelFileName = new DevExpress.XtraEditors.LabelControl();
@@ -233,6 +234,7 @@
             this.tabPageFile.Appearance.Header.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.tabPageFile.Appearance.Header.Options.UseFont = true;
             this.tabPageFile.AutoScroll = true;
+            this.tabPageFile.Controls.Add(this.btnReselectPages);
             this.tabPageFile.Controls.Add(this.labelFileTitle);
             this.tabPageFile.Controls.Add(this.labelSelectFile);
             this.tabPageFile.Controls.Add(this.labelFileName);
@@ -243,6 +245,25 @@
             this.tabPageFile.Name = "tabPageFile";
             this.tabPageFile.Size = new System.Drawing.Size(1865, 711);
             this.tabPageFile.Text = "📄 File";
+            // 
+            // btnReselectPages
+            // 
+            this.btnReselectPages.Appearance.BackColor = System.Drawing.Color.White;
+            this.btnReselectPages.Appearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
+            this.btnReselectPages.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnReselectPages.Appearance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
+            this.btnReselectPages.Appearance.Options.UseBackColor = true;
+            this.btnReselectPages.Appearance.Options.UseBorderColor = true;
+            this.btnReselectPages.Appearance.Options.UseFont = true;
+            this.btnReselectPages.Appearance.Options.UseForeColor = true;
+            this.btnReselectPages.Enabled = false;
+            this.btnReselectPages.Location = new System.Drawing.Point(1072, 154);
+            this.btnReselectPages.Margin = new System.Windows.Forms.Padding(4);
+            this.btnReselectPages.Name = "btnReselectPages";
+            this.btnReselectPages.Size = new System.Drawing.Size(200, 49);
+            this.btnReselectPages.TabIndex = 6;
+            this.btnReselectPages.Text = "Reselect Pages";
+            this.btnReselectPages.Click += new System.EventHandler(this.btnReselectPages_Click);
             // 
             // labelFileTitle
             // 
@@ -1425,6 +1446,7 @@
         private DevExpress.XtraEditors.LabelControl labelStudyMaterials;
         private DevExpress.XtraEditors.LabelControl labelAnalysisTools;
         private DevExpress.XtraEditors.LabelControl labelSpecialFeatures;
+        private DevExpress.XtraEditors.SimpleButton btnReselectPages;
     }
 }
 
